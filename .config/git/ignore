@@ -1,0 +1,38 @@
+# User-specific stuff
+**/.idea/**/workspace.xml
+**/.idea/**/tasks.xml
+**/.idea/**/vcs.xml
+**/.idea/dictionaries
+**/.idea/inspectionProfiles
+**/.idea/.name
+**/.idea/markdown-*
+**/.idea/compiler.xml
+**/.idea/misc.xml
+**/.idea/modules.xml
+**/.idea/caches
+**/.idea/encodings.xml
+**/.idea/kotlinScripting.xml
+**/.idea/jarRepositories.xml
+
+## Unecessary IDEA stuff
+*.iws
+**/*.iml
+out/
+
+# Sensitive or high-churn files
+**/.idea/**/dataSources/
+**/.idea/**/dataSources.ids
+**/.idea/**/dataSources.xml
+**/.idea/**/dataSources.local.xml
+**/.idea/**/sqlDataSources.xml
+**/.idea/**/dynamic.xml
+**/.idea/**/uiDesigner.xml
+
+# Gradle
+**/.idea/**/gradle.xml
+**/.idea/**/libraries
+.gradle/
+build/
+
+# Build
+.kotlintest
