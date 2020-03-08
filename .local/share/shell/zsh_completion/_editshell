@@ -1,0 +1,2 @@
+#compdef editshell
+compadd $(ls -pA ~/shells | grep -v / )

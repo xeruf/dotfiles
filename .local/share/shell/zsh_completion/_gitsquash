@@ -1,0 +1,15 @@
+#compdef gitsquash
+local -a h
+
+maxargs=4;
+for el in "${words[@]}"; do
+  [[ $el != -* ]] && break
+  ((++maxargs))
+done
+echo $maxargs
+
+if [ $CURRENT -lt $maxargs ]; then
+  commits=$( ([ $PREFIX ] && git log --pretty=%h | grep "^$PREFIX" - | head -10) || git log --pretty=%h -10 )
+  while read commit; do h+=("$commit:$(git log -1 --pretty=%s $commit)"); done <<< "$commits"
+fi
+_describe -V "hashes" h

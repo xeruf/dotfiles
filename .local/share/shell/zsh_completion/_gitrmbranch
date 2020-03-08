@@ -1,0 +1,2 @@
+#compdef gitrmbranch gitrebranch
+compadd $(git branch | cut -c 3- | grep -v master)

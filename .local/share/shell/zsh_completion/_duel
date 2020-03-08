@@ -1,0 +1,12 @@
+#compdef duel battle
+cur=$words[$CURRENT-1]
+unset 'words[-1]'
+case $cur in
+    -p) compadd {13060..13069};;
+    *) 
+    case $PREFIX in
+        -*) compadd -- -p -g -min -v -vv -nodocker;;
+        *)  compadd $(find $projects_dir/softwarechallenge2018/clients -name "*.jar" | sed "s|.*Jumper-||" | sed "s|.jar||" | while read in; do for word in $words; do [ "$in" = "$word" ] && continue 2; done; echo $in; done)
+            compadd -- -p -g -min -v -vv -nodocker;;
+    esac
+esac

@@ -1,0 +1,83 @@
+# A tool for managing multiple git projects quickly. Simply source this in your bashrc or zshrc.
+# This assumes a common directory that contains all projects. Subfolders are detected as well.
+# You can set $projects_dir before or after sourcing this script, or adjust it below.
+# The standard command I execute daily is "p status", it updates all projects and shows their status.
+
+# Common root for all projects
+projects_dir=${projects_dir:-~/daten/projects}
+
+# The max depth to search for when listing projects. The actual depth is this value minus one, since it searches for ".git" folders at that depth.
+projects_subfolder_level=4
+
+
+# Lists all projects under $projects_dir or the current directory if that is a subfolder of $projects_dir and not a git repository.
+# This is done by searching for corresponding ".git" folders and then listing their parent directories via "dirname"
+listprojects() {
+    if test "$1" = "--all"
+    then find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
+    else
+        if test "$(echo $PWD | grep $projects_dir/)" -a ! -d ".git" && ! git rev-parse --git-dir > /dev/null 2>&1
+        then find $PWD -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
+        else find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -not -path "*_*" -name ".git" | xargs dirname
+        fi
+    fi
+}
+
+# Underlines the project names
+highlight() { echo "[4m$1[0m" }
+
+# Lists all projects and evaluates the given command. 
+alias p=projects
+projects() {
+    test "$1" = "--all" && all="$1" && shift
+	case $1 in
+	"build")
+		# Builds all found gradle projects in parallel and then prints the results in batches - WARNING: This is likely to considerably slow down your computer!
+		listprojects $all | while read d; do
+			if test "$(find $d -maxdepth 1 -name "*gradle*")"; then
+				cd $d
+				buildlog="/tmp/build-$(basename $d)"
+				(nohup gradle build --no-daemon --console=rich &>$buildlog; highlight $(basename $d | awk '{print toupper($0)}') && cat $buildlog) &
+			fi
+		done
+		wait
+		;;
+	"diffs")
+		# Puts the diffs of all projects into a single diffs.txt in the current directory
+		listprojects $all | while read d; do
+			echo $(basename $d)>>diffs.txt
+			git -C $d diff -G.>>diffs.txt
+			printf "\n">>diffs.txt
+		done
+		;;
+	"status")
+		# Sets the current branch upstream to a remote branch of the same name, updates it and shows "git status -s -b"
+		listprojects $all | while read d; do
+			cd $d
+			highlight $(basename $d)
+			git branch --set-upstream-to=origin/$(git curbranch)>/dev/null
+			git pull --all | grep -v "Already up to date."
+			git status -s -b
+		done
+		;;
+	*)  
+		# Just provide a one-line summary of the status of each project and execute the command entered on every project
+		com="$@"
+		listprojects $all | while read d; do
+			cd $d
+			if [[ $com != gradle* ]] || (( $(f1 -name "*gradle*" | wc -l) > 0 )); then
+				local st=()
+				local ahead=$(command git rev-list "${branch_name}"@{upstream}..HEAD 2>/dev/null | wc -l)
+				test $ahead -gt 0 && st+=("ahead $ahead")
+				local behind=$(command git rev-list HEAD.."${branch_name}"@{upstream} 2>/dev/null | wc -l)
+				test $behind -gt 0 && st+=("behind $behind")
+				local stashes=$(git stash list | wc -l)
+				test $stashes -gt 0 && st+=("stashed $stashes")
+				test "$st"  && name+=" [$(IFS=, eval 'JOINED="${st[*]}"' && echo $JOINED)]"
+				highlight $(basename $d)
+				eval "$com"
+			fi
+		done
+	esac
+	cd $projects_dir
+}
