@@ -1,0 +1,3 @@
+#!/bin/bash
+read -p URL? url
+xdg-open "https://icons.duckduckgo.com/ip2/$url.ico"
