@@ -1,4 +1,4 @@
-source ~/.lcaol/share/shell/functions
+source ~/.local/share/shell/functions
 
 # ls aliases
 
