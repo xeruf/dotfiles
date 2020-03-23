@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:$HOME/.local/bin:$PATH
 
@@ -7,6 +14,12 @@ DEFAULT_USER=$USER
 
 ZSH_COMPDUMP="/var/tmp/zcompdump-$ZSH_VERSION"
 ZSH_DISABLE_COMPFIX=true
+
+ZSH_THEME="powerlevel10k/powerlevel10k"
+export TERM="xterm-256color"
+
+#POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator context dir rbenv vcs)
+#POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time)
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -57,11 +70,9 @@ plugins=(
   zsh-vim-mode
 )
 
-SHELL_CONFIG="$HOME/.local/share/shell"
+SHELL_CONFIG="$HOME/.config/shell"
 
 fpath=($fpath "$SHELL_CONFIG/zsh_completion")
-
-source "$SHELL_CONFIG/zsh_theme"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -214,3 +225,8 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f $SHELL_CONFIG/p10k.zsh ]] || source $SHELL_CONFIG/p10k.zsh
+
+PATH=$PATH:/home/janek/daten/programme/010editor;export PATH; # ADDED BY INSTALLER - DO NOT EDIT OR DELETE THIS COMMENT - 87FF8EFC-483D-BCAA-D67D-735CF60410D1 38562BC7-22FC-AE71-D3CD-79BBBCE2AB2A

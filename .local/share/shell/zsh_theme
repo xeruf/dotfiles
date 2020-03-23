@@ -1,6 +1,0 @@
-
-ZSH_THEME="powerlevel9k/powerlevel9k"
-export TERM="xterm-256color"
-
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator context dir rbenv vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time)

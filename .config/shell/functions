@@ -252,8 +252,7 @@ formatsong() {
 # INSTALL
 
 snapinstall() {
-	sudo snap install "$@"
-	refreshSetup
+	sudo snap install "$@" && refreshSetup
 }
 
 alias aptupdate='sudo apt-get update'
