@@ -1,12 +1,17 @@
 # Shell configuration for Zsh, works almost completely for Bash as well
+
 export LESS=-R
 export LC_MESSAGES=C
 
 export DIST=$(lsb_release --id | cut -d'	' -f2)
 
+#export PASSWORD_STORE_DIR=~/.local/share/pass
+
+# Some aliases
 alias println='printf "\n"'
 
-alias editgrub='sudo nvim /etc/default/grub && sudo update-grub'
+alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
+alias editenv='sudoedit /etc/environment'
 
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
@@ -335,7 +340,7 @@ if test "$BASH_VERSION"
 then _clean_map=([m]=~/.mozilla [c]=~/.cache)
 else _clean_map=(m ~/.mozilla c ~/.cache)
 fi
-_clean_folders=(~/.oracle_jre_usage ~/.gradle-kotlin-dsl ~/.thumbnails ~/.zcompdump*)
+_clean_folders=(~/.oracle_jre_usage ~/.gradle-kotlin-dsl ~/.thumbnails $ZDOTDIR/.zcompdump*)
 clean() {
 	
 	for f in $_clean_folders
