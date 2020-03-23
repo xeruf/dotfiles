@@ -1,4 +1,4 @@
-source ~/.local/share/shell/functions
+source ~/.config/shell/functions
 
 # ls aliases
 
