@@ -1,7 +1,2 @@
 export XDG_DATA_DIRS="$HOME/.local/xdg:$XDG_DATA_DIRS"
 export KDEHOME="$HOME/.local/share/kdehome"
-export PASSWORD_STORE_DIR="$HOME/.local/share/pass"
-export ZDOTDIR="$HOME/.config/zsh"
-export _Z_DATA="$HOME/.config/zsh/z"
-export EDITOR=/usr/bin/nvim
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"

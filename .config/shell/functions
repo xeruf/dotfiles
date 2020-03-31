@@ -5,8 +5,6 @@ export LC_MESSAGES=C
 
 export DIST=$(lsb_release --id | cut -d'	' -f2)
 
-#export PASSWORD_STORE_DIR=~/.local/share/pass
-
 # Some aliases
 alias println='printf "\n"'
 
