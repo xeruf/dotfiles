@@ -1,25 +1,23 @@
-# User-specific stuff
+# IDEA
+## User-specific files
 **/.idea/**/workspace.xml
 **/.idea/**/tasks.xml
 **/.idea/**/vcs.xml
 **/.idea/dictionaries
 **/.idea/inspectionProfiles
-**/.idea/.name
+**/.idea/caches
 **/.idea/markdown-*
 **/.idea/compiler.xml
 **/.idea/misc.xml
 **/.idea/modules.xml
-**/.idea/caches
 **/.idea/encodings.xml
 **/.idea/kotlinScripting.xml
 **/.idea/jarRepositories.xml
-
-## Unecessary IDEA stuff
-*.iws
+**/.idea/.name
 **/*.iml
-out/
+#*.iws
 
-# Sensitive or high-churn files
+## Sensitive or high-churn files
 **/.idea/**/dataSources/
 **/.idea/**/dataSources.ids
 **/.idea/**/dataSources.xml
@@ -28,11 +26,10 @@ out/
 **/.idea/**/dynamic.xml
 **/.idea/**/uiDesigner.xml
 
-# Gradle
+# Build
 **/.idea/**/gradle.xml
 **/.idea/**/libraries
-.gradle/
+**/.gradle/
 build/
-
-# Build
+out/
 .kotlintest

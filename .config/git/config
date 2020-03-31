@@ -1,39 +1,41 @@
-[credential]
-	helper = store
-[user]
-	email = 27jf@web.de
-	name = Xerus
 [core]
 	autocrlf = input
 	editor = nvim
+[diff]
+	tool = meld
+[submodule]
+	recurse = true
+[rerere]
+	enabled = true
+# Accelerate packing by automatically determining thread count
+[pack]
+	threads = 0
+
+# Automatically push to branch with matching name
 [push]
 	default = current
+# Disable pagination for branch commmand by default
 [pager]
 	branch = false
+[grep]
+	lineNumber
+
 [color "status"]
 	added = green
 	changed = yellow
-	untracked = red
-[pack]
-	threads = 3
-[submodule]
-	recurse = true
+	untracked = magenta
+
+[user]
+	email = 27jf@pm.me
+	name = xerus
+
 [alias]
 	curbranch = symbolic-ref --short HEAD
 	root = rev-parse --show-toplevel
 	dir = !git root | sed 's/$/\\/.git/g'
-[rerere]
-	enabled = true
-[code]
-	editor = kate
-[github]
-	user = Xerus2000
-[ghi]
-	token = 32ae6d2b42aa78d823cfbd62a3ed765bf14c8b44
-[diff]
-	tool = meld
+
 [filter "lfs"]
+	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
+	required
