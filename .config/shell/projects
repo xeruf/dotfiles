@@ -16,8 +16,8 @@ listprojects() {
     if test "$1" = "--all"
     then find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
     else
-        if test "$(echo $PWD | grep $projects_dir/)" -a ! -d ".git" && ! git rev-parse --git-dir > /dev/null 2>&1
-        then find $PWD -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
+        if test "$(echo $PWD | grep $projects_dir/)" && ! git rev-parse --git-dir > /dev/null 2>&1
+        then find $PWD -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname 2> /dev/null || listprojects --all
         else find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -not -path "*_*" -name ".git" | xargs dirname
         fi
     fi
