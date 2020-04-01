@@ -1,4 +1,3 @@
-
 alias bfg='java -jar ~/daten/dropbox/tools/bfg-1.13.0.jar'
 alias gti=git
 

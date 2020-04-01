@@ -32,4 +32,5 @@
 **/.gradle/
 build/
 out/
-.kotlintest
+.kotlintest/
+cmake-build-debug/
