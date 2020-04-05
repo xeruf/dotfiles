@@ -3,6 +3,8 @@ cmap w!! w !sudo tee > /dev/null %
 set number relativenumber
 set clipboard+=unnamedplus
 
+ autocmd FileType json syntax match Comment +\/\/.\+$+
+
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -10,8 +12,15 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
 endif
 
 call plug#begin()
+
 Plug 'psliwka/vim-smoothie'
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+
+Plug 'norcalli/nvim-colorizer.lua'
 Plug 'vim-airline/vim-airline'
+
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release' }
+
 call plug#end()
