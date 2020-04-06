@@ -1,0 +1,12 @@
+
+# Enable REISUB and increase watch limit for Intellij & co
+echo "kernel.sysrq=1" | sudo tee /etc/sysctl.d/60-sysrq.conf
+echo "fs.inotify.max_user_watches=800000" | sudo tee /etc/sysctl.d/60-max-user-watches.conf
+sudo sysctl --system
+
+# Update sudoers configuration
+echo "Defaults	editor=/usr/bin/nvim" | sudo tee /etc/sudoers.d/editor
+echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
+
+# Stop logind from suspending my laptop
+sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
