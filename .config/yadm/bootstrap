@@ -10,3 +10,6 @@ echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
 
 # Stop logind from suspending my laptop
 sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
+
+# Colorize Pacman
+test -f /etc/pacman.conf && sudo sed -i 's/#Color/Color/' /etc/pacman.conf
