@@ -1,29 +1,40 @@
+#! /usr/bin/make
 # Shell configuration for Zsh, works almost completely for Bash as well
 
 export LESS=-R
-export LC_MESSAGES=C
-
+alias info='info --vi-keys'
 export DIST=$(lsb_release --id | cut -d'	' -f2)
 
 # Some aliases
 alias println='printf "\n"'
 
+# find pruning avoids permission denied errors - see https://unix.stackexchange.com/a/121020/272449
+alias conf='find ~/.config/nvim ~/.config ~/.gradle/gradle.properties /etc -type d ! \( -readable \) -prune -o -type f -print | fzf --tiebreak=end,index --preview "bat --color=always --style=numbers --line-range :500 {}" --bind "enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {})"'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
+editshell() {
+	nvim $(test $# -lt 1 && echo "$SHELL_FUNCTIONS" || (results=$(find "$dropbox_path/tools/setup" -maxdepth 1 -name "$1.sh") && test "$results" && echo "$results") || echo "$(dirname $SHELL_FUNCTIONS)/$1") && r
+}
+
+alias graphics='lspci -vnn | grep VGA --color=never'
 
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 # Fast shortcuts
-alias t='tree -C | less'
+alias t='task'
 alias c='clear'
 alias q='exit'
 alias v='nvim'
+alias grp='grep -iIn'
+alias grpr='grp -r'
 b() { bat "$@" 2>/dev/null || ls -lah "$@" }
+cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
+tr() { tree -C -a -L 2 "$@" | less }
 
-_FUNCTIONS=${BASH_SOURCE[0]:-${(%):-%x}}
-alias r="reset && source $_FUNCTIONS"
+SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
+alias r="reset && source $SHELL_FUNCTIONS"
 
-dropbox_path=$(cat ~/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')
+dropbox_path="$(cat ~/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
 
 # Add an "alert" alias for long running commands. Use like so: sleep 10; alert
 #if [ command -v notify-send >/dev/null 2>&1 ]; then
@@ -37,6 +48,51 @@ alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-data
 man() {
 	(test "$1" = "zmv" && LESS="$LESS+/^ *zmv *\\[" /usr/bin/man zshcontrib) || /usr/bin/man "$@"
 }
+
+sedcomment() { sed -i 's/$1/#\0/' "${@:2}" }
+seduncomment() { sed -i 's/#\($1\)/\0/' "${@:2}" }
+
+mozedit() (
+	set -eo pipefail
+	file="$1"
+	tmpfile="/tmp/$(basename $1).tmp"
+	unsetopt multios # https://stackoverflow.com/a/58261480
+	# ( [[ -t 0 ]] && echo 'STDIN is attached to TTY' ) || cat
+	{ echo -en '\x02\x21\x4C\x18TT\x0\x0' && dd if="$file" bs=1 skip=12 } 2>&1 >"$tmpfile" | head -1 | cut -d+ -f1 | xargs printf "%04x\n" | read len
+	tmpfile2="${tmpfile}2"
+	cat "$tmpfile" | sed "s/TT/\\x${len:2:2}\\x${len:0:2}/" | unlz4 >"$tmpfile2"
+	cat "$tmpfile2" | sed "$2" | lz4 -l | dd bs=1 skip=8 seek=12 of="$file" conv=notrunc
+)
+
+theme_save="$(xdg-user-dir CACHE)/theme"
+theme_default="dark"
+theme() {
+	theme="$1"
+	if test "$2" = "kde" || test "$theme" != "$THEME" -a "$2" != "q"
+	then kcmshell5 kcm_lookandfeel &
+	fi
+	export THEME="$theme"
+	echo "$theme">"$theme_save"
+
+	#mozfile=$(find $HOME/.mozilla/firefox/ -maxdepth 2 -name addonStartup.json.lz4 | grep ".test")
+	case "$theme" in
+		(light)
+			export BAT_THEME="OneHalfLight"
+    		konsoleprofile colors="Light"
+			sed -i 's/#\(include.*\/light-256.theme\)/\1/' "$(xdg-user-dir CONFIG)/taskrc"
+			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/'
+			;;
+		(dark)
+			export BAT_THEME="OneHalfDark"
+    		konsoleprofile colors="Breeze"
+			sed -i 's/^include.*light-256.theme/#\0/' "$(xdg-user-dir CONFIG)/taskrc"
+			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/'
+			;;
+	esac
+}
+export THEME=$(cat "$theme_save" 2> /dev/null)
+export THEME=${THEME:-$theme_default}
+theme $THEME
 
 updateDeps() {
 	name="$1"
@@ -64,8 +120,11 @@ alias updateKotlin='updateDeps build.gradle.kts '\''kotlin(\"jvm\") version \"'\
 alias updateGradle='updateDeps gradle-wrapper.properties "services.gradle.org\/distributions\/gradle-" --version'
 alias updateUtils='updateDeps build.gradle.kts '\''\"com.github.Xerus2000.util\", \".*\", \"'\'' --pattern '\''[^\"]\+'\'' --version'
 
+# Kill all shell background processes
 alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
 
+# Kil all Java processes except IDEA
+# Pass "-9" to force-kill and "-q" to not output what has been killed
 killJava() {
 	pgrep -f 'java' | while read id
 		do if [[ $(ps --no-headers -o cmd $id) != *"idea"* ]]; then
@@ -129,7 +188,7 @@ mvk() {
 	mv "$1" "$2"
 }
 
-# moves from $1 to $2 and creates a symlink instead
+# Moves from $1 to $2 and creates a symlink in place of $2
 mvln() {
 	file=$(test -f "$1" && echo 1 || echo 0)
 	if test -d $1; then
@@ -143,10 +202,6 @@ mvln() {
 }
 
 # OTHER
-
-editshell() {
-	nvim $(test $# -lt 1 && echo "$_FUNCTIONS" || (results=$(find "$dropbox_path/tools/setup" -maxdepth 1 -name "$1.sh") && test "$results" && echo "$results") || echo "$(dirname $_FUNCTIONS)/$1") && r
-}
 
 pathadd() {
 	local IFS=":"
@@ -179,7 +234,7 @@ music_original_folder="$audio_folder/songs/_raw"
 
 makePl() { echo ${2:-empty} >$1.m3u8 }
 makePls() {
-	i=1; while test $i -le ${1:-9}; do makePl "${2:-Ω}$i" "empty$i"; ((i++)); done 
+	i=1; while test $i -le ${1:-9}; do makePl "${2:-Ω}$i" "empty$i"; ((i++)); done
 }
 
 findsongs() {
@@ -193,19 +248,19 @@ addmix() {
 
 addsong() {
 	test "$1" = "-q" && shift && quick="true"
-	
+
 	local raw="${1%.*}"
 	local isflac=$(case "$1" in *.flac) echo "true";; esac)
 	test "$isflac" || (echo "Converting to flac..." && flac "$1" --totally-silent)
-	
+
 	test "$quick" || (echo "Press ENTER when the metadata of the flac file is correct..." && read)
-	
+
 	echo "Converting to mp3..."
 	lame -V0 "$1" --silent
-	
+
 	mkdir -p "$music_folder/$2"
 	mkdir -p "$music_original_folder/$2"
-	
+
 	local destination="$music_folder/$2/$raw.mp3"
 	echo "Moving mp3 with metadata to $destination"
 	ffmpeg -i "$raw.mp3" -i "$raw.flac" -c copy -map_metadata 1 "$destination" -v warning "${@:3}" && rm "$raw.mp3"
@@ -224,9 +279,9 @@ addalbum() {
 		cp -v "$cover" "$music_folder/$1" &&
 		mv -v "$cover" "$music_original_folder/$1"
 	done
-	
+
 	IFS=$'\n'
-	for s in $(findsongs ".*\.(flac|wav)"); do 
+	for s in $(findsongs ".*\.(flac|wav)"); do
 		highlight "$s"
 		addsong -q "$s" "$1" "${@:2}"
 	done
@@ -241,7 +296,7 @@ formatsongs() {
 	done; done
 	cd "$_pwd"
 	IFS=$'\n'
-	for f in $(find "$@" -name "*.wav"); do 
+	for f in $(find "$@" -name "*.wav"); do
 		echo "Converting $f to ${f%.*}.flac"
 		ffmpeg -i "$f" "${f%.*}.flac" -v warning && rm -v $f
 	done
@@ -306,14 +361,15 @@ aptrepoinstall() {
 # Gets the download url for the latest release of a package provided via GitHub Releases
 # Usage: ghrelease USER REPO [PATTERN]
 ghrelease() {
-	curl -s "https://api.github.com/repos/$1/$2/releases/latest" | grep -o "http.*${3:-deb}"
+	result=$(curl -s "https://api.github.com/repos/$1/$2/releases/latest" | grep -o "http.*${3:-deb}" | awk '{ print length(), $0}' | sort -n | cut -d' ' -f2-)
+	echo "$result" | grep amd64 || echo "$result"
 }
 
 # Installs a local or remote(http/https) deb package and removes it after installation
 installdeb() {
 	set -e
 	loc="/tmp/install.deb"
-	case $1 in 
+	case $1 in
 	http*) sudo wget -O "$loc" $1;;
 	*) loc="$1"
 	esac
@@ -338,19 +394,19 @@ if test "$BASH_VERSION"
 then _clean_map=([m]=~/.mozilla [c]=~/.cache)
 else _clean_map=(m ~/.mozilla c ~/.cache)
 fi
-_clean_folders=(~/.oracle_jre_usage ~/.gradle-kotlin-dsl ~/.thumbnails $ZDOTDIR/.zcompdump*)
+_clean_folders=(~/.oracle_jre_usage ~/.gradle-kotlin-dsl ~/.thumbnails)
 clean() {
-	
+
 	for f in $_clean_folders
 	do test -d $f && rm -rv $f
 	done
-	
+
 	highlight "g to clean gradle"
 	if [[ $1 =~ "g" ]]; then
 		find ~/.gradle/* -maxdepth 0 -not -name "gradle.properties" -exec rm -r {} \; -print
 		find ~/daten/projects/ -name .gradle -print -exec rm -r {} \;
 	fi
-	
+
 	if test "$BASH_VERSION"; then
 		for k in "${!_clean_map[@]}"; do
 			highlight "$k to delete $_clean_map[$k]
@@ -370,38 +426,38 @@ clean() {
 	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
 }
 
-function zipdiff() { 
+function zipdiff() {
 	diff -W200 -y <(unzip -vql $1 | sort -k8) <(unzip -vql $2 | sort -k8) #--suppress-common-lines
 }
 
 # PROJECTS
 
-source "$(dirname $_FUNCTIONS)/git"
-source "$(dirname $_FUNCTIONS)/projects"
+source "$(dirname $SHELL_FUNCTIONS)/git"
+source "$(dirname $SHELL_FUNCTIONS)/projects"
+
+pdiff() {
+	diff -r $1 $2 -x .git -x .idea -x .gradle
+}
 
 genssh() {
 	mkdir -p ~/.ssh
 	test -f ~/.ssh/id_rsa.pub || ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N "" -C ${1:-$(hostname)}
 	if test "$OSTYPE" = "cygwin"
 	then cat ~/.ssh/id_rsa.pub>/dev/clipboard
-	else xclip -sel clip < ~/.ssh/id_rsa.pub
-	fi && echo "SSH Public key copied to clipboard"
-}
-
-pdiff() {
-	diff -r $1 $2 -x .git -x .idea -x .gradle
+    else xclip -sel clip < ~/.ssh/id_rsa.pub
+    fi && echo "SSH Public key copied to clipboard"
 }
 
 createproject() {
 	mkcd $1
-	
+
 	echo 'plugins {
 	kotlin("jvm") version "1.3.41"
 	application
 	id("com.github.johnrengelman.shadow") version "5.1.0"
 	id("com.github.ben-manes.versions") version "0.21.0"
 }
-	
+
 sourceSets {
 	main {
 		java.srcDir("src/main")
@@ -411,7 +467,7 @@ sourceSets {
 		java.srcDir("src/test")
 	}
 }' > build.gradle.kts
-	 
+
 }
 
 # SWAP

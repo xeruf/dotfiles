@@ -11,5 +11,9 @@ echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
 # Stop logind from suspending my laptop
 sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
 
+# Fix Chrysalis for keyboardio - https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting
+echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/keyboardio.rules
+systemctl disable ModemManager
+
 # Colorize Pacman
 test -f /etc/pacman.conf && sudo sed -i 's/#Color/Color/' /etc/pacman.conf
