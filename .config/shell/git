@@ -10,7 +10,7 @@ alias ghead='git rev-parse --short HEAD'
 alias gref='git reflog'
 
 # Show the 5 most recent commits without pager
-alias gln='git --no-pager log --pretty=tformat:"%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset" -5 "$@"'
+alias gln='git --no-pager log --pretty=tformat:"%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset" -5'
 
 # Log local and origin commits side by side - useful to check before forcing an action
 glno() {

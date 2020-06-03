@@ -40,6 +40,8 @@
 [alias]
 	st = status -sb
 	stv = --paginate status -v
+	stvv = --paginate status -vv
+	ln = !git --no-pager log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset' -5
 
 	unstage = reset HEAD --
 	ready = rebase -i @{u}
