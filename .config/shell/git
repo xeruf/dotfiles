@@ -1,51 +1,56 @@
+# Tools
 alias bfg='java -jar ~/daten/dropbox/tools/bfg-1.13.0.jar'
-alias gti=git
+alias magit='nvim -c MagitOnly'
 
 # Repo info
-
 alias gr='git remote -v'
 alias gb='git branch -vv'
 alias grev='git rev-parse --short'
 alias ghead='git rev-parse --short HEAD'
 alias gref='git reflog'
-gln() {
-	git --no-pager log --graph --pretty=format:"%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset" -5 "$@"
-	println
-}
 
+# Show the 5 most recent commits without pager
+alias gln='git --no-pager log --pretty=tformat:"%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset" -5 "$@"'
+
+# Log local and origin commits side by side - useful to check before forcing an action
 glno() {
-	local log=
-	local loc="$(git log --pretty=format:"%C(auto)%h %s %Cgreen(%cr)" -5 "$@" --color=always "$@")"
-	local origin="$(git log --pretty=format:"%C(auto)%h %s %Cgreen(%cr)" -5 "origin/$(git curbranch)" --color=always "$@")"
-	local a=$(echo $loc | wc -l)
-	local b=$(echo $origin | wc -l)
+	loc="$(git log --pretty=format:"%C(auto)%h %s %Cgreen(%cr)" -5 "$@" --color=always "$@")"
+	origin="$(git log --pretty=format:"%C(auto)%h %s %Cgreen(%cr)" -5 "origin/$(git curbranch)" --color=always "$@")"
+	a=$(echo $loc | wc -l)
+	b=$(echo $origin | wc -l)
+	halfcols="$(($(tput cols) / 2))"
 	for i in `seq 1 $([ $a -le $b ] && echo "$a" || echo "$b")`; do
-		printf '%-120s %s\n' "$(echo $loc | head -n $i | tail -1)" "$(echo $origin | head -n $i | tail -1)"
+		printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $origin | head -n $i | tail -1)"
 	done
 }
 
 # Shortcuts
-
 alias gfs='git fetch && git status -s -b'
+alias glu='git pull upstream $(git curbranch)'
 alias gcap!='git commit -a --amend --no-edit && git push -f'
 alias grh!='git reset --hard'
 alias grhr='git reset --hard $(git rev-parse --abbrev-ref --symbolic-full-name @{u})'
 alias gitgc='git gc && git repack -a -d'
+alias gitstandup='git --no-pager log --since yesterday --author erus --all'
+alias gitready='git rebase -i @{u}'
+# List all branches with their last updates
+alias gitwhen="git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/"
+# Find a commit that follows the given one - second argument can be used to specify the search range
 gitchild() { git log --reverse --ancestry-path --pretty=%H $1..${2:-HEAD} | head -1; }
-gitrecache() { 
+
+# Caching
+gitrecache() {
 	git rm --cached --quiet -r ${1:-.}
 	git add ${1:-.}
 	git status -s
 }
-
 gitrestore() {
 	git reset -- "$@"
 	git checkout -- "$@"
 }
 
-alias gitstandup='git --no-pager log --since yesterday --author Xerus --all'
-alias gitready='git rebase -i @{u}'
-alias gitwhen="git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/"
+# Branches
+alias gitrmgonebranches='git fetch -p && for branch in `git branch -vv | grep ": gone]" | cut -d" " -f3`; do git branch -D "$branch"; done'
 gitrebranch() {
 	branch=${1:-$(git curbranch)}
 	test "$(git curbranch)" = "$branch" && git checkout ${2:-master}
@@ -58,30 +63,25 @@ gitrmbranch() {
 	test $1 || git checkout master
 	git branch -D $branch
 }
-alias gitrmgonebranches='git fetch -p && for branch in `git branch -vv | grep ": gone]" | cut -d" " -f3`; do git branch -D "$branch"; done'
 
-# Testing
+# Save HEAD commit hash to "snap" file in git dir
+gitsnap() { echo Snapped $(git rev-parse HEAD | tee "$(git dir)/${1:-snap}") }
+# Hard reset HEAD to commit in "snap"-file
+gitsnaprestore() { git reset --hard $(cat "$(git dir)/${1:-snap}") }
 
-gittestcommit() { touch file$((++i)) && git add . && git commit -m "Create file$i"; }
-gitsnap() {
-	echo -n "Snapped "
-	echo $(git rev-parse HEAD) | tee "$(git dir)/${1:-snap}"
-}
-gitsnaprestore() {
-	git reset --hard $(cat "$(git dir)/${1:-snap}")
-}
+# Remove list of tags local & remote
 gitrmtag() {
 	declare -a refs
 	local index=1
 	for tag in $@; do refs[index++]=":refs/tags/$tag"; done
 	git push origin "${refs[@]}" && git tag -d "$@"
 }
+# Rename a tag
 gitretag() {
 	git push origin refs/tags/${1}:refs/tags/${2} :refs/tags/$1 && git tag -d $1
 }
 
-# Repo management
-
+# Repo management {{{
 gitinit() {
 	git init
 	git add .
@@ -97,18 +97,6 @@ gitbackup() {
 	cd $p
 }
 
-gitremote() {
-	case "$1" in 
-	http*)	echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
-	*)	test "$2" = "-" && 2=""
-		test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
-		test "$3" = "btl" && 3="betweenthelinesev"
-		echo "git@git${1:-hub}.com:${3:-Xerus2000}/${2:-$(basename $PWD)}.git" ;;
-	esac
-}
-
-# Setting up repos
-
 project() {
 	cd $projects_dir
 	if [ -d $2 ]
@@ -117,20 +105,30 @@ project() {
 	fi
 }
 
-gitclone() { 
+gitremote() {
+	case "$1" in
+	http*)	echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
+	*)	test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
+		test "$3" = "btl" && 3="betweenthelinesev"
+		echo "git@git${1:-hub}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
+	esac
+}
+
+gitclone() {
 	remote=$(gitremote "$@")
 	echo $remote
 	git clone $remote "${@:4}"
-	cd "$2"
+	cd "$(basename ${remote/.git})"
 }
 
 gitfork() {
 	cd "$projects_dir/_forks"
 	gitclone hub "$1"
 	test "$2" && git remote add upstream "$(gitremote hub "$1" "$2")"
+	git remote -v
 }
 
-# sets this repo as origin and sets all branches upstream to their respective remote branch, if available
+# set repo as origin and set all branches upstream to their respective remote branch, if available
 gitorigin() {
 	git remote remove origin 2>/dev/null
 	git remote add origin $(gitremote "$@")
@@ -141,15 +139,16 @@ gitorigin() {
 	done
 }
 
-# sets this repo as upstream
+# set repo as upstream
 gitupstream() {
 	local name="${2:-upstream}"
 	git remote remove $name 2>/dev/null
 	git remote add $name "$(git remote -v | grep origin | head -1 | cut -f2 | cut -d':' -f1):$1/$(git remote -v | grep origin | head -1 | cut -f2 | cut -d'/' -f2 | cut -d' ' -f1)"
 	git remote -v && git fetch $name || ( last=$? && echo "git fetch failed, aborting!" && return $last )
 }
+# }}}
 
-# Rewriting history
+# Rewriting history {{{
 
 # gets the AuthorDate of a given committish
 git-authordate() {
@@ -194,11 +193,11 @@ gitsquash() {
 
 	gitcommits -q $1
 	git reset --hard $1
-	if [ $(git rev-list $2 --count) = 1 ]; then 
+	if [ $(git rev-list $2 --count) = 1 ]; then
 		git update-ref -d HEAD
 		git add .
 		git-withdate $1 commit -c $1
-	else 
+	else
 		git reset -q $2
 		git add .
 		git commit --amend
@@ -220,7 +219,7 @@ gitcommits() {
 	done
 
 	stashed="$(git rev-parse --show-toplevel)/.git/stashed-commits"
-	if [ $1 ]; then 
+	if [ $1 ]; then
 		if [ $verbosity -eq 0 ]
 			then git rev-list --reverse HEAD...$1 >$stashed
 			else git rev-list --reverse HEAD...$1 | tee $stashed
@@ -240,3 +239,7 @@ gitcommits() {
 		[ $aborted ] && echo "A problem was encountered. Fix it and run 'gitcommits' again to apply the remaining ${#rest} commits."
 	fi
 }
+# }}}
+
+# Testing
+gittestcommit() { touch file$((++i)) && git add . && git commit -m "Create file$i"; }

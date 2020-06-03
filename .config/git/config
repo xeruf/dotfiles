@@ -1,8 +1,6 @@
 [core]
 	autocrlf = input
 	editor = nvim
-[diff]
-	tool = meld
 [submodule]
 	recurse = true
 [rerere]
@@ -11,6 +9,16 @@
 [pack]
 	threads = 0
 
+[diff]
+	tool = nvim
+[merge]
+	tool = nvim
+[mergetool "nvim"]
+	cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
+	prompt = false
+[difftool "nvim"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
 # Automatically push to branch with matching name
 [push]
 	default = current
@@ -18,7 +26,7 @@
 [pager]
 	branch = false
 [grep]
-	lineNumber
+	lineNumber = 1
 
 [color "status"]
 	added = green
@@ -27,9 +35,15 @@
 
 [user]
 	email = 27jf@pm.me
-	name = xerus
+	name = xerus2000
 
 [alias]
+	st = status -sb
+	stv = --paginate status -v
+
+	unstage = reset HEAD --
+	ready = rebase -i @{u}
+
 	curbranch = symbolic-ref --short HEAD
 	root = rev-parse --show-toplevel
 	dir = !git root | sed 's/$/\\/.git/g'
@@ -38,4 +52,4 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
-	required
+	required = true
