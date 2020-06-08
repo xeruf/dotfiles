@@ -1,8 +1,9 @@
 # Commands
-
-neofetch
-task next limit:3
-timew
+if test "$PWD" = ~ && test "$0" !=  "$SHELL"; then
+	neofetch --config $(xdg-user-dir CONFIG)/neofetch/config-short.conf
+	task next limit:3
+	timew | head -3
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -11,11 +12,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:$HOME/.local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
-export ZSH=~/.local/share/oh-my-zsh
+export CONFIG_ZSH="$HOME/.config/zsh"
+export CONFIG_SHELLS="$HOME/.config/shell"
+export ZSH="$HOME/.local/share/oh-my-zsh"
 DEFAULT_USER=$USER
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -36,17 +37,15 @@ DISABLE_UNTRACKED_FILES_DIRTY="true" # DOn't mark untracked files as dirty - spe
 plugins=(
 	git
 	git-extras
+	git-auto-fetch
 	z
 	fast-syntax-highlighting
 	zsh-autosuggestions
-	#zsh-vim-mode
+	zsh-vim-mode
 )
 
-SHELL_CONFIG="$HOME/.config/shell"
-ZSH_CONFIG="$HOME/.config/zsh"
-
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
-fpath=($fpath "$ZSH_CONFIG/zsh_completion") # Custom completions
+fpath=($fpath "$CONFIG_ZSH/zsh_completion") # Custom completions
 ZSH_COMPDUMP="$(xdg-user-dir CACHE)/zsh/zcompdump-$ZSH_VERSION" # Cache completions
 
 source $ZSH/oh-my-zsh.sh
@@ -98,7 +97,7 @@ bindkey '^q' push-line-or-edit
 
 export KEYTIMEOUT=1
 
-# Manual VIM bindings - disabled, replaced by plugin {{{
+# Obsolete: zsh-vim-mode plugin - Custom VIM bindings {{{
 #bindkey -v
 #autoload -Uz history-search-end
 #
@@ -115,7 +114,7 @@ export KEYTIMEOUT=1
 #                 '^[OB' history-beginning-search-forward-end
 # }}}
 
-# Show time on the right after executing command - obsolete through powerlevel10k {{{
+# Obsolete: powerlevel10k - Show time on the right after executing command {{{
 # strlen() {
 #   FOO=$1
 #   local zero='%([BSUbfksu]|([FB]|){*})'
@@ -145,8 +144,6 @@ export KEYTIMEOUT=1
 
 ## User configuration
 
-source "$SHELL_CONFIG/functions"
-
 # turn on spelling correction
 setopt correct
 # don't save duplicates in command history
@@ -154,14 +151,15 @@ setopt histignoredups
 
 setopt extended_glob
 
-# Enable zmv
+setopt pipefail
+
+# Enable zmv (see ZSHCONTRIB(1))
 autoload zmv
 alias zmv='noglob zmv'
 alias zmw='zmv -W'
 alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
-
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -170,6 +168,7 @@ else
   export EDITOR='nvim'
 fi
 
+for file in $CONFIG_SHELLS/*; do source $file; done
 
 # AUTOMATICALLY ADDED SHIT
 
@@ -186,6 +185,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
-[[ ! -f $ZSH_CONFIG/.p10k.zsh ]] || source $ZSH_CONFIG/.p10k.zsh
+[[ ! -f $CONFIG_ZSH/.p10k.zsh ]] || source $CONFIG_ZSH/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -1,4 +1,3 @@
-#! /usr/bin/make
 # Shell configuration for Zsh, works almost completely for Bash as well
 
 export LESS=-R
@@ -6,22 +5,29 @@ alias info='info --vi-keys'
 export DIST=$(lsb_release --id | cut -d'	' -f2)
 
 # Some aliases
-alias println='printf "\n"'
-
-# find pruning avoids permission denied errors - see https://unix.stackexchange.com/a/121020/272449
-alias conf='find ~/.config/nvim ~/.config ~/.gradle/gradle.properties /etc -type d ! \( -readable \) -prune -o -type f -print | fzf --tiebreak=end,index --preview "bat --color=always --style=numbers --line-range :500 {}" --bind "enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {})"'
+alias conf='{ fd -t f . --full-path $(xdg-user-dir CONFIG) /etc; echo ~/.gradle/gradle.properties } | fzf --tiebreak=end,length --preview "bat --color=always --style=numbers --line-range :500 {}" --bind "enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {}),change:top"'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
+
+CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
+alias r="reset && exec zsh"
 editshell() {
-	nvim $(test $# -lt 1 && echo "$SHELL_FUNCTIONS" || (results=$(find "$dropbox_path/tools/setup" -maxdepth 1 -name "$1.sh") && test "$results" && echo "$results") || echo "$(dirname $SHELL_FUNCTIONS)/$1") && r
+	file=$((test $# -lt 1 && echo "$CONFIG_SHELL_FUNCTIONS") || (test "$1" = "zsh" && echo "$CONFIG_ZSH/.zshrc") || echo "$CONFIG_SHELLS/$1")
+	checksum="$(md5sum $file)"
+	$EDITOR $file
+	test "$checksum" != "$(md5sum $file)" && exec $SHELL
 }
 
-alias graphics='lspci -vnn | grep VGA --color=never'
+alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
+alias -g G="| grp"
 
+alias println='printf "\n"'
+alias graphics='lspci -vnn | grep VGA --color=never'
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 # Fast shortcuts
 alias t='task'
+alias tw='timew'
 alias c='clear'
 alias q='exit'
 alias v='nvim'
@@ -30,9 +36,8 @@ alias grpr='grp -r'
 b() { bat "$@" 2>/dev/null || ls -lah "$@" }
 cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
 tr() { tree -C -a -L 2 "$@" | less }
+alias sc='sudo systemctl'
 
-SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
-alias r="reset && source $SHELL_FUNCTIONS"
 
 dropbox_path="$(cat ~/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
 
@@ -227,86 +232,6 @@ resetdocker() {
 }
 
 # MUSIC
-
-music_folder="/home/janek/daten/musik"
-audio_folder="/home/janek/daten/audio"
-music_original_folder="$audio_folder/songs/_raw"
-
-makePl() { echo ${2:-empty} >$1.m3u8 }
-makePls() {
-	i=1; while test $i -le ${1:-9}; do makePl "${2:-Ω}$i" "empty$i"; ((i++)); done
-}
-
-findsongs() {
-	find -regextype posix-extended -maxdepth 1 -type f -regex "${1:-.*\.(mp3|flac|wav|m4a)}" -printf "%P\n"
-}
-
-addmix() {
-	mv -v "$1.cue" "$audio_folder/recordings/cues"
-	addsong "$1.flac" Mixes
-}
-
-addsong() {
-	test "$1" = "-q" && shift && quick="true"
-
-	local raw="${1%.*}"
-	local isflac=$(case "$1" in *.flac) echo "true";; esac)
-	test "$isflac" || (echo "Converting to flac..." && flac "$1" --totally-silent)
-
-	test "$quick" || (echo "Press ENTER when the metadata of the flac file is correct..." && read)
-
-	echo "Converting to mp3..."
-	lame -V0 "$1" --silent
-
-	mkdir -p "$music_folder/$2"
-	mkdir -p "$music_original_folder/$2"
-
-	local destination="$music_folder/$2/$raw.mp3"
-	echo "Moving mp3 with metadata to $destination"
-	ffmpeg -i "$raw.mp3" -i "$raw.flac" -c copy -map_metadata 1 "$destination" -v warning "${@:3}" && rm "$raw.mp3"
-	test ! "$PWD" -ef "$music_original_folder/$2" && mv -v "$raw.flac" "$music_original_folder/$2" && (test "$isflac" || rm -v "$1")
-}
-
-addalbum() {
-	mkdir -p "$music_folder/$1"
-	mkdir -p "$music_original_folder/$1"
-	f1 -regextype posix-extended -type f -regex "\./(cover|folder)\.(png|jpg|jpeg)" | while read cover; do
-		foundcover="true"
-		cp -v "$cover" "$music_folder/$1" &&
-		mv -v "$cover" "$music_original_folder/$1"
-	done
-	test "$foundcover" || f1 -regextype posix-extended -type f -regex ".*\.(png|jpg|jpeg)" | while read cover; do
-		cp -v "$cover" "$music_folder/$1" &&
-		mv -v "$cover" "$music_original_folder/$1"
-	done
-
-	IFS=$'\n'
-	for s in $(findsongs ".*\.(flac|wav)"); do
-		highlight "$s"
-		addsong -q "$s" "$1" "${@:2}"
-	done
-	unset IFS
-}
-
-formatsongs() {
-	_pwd="$PWD"
-	find "$PWD" "$@" -type d | while read d; do cd $d; findsongs | while read song; do
-		new="$(formatsong "$song")"
-		test "$new" != "$song" && mv -v "$song" "$new"
-	done; done
-	cd "$_pwd"
-	IFS=$'\n'
-	for f in $(find "$@" -name "*.wav"); do
-		echo "Converting $f to ${f%.*}.flac"
-		ffmpeg -i "$f" "${f%.*}.flac" -v warning && rm -v $f
-	done
-	unset IFS
-}
-
-formatsong() {
-	echo "$1" | sed -e 's/\([ ([]\)\(ft\|Ft\|Feat\)\([ .]\)/\1feat\3/;s/\([ ([]\)feat /\1feat. /;s/ \((Original Mix)\|(Original)\|(Full Stream)\|.NCS Release.\)//i;s/ \(\..\{2,4\}\)$/\1/;s/---/ - /;s/^[0-9]\{6\}_//;s/  / /g;s/\(\w\)+\(\w\)/\1 \2/g' -
-}
-
 # INSTALL
 
 snapinstall() {
@@ -431,9 +356,6 @@ function zipdiff() {
 }
 
 # PROJECTS
-
-source "$(dirname $SHELL_FUNCTIONS)/git"
-source "$(dirname $SHELL_FUNCTIONS)/projects"
 
 pdiff() {
 	diff -r $1 $2 -x .git -x .idea -x .gradle
