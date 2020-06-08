@@ -2,6 +2,18 @@
 alias bfg='java -jar ~/daten/dropbox/tools/bfg-1.13.0.jar'
 alias magit='nvim -c MagitOnly'
 
+# if in home or xdg-config and not within a git directory, replace git by yadm
+git() {
+	case "$PWD" in
+		~|$(xdg-user-dir CONFIG)*)
+			if ! command git rev-parse --show-toplevel 2&>/dev/null; then
+				yadm "$@"
+				return
+			fi;;
+	esac
+	command git "$@";
+}
+
 # Repo info
 alias gr='git remote -v'
 alias gb='git branch -vv'
@@ -27,7 +39,8 @@ glno() {
 # Shortcuts
 alias gfs='git fetch && git status -s -b'
 alias glu='git pull upstream $(git curbranch)'
-alias gcap!='git commit -a --amend --no-edit && git push -f'
+alias gluu='git pull upstream $(git curbranch) && git push --no-verify'
+alias gcap!='git commit -a --amend --no-edit && git push --force-with-lease'
 alias grh!='git reset --hard'
 alias grhr='git reset --hard $(git rev-parse --abbrev-ref --symbolic-full-name @{u})'
 alias gitgc='git gc && git repack -a -d'
@@ -108,6 +121,7 @@ project() {
 gitremote() {
 	case "$1" in
 	http*)	echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
+	git:*)	echo "$1" ;;
 	*)	test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
 		test "$3" = "btl" && 3="betweenthelinesev"
 		echo "git@git${1:-hub}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;

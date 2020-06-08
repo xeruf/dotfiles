@@ -41,17 +41,19 @@
 	st = status -sb
 	stv = --paginate status -v
 	stvv = --paginate status -vv
-	ln = !git --no-pager log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset' -5
+	l = !git --no-pager log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset' -5
 
 	unstage = reset HEAD --
 	ready = rebase -i @{u}
 
 	curbranch = symbolic-ref --short HEAD
 	root = rev-parse --show-toplevel
-	dir = !git root | sed 's/$/\\/.git/g'
+	dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[pull]
+	ff = only
