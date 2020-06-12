@@ -47,6 +47,7 @@ command! S OpenBrowserSmartSearch <C-R>"<CR>
 command! GH OpenGithubProject <C-R>"<CR>
 
 " QOL
+Plug 'farmergreg/vim-lastplace' " Automatically jump to last edit position
 Plug 'chrisbra/Recover.vim' " Add Recover options for swap files
  " Remove trailing whitespace on save
 Plug 'ntpeters/vim-better-whitespace'
@@ -122,8 +123,6 @@ autocmd FileType markdown setlocal spell " Spell checking in markdown
  " Center on insert mode
 autocmd InsertEnter * norm zz
 
-autocmd BufNew * :0put ='#! '. system('which '. &makeprg)
-
 " }}}
 
 " Mappings {{{
@@ -135,9 +134,12 @@ command! FormatJSON %!python -m json.tool
 
 " Add shebang - https://www.reddit.com/r/vim/comments/4z7z7s/add_shebang_lines_to_your_vim_files_automatically/d6v7op8 and https://stackoverflow.com/a/52135425
 inoreabbrev <expr> #!! "#!/usr/bin/env" . (empty(&filetype) ? '' : ' '.&filetype)
-autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
+"autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
 
+" Sane yanking
 map Y y$
+" Disable Ex mode - https://vi.stackexchange.com/q/457
+nnoremap Q <nop>
 
 let mapleader=" "
 
