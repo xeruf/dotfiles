@@ -1,13 +1,22 @@
 # Shell configuration for Zsh, works almost completely for Bash as well
 
 export LESS=-R
-alias info='info --vi-keys'
 export DIST=$(lsb_release --id | cut -d'	' -f2)
+alias info='info --vi-keys'
 
 # Some aliases
-alias conf='{ fd -t f . --full-path $(xdg-user-dir CONFIG) /etc; echo ~/.gradle/gradle.properties } | fzf --tiebreak=end,length --preview "bat --color=always --style=numbers --line-range :500 {}" --bind "enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {}),change:top"'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
+
+conf() {
+	conf_cache="$XDG_CACHE_HOME/conf"
+	conf_tmp="${conf_cache}.tmp"
+	conf_extra="$XDG_CONFIG_HOME/conf-extra"
+	touch "$conf_cache"
+	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
+	sel="$({ cat $conf_cache $conf_extra; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --type file --size -1m --max-depth 3 . --full-path $XDG_CONFIG_HOME /etc } | awk '!a[$0]++' | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}')"
+	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -9 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & (test -O "$sel" && $EDITOR "$sel" || sudoedit "$sel"))
+}
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 alias r="reset && exec zsh"
@@ -31,9 +40,17 @@ alias tw='timew'
 alias c='clear'
 alias q='exit'
 alias v='nvim'
+alias lar='last | tac'
 alias grp='grep -iIn'
 alias grpr='grp -r'
-b() { bat "$@" 2>/dev/null || ls -lah "$@" }
+b() {
+	arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
+	file $arg | grep -v --color=never directory
+	case "$(file --dereference $arg)" in
+		*directory) ls -lAHh "$@";;
+		*text*) bat --style=numbers "$@";;
+	esac
+}
 cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
 tr() { tree -C -a -L 2 "$@" | less }
 alias sc='sudo systemctl'
@@ -69,11 +86,13 @@ mozedit() (
 	cat "$tmpfile2" | sed "$2" | lz4 -l | dd bs=1 skip=8 seek=12 of="$file" conv=notrunc
 )
 
-theme_save="$(xdg-user-dir CACHE)/theme"
-theme_default="dark"
+theme_save="/tmp/theme"
+theme_default="$(d=$(date +%H) && test $d -lt 7 && test $d -gt 17 && echo dark || echo light)"
 theme() {
 	theme="$1"
-	if test "$2" = "kde" || test "$theme" != "$THEME" -a "$2" != "q"
+	if test "$2" = "kde"
+	then kcmshell5 kcm_lookandfeel
+	elif test "$theme" != "$THEME" -a "$2" != "q"
 	then kcmshell5 kcm_lookandfeel &
 	fi
 	export THEME="$theme"
@@ -83,14 +102,14 @@ theme() {
 	case "$theme" in
 		(light)
 			export BAT_THEME="OneHalfLight"
-    		konsoleprofile colors="Light"
-			sed -i 's/#\(include.*\/light-256.theme\)/\1/' "$(xdg-user-dir CONFIG)/taskrc"
+			konsoleprofile colors="Light"
+			sed -i 's/#\(include.*\/light-256.theme\)/\1/' "$XDG_CONFIG_HOME/taskrc"
 			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/'
 			;;
 		(dark)
 			export BAT_THEME="OneHalfDark"
-    		konsoleprofile colors="Breeze"
-			sed -i 's/^include.*light-256.theme/#\0/' "$(xdg-user-dir CONFIG)/taskrc"
+			konsoleprofile colors="Breeze"
+			sed -i 's/^include.*light-256.theme/#\0/' "$XDG_CONFIG_HOME/taskrc"
 			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/'
 			;;
 	esac
@@ -275,6 +294,10 @@ aptrepos() {
 	aptupdate
 }
 alias aptinstall='sudo apt-get install'
+aptinstalls() {
+	apt-cache show "$1" | grep --color=never '\(Version\|Description\):'
+	aptinstall "$@"
+}
 aptrepoinstall() {
 	aptrepo -yu $1
 	if (( $# > 1 ))
@@ -316,12 +339,11 @@ download-debs() {
 
 typeset -A _clean_map
 if test "$BASH_VERSION"
-then _clean_map=([m]=~/.mozilla [c]=~/.cache)
-else _clean_map=(m ~/.mozilla c ~/.cache)
+then _clean_map=([c]=$XDG_CACHE_HOME [t]=/var/tmp)
+else _clean_map=(c $XDG_CACHE_HOME t /var/tmp)
 fi
-_clean_folders=(~/.oracle_jre_usage ~/.gradle-kotlin-dsl ~/.thumbnails)
+_clean_folders=()
 clean() {
-
 	for f in $_clean_folders
 	do test -d $f && rm -rv $f
 	done
@@ -329,7 +351,7 @@ clean() {
 	highlight "g to clean gradle"
 	if [[ $1 =~ "g" ]]; then
 		find ~/.gradle/* -maxdepth 0 -not -name "gradle.properties" -exec rm -r {} \; -print
-		find ~/daten/projects/ -name .gradle -print -exec rm -r {} \;
+		find $projects_dir -name .gradle -print -exec rm -r {} \;
 	fi
 
 	if test "$BASH_VERSION"; then
