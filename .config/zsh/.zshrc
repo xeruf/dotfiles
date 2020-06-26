@@ -1,6 +1,6 @@
 # Commands
 if test "$PWD" = ~ && test "$0" !=  "$SHELL"; then
-	neofetch --config $(xdg-user-dir CONFIG)/neofetch/config-short.conf
+	neofetch --config $XDG_CONFIG_HOME/neofetch/config-short.conf
 	task next limit:3
 	timew | head -3
 fi
@@ -12,11 +12,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-export PATH=$HOME/bin:$HOME/.local/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 
-export CONFIG_ZSH="$HOME/.config/zsh"
-export CONFIG_SHELLS="$HOME/.config/shell"
-export ZSH="$HOME/.local/share/oh-my-zsh"
+export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
+export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
+export ZSH="$XDG_DATA_HOME/oh-my-zsh"
 DEFAULT_USER=$USER
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -36,7 +36,6 @@ DISABLE_UNTRACKED_FILES_DIRTY="true" # DOn't mark untracked files as dirty - spe
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
 	git
-	git-extras
 	git-auto-fetch
 	z
 	fast-syntax-highlighting
@@ -46,7 +45,8 @@ plugins=(
 
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
 fpath=($fpath "$CONFIG_ZSH/zsh_completion") # Custom completions
-ZSH_COMPDUMP="$(xdg-user-dir CACHE)/zsh/zcompdump-$ZSH_VERSION" # Cache completions
+ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION" # Cache completions
+DISABLE_UPDATE_PROMPT=true
 
 source $ZSH/oh-my-zsh.sh
 

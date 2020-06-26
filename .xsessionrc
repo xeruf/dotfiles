@@ -1,2 +1,2 @@
 export XDG_DATA_DIRS="$HOME/.local/xdg:$XDG_DATA_DIRS"
-export KDEHOME="$HOME/.local/share/kdehome"
+export KDEHOME="$XDG_DATA_HOME/kdehome"
