@@ -52,7 +52,7 @@ b() {
 	esac
 }
 cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
-tr() { tree -C -a -L 2 "$@" | less }
+tr() { tree -a -L 2 --du -h -C "$@" | less }
 alias sc='sudo systemctl'
 
 
