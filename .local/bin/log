@@ -1,0 +1,10 @@
+#!/bin/sh
+local date_args=${LOG_TIME_DEFAULT:-d}
+
+case $1 in
+	(y)
+	(m)
+	(d)
+	(h)
+	(t)
+esac

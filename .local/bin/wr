@@ -1,15 +1,2 @@
 #!/bin/sh
-p=$PWD
-cd $HOME/daten/Dropbox/dokumente/notes
-case $1 in
-log) file=life/${2:-general};;
-idea) file=idea/$2.md;;
-write) file=writings/$2.md;;
-*) file=$2.md;;
-esac
-comment=$(test -d $file && echo Edit || echo Create)
-test "$3" && echo $3 >>$file || $EDITOR $file
-git add $file
-git commit -m "$comment $file"
-git push
-cd $p
+note write "$@"

@@ -1,0 +1,14 @@
+#!/bin/sh
+p=$PWD
+cd $HOME/daten/Dropbox/dokumente/notes
+case $1 in
+	log) shift; file=life/${1:-general}; date +%F >>$file;;
+	idea) shift; file=ideas/${1:-general}.md;;
+	write) shift; file=writings/$1.md;;
+	msg) shift; file=archive/messages/$1.md;;
+	*) file=${1:-README}.md;;
+esac
+comment=$(test -f $file && echo Edit || echo Create)
+test "$3" && echo $3 >>$file || $EDITOR + $file
+git add $file && git commit -m "$comment $file" && git push
+cd $p
