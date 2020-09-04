@@ -6,12 +6,19 @@ command! PU PlugUpdate | PlugUpgrade
 lua require 'colorizer'.setup({ '*'; markdown = { names = false; }; })
 
 let g:strip_whitespace_on_save=1
+autocmd FileType taskedit,crontab,markdown DisableStripWhitespaceOnSave
 let g:show_spaces_that_precede_tabs=1
 let g:better_whitespace_skip_empty_lines=1
 let g:better_whitespace_guicolor=$THEME == 'light' ? 'LightGrey' : 'DarkGrey'
-autocmd FileType taskedit,markdown DisableWhitespace
 " see https://github.com/ntpeters/vim-better-whitespace/issues/134 - autocmd OptionSet background let g:better_whitespace_guicolor=&background == 'light' ? 'LightYellow' : 'Brown'
 
+let g:blamer_enabled = 1
+let g:blamer_template = '<committer>: <summary> • <commit-short> <committer-time>'
+let g:blamer_relative_time = 1
+let g:blamer_delay = 300
+" let g:blamer_show_in_visual_modes = 0
+
+" remap movement commands to respect CamelCase
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
@@ -39,23 +46,29 @@ let g:firenvim_config = {
     \  },
     \ 'localSettings': {
         \ '.*': {
-            \ 'cmdline': 'neovim',
+            \ 'cmdline': 'firenvim',
             \ 'priority': 0,
-            \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]), div[role="textbox"]',
+            \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]), div[role="textbox"]:not([aria-label="Search"])',
             \ 'takeover': 'always',
         \ },
-        \ '.*notion\.so.*': { 'priority': 1, 'takeover': 'never', },
-        \ '.*openstreetmap\.org.*': { 'priority': 1, 'takeover': 'never', },
+        \ '.*notion\.so.*': { 'priority': 9, 'takeover': 'never', },
+        \ '.*docs\.google\.com.*': { 'priority': 9, 'takeover': 'never', },
+        \ '.*mail\.protonmail\.com.*': { 'priority': 9, 'takeover': 'never', },
+		\ '.*cloud.atomtoast.xyz.*': { 'priority': 9, 'takeover': 'never', },
     \ }
 \ }
 if exists('g:started_by_firenvim')
+	let g:smoothie_no_default_mappings=1 "extremely slow, see https://github.com/psliwka/vim-smoothie/issues/17
+
+	nnoremap <Esc><Esc> :call firenvim#focus_page()<CR>
+
 	autocmd FocusLost,InsertLeave,BufLeave * ++nested call WriteSilent()
 	function WriteSilent()
- 		let tmp=b:better_whitespace_enabled
-		let b:better_whitespace_enabled=0
+		let was_enabled=b:strip_whitespace_on_save
+		DisableStripWhitespaceOnSave
 		write
-		let b:better_whitespace_enabled=tmp
+		if was_enabled
+			EnableStripWhitespaceOnSave
+		endif
 	endfunction
-	nnoremap <Esc><Esc> :call firenvim#focus_page()<CR>
-	let g:strip_whitespace_on_save=0
 endif

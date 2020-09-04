@@ -1,3 +1,5 @@
+let @c = '/^\ni```Ni```j0/```lllkxNA'
+
 " Save file as root when I forgot to use sudoedit
 cnoremap w!! execute 'write !sudo tee % >/dev/null' <bar> edit!
 " Write file & source vimrc (really only makes sense from within vimrc to quickly test changes)
@@ -6,17 +8,14 @@ command! WS write <bar> source $MYVIMRC
 command! FormatJSON %!python -m json.tool
 command! DiffSwap :diffsp % " Diff for swap - replaced by 'chrisbra/Recover.vim'
 
-" shebang shortcut - https://www.reddit.com/r/vim/comments/4z7z7s/add_shebang_lines_to_your_vim_files_automatically/d6v7op8 and https://stackoverflow.com/a/52135425
-inoreabbrev <expr> #!! "#!/usr/bin/env" . (empty(&filetype) ? '' : ' '.&filetype)
-autocmd BufNewFile *.sh execute 'silent! 1s/.*/#!\/bin\/sh\r\r'| :startinsert
-"autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
-
 " Sane yanking
 map Y y$
 " Disable Ex mode - https://vi.stackexchange.com/q/457
-nnoremap Q <nop>
+nnoremap Q @q
 
 let mapleader=" "
+
+nnoremap <leader>" ysiW"
 
  " Alias write and quit to leader
 nnoremap <leader>q :wq<CR>
@@ -48,5 +47,8 @@ map <leader>C :setlocal formatoptions=cro<CR>
 
 map <leader>i :setlocal autoindent!<CR>
 map <leader>s :setlocal spell!<CR>
+map <leader>ls :setlocal colorcolumn=81,121 nowrap<CR>
+map <leader>lw :setlocal colorcolumn=81 textwidth=80<CR>
+map <leader>ln :setlocal colorcolumn= textwidth=0 wrap<CR>
 
 " }}}

@@ -2,14 +2,14 @@ set termguicolors
 set mouse=a " Enable mouse in all modes
 
 set undofile
-set wildmode=longest,list,full " Auto-completion
+set wildmode=longest,list,full " Auto-completion for cmdline
 set clipboard+=unnamedplus " Merge with system clipboard
 
 set tabstop=4 shiftwidth=4 " Indentation
 
 " visuals
 set number relativenumber " Relative line numbering on the left
-set wrap linebreak
+set linebreak
 set cursorline cursorcolumn
 set scrolloff=7 sidescrolloff=20 " Keep some context when scrolling
 
@@ -37,11 +37,16 @@ filetype plugin on
 autocmd FileType json syntax match Comment +\/\/.\+$+ " Comment highlighting in JSON
 autocmd Filetype * set formatoptions-=o " Don't automatically comment on o
 " custom hardcoded types
-autocmd BufRead,BufNewFile $SHELL_CONFIG/* set filetype=zsh
-autocmd BufRead,BufNewFile www.mixxx.org_wiki* set filetype=dokuwiki scrolloff=1
+autocmd BufRead,BufNewFile $CONFIG_SHELLS/*,$CONFIG_ZSH/* setlocal filetype=zsh
+autocmd BufRead $XDG_CONFIG_HOME/yadm/bootstrap setlocal filetype=sh
+
+" shebang shortcut - https://www.reddit.com/r/vim/comments/4z7z7s/add_shebang_lines_to_your_vim_files_automatically/d6v7op8 and https://stackoverflow.com/a/52135425
+inoreabbrev <expr> #!! "#!/usr/bin/env" . (empty(&filetype) ? '' : ' '.&filetype)
+autocmd BufNewFile *.sh,$HOME/.local/bin/* execute 'silent! 1s/.*/#!\/bin\/sh\r\r'| setlocal filetype=sh | :startinsert
+"autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
 
 set spelllang=en_us,de_de
-autocmd FileType markdown setlocal spell " Spell checking in markdown
+autocmd FileType markdown setlocal wrap spell colorcolumn=  " Spell checking & no guiding columns in markdown
 
  " Center on insert mode
 autocmd InsertEnter * norm zz

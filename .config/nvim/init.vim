@@ -1,4 +1,5 @@
-source $XDG_CONFIG_HOME/nvim/init/plug.vim
-source $XDG_CONFIG_HOME/nvim/init/general.vim
-source $XDG_CONFIG_HOME/nvim/init/pluginConfig.vim
-source $XDG_CONFIG_HOME/nvim/init/keys.vim
+let $INITDIR=stdpath('config')
+source $INITDIR/init/plug.vim
+source $INITDIR/init/general.vim
+source $INITDIR/init/pluginConfig.vim
+source $INITDIR/init/keys.vim
