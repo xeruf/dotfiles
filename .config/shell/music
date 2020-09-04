@@ -1,10 +1,22 @@
-MUSIC="/home/janek/daten/musik"
+MUSIC="/home/janek/daten/music"
 AUDIO="/home/janek/daten/audio"
 MUSIC_RAW="$audio_folder/songs/_raw"
+
+edpl() {
+	$EDITOR $(find $MUSIC/Playlists -iname "$1\.*" | grep . || find $MUSIC/Playlists -iname "$1*")
+}
 
 makePl() { echo ${2:-empty} >$1.m3u8 }
 makePls() {
 	i=1; while test $i -le ${1:-9}; do makePl "${2:-Ω}$i" "empty$i"; ((i++)); done
+}
+fixPl() {
+    sed -i 's/\/storage\/AAAA-AAAA\/musik/../g' *
+}
+plCd() {
+	dir=${2:-cd}
+	mkdir $dir
+	cat $1 | python -c "import sys, urllib as ul; [sys.stdout.write(ul.unquote_plus(l)) for l in sys.stdin]" | sed '=' | sed -r 's/^[0-9]$/0\0/' | sed -r "N; s/(.*)\n(.*\/[0-9 ]*(.*))/'\2'\n'$dir\/\1 \3'/" | xargs -L 2 cp
 }
 
 findsongs() {
