@@ -8,53 +8,90 @@ alias info='info --vi-keys'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
 
-conf() {
-	conf_cache="$XDG_CACHE_HOME/conf"
+alias dedup='awk '"'"'!a[$0]++'"'"
+edconf() {
+	conf_cache_dir="$XDG_CACHE_HOME/edconf"
+	conf_cache="$conf_cache_dir/files"
 	conf_tmp="${conf_cache}.tmp"
-	conf_extra="$XDG_CONFIG_HOME/conf-extra"
+	conf_extra="$XDG_CONFIG_HOME/edconf-extra"
+	mkdir -p "$conf_cache_dir"
 	touch "$conf_cache"
 	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
-	sel="$({ cat $conf_cache $conf_extra; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --type file --size -1m --max-depth 3 . --full-path $XDG_CONFIG_HOME /etc } | awk '!a[$0]++' | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}')"
+	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra"; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
 	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -9 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & (test -O "$sel" && $EDITOR "$sel" || sudoedit "$sel"))
 }
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 alias r="reset && exec zsh"
-editshell() {
-	file=$((test $# -lt 1 && echo "$CONFIG_SHELL_FUNCTIONS") || (test "$1" = "zsh" && echo "$CONFIG_ZSH/.zshrc") || echo "$CONFIG_SHELLS/$1")
+edshell() {
+	case $1 in
+		"") file="$CONFIG_SHELL_FUNCTIONS";;
+		zsh) file="$CONFIG_ZSH/.zshrc";;
+		prof*) file="$HOME/.zprofile";;
+		*) file=$(find $CONFIG_SHELLS -name "$1*" | head -1);;
+	esac
 	checksum="$(md5sum $file)"
 	$EDITOR $file
-	test "$checksum" != "$(md5sum $file)" && exec $SHELL
+	test "$checksum" != "$(md5sum $file)" && source $HOME/.zprofile && exec $SHELL
+}
+
+edbin() {
+	$EDITOR "$( (command which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
 }
 
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 alias -g G="| grp"
+alias -g X="| xargs"
 
-alias println='printf "\n"'
-alias graphics='lspci -vnn | grep VGA --color=never'
-alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
+alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
+cd() { builtin cd "$@" && command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3 }
 
-# Fast shortcuts
+
+# Task management & time tracking
 alias t='task'
 alias tw='timew'
+twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
+alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && rm -rf ${TIMEWARRIORDB} && mkdir -p ${TIMEWARRIORDB}/data && :> ${TIMEWARRIORDB}/timewarrior.cfg && $SHELL )'
+
+# Quick shortcuts
 alias c='clear'
 alias q='exit'
 alias v='nvim'
-alias lar='last | tac'
-alias grp='grep -iIn'
-alias grpr='grp -r'
-b() {
-	arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
-	file $arg | grep -v --color=never directory
-	case "$(file --dereference $arg)" in
-		*directory) ls -lAHh "$@";;
-		*text*) bat --style=numbers "$@";;
-	esac
-}
-cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
-tr() { tree -a -L 2 --du -h -C "$@" | less }
-alias sc='sudo systemctl'
 
+alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
+alias lar='last | tac'
+tr() { tree -a -L 2 --du -h -C "$@" | ${PAGER:-less} }
+
+alias xo='xdg-open'
+alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
+alias loc='noglob locate --basename'
+alias uloc='noglob sudo updatedb && locate --basename'
+alias syslog='less +F /var/log/syslog'
+alias println='printf "\n"'
+alias graphics='lspci -vnn | grep VGA --color=never'
+alias vlch="vlc -H | ${PAGER:-less}"
+
+alias sc='sudo systemctl'
+alias scrw='sudo systemctl restart display-manager'
+
+alias grp='grep --line-number --ignore-case --binary-files=without-match'
+alias grpr='grp --recursive'
+# Use grep and sed to replace $1 with $2 recursively
+rpl() {
+	grep --null --recursive --files-with-matches "$1" |
+		xargs -0 sed -i "/${1}/{
+			s//${2}/g
+			w /dev/stdout
+		}"
+}
+
+# Recover stray swap files from neovim
+alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs -r nvim"
+alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r rm"
+
+# Applications
+alias dict="(builtin cd $(dirname $(locate -n 2 /dict.txt)) && rlwrap perl dictcc-helper.pl)"
+alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 dropbox_path="$(cat ~/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
 
@@ -87,7 +124,7 @@ mozedit() (
 )
 
 theme_save="/tmp/theme"
-theme_default="$(d=$(date +%H) && test $d -lt 7 && test $d -gt 17 && echo dark || echo light)"
+theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
 theme() {
 	theme="$1"
 	if test "$2" = "kde"
@@ -140,7 +177,7 @@ updateDeps() {
 		sed -i "s/\($pattern\)$oldversion/\1$version/gw /dev/stdout" $f
 	done
 }
-alias updateKotlin='updateDeps build.gradle.kts '\''kotlin(\"jvm\") version \"'\'' --version'
+alias updateKotlin="updateDeps build.gradle.kts 'kotlin(\"jvm\") version ' --version"
 alias updateGradle='updateDeps gradle-wrapper.properties "services.gradle.org\/distributions\/gradle-" --version'
 alias updateUtils='updateDeps build.gradle.kts '\''\"com.github.Xerus2000.util\", \".*\", \"'\'' --pattern '\''[^\"]\+'\'' --version'
 
@@ -169,6 +206,27 @@ clearNpmCache() {
 
 # NAVIGATION & DISK
 
+alias rcd="cd $PWD"
+cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
+
+# Switch directory & ls
+cl() {
+	builtin cd $1
+	ls --almost-all --group-directories-first --file-type
+}
+
+# Show type & contents of given files or PWD
+b() {
+	arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
+	file $arg | grep -v --color=never directory
+	case "$(file --dereference $arg)" in
+		*directory) ls -l --all --human-readable --dereference-command-line "$@";;
+		*text*) bat --style=numbers "$@";;
+	esac
+}
+wh() { b $(which "$@"); }
+
+# Go up a number of dirs
 up() {
 	if [[ $# < 1 ]] ; then
 		cd ..
@@ -181,19 +239,13 @@ up() {
 	fi
 }
 
-# Switch directory & ls
-cl() {
-	cd $1
-	ls -A
-}
-
-# shows size usage for disk or folder
+# shows size statistics for subfolders
 s() {
-	if test "-d" = "$1"
-	then df -h
-	else sudo du --max-depth ${1:-1} -xh | sort -h | grep -v "^0"
-	fi
+	case "$1" in [0-9]) local depth=$1; shift;; esac
+	sudo du --max-depth "${depth:-1}" -xhat 50M "$@" | sort -h | grep -v "^0"
 }
+# disk size usage information
+alias sd='df -B1M -x tmpfs  -x devtmpfs -x squashfs | awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" '"'"'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1000,$4/1000,$6; printf n}'"'"
 
 alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 alias f1='find -mindepth 1 -maxdepth 1'
@@ -239,7 +291,7 @@ pathadd() {
 
 writecompletion() {
 	echo "#compdef $1" > "_$1"
-	nvim "_$1"
+	$EDITOR "_$1"
 }
 
 resetdocker() {
@@ -250,8 +302,11 @@ resetdocker() {
 	#aptinstall docker-ce
 }
 
-# MUSIC
 # INSTALL
+
+addalternative() {
+	sudo update-alternatives --install /usr/bin/$1 $1 "$(which "$1$2")" 1
+}
 
 snapinstall() {
 	sudo snap install "$@" && refreshSetup
@@ -260,7 +315,7 @@ snapinstall() {
 alias aptupdate='sudo apt-get update'
 alias aptremove='sudo apt-get remove'
 alias aptpurge='sudo apt-get purge'
-alias aptclean='sh -c "sudo apt-get clean && sudo apt-get autoremove"'
+alias aptclean='sudo apt-get clean && sudo apt-get autoremove'
 upgrade() {
 	if test $DIST = "neon"
 	then sudo pkcon update
@@ -315,15 +370,12 @@ ghrelease() {
 
 # Installs a local or remote(http/https) deb package and removes it after installation
 installdeb() {
-	set -e
 	loc="/tmp/install.deb"
 	case $1 in
-	http*) sudo wget -O "$loc" $1;;
-	*) loc="$1"
+	http*) wget -O "$loc" $1;;
+	*) loc="$1";;
 	esac
-	sudo dpkg -i "$loc"
-	sudo apt -f install
-	sudo rm -f "$loc"
+	sudo dpkg -i "$loc" "${@:2}" && sudo apt -f install && rm "$loc"
 }
 
 installgh() {
@@ -350,24 +402,32 @@ clean() {
 
 	highlight "g to clean gradle"
 	if [[ $1 =~ "g" ]]; then
-		find ~/.gradle/* -maxdepth 0 -not -name "gradle.properties" -exec rm -r {} \; -print
+		find ${GRADLE_USER_HOME:-$HOME/.gradle} -mindepth 1 -maxdepth 1 -type d -exec rm -r {} \; -print
 		find $projects_dir -name .gradle -print -exec rm -r {} \;
+	fi
+
+	highlight "m to clean mac-files"
+	if [[ $1 =~ "m" ]]; then
+		find -iname '.spotlight*' -print -exec rm -r {} \;
+		find -name "*.DS_Store" -delete
 	fi
 
 	if test "$BASH_VERSION"; then
 		for k in "${!_clean_map[@]}"; do
-			highlight "$k to delete $_clean_map[$k]
+			highlight "$k to delete $_clean_map[$k]"
 			echo "key  : $k"
 			echo "value: ${_clean_map[$k]}"
 		done
 	else
 		for k in "${(@k)_clean_map}"; do
-			highlight "$k to delete $_clean_map[$k]
+			highlight "$k to delete $_clean_map[$k]"
 			[[ $1 =~ "$k" ]] && rm -rfv "$_clean_map[$k]"
 		done
 	fi
 
-	aptclean && echo "Cleaned apt"
+	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
+	test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
+	export aptclean_last=$aptclean_cur
 
 	highlight "e to delete empty folders"
 	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
@@ -415,28 +475,19 @@ sourceSets {
 }
 
 # SWAP
-
-mem_stat() {
-	mem_total="$(free | head -2 | tail -1 | awk '{print $2}')"
-	mem_free="$(free | head -2 | tail -1 | awk '{print $4}')"
-	mem_percentage=$((mem_free * 100 / $mem_total))
-	swap_total="$(free | tail -1 | awk '{print $2}')"
-	swap_used="$(free | tail -1 | awk '{print $3}')"
-	swap_percentage=$(($swap_used * 100 / $swap_total))
-
-	echo -e "Free memory:\t$((mem_free / 1024))/$((mem_total / 1024)) MB\t($mem_percentage%)"
-	echo -e "Used swap:\t$((swap_used / 1024))/$((swap_total / 1024)) MB\t($swap_percentage%)"
-}
+alias memstat='free -h | awk '"'"'NR==2 {printf "Free memory:\t %s/%s\t(%d%)\n",$7,$2,$7*100/$2} NR==3 {if($2 != "0B") printf "Used swap:\t%s/%s\t(%d%)\n",$3,$2,$2*100/$3}'"'"
 
 stopswap() {
-	mem_stat
-	if (( $swap_used == 0 ))
+	memstat
+	swap_used=$(cat /proc/meminfo | grep SwapFree | awk '{print $2}')
+	mem_available=$(cat /proc/meminfo | grep MemAvailable | awk '{print $2}')
+	if test $swap_used = 0
 	then echo "No swap is in use."
-	elif (( $swap_used + 100000 < mem_free ))
+	elif test $swap_used + 100000 < $mem_available
 	then echo "Freeing swap..."
 		sudo swapoff -a
 		sudo swapon -a
-		mem_stat
+		memstat
 	else
 		echo "Not enough free memory!"
 	fi
