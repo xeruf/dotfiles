@@ -1,0 +1,91 @@
+# [Created by task 2.5.1 4/6/2020 16:16:41]
+# Taskwarrior program configuration file.
+# For more documentation, see http://taskwarrior.org or try 'man task', 'man task-color',
+# 'man task-sync' or 'man taskrc'
+
+# Here is an example of entries that use the default, override and blank values
+#   variable=foo   -- By specifying a value, this overrides the default
+#   variable=      -- By specifying no value, this means no default
+#   #variable=foo  -- By commenting out the line, or deleting it, this uses the default
+
+# Use the command 'task show' to see all defaults and overrides
+
+# Files
+data.location=~/.local/share/task
+
+# Color theme (uncomment one to use)
+#include /usr/local/share/doc/task/rc/light-16.theme
+include /usr/local/share/doc/task/rc/light-256.theme
+#include /usr/local/share/doc/task/rc/dark-16.theme
+#include /usr/local/share/doc/task/rc/dark-256.theme
+#include /usr/local/share/doc/task/rc/dark-red-256.theme
+#include /usr/local/share/doc/task/rc/dark-green-256.theme
+#include /usr/local/share/doc/task/rc/dark-blue-256.theme
+#include /usr/local/share/doc/task/rc/dark-violets-256.theme
+#include /usr/local/share/doc/task/rc/dark-yellow-green.theme
+#include /usr/local/share/doc/task/rc/dark-gray-256.theme
+#include /usr/local/share/doc/task/rc/dark-gray-blue-256.theme
+#include /usr/local/share/doc/task/rc/solarized-dark-256.theme
+#include /usr/local/share/doc/task/rc/solarized-light-256.theme
+#include /usr/local/share/doc/task/rc/no-color.theme
+
+# Custom priority ordering
+uda.priority.values=H,M,,L
+urgency.uda.priority.H.coefficient=5
+urgency.uda.priority.M.coefficient=2
+urgency.uda.priority.L.coefficient=-2
+
+# Custom size attribute
+uda.size.type=string
+uda.size.label=Size
+uda.size.values=S,M,B,,-
+urgency.uda.size.S.coefficient=2
+urgency.uda.size.M.coefficient=0
+urgency.uda.size.B.coefficient=-2
+urgency.uda.size.-.coefficient=-5
+
+# Custom url attribute
+uda.url.type=string
+uda.url.label=URL
+
+# Custom chore recurrence attribute
+# scheduled,wait(default: scheduled/2),due
+uda.chore.type=string
+uda.chore.label=Chore
+
+# Urgency coefficients
+urgency.due.coeffient=7
+urgency.blocking.coefficient=3
+urgency.next.coefficient=9
+
+# Context
+context.dev=+dev
+context.work=+work
+context.focus-low=+comm or +admin or +phys or size:S
+
+# Reports
+report.inbox.columns=id,priority,tags,size,scheduled.countdown,due.relative,description.desc,urgency
+report.inbox.labels=ID,Prio,Tags,Size,⏲ ,⏰,Description,Urg
+report.inbox.filter=status:pending project: -config -passive
+report.inbox.sort=urgency-
+
+report.next.columns=id,depends,priority,tags,size,scheduled.relative,due.relative,project,description.count,url,urgency
+report.next.labels=ID,Deps,Prio,Tags,Size,⏲ ,⏰,Proj,Description,Url,Urg
+
+report.break.columns=id,description.desc,due.relative,urgency
+report.break.labels=ID,Description,Scheduled,Urgency
+report.break.filter=status:pending limit:page size:S +phys
+report.break.sort=urgency-
+
+# General config
+bulk=5
+search.case.sensitive=no
+
+# tasksh review
+uda.reviewed.type=date
+uda.reviewed.label=Reviewed
+report._reviewed.description=Tasksh review report.  Adjust the filter to your needs.
+report._reviewed.columns=uuid
+report._reviewed.sort=reviewed+,modified+
+report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
+reccurence.limit=2
