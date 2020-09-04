@@ -9,6 +9,11 @@
 [pack]
 	threads = 0
 
+[pull]
+	ff = only
+[checkout]
+	defaultRemote = origin
+
 [diff]
 	tool = nvim
 [merge]
@@ -37,23 +42,62 @@
 	email = 27jf@pm.me
 	name = xerus2000
 
+[mailmap]
+	file = /home/janek/.config/yadm/.mailmap
+
+[http]
+	lowSpeedLimit = 1000
+	lowSpeedTime = 3
+
 [alias]
 	st = status -sb
 	stv = --paginate status -v
 	stvv = --paginate status -vv
-	l = !git --no-pager log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset' -5
 
-	unstage = reset HEAD --
-	ready = rebase -i @{u}
-
-	curbranch = symbolic-ref --short HEAD
+	r = remote -v
+	b = branch -vv
+	ref = reflog
+	rev = rev-parse --short
+	head = rev-parse --short HEAD
 	root = rev-parse --show-toplevel
+	curbranch = symbolic-ref --short HEAD
+
+	lo = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
+	l = !git --no-pager lo -5
+	my = lo --author erus
+	standup = lo --since yesterday --author erus --all
+	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
+	# List all branches with their last updates
+	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/
+
 	dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
+	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{u} || echo origin/$(git curbranch)
+
+	c = commit
+	co = checkout
+	cp = cherry-pick
+	p = push
+	pf = push --force-with-lease
+	fs = !git fetch && git st
+	lu = !git pull upstream $(git curbranch)
+	luu = !git pull upstream $(git curbranch) && git push --no-verify
+
+	rh = reset HEAD~
+	rhh = reset --hard
+	rhhu = !git reset --hard $(git upstream)
+	unstage = reset HEAD --
+	gcr = !git gc && git repack -a -d
+	
+	ready = rebase -i @{u}
+	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
+	
+	# yadm
+	add-git = !git add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git
+	add-vim = !git add $XDG_CONFIG_HOME/nvim/init*
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-[pull]
-	ff = only
+

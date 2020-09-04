@@ -1,5 +1,5 @@
 # Tools
-alias bfg='java -jar ~/daten/dropbox/tools/bfg-1.13.0.jar'
+alias bfg="java -jar $HOME/daten/applications/bfg-1.13.0.jar"
 alias magit='nvim -c MagitOnly'
 
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
@@ -19,42 +19,21 @@ git() {
 	command git "$@";
 }
 
-# Repo info
-alias gr='git remote -v'
-alias gb='git branch -vv'
-alias grev='git rev-parse --short'
-alias ghead='git rev-parse --short HEAD'
-alias gref='git reflog'
-
-# Show the 5 most recent commits without pager
-alias gln='git --no-pager log --pretty=tformat:"%C(auto)%h -%d %s %Cgreen(%cr) %Cblue<%an>%Creset" -5'
-
-# Log local and origin commits side by side - useful to check before forcing an action
+# Log local and upstream commits side by side - useful to check before forcing an action
 glno() {
-	loc="$(git log --pretty=format:"%C(auto)%h %s %Cgreen(%cr)" -5 "$@" --color=always "$@")"
-	origin="$(git log --pretty=format:"%C(auto)%h %s %Cgreen(%cr)" -5 "origin/$(git curbranch)" --color=always "$@")"
+	loc="$(git l --color=always "$@")"
+	upstream="$(git l --color=always $(git upstream) "$@")"
 	a=$(echo $loc | wc -l)
-	b=$(echo $origin | wc -l)
+	b=$(echo $upstream | wc -l)
 	halfcols="$(($(tput cols) / 2))"
 	for i in `seq 1 $([ $a -le $b ] && echo "$a" || echo "$b")`; do
-		printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $origin | head -n $i | tail -1)"
+		printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $upstream | head -n $i | tail -1)"
 	done
 }
 
 # Shortcuts
-alias gfs='git fetch && git status -s -b'
-alias glu='git pull upstream $(git curbranch)'
-alias gluu='git pull upstream $(git curbranch) && git push --no-verify'
 alias gcap!='git commit --all --amend --no-edit && git push --force-with-lease'
-alias gpf='git push --force-with-lease'
-alias grh='git reset HEAD~'
-alias grh!='git reset --hard'
-alias grhr='git reset --hard $(git rev-parse --abbrev-ref --symbolic-full-name @{u})'
-alias gitgc='git gc && git repack -a -d'
-alias gitstandup='git --no-pager log --since yesterday --author erus --all'
-alias gitready='git rebase -i @{u}'
-# List all branches with their last updates
-alias gitwhen="git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/"
+gitweek() { git my --after "$(date -d "Mon ${1:-1} weeks ago")" --before "$(date -d "Mon $(expr ${1:-1} - 1) weeks ago")" "${@:2}" }
 # Find a commit that follows the given one - second argument can be used to specify the search range
 gitchild() { git log --reverse --ancestry-path --pretty=%H $1..${2:-HEAD} | head -1; }
 
@@ -79,7 +58,7 @@ gitrebranch() {
 }
 gitrmbranch() {
 	branch=${1:-$(git curbranch)}
-	git push -d origin $branch
+	git push -d $(git rev-parse --abbrev-ref $branch@{u} | sed 's/\// /' || echo origin $branch)
 	test $1 || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -f4)
 	git branch -D $branch
 }
@@ -112,7 +91,7 @@ gitinit() {
 
 gitbackup() {
 	p=$(basename $PWD)
-	cd ..
+	builtin cd ..
 	git clone --mirror $p
 	cd $p
 }
@@ -138,13 +117,13 @@ gitremote() {
 gitclone() {
 	remote=$(gitremote "$@")
 	echo $remote
-	git clone $remote "${@:4}"
+	git clone $remote ${@:4}
 	cd "$(test $4 && echo $4 || basename ${remote/.git})"
 }
 
 gitfork() {
-	cd "$projects_dir/_forks"
-	gitclone hub "$1"
+	builtin cd "$projects_dir/_forks"
+	gitclone hub "$1" "" "$3" --recurse-submodules
 	test "$2" && git remote add upstream "$(gitremote hub "$1" "$2")"
 	git remote -v
 }
