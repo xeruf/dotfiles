@@ -1,4 +1,4 @@
-
+## System
 # Enable REISUB and increase watch limit for Intellij & co
 echo "kernel.sysrq=1" | sudo tee /etc/sysctl.d/60-sysrq.conf
 echo "fs.inotify.max_user_watches=800000" | sudo tee /etc/sysctl.d/60-max-user-watches.conf
@@ -6,14 +6,47 @@ sudo sysctl --system
 
 # Update sudoers configuration
 echo "Defaults	editor=/usr/bin/nvim" | sudo tee /etc/sudoers.d/editor
-echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
+echo "Defaults	timestamp_timeout=30" | sudo tee /etc/sudoers.d/timeout
 
-# Stop logind from suspending my laptop
+## Hardware
+printf '\nHardware\n'
+
+echo 'Stop logind from suspending laptop'
 sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
 
 # Fix Chrysalis for keyboardio - https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting
-echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/keyboardio.rules
-systemctl disable ModemManager
+if test ! -f /etc/udev/rules.d/keyboardio.rules; then
+	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/keyboardio.rules
+	sudo systemctl disable ModemManager
+fi
+
+## Software
+printf '\nSoftware\n'
+
+echo 'text/csv; sc-im "%s"; edit=sc-im "%s"; compose=sc-im "%s"; description="CSV Document"; nametemplate=%s.csv' | tee $HOME/.mailcap
 
 # Colorize Pacman
 test -f /etc/pacman.conf && sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+
+# Block internet at night & on weekdays in the morning to force focus
+# https://askubuntu.com/a/124512 and https://blog.sleeplessbeastie.eu/2018/06/21/how-to-create-iptables-firewall-using-custom-chains/
+sudo iptables --new-chain chain-times 2>/dev/null || sudo iptables --flush chain-times
+time9=$(date -u -d "$(date -d 09:00)" +%k)
+sudo iptables -A chain-times -m owner --uid-owner janek -j DROP -m time                --timestart $(date -u -d "$(date -d 0)" +%k):00 --timestop             $time9:00
+sudo iptables -A chain-times -m owner --uid-owner janek -j DROP -m time --weekdays 1-5 --timestart                           $time9:20 --timestop $(expr $time9 + 1):00
+sudo iptables -A chain-times -m owner --uid-owner janek -j DROP -m time --weekdays 1-5 --timestart               $(expr $time9 + 1):20 --timestop $(expr $time9 + 2):00
+sudo iptables -L OUTPUT | grep -q "^chain-times" || sudo iptables -A OUTPUT -j chain-times
+sudo iptables-save | sudo tee /etc/iptables.rules
+echo "@reboot root $(which iptables-restore) < /etc/iptables.rules" | sudo tee /etc/cron.d/iptables-times
+
+# Workrave
+sudo sed -i 's|Exec=workrave|Exec=sh -c "workrave \& sleep 1; dbus-send --session --dest=org.workrave.Workrave --type=method_call /org/workrave/Workrave/Core org.workrave.CoreInterface.SetOperationMode string:normal"|' /usr/share/applications/workrave.desktop
+ln -sfv /usr/share/applications/workrave.desktop $XDG_CONFIG_HOME/autostart
+echo "  0,20,40	*	*	*	*	janek	pgrep workrave || XAUTHORITY='$HOME/.Xauthority' DISPLAY=:0 /usr/bin/workrave" | sudo tee /etc/cron.d/workrave
+
+# Cron logging
+echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
+sudo service rsyslog restart
+
+## Finalize
+sudo service cron reload
