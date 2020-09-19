@@ -15,7 +15,7 @@ data.location=~/.local/share/task
 
 # Color theme (uncomment one to use)
 #include /usr/local/share/doc/task/rc/light-16.theme
-include /usr/local/share/doc/task/rc/light-256.theme
+#include /usr/local/share/doc/task/rc/light-256.theme
 #include /usr/local/share/doc/task/rc/dark-16.theme
 #include /usr/local/share/doc/task/rc/dark-256.theme
 #include /usr/local/share/doc/task/rc/dark-red-256.theme
@@ -29,53 +29,69 @@ include /usr/local/share/doc/task/rc/light-256.theme
 #include /usr/local/share/doc/task/rc/solarized-light-256.theme
 #include /usr/local/share/doc/task/rc/no-color.theme
 
-# Custom priority ordering
+# size uda
+uda.size.type=string
+uda.size.label=Size
+uda.size.values=S,M,B,,-
+urgency.uda.size.B.coefficient=-2
+urgency.uda.size.-.coefficient=-5
+
+# url uda
+uda.url.type=string
+uda.url.label=URL
+
+# relative recur udas
+uda.recurDue.type=duration
+uda.recurDue.label=RecDue
+uda.recurWait.type=duration
+uda.recurWait.label=RecWait
+
+# Custom interface - tafo
+uda.userid.type=string
+#uda.parent.type=string
+
+# no priority > L
 uda.priority.values=H,M,,L
 urgency.uda.priority.H.coefficient=5
 urgency.uda.priority.M.coefficient=2
 urgency.uda.priority.L.coefficient=-2
 
-# Custom size attribute
-uda.size.type=string
-uda.size.label=Size
-uda.size.values=S,M,B,,-
-urgency.uda.size.S.coefficient=2
-urgency.uda.size.M.coefficient=0
-urgency.uda.size.B.coefficient=-2
-urgency.uda.size.-.coefficient=-5
-
-# Custom url attribute
-uda.url.type=string
-uda.url.label=URL
-
-# Custom chore recurrence attribute
-# scheduled,wait(default: scheduled/2),due
-uda.chore.type=string
-uda.chore.label=Chore
-
 # Urgency coefficients
 urgency.due.coeffient=7
+urgency.scheduled.coeffient=7
 urgency.blocking.coefficient=3
 urgency.next.coefficient=9
+urgency.config.coefficient=-2
+urgency.uda.recurDue.coefficient=-4
 
 # Context
 context.dev=+dev
 context.work=+work
-context.focus-low=+comm or +admin or +phys or size:S
+context.fog=+comm or +admin or +move or +config or +browse
 
 # Reports
-report.inbox.columns=id,priority,tags,size,scheduled.countdown,due.relative,description.desc,urgency
-report.inbox.labels=ID,Prio,Tags,Size,⏲ ,⏰,Description,Urg
-report.inbox.filter=status:pending project: -config -passive
+report.inbox.columns=id,priority,tags,scheduled.countdown,due.relative,description.desc,url,urgency
+report.inbox.labels=ID,Prio,Tags,⏰,Description,Url,Urg
+report.inbox.filter=status:pending project: -config -consume
 report.inbox.sort=urgency-
 
-report.next.columns=id,depends,priority,tags,size,scheduled.relative,due.relative,project,description.count,url,urgency
-report.next.labels=ID,Deps,Prio,Tags,Size,⏲ ,⏰,Proj,Description,Url,Urg
+report.next.columns=id,depends,priority,tags,scheduled.relative,due.relative,project,description.count,urgency
+report.next.labels=ID,Deps,Prio,Tags,,⏰,Proj,Description,Urg
+report.next.filter=status:pending limit:20
+
+report.waitfor.columns=id,tags,due.relative,project,description.count,urgency
+report.waitfor.labels=ID,Tags,⏰,Proj,Description,Urg
+report.waitfor.filter=+waitfor
 
 report.break.columns=id,description.desc,due.relative,urgency
 report.break.labels=ID,Description,Scheduled,Urgency
-report.break.filter=status:pending limit:page size:S +phys
+report.break.filter=status:pending limit:page (+phys or +move)
 report.break.sort=urgency-
+
+report.meeting.columns=id,description.desc,due.relative,urgency
+report.meeting.labels=ID,Description,Scheduled,Urgency
+report.meeting.filter=status:pending limit:page +phys
+report.meeting.sort=urgency-
 
 # General config
 bulk=5
@@ -88,4 +104,8 @@ report._reviewed.description=Tasksh review report.  Adjust the filter to your ne
 report._reviewed.columns=uuid
 report._reviewed.sort=reviewed+,modified+
 report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +PENDING or +WAITING )
-reccurence.limit=2
+
+# aliases
+alias.cfg=add +pc +config
+alias.research=add +pc +research
+alias.waiton=mod +waitfor wait:1mo due:1d
