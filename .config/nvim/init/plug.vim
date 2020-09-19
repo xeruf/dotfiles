@@ -55,13 +55,15 @@ Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup = 1
 
 " Integrations
-Plug 'xerus2000/vim-dokuwiki'
+Plug 'dhruvasagar/vim-table-mode'
+let g:table_mode_corner='|'
 Plug 'neoclide/coc.nvim', {'branch': 'release' }
 Plug 'udalov/kotlin-vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'mipmip/vim-scimark' " Edit markdown tables
 Plug 'APZelos/blamer.nvim' " Inline git blame
+" Plug 'xerus2000/vim-dokuwiki'
 
 call plug#end()
 

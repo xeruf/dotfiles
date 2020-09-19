@@ -38,7 +38,6 @@ nnoremap gl $
 nnoremap gh 0
 nnoremap gk H
 nnoremap gj L
-nnoremap gt gg
 nnoremap gb G
 
  " Enable and disable auto comment

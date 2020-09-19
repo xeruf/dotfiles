@@ -5,7 +5,8 @@ set undofile
 set wildmode=longest,list,full " Auto-completion for cmdline
 set clipboard+=unnamedplus " Merge with system clipboard
 
-set tabstop=4 shiftwidth=4 " Indentation
+set shiftwidth=2 " Indentation
+"set shiftwidth=4 tabstop = 4 " Indentation for programming
 
 " visuals
 set number relativenumber " Relative line numbering on the left
@@ -34,8 +35,10 @@ set foldopen+=jump " Automatically open folds on jump
 " FILETYPES
 syntax on
 filetype plugin on
-autocmd FileType json syntax match Comment +\/\/.\+$+ " Comment highlighting in JSON
-autocmd Filetype * set formatoptions-=o " Don't automatically comment on o
+" comments
+autocmd Filetype * setlocal formatoptions-=o | setlocal formatoptions+=qn1jr " Change comment behavior
+autocmd Filetype json syntax match Comment +\/\/.\+$+ " Comment highlighting in JSON
+autocmd Filetype markdown let &comments = "b:*,b:-,b:+," . &comments
 " custom hardcoded types
 autocmd BufRead,BufNewFile $CONFIG_SHELLS/*,$CONFIG_ZSH/* setlocal filetype=zsh
 autocmd BufRead $XDG_CONFIG_HOME/yadm/bootstrap setlocal filetype=sh
