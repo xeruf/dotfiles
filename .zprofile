@@ -18,6 +18,8 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 # red stderr
 export LD_PRELOAD="/opt/stderred/build/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
+ # enable pass extensions
+export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
  # fzf defaults
 export FZF_DEFAULT_OPTS='--select-1 --exit-0 --tiebreak=end,length --history=/var/tmp/fzf-history --ansi --bind="alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {}),change:top,left-click:execute(xdg-open {})"'
 export FZF_DEFAULT_COMMAND="fd --hidden --type file --color=always"

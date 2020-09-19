@@ -49,6 +49,7 @@ cd() { builtin cd "$@" && command ls --file-type --group-directories-first --col
 
 # Task management & time tracking
 alias t='task'
+alias tl='tasklite'
 alias tw='timew'
 twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
 alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && rm -rf ${TIMEWARRIORDB} && mkdir -p ${TIMEWARRIORDB}/data && :> ${TIMEWARRIORDB}/timewarrior.cfg && $SHELL )'
@@ -73,6 +74,8 @@ alias vlch="vlc -H | ${PAGER:-less}"
 
 alias sc='sudo systemctl'
 alias scrw='sudo systemctl restart display-manager'
+
+alias drag='dragon -x -a'
 
 alias grp='grep --line-number --ignore-case --binary-files=without-match'
 alias grpr='grp --recursive'
@@ -123,8 +126,9 @@ mozedit() (
 	cat "$tmpfile2" | sed "$2" | lz4 -l | dd bs=1 skip=8 seek=12 of="$file" conv=notrunc
 )
 
-theme_save="/tmp/theme"
-theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
+theme_save="$XDG_CACHE_HOME/theme"
+#theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
+theme_default="dark"
 theme() {
 	theme="$1"
 	if test "$2" = "kde"
@@ -220,7 +224,7 @@ b() {
 	arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
 	file $arg | grep -v --color=never directory
 	case "$(file --dereference $arg)" in
-		*directory) ls -l --all --human-readable --dereference-command-line "$@";;
+		*directory) ls -l --almost-all --human-readable --group-directories-first --file-type --dereference-command-line "$@";;
 		*text*) bat --style=numbers "$@";;
 	esac
 }

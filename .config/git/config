@@ -90,6 +90,8 @@
 	
 	ready = rebase -i @{u}
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
+
+	sm = !git submodule init && git submodule update
 	
 	# yadm
 	add-git = !git add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git

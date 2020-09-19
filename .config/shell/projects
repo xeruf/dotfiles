@@ -26,7 +26,7 @@ listprojects() {
 # Underlines the project names
 highlight() { echo "[4m$1[0m" }
 
-# Lists all projects and evaluates the given command. 
+# Lists all projects and evaluates the given command.
 alias p=projects
 projects() {
     test "$1" = "--all" && all="$1" && shift
@@ -35,7 +35,7 @@ projects() {
 		# Builds all found gradle projects in parallel and then prints the results in batches - WARNING: This is likely to considerably slow down your computer!
 		listprojects $all | while read d; do
 			if test "$(find $d -maxdepth 1 -name "*gradle*")"; then
-				cd $d
+				builtin cd $d
 				buildlog="/tmp/build-$(basename $d)"
 				(nohup gradle build --no-daemon --console=rich &>$buildlog; highlight $(basename $d | awk '{print toupper($0)}') && cat $buildlog) &
 			fi
@@ -53,18 +53,18 @@ projects() {
 	"status")
 		# Sets the current branch upstream to a remote branch of the same name, updates it and shows "git status -s -b"
 		listprojects $all | while read d; do
-			cd $d
+			builtin cd $d
 			highlight $(basename $d)
 			git branch --set-upstream-to=origin/$(git curbranch)>/dev/null
 			git pull --all | grep -v "Already up to date."
 			git status -s -b
 		done
 		;;
-	*)  
+	*)
 		# Just provide a one-line summary of the status of each project and execute the command entered on every project
 		com="$@"
 		listprojects $all | while read d; do
-			cd $d
+			builtin cd $d
 			if [[ $com != gradle* ]] || (( $(f1 -name "*gradle*" | wc -l) > 0 )); then
 				local st=()
 				local ahead=$(command git rev-list "${branch_name}"@{upstream}..HEAD 2>/dev/null | wc -l)
@@ -79,5 +79,5 @@ projects() {
 			fi
 		done
 	esac
-	cd $projects_dir
+	builtin cd $projects_dir
 }
