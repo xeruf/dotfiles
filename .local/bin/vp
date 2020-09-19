@@ -1,0 +1,2 @@
+#!/bin/sh
+killall -q vlc; sleep 1; vlc --qt-start-minimized --loop --random "$@" >/dev/null 2>&1 &

@@ -36,7 +36,9 @@ edshell() {
 }
 
 edbin() {
-	$EDITOR "$( (command which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
+  file="$( (command which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
+  $EDITOR "$file"
+  yadm add "$file"
 }
 
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
