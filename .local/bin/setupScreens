@@ -1,5 +1,10 @@
-dp=$(xrandr | grep '^D.* con' | cut -d' ' -f1)
-hdmi=$(xrandr | grep '^H.* con' | cut -d' ' -f1)
+#connected=$(xrandr | grep ' connected ')
+#k4=$(xrandr | grep '3840' | cut -d' ' -f1)
+#k2=$(xrandr | grep '1920' | cut -d' ' -f1)
+k4=$(xrandr | grep -1 '   3840' | grep ' connected ' | cut -d' ' -f1)
+k2=$(xrandr | grep -1 '   1920' | grep ' connected ' | cut -d' ' -f1)
+
 #xrandr --output $dp --auto --output $hdmi --mode 1680x1050 --scale 2x2 --right-of $dp && xrandr --output $hdmi --mode 1920x1080
-xrandr --output $dp --auto --output $hdmi --scale 2x2 --mode 1920x1080 --fb 7681x2160 --pos 3841x0
+xrandr --output $k4 --auto --scale 1x1 --pos 0x0 --output $k2 --auto --scale 2x2 --mode 1920x1080 --pos 3841x0
+ #--fb 7681x2160
 #xrandr --output $dp --auto --scale 0.5x0.5 --output $hdmi --scale 1x1 --mode 1920x1080 --fb 5760x1080 --right-of $dp
