@@ -359,6 +359,10 @@ aptinstalls() {
 	apt-cache show "$1" | grep --color=never '\(Version\|Description\):'
 	aptinstall "$@"
 }
+aptinstalli() {
+	apt download $1
+	sudo dpkg --ignore-depends=$2 -i $1*.deb
+}
 aptrepoinstall() {
 	aptrepo -yu $1
 	if (( $# > 1 ))
