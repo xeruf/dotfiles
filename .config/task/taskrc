@@ -70,6 +70,7 @@ context.work=+work
 context.fog=+comm or +admin or +move or +config or +browse
 
 # Reports
+report.inbox.description=Interesting tasks without project
 report.inbox.columns=id,priority,tags,scheduled.countdown,due.relative,description.desc,url,urgency
 report.inbox.labels=ID,Prio,Tags,⏰,Description,Url,Urg
 report.inbox.filter=status:pending project: -config -consume
@@ -79,18 +80,26 @@ report.next.columns=id,depends,priority,tags,scheduled.relative,due.relative,pro
 report.next.labels=ID,Deps,Prio,Tags,,⏰,Proj,Description,Urg
 report.next.filter=status:pending limit:20
 
+report.open.description=All non-completed tasks
+report.open.columns=id,depends,priority,tags,scheduled.relative,due.relative,project,description.count,urgency
+report.open.labels=ID,Deps,Prio,Tags,,⏰,Proj,Description,Urg
+report.open.filter=-DELETED -COMPLETED -PARENT
+
+report.waitfor.description=Tasks waiting for external work
 report.waitfor.columns=id,tags,due.relative,project,description.count,urgency
 report.waitfor.labels=ID,Tags,⏰,Proj,Description,Urg
 report.waitfor.filter=+waitfor
 
+report.break.description=Physical tasks for a break
 report.break.columns=id,description.desc,due.relative,urgency
 report.break.labels=ID,Description,Scheduled,Urgency
-report.break.filter=status:pending limit:page (+phys or +move)
+report.break.filter=status:pending limit:9 (+phys or +move)
 report.break.sort=urgency-
 
+report.meeting.description=Mundane tasks that don't need a specific location
 report.meeting.columns=id,description.desc,due.relative,urgency
 report.meeting.labels=ID,Description,Scheduled,Urgency
-report.meeting.filter=status:pending limit:page +phys
+report.meeting.filter=status:pending limit:9 +phys
 report.meeting.sort=urgency-
 
 # General config
@@ -108,4 +117,4 @@ report._reviewed.filter=( reviewed.none: or reviewed.before:now-6days ) and ( +P
 # aliases
 alias.cfg=add +pc +config
 alias.research=add +pc +research
-alias.waiton=mod +waitfor wait:1mo due:1d
+alias.waiton=mod +waitfor wait:1w due:3w
