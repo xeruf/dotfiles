@@ -1,6 +1,6 @@
-MUSIC="/home/janek/daten/music"
-AUDIO="/home/janek/daten/audio"
-MUSIC_RAW="$audio_folder/songs/_raw"
+MUSIC="$HOME/daten/music"
+AUDIO="$HOME/daten/audio"
+MUSIC_RAW="$AUDIO/songs/_raw"
 
 edpl() {
 	$EDITOR $(find $MUSIC/Playlists -iname "$1\.*" | grep . || find $MUSIC/Playlists -iname "$1*")
@@ -11,7 +11,7 @@ makePls() {
 	i=1; while test $i -le ${1:-9}; do makePl "${2:-Ω}$i" "empty$i"; ((i++)); done
 }
 fixPl() {
-    sed -i 's/\/storage\/AAAA-AAAA\/musik/../g' *
+    sed -i 's/.*\/musi[kc]/../g' *
 }
 plCd() {
 	dir=${2:-cd}
@@ -24,7 +24,7 @@ findsongs() {
 }
 
 addmix() {
-	mv -v "$1.cue" "$audio_folder/recordings/cues"
+	mv -v "$1.cue" "$AUDIO/recordings/cues"
 	addsong "$1.flac" Mixes
 }
 
