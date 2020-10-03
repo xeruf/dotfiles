@@ -73,7 +73,8 @@
 	dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
 	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{u} || echo origin/$(git curbranch)
 
-	c = commit
+	ap = add -p
+	c = commit -v
 	co = checkout
 	cp = cherry-pick
 	p = push
