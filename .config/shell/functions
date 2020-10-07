@@ -1,4 +1,6 @@
-# Shell configuration for Zsh, works almost completely for Bash as well
+# Shell aliases & functions for Zsh, works almost completely for Bash as well
+
+ulimit -c unlimited # Enable core dumps
 
 export LESS=-R
 export DIST=$(lsb_release --id | cut -d'	' -f2)
@@ -7,6 +9,9 @@ alias info='info --vi-keys'
 # Some aliases
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
+editright() {
+	test -O "$1" && $EDITOR "$1" || sudoedit "$1"
+}
 
 alias dedup='awk '"'"'!a[$0]++'"'"
 edconf() {
@@ -18,7 +23,7 @@ edconf() {
 	touch "$conf_cache"
 	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
 	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra"; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
-	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -9 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & (test -O "$sel" && $EDITOR "$sel" || sudoedit "$sel"))
+	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -9 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & editright "$sel")
 }
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
@@ -37,8 +42,8 @@ edshell() {
 
 edbin() {
   file="$( (command which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
-  $EDITOR "$file"
-  yadm add "$file"
+  editright "$file"
+  case "$file" in $HOME) yadm add "$file";; esac
 }
 
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
@@ -48,6 +53,11 @@ alias -g X="| xargs"
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() { builtin cd "$@" && command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3 }
 
+swap() {
+	mv -n $1 $1.tmp
+	mv -n $2 $1
+	mv -n $1.tmp $2
+}
 
 # Task management & time tracking
 alias t='task'
@@ -79,7 +89,7 @@ alias scrw='sudo systemctl restart display-manager'
 
 alias drag='dragon -x -a'
 
-alias grp='grep --line-number --ignore-case --binary-files=without-match'
+alias grp='grep --line-number --ignore-case --binary-files=without-match --directories=skip'
 alias grpr='grp --recursive'
 # Use grep and sed to replace $1 with $2 recursively
 rpl() {
@@ -223,12 +233,19 @@ cl() {
 
 # Show type & contents of given files or PWD
 b() {
-	arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
-	file $arg | grep -v --color=never directory
-	case "$(file --dereference $arg)" in
-		*directory) ls -l --almost-all --human-readable --group-directories-first --file-type --dereference-command-line "$@";;
-		*text*) bat --style=numbers "$@";;
-	esac
+	#if test $# -gt 1
+	#then
+	#  for arg in "$@"; do
+	#    b --pager=never "$arg"
+	#  done
+	#else
+	  arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
+	  file $arg | grep -v --color=never directory
+	  case "$(file --dereference $arg)" in
+	  	*directory) ls -l --almost-all --human-readable --group-directories-first --file-type --dereference-command-line "$@";;
+	  	*text*) bat --style=numbers,header "$@";;
+	  esac
+	#fi
 }
 wh() { b $(which "$@"); }
 
@@ -323,7 +340,7 @@ alias aptremove='sudo apt-get remove'
 alias aptpurge='sudo apt-get purge'
 alias aptclean='sudo apt-get clean && sudo apt-get autoremove'
 upgrade() {
-	if test $DIST = "neon"
+	if test -x /usr/bin/pkcon
 	then sudo pkcon update
 	else sudo apt update && sudo apt upgrade
 	fi
