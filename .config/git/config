@@ -98,6 +98,7 @@
 	add-git = !yadm add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git
 	add-vim = !yadm add $XDG_CONFIG_HOME/nvim/init*
 	add-shell = !yadm add $CONFIG_SHELLS
+	add-bin = !yadm add -u $HOME/.local/bin
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f

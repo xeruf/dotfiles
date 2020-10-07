@@ -3,7 +3,7 @@ p=$PWD
 cd $HOME/daten/Dropbox/dokumente/notes
 loc=$1
 case $1 in
-	log|life) shift; file=journal/${1:-general}.txt; date +%F >>$file;;
+	log|jrnl) shift; file=journal/${1:-jrnl}.txt;; #date +%F >>$file;;
 	idea) shift; file=ideas/${1:-README}.md;;
 	box) shift; file=box/$1.md;;
 	write) shift; file=writings/$1.md;;
