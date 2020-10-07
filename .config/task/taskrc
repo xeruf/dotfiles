@@ -57,12 +57,15 @@ urgency.uda.priority.M.coefficient=2
 urgency.uda.priority.L.coefficient=-2
 
 # Urgency coefficients
+ # States
 urgency.due.coeffient=7
-urgency.scheduled.coeffient=7
+urgency.scheduled.coeffient=5
 urgency.blocking.coefficient=3
+urgency.uda.recurDue.coefficient=-3
+ # Tags
 urgency.next.coefficient=9
 urgency.config.coefficient=-2
-urgency.uda.recurDue.coefficient=-4
+urgency.reflect.coefficient=-3
 
 # Context
 context.dev=+dev
@@ -99,7 +102,7 @@ report.break.sort=urgency-
 report.meeting.description=Mundane tasks that don't need a specific location
 report.meeting.columns=id,description.desc,due.relative,urgency
 report.meeting.labels=ID,Description,Scheduled,Urgency
-report.meeting.filter=status:pending limit:9 +phys
+report.meeting.filter=status:pending limit:9 (+phys or +msg or +menial)
 report.meeting.sort=urgency-
 
 # General config
