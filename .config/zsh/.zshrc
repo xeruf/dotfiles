@@ -8,9 +8,9 @@ fi
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+#fi
 
 export PATH=$HOME/.local/bin:$PATH
 
@@ -35,7 +35,8 @@ DISABLE_UNTRACKED_FILES_DIRTY="true" # DOn't mark untracked files as dirty - spe
 # Plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
-	git
+	#git
+	gitfast
 	git-auto-fetch
 	z
 	fast-syntax-highlighting
@@ -187,4 +188,4 @@ export NVM_DIR="$HOME/.nvm"
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
 [[ ! -f $CONFIG_ZSH/.p10k.zsh ]] || source $CONFIG_ZSH/.p10k.zsh
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f $XDG_DATA_HOME/shell/.fzf.zsh ] && source $XDG_DATA_HOME/shell/.fzf.zsh

@@ -1,4 +1,5 @@
 # Tools
+alias g="git"
 alias bfg="java -jar $HOME/daten/applications/bfg-1.13.0.jar"
 alias magit='nvim -c MagitOnly'
 

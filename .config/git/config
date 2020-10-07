@@ -95,8 +95,9 @@
 	sm = !git submodule init && git submodule update
 	
 	# yadm
-	add-git = !git add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git
-	add-vim = !git add $XDG_CONFIG_HOME/nvim/init*
+	add-git = !yadm add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git
+	add-vim = !yadm add $XDG_CONFIG_HOME/nvim/init*
+	add-shell = !yadm add $CONFIG_SHELLS
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
