@@ -16,8 +16,10 @@ sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/lo
 
 # Fix Chrysalis for keyboardio - https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting
 if test ! -f /etc/udev/rules.d/keyboardio.rules; then
-	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/keyboardio.rules
-	sudo systemctl disable ModemManager
+	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", SYMLINK+="model01", TAG+="seat", TAG+="uaccess", RUN+="/home/janek/.local/bin/update-keyboard-layout.sh"' | sudo tee /etc/udev/rules.d/keyboardio.rules
+	sudo udevadm control -R
+	sudo udevadm trigger -v /dev/ttyACM0
+	#sudo systemctl disable ModemManager
 fi
 
 ## Software
