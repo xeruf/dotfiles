@@ -5,31 +5,35 @@ alias magit='nvim -c MagitOnly'
 
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
 git() {
-	test "$1" = "config" || case "$PWD" in
-		$HOME|$XDG_CONFIG_HOME|$LAST_YADM)
-			yadm "$@"
-			return
-			;;
-		$XDG_CONFIG_HOME*)
-			if ! command git rev-parse --show-toplevel &>/dev/null; then
-				export LAST_YADM="$PWD"
-				yadm "$@"
-				return
-			fi;;
-	esac
-	command git "$@";
+  case "$1" in
+    config) ;;
+    clone) ;;
+    *) case "$PWD" in
+    $HOME|$XDG_CONFIG_HOME|$LAST_YADM)
+      yadm "$@"
+      return
+      ;;
+    $XDG_CONFIG_HOME*)
+      if ! command git rev-parse --show-toplevel &>/dev/null; then
+        export LAST_YADM="$PWD"
+        yadm "$@"
+        return
+      fi;;
+    esac;;
+  esac
+  command git "$@";
 }
 
 # Log local and upstream commits side by side - useful to check before forcing an action
 glno() {
-	loc="$(git l --color=always "$@")"
-	upstream="$(git l --color=always $(git upstream) "$@")"
-	a=$(echo $loc | wc -l)
-	b=$(echo $upstream | wc -l)
-	halfcols="$(($(tput cols) / 2))"
-	for i in `seq 1 $([ $a -le $b ] && echo "$a" || echo "$b")`; do
-		printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $upstream | head -n $i | tail -1)"
-	done
+  loc="$(git l --color=always "$@")"
+  upstream="$(git l --color=always $(git upstream) "$@")"
+  a=$(echo $loc | wc -l)
+  b=$(echo $upstream | wc -l)
+  halfcols="$(($(tput cols) / 2))"
+  for i in `seq 1 $([ $a -le $b ] && echo "$a" || echo "$b")`; do
+    printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $upstream | head -n $i | tail -1)"
+  done
 }
 
 # Shortcuts
@@ -40,28 +44,28 @@ gitchild() { git log --reverse --ancestry-path --pretty=%H $1..${2:-HEAD} | head
 
 # Caching
 gitrecache() {
-	git rm --cached --quiet -r ${1:-.}
-	git add ${1:-.}
-	git status -s
+  git rm --cached --quiet -r ${1:-.}
+  git add ${1:-.}
+  git status -s
 }
 gitrestore() {
-	git reset -- "$@"
-	git checkout -- "$@"
+  git reset -- "$@"
+  git checkout -- "$@"
 }
 
 # Branches
 alias gitrmgonebranches='git fetch -p && for branch in `git branch -vv | grep ": gone]" | cut -d" " -f3`; do git branch -D "$branch"; done'
 gitrebranch() {
-	branch=${1:-$(git curbranch)}
-	test "$(git curbranch)" = "$branch" && git checkout ${2:-master}
-	git branch -D $branch
-	git checkout -b $branch
+  branch=${1:-$(git curbranch)}
+  test "$(git curbranch)" = "$branch" && git checkout ${2:-master}
+  git branch -D $branch
+  git checkout -b $branch
 }
 gitrmbranch() {
-	branch=${1:-$(git curbranch)}
-	git push -d $(git rev-parse --abbrev-ref $branch@{u} | sed 's/\// /' || echo origin $branch)
-	test $1 || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -f4)
-	git branch -D $branch
+  branch=${1:-$(git curbranch)}
+  git push -d $(git rev-parse --abbrev-ref $branch@{u} | sed 's/\// /' || echo origin $branch)
+  test $1 || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -f4)
+  git branch -D $branch
 }
 
 # Save HEAD commit hash to "snap" file in git dir
@@ -71,84 +75,84 @@ gitsnaprestore() { git reset --hard $(cat "$(git dir)/${1:-snap}") }
 
 # Remove list of tags local & remote
 gitrmtag() {
-	declare -a refs
-	local index=1
-	for tag in $@; do refs[index++]=":refs/tags/$tag"; done
-	git push origin "${refs[@]}" && git tag -d "$@"
+  declare -a refs
+  local index=1
+  for tag in $@; do refs[index++]=":refs/tags/$tag"; done
+  git push origin "${refs[@]}" && git tag -d "$@"
 }
 # Rename a tag
 gitretag() {
-	git push origin refs/tags/${1}:refs/tags/${2} :refs/tags/$1 && git tag -d $1
+  git push origin refs/tags/${1}:refs/tags/${2} :refs/tags/$1 && git tag -d $1
 }
 
 # Repo management {{{
 gitinit() {
-	git init
-	git add .
-	git commit -m "First strike"
-	gitorigin "$@"
-	git push
+  git init
+  git add .
+  git commit -m "First strike"
+  gitorigin "$@"
+  git push
 }
 
 gitbackup() {
-	p=$(basename $PWD)
-	builtin cd ..
-	git clone --mirror $p
-	cd $p
+  p=$(basename $PWD)
+  builtin cd ..
+  git clone --mirror $p
+  cd $p
 }
 
 project() {
-	cd $projects_dir
-	if [ -d $2 ]
-	then cd "$2" && gitorigin "$@"
-	else gitclone "$@"
-	fi
+  cd $projects_dir
+  if [ -d $2 ]
+  then cd "$2" && gitorigin "$@"
+  else gitclone "$@"
+  fi
 }
 
 gitremote() {
-	case "$1" in
-	http*)	echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
-	git:*)	echo "$1" ;;
-	*)	test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
-		test "$3" = "btl" && 3="betweenthelinesev"
-		echo "git@git${1:-hub}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
-	esac
+  case "$1" in
+  http*)  echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
+  git:*)  echo "$1" ;;
+  *)  test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
+    test "$3" = "btl" && 3="betweenthelinesev"
+    echo "git@git${1:-hub}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
+  esac
 }
 
 gitclone() {
-	remote=$(gitremote "$@")
-	echo $remote
-	git clone $remote ${@:4}
-	cd "$(test $4 && echo $4 || basename ${remote/.git})"
+  remote=$(gitremote "$@")
+  echo $remote
+  git clone $remote ${@:4}
+  cd "$(test $4 && echo $4 || basename ${remote/.git})"
 }
 
 gitfork() {
-	builtin cd "$projects_dir/_forks"
-	gitclone hub "$1" "" "$3" --recurse-submodules
-	test "$2" && git remote add upstream "$(gitremote hub "$1" "$2")"
-	git remote -v
+  builtin cd "$projects_dir/_forks"
+  gitclone hub "$1" "" "$3" --recurse-submodules
+  test "$2" && git remote add upstream "$(gitremote hub "$1" "$2")"
+  git remote -v
 }
 
 # set repo as origin and set all branches upstream to their respective remote branch, if available
 gitorigin() {
-	git remote remove origin 2>/dev/null
-	git remote add origin $(gitremote "$@")
-	git remote -v && git fetch || ( last=$? && echo "git fetch failed, aborting\!" && return $last )
+  git remote remove origin 2>/dev/null
+  git remote add origin $(gitremote "$@")
+  git remote -v && git fetch || ( last=$? && echo "git fetch failed, aborting\!" && return $last )
 
-	git branch | sed 's/ //g' | sed 's/*//' | while read branch
-	do test $(git branch -a | grep origin/$branch | wc -l) -gt 0 && git branch -u origin/$branch $branch
-	done
+  git branch | sed 's/ //g' | sed 's/*//' | while read branch
+  do test $(git branch -a | grep origin/$branch | wc -l) -gt 0 && git branch -u origin/$branch $branch
+  done
 }
 
 # set repo as upstream or add a new remote
 gitupstream() {
-	if test "$2"
-	then local name="$2"; git remote remove "$2" >/dev/null
-	else git remote get-url upstream &>/dev/null && local name="$1" || local name="upstream"
-	fi
-	local origin="$(git remote get-url origin)"
-	git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/$(echo $origin | cut -d'/' -f2)"
-	git remote -v
+  if test "$2"
+  then local name="$2"; git remote remove "$2" >/dev/null
+  else git remote get-url upstream &>/dev/null && local name="$1" || local name="upstream"
+  fi
+  local origin="$(git remote get-url origin)"
+  git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/$(echo $origin | cut -d'/' -f2)"
+  git remote -v
 }
 # }}}
 
@@ -156,92 +160,92 @@ gitupstream() {
 
 # gets the AuthorDate of a given committish
 git-authordate() {
-	local date=$(git log --pretty=fuller --date=raw -1 $1 | grep AuthorDate)
-	echo ${date##*: }
+  local date=$(git log --pretty=fuller --date=raw -1 $1 | grep AuthorDate)
+  echo ${date##*: }
 }
 # executes a git command (usually commit) with the date of a given committish
 git-withdate() {
-	date=$(git-authordate $1)
-	GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" git "${@:2}"
+  date=$(git-authordate $1)
+  GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" git "${@:2}"
 }
 
 # takes all changes in the current working tree and amends them to the given commit
 gitedit() {
-	git stash
-	gitcommits -q $1
-	git reset --hard $1
-	git stash pop -q
-	git-withdate $1 commit --all --amend "${@:2}"
-	gitcommits
+  git stash
+  gitcommits -q $1
+  git reset --hard $1
+  git stash pop -q
+  git-withdate $1 commit --all --amend "${@:2}"
+  gitcommits
 }
 
 # takes two committishs and squashes them with all commits between them into a single commit
 # this will rewrite the full history from then on, but should not create any conflicts
 gitsquash() {
-	local -a options
-	while [ $# -gt 0 ]; do
-		case $1 in
-			-i) ignore=true; shift 1;;
-			-f|--force) force=true; shift 1;;
-			-*) options+=($1); exit 1;;
-			*) break;;
-		esac
-	done
+  local -a options
+  while [ $# -gt 0 ]; do
+    case $1 in
+      -i) ignore=true; shift 1;;
+      -f|--force) force=true; shift 1;;
+      -*) options+=($1); exit 1;;
+      *) break;;
+    esac
+  done
 
-	((#!=2)) && echo "Usage: [options] <startcommit> <endcommit>" && return 1
-	[[ -n $(git status -s) ]] && [ ! $force ] && echo -e "Tree is dirty, commit or stash your changes first!\nIf you want to execute the command regardless, run again with --force" && return 1
+  ((#!=2)) && echo "Usage: [options] <startcommit> <endcommit>" && return 1
+  [[ -n $(git status -s) ]] && [ ! $force ] && echo -e "Tree is dirty, commit or stash your changes first!\nIf you want to execute the command regardless, run again with --force" && return 1
 
-	1=$(git rev-parse $1)
-	2=$(git rev-parse $2)
-	[ $(git rev-list $1 --count) -lt $(git rev-list $2 --count) ] && t=$1 && 1=$2 && 2=$t
+  1=$(git rev-parse $1)
+  2=$(git rev-parse $2)
+  [ $(git rev-list $1 --count) -lt $(git rev-list $2 --count) ] && t=$1 && 1=$2 && 2=$t
 
-	gitcommits -q $1
-	git reset --hard $1
-	if [ $(git rev-list $2 --count) = 1 ]; then
-		git update-ref -d HEAD
-		git add .
-		git-withdate $1 commit -c $1
-	else
-		git reset -q $2
-		git add .
-		git commit --amend
-	fi
-	gitcommits
+  gitcommits -q $1
+  git reset --hard $1
+  if [ $(git rev-list $2 --count) = 1 ]; then
+    git update-ref -d HEAD
+    git add .
+    git-withdate $1 commit -c $1
+  else
+    git reset -q $2
+    git add .
+    git commit --amend
+  fi
+  gitcommits
 }
 
 # given a committish, this command saves a list of commits between the HEAD and the given committish into the .git directory
 # when ran without parameters it applies the saved list of commits onto the current HEAD
 gitcommits() {
-	verbosity=1
-	while [[ $# -gt 0 ]]; do
-		case $1 in
-			-v) verbosity=2; shift 1;;
-			-q|--quiet) verbosity=0; shift 1;;
-			--theirs) params=(-X theirs); shift 1;;
-			*) break;;
-		esac
-	done
+  verbosity=1
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -v) verbosity=2; shift 1;;
+      -q|--quiet) verbosity=0; shift 1;;
+      --theirs) params=(-X theirs); shift 1;;
+      *) break;;
+    esac
+  done
 
-	stashed="$(git rev-parse --show-toplevel)/.git/stashed-commits"
-	if [ $1 ]; then
-		if [ $verbosity -eq 0 ]
-			then git rev-list --reverse HEAD...$1 >$stashed
-			else git rev-list --reverse HEAD...$1 | tee $stashed
-		fi
-	else
-		local aborted
-		for commit in $(cat $stashed); do
-			[ $aborted ] && rest+=($commit) && continue
-			[ $verbosity -gt 0 ] && git --no-pager log --oneline -1 $commit
-			git-withdate $commit cherry-pick $commit ${params:0} >/dev/null
-			last=$?
-			[ $last -gt 0 ] && aborted=true && typeset -a rest && continue
-			[ $verbosity -gt 0 ] && echo -e "\e[1A$(git log --color=always --pretty=format:"%C(yellow)$(git rev-parse --short HEAD^^)%C(bold) -> %Creset%C(yellow)%h%Creset %s" -1)"
-			[ $verbosity -gt 1 ] && git status -s
-		done
-		echo $rest >$stashed
-		[ $aborted ] && echo "A problem was encountered. Fix it and run 'gitcommits' again to apply the remaining ${#rest} commits."
-	fi
+  stashed="$(git rev-parse --show-toplevel)/.git/stashed-commits"
+  if [ $1 ]; then
+    if [ $verbosity -eq 0 ]
+      then git rev-list --reverse HEAD...$1 >$stashed
+      else git rev-list --reverse HEAD...$1 | tee $stashed
+    fi
+  else
+    local aborted
+    for commit in $(cat $stashed); do
+      [ $aborted ] && rest+=($commit) && continue
+      [ $verbosity -gt 0 ] && git --no-pager log --oneline -1 $commit
+      git-withdate $commit cherry-pick $commit ${params:0} >/dev/null
+      last=$?
+      [ $last -gt 0 ] && aborted=true && typeset -a rest && continue
+      [ $verbosity -gt 0 ] && echo -e "\e[1A$(git log --color=always --pretty=format:"%C(yellow)$(git rev-parse --short HEAD^^)%C(bold) -> %Creset%C(yellow)%h%Creset %s" -1)"
+      [ $verbosity -gt 1 ] && git status -s
+    done
+    echo $rest >$stashed
+    [ $aborted ] && echo "A problem was encountered. Fix it and run 'gitcommits' again to apply the remaining ${#rest} commits."
+  fi
 }
 # }}}
 

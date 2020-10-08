@@ -3,7 +3,7 @@
 ulimit -c unlimited # Enable core dumps
 
 export LESS=-R
-export DIST=$(lsb_release --id | cut -d'	' -f2)
+which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2)
 alias info='info --vi-keys'
 
 # Some aliases
@@ -41,7 +41,7 @@ edshell() {
 }
 
 edbin() {
-  file="$( (command which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
+  file="$( (which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
   editright "$file"
   case "$file" in $HOME) yadm add "$file";; esac
 }
@@ -68,8 +68,8 @@ alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && rm -rf ${TIMEWARRIORDB} && m
 
 # Quick shortcuts
 alias c='clear'
-alias q='exit'
 alias v='nvim'
+alias sudo='sudo -v; sudo '
 
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
@@ -108,7 +108,7 @@ alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r rm"
 alias dict="(builtin cd $(dirname $(locate -n 2 /dict.txt)) && rlwrap perl dictcc-helper.pl)"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
-dropbox_path="$(cat ~/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
+test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
 
 # Add an "alert" alias for long running commands. Use like so: sleep 10; alert
 #if [ command -v notify-send >/dev/null 2>&1 ]; then
@@ -323,95 +323,6 @@ resetdocker() {
 	sudo rm -rf /var/run/docker /var/lib/docker
 	sudo rm /var/run/docker.*
 	#aptinstall docker-ce
-}
-
-# INSTALL
-
-addalternative() {
-	sudo update-alternatives --install /usr/bin/$1 $1 "$(which "$1$2")" 1
-}
-
-snapinstall() {
-	sudo snap install "$@" && refreshSetup
-}
-
-alias aptupdate='sudo apt-get update'
-alias aptremove='sudo apt-get remove'
-alias aptpurge='sudo apt-get purge'
-alias aptclean='sudo apt-get clean && sudo apt-get autoremove'
-upgrade() {
-	if test -x /usr/bin/pkcon
-	then sudo pkcon update
-	else sudo apt update && sudo apt upgrade
-	fi
-	sudo snap refresh
-	flatpak update -y
-	sudo npm update -g
-	# npm -g outdated --parseable=true | cut -d : -f 4 | xargs -n 1 npm -g install
-}
-
-uma() {
-	if test "$1"
-	then printf 'y\nj\na' | umake "$1" "$2" "/opt/${3:-$2}"
-	else
-		uma ide idea-ultimate idea
-		uma android android-studio android/android-studio && yes | /opt/android/sdk/tools/bin/sdkmanager --licenses && pathadd /opt/android/sdk/tools/bin /opt/android/sdk/platform-tools && sudo apt install qemu-kvm && sudo adduser janek kvm
-		test -d "/opt/vscode" && uma ide visual-studio-code vscode
-	fi
-}
-
-alias aptrepo='sudo add-apt-repository'
-_aptrepo_n="$(test "$OSTYPE" != "cygwin" && add-apt-repository --help | grep -- "-n")"
-aptrepon() {
-	test $_aptrepo_n && aptrepo -y -n "$@" || aptrepo -y "$@"
-}
-aptrepos() {
-	for repo in "$@"
-	do aptrepon $repo
-	done
-	aptupdate
-}
-alias aptinstall='sudo apt-get install'
-aptinstalls() {
-	apt-cache show "$1" | grep --color=never '\(Version\|Description\):'
-	aptinstall "$@"
-}
-aptinstalli() {
-	apt download $1
-	sudo dpkg --ignore-depends=$2 -i $1*.deb
-}
-aptrepoinstall() {
-	aptrepo -yu $1
-	if (( $# > 1 ))
-	then aptinstall "${@:2}"
-	else aptinstall "${1##*/}"
-	fi
-}
-
-# Gets the download url for the latest release of a package provided via GitHub Releases
-# Usage: ghrelease USER REPO [PATTERN]
-ghrelease() {
-	result=$(curl -s "https://api.github.com/repos/$1/$2/releases/latest" | grep -o "http.*${3:-deb}" | awk '{ print length(), $0}' | sort -n | cut -d' ' -f2-)
-	echo "$result" | grep amd64 || echo "$result"
-}
-
-# Installs a local or remote(http/https) deb package and removes it after installation
-installdeb() {
-	loc="/tmp/install.deb"
-	case $1 in
-	http*) wget -O "$loc" $1;;
-	*) loc="$1";;
-	esac
-	sudo dpkg -i "$loc" "${@:2}" && sudo apt -f install && rm "$loc"
-}
-
-installgh() {
-	installdeb $(ghrelease "$@")
-}
-
-# Downloads all dependencies of a package into the current directory
-download-debs() {
-	apt-get download $1 && apt-cache depends -i $1 | awk '/Depends:/ {print $2}' | xargs apt-get download
 }
 
 # RANDOM
