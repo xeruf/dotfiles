@@ -1,0 +1,13 @@
+source ~/.config/nvim/init/general.vim
+source ~/.config/nvim/init/keys.vim
+
+" see https://github.com/JetBrains/ideavim/blob/master/doc/emulated-plugins.md
+set argtextobj
+let g:argtextobj_pairs="(:),[:],{:},<:>"
+set surround
+set commentary
+set ReplaceWithRegister
+set multiple-cursors
+
+" see https://github.com/JetBrains/ideavim/blob/master/doc/set-commands.md
+set ideajoin
