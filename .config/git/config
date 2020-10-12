@@ -54,6 +54,10 @@
 	stv = --paginate status -v
 	stvv = --paginate status -vv
 
+	sta = stash
+	stp = stash pop
+	std = stash drop
+
 	r = remote -v
 	b = branch -vv
 	ref = reflog
@@ -61,22 +65,27 @@
 	head = rev-parse --short HEAD
 	root = rev-parse --show-toplevel
 	curbranch = symbolic-ref --short HEAD
-
-	lo = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
-	l = !git --no-pager lo -5
-	my = lo --author erus
-	standup = lo --since yesterday --author erus --all
+  
+	l = pull
+	lg = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
+	ln = !git --no-pager lg -5
+	my = lg --author erus
+	standup = lg --since yesterday --author erus --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
-	# List all branches with their last updates
-	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/
+	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
 	dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
 	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{u} || echo origin/$(git curbranch)
 
+	a = add -u
+	aa = add -u .
 	ap = add -p
 	c = commit -v
 	co = checkout
+	cb = checkout -b
 	cp = cherry-pick
+	rb = rebase
+	rbc = rebase --continue
 	p = push
 	pf = push --force-with-lease
 	fs = !git fetch && git st
@@ -84,8 +93,8 @@
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
 
 	rh = reset HEAD~
-	rhh = reset --hard
-	rhhu = !git reset --hard $(git upstream)
+	rs = reset --keep
+	ru = reset --keep @{u}
 	unstage = reset HEAD --
 	gcr = !git gc && git repack -a -d
 	
