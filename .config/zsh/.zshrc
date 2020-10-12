@@ -173,19 +173,11 @@ for file in $CONFIG_SHELLS/*; do source $file; done
 
 # AUTOMATICALLY ADDED SHIT
 
-if [ -d "~/.sdkman" ]; then
-    export SDKMAN_DIR="~/.sdkman"
-    [[ -s "~/.sdkman/bin/sdkman-init.sh" ]] && source "~/.sdkman/bin/sdkman-init.sh"
-fi
-
-# added by travis gem
-[ -f /home/janek/.travis/travis.sh ] && source /home/janek/.travis/travis.sh
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
-[[ ! -f $CONFIG_ZSH/.p10k.zsh ]] || source $CONFIG_ZSH/.p10k.zsh
+test -f $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
 
-[ -f $XDG_DATA_HOME/shell/.fzf.zsh ] && source $XDG_DATA_HOME/shell/.fzf.zsh
+test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
