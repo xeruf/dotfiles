@@ -3,7 +3,6 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
-
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "xerus"
@@ -38,7 +37,7 @@
 (setq auto-save-default t)
 (setq auto-save-interval 40)
 
-(setq backup-directory-alist `(("" . "~/.emacs.d/backups/")))
+(setq backup-directory-alist `(("" . (expand-file-name "backups" user-emacs-directory))))
 (setq delete-old-versions t
   kept-new-versions 6
   kept-old-versions 2
@@ -46,11 +45,13 @@
 (setq vc-make-backup-files t)
 
 (setq undo-tree-auto-save-history t)
-(setq undo-tree-history-directory-alist `(("" . "~/.emacs.d/backups/undo/")))
+(setq undo-tree-history-directory-alist `(("" . (expand-file-name "backups/undo" user-emacs-directory))))
 
 (setq amalgamating-undo-limit 5)
 
 ; (advice-add 'undo-auto--last-boundary-amalgamating-number :override #'ignore)
+
+(load! "./local.el" nil t)
 
 ; ORG
 
@@ -58,17 +59,20 @@
 
 (setq org-image-actual-width 300)
 
+(defvar user-data-dir "~/data")
+
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/daten/1-projects")
-(setq org-agenda-files (apply 'append
+(let ((default-directory user-data-dir))
+  (setq org-directory (expand-file-name "1-projects"))
+  (setq org-agenda-files (apply 'append
 			      (mapcar
 			       (lambda (directory)
 				 (directory-files-recursively
 				  directory org-agenda-file-regexp))
-			       '("~/daten/Dropbox/dokumente/notes" "~/daten/1-projects" "~/daten/2-standards" "~/daten/3-resources"))))
-; (setq org-agenda-files '("~/daten/Dropbox/dokumente/notes" "~/daten/1-projects" "~/daten/2-standards" "~/daten/3-resources"))
-(setq org-roam-directory "~/daten/2-standards/org-roam")
+			       '("Dropbox/dokumente/notes" "1-projects" "2-standards" "3-resources"))))
+  (setq org-roam-directory (expand-file-name "2-standards/org-roam"))
+)
 
 (setq default-directory org-directory)
 
