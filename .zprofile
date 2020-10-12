@@ -7,6 +7,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/pass"
 export TIMEWARRIORDB="$XDG_DATA_HOME/timewarrior"
 export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
  # zsh dirs
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export _Z_DATA="$XDG_DATA_HOME/zsh/z"
@@ -16,7 +17,7 @@ export HISTFILE="$XDG_DATA_HOME/zsh/history"
 export EDITOR=/usr/bin/nvim
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 # red stderr
-export LD_PRELOAD="/opt/stderred/build/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
+test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
  # enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
