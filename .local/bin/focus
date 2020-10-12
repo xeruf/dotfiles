@@ -1,5 +1,3 @@
-#!/bin/sh
-MUSIC="$HOME/daten/music"
 playlistPath="$MUSIC/Playlists"
 result="$(test "$1" && (find $playlistPath -iname "focus-$1.m3u8" | grep . || find $playlistPath -iname "$1.m3u*" | grep . || find $MUSIC -iname "*$1*") || echo "$playlistPath/focus.m3u8" )"
 vp "$result"

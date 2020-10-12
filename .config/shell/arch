@@ -1,0 +1,8 @@
+which pacman >/dev/null || return
+
+# Arch aliases
+alias pac='sudo pacman'
+alias pacs='pac -Syu --needed'
+alias pacr='pac -R'
+alias yays='yay -Syu --needed'
+

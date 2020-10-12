@@ -1,5 +1,6 @@
-MUSIC="$HOME/daten/music"
-AUDIO="$HOME/daten/audio"
+export DATA="$(test -d $HOME/data && echo $HOME/data || $HOME/daten)"
+export MUSIC="$DATA/music"
+export AUDIO="$DATA/audio"
 MUSIC_RAW="$AUDIO/songs/_raw"
 
 edpl() {
