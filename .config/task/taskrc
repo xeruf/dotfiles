@@ -105,6 +105,12 @@ report.meeting.labels=ID,Description,Scheduled,Urgency
 report.meeting.filter=status:pending limit:9 (+phys or +msg or +menial)
 report.meeting.sort=urgency-
 
+report.relax.description=Brainless tasks for the evening on the computer
+report.relax.columns=id,description.desc,due.relative,urgency
+report.relax.labels=ID,Description,Scheduled,Urgency
+report.relax.filter=status:pending limit:9 +pc (+menial or +msg or +passive)
+report.relax.sort=urgency-
+
 # General config
 bulk=5
 search.case.sensitive=no
