@@ -10,6 +10,7 @@ alias info='info --vi-keys'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
 editright() {
+	echo "Editing $1..."
 	test -O "$1" && $EDITOR "$1" || sudoedit "$1"
 }
 
