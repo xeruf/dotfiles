@@ -115,7 +115,7 @@ gitremote() {
   git:*)  echo "$1" ;;
   *)  test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
     test "$3" = "btl" && 3="betweenthelinesev"
-    echo "git@git${1:-hub}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
+    echo "git@${1:-github}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
   esac
 }
 
@@ -129,7 +129,7 @@ gitclone() {
 gitfork() {
   builtin cd "$projects_dir/_forks"
   gitclone hub "$1" "" "$3" --recurse-submodules
-  test "$2" && git remote add upstream "$(gitremote hub "$1" "$2")"
+  test "$2" && git remote add upstream "$(gitremote github "$1" "$2")"
   git remote -v
 }
 

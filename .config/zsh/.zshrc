@@ -42,6 +42,7 @@ plugins=(
 	fast-syntax-highlighting
 	zsh-autosuggestions
 	zsh-vim-mode
+	history-substring-search
 )
 
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
