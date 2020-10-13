@@ -37,7 +37,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true" # DOn't mark untracked files as dirty - spe
 plugins=(
 	#git
 	gitfast
-	git-auto-fetch
+	#git-auto-fetch
 	z
 	fast-syntax-highlighting
 	zsh-autosuggestions

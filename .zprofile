@@ -1,13 +1,18 @@
-. ~/.profile
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
  # adjust programs to use xdg
+export XAUTHORITY="$XDG_CACHE_HOME/Xauthority"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/pass"
-export TIMEWARRIORDB="$XDG_DATA_HOME/timewarrior"
 export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
-export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
+export XAUTHORITY="$XDG_CACHE_HOME/Xauthority"
+export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+
+export TIMEWARRIORDB="$XDG_DATA_HOME/timewarrior"
+export TASKRC="$XDG_CONFIG_HOME/task/taskrc"
+export TASKDATA="$XDG_DATA_HOME/task"
  # zsh dirs
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export _Z_DATA="$XDG_DATA_HOME/zsh/z"
