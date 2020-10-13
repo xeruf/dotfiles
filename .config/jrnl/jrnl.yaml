@@ -1,8 +1,8 @@
 colors:
   body: none
-  date: none
-  tags: none
-  title: none
+  date: green
+  tags: yellow
+  title: blue
 default_hour: 0
 default_minute: 0
 editor: nvim
@@ -11,10 +11,8 @@ highlight: true
 indent_character: '|'
 journals:
   default: ~/daten/Dropbox/dokumente/notes/journal/jrnl.txt
-  life: ~/daten/Dropbox/dokumente/notes/journal/life.txt
   nug: ~/daten/Dropbox/dokumente/notes/journal/nugnug.txt
-  work: ~/daten/Dropbox/dokumente/notes/journal/work.txt
-linewrap: 79
+linewrap: 99
 tagsymbols: '@'
 template: false
 timeformat: '%Y-%m-%d %H:%M'
