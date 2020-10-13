@@ -28,7 +28,8 @@
 
 (map! :leader "u" 'evil-prev-buffer
       :leader "i" 'evil-next-buffer
-      :leader "bq" 'doom/save-and-kill-buffer)
+      :leader "bq" 'doom/save-and-kill-buffer
+      :leader "mj" 'org-insert-heading)
 
 (desktop-save-mode 1)
 
