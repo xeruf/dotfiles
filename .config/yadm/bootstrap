@@ -16,9 +16,10 @@ sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/lo
 
 # Fix Chrysalis for keyboardio - https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting
 if test ! -f /etc/udev/rules.d/keyboardio.rules; then
-	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", SYMLINK+="model01", TAG+="seat", TAG+="uaccess", RUN+="/home/janek/.local/bin/update-keyboard-layout.sh"' | sudo tee /etc/udev/rules.d/keyboardio.rules
+	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", SYMLINK+="model01", TAG+="seat", TAG+="uaccess", RUN+="'"$HOME/.local/bin/update-keyboard-layout\"" | sudo tee /etc/udev/rules.d/keyboardio.rules
 	sudo udevadm control -R
 	sudo udevadm trigger -v /dev/ttyACM0
+	
 	#sudo systemctl disable ModemManager
 fi
 
@@ -44,7 +45,7 @@ echo "@reboot root $(which iptables-restore) < /etc/iptables.rules" | sudo tee /
 # Workrave
 sudo sed -i 's|Exec=workrave|Exec=sh -c "workrave \& sleep 1; dbus-send --session --dest=org.workrave.Workrave --type=method_call /org/workrave/Workrave/Core org.workrave.CoreInterface.SetOperationMode string:normal"|' /usr/share/applications/workrave.desktop
 ln -sfv /usr/share/applications/workrave.desktop $XDG_CONFIG_HOME/autostart
-echo "  0,20,40	*	*	*	*	janek	pgrep workrave || XAUTHORITY='$HOME/.Xauthority' DISPLAY=:0 /usr/bin/workrave" | sudo tee /etc/cron.d/workrave
+echo "  0,20,40	*	*	*	*	janek	pgrep workrave || XAUTHORITY='$XDG_CACHE_HOME/Xauthority' DISPLAY=:0 /usr/bin/workrave" | sudo tee /etc/cron.d/workrave
 
 # Cron logging
 echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
