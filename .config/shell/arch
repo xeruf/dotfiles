@@ -1,4 +1,4 @@
-which pacman >/dev/null || return
+which pacman >/dev/null || return 0
 
 # Arch aliases
 alias pac='sudo pacman'

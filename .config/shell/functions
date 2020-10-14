@@ -24,7 +24,7 @@ edconf() {
 	touch "$conf_cache"
 	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
 	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra"; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
-	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -9 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & editright "$sel")
+	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & editright "$sel")
 }
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
@@ -100,12 +100,13 @@ rpl() {
 		}"
 }
 
+
 # Recover stray swap files from neovim
 alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs -r nvim"
 alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r rm"
 
 # Applications
-alias dict="(builtin cd $(dirname $(locate -n 2 /dict.txt)) && rlwrap perl dictcc-helper.pl)"
+alias dict="(builtin cd $XDG_DATA_HOME/dictcc && rlwrap perl dictcc-helper.pl)"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
