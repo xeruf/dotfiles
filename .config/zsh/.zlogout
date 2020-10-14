@@ -1,2 +1,1 @@
-echo "user-zlogout">>/var/tmp/testi
-/usr/local/bin/timew stop
+/usr/local/bin/timew stop 2>/dev/null

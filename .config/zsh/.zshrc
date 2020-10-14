@@ -1,9 +1,9 @@
 # Commands
-if test "$PWD" = ~ && test "$0" !=  "$SHELL"; then
+if test "$PWD" = "$HOME" && test "$0" !=  "$SHELL"; then
 	neofetch --config $XDG_CONFIG_HOME/neofetch/config-short.conf
 	task next limit:3
 	timew | head -3
-fi
+fi 2>/dev/null || return 0
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -179,6 +179,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
-test -f $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
+test -s $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
 
-test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
+test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh || return 0
