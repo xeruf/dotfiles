@@ -217,7 +217,17 @@ alias f1='find -mindepth 1 -maxdepth 1'
 which perl-rename >/dev/null && alias lowercase='perl-rename "y/A-Z/a-z/"' || alias lowercase='rename "y/A-Z/a-z/"'
 
 mkcd() {
-	mkdir -p $1 && cd $1
+	mkdir -p "$1" && cd "$1"
+}
+
+# mv with automatic sudo if neccessary
+smv() {
+	test -w "$1" && test -w "$(dirname $2)" && mv "$@" || sudo mv "${@}"
+}
+
+# Rename the file, keep it in its directory
+mvf() {
+	smv "$1" "$(dirname $1)/$2"
 }
 
 # Creates directory $2 and moves $1 into it
