@@ -1,9 +1,15 @@
 # Shell aliases & functions for Zsh, works almost completely for Bash as well
 
+if test "$ZSH_NAME" = "zsh"; then
+alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
+alias -g G="| grp"
+alias -g X="| xargs"
+fi
+
 ulimit -c unlimited # Enable core dumps
 
-export LESS=-R
-which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2)
+which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
+
 alias info='info --vi-keys'
 
 # Some aliases
@@ -47,10 +53,6 @@ edbin() {
   case "$file" in $HOME) yadm add "$file";; esac
 }
 
-alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
-alias -g G="| grp"
-alias -g X="| xargs"
-
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() { builtin cd "$@" && command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3 }
 
@@ -87,8 +89,6 @@ alias vlch="vlc -H | ${PAGER:-less}"
 alias sc='sudo systemctl'
 alias scrw='sudo systemctl restart display-manager'
 
-alias drag='dragon -x -a'
-
 alias grp='grep --line-number --ignore-case --binary-files=without-match --directories=skip'
 alias grpr='grp --recursive'
 # Use grep and sed to replace $1 with $2 recursively
@@ -116,9 +116,6 @@ test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -P
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 #fi
 
-# Fix broken mime messages
-alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-database /usr/share/mime'
-
 # Find zmv in man because I need to look it up all the time ^^
 man() {
 	(test "$1" = "zmv" && LESS="$LESS+/^ *zmv *\\[" /usr/bin/man zshcontrib) || /usr/bin/man "$@"
@@ -126,51 +123,6 @@ man() {
 
 sedcomment() { sed -i 's/$1/#\0/' "${@:2}" }
 seduncomment() { sed -i 's/#\($1\)/\0/' "${@:2}" }
-
-mozedit() (
-	set -eo pipefail
-	file="$1"
-	tmpfile="/tmp/$(basename $1).tmp"
-	unsetopt multios # https://stackoverflow.com/a/58261480
-	# ( [[ -t 0 ]] && echo 'STDIN is attached to TTY' ) || cat
-	{ echo -en '\x02\x21\x4C\x18TT\x0\x0' && dd if="$file" bs=1 skip=12 } 2>&1 >"$tmpfile" | head -1 | cut -d+ -f1 | xargs printf "%04x\n" | read len
-	tmpfile2="${tmpfile}2"
-	cat "$tmpfile" | sed "s/TT/\\x${len:2:2}\\x${len:0:2}/" | unlz4 >"$tmpfile2"
-	cat "$tmpfile2" | sed "$2" | lz4 -l | dd bs=1 skip=8 seek=12 of="$file" conv=notrunc
-)
-
-theme_save="$XDG_CACHE_HOME/theme"
-#theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
-theme_default="dark"
-theme() {
-	theme="$1"
-	if test "$2" = "kde"
-	then kcmshell5 kcm_lookandfeel
-	elif test "$theme" != "$THEME" -a "$2" != "q"
-	then kcmshell5 kcm_lookandfeel &
-	fi
-	export THEME="$theme"
-	echo "$theme">"$theme_save"
-
-	#mozfile=$(find $HOME/.mozilla/firefox/ -maxdepth 2 -name addonStartup.json.lz4 | grep ".test")
-	case "$theme" in
-		(light)
-			export BAT_THEME="OneHalfLight"
-			konsoleprofile colors="Light"
-			sed -i 's/#\(include.*\/light-256.theme\)/\1/' "$XDG_CONFIG_HOME/task/taskrc"
-			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/'
-			;;
-		(dark)
-			export BAT_THEME="OneHalfDark"
-			konsoleprofile colors="Breeze"
-			sed -i 's/^include.*light-256.theme/#\0/' "$XDG_CONFIG_HOME/task/taskrc"
-			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/'
-			;;
-	esac
-}
-export THEME=$(cat "$theme_save" 2> /dev/null)
-export THEME=${THEME:-$theme_default}
-theme $THEME
 
 updateDeps() {
 	name="$1"
@@ -385,10 +337,11 @@ pdiff() {
 genssh() {
 	mkdir -p ~/.ssh
 	test -f ~/.ssh/id_rsa.pub || ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N "" -C ${1:-$(hostname)}
+	cat ~/.ssh/id_rsa.pub
 	if test "$OSTYPE" = "cygwin"
 	then cat ~/.ssh/id_rsa.pub>/dev/clipboard
-	else xclip -sel clip < ~/.ssh/id_rsa.pub | cat ~/.ssh/id_rsa.pub
-	fi && echo "SSH Public key copied to clipboard"
+	else xclip -sel clip 2>/dev/null < ~/.ssh/id_rsa.pub
+	fi && echo "SSH Public key copied to clipboard" || return 0
 }
 
 createproject() {

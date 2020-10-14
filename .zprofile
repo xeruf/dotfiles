@@ -21,6 +21,7 @@ export HISTFILE="$XDG_DATA_HOME/zsh/history"
 # environment
 export EDITOR=/usr/bin/nvim
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export LESS=-R
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
