@@ -1,2 +1,5 @@
 export XDG_DATA_DIRS="$HOME/.local/xdg:$XDG_DATA_DIRS"
 export KDEHOME="$XDG_DATA_HOME/kdehome"
+
+# Update keyboard layout to US if keyboardio is connected
+$HOME/.local/bin/update-keyboard-layout

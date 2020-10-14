@@ -34,6 +34,3 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
-
-# Update keyboard layout to US if keyboardio is connected
-$HOME/.local/bin/update-keyboard-layout

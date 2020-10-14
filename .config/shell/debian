@@ -65,7 +65,7 @@ aptrepoinstall() {
 # Usage: ghrelease USER REPO [PATTERN]
 ghrelease() {
 	result=$(curl -s "https://api.github.com/repos/$1/$2/releases/latest" | grep -o "http.*${3:-deb}" | awk '{ print length(), $0}' | sort -n | cut -d' ' -f2-)
-	echo "$result" | grep amd64 || echo "$result"
+	echo "$result" | command grep amd64 || echo "$result"
 }
 
 # Installs a local or remote(http/https) deb package and removes it after installation

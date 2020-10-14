@@ -387,8 +387,8 @@ genssh() {
 	test -f ~/.ssh/id_rsa.pub || ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N "" -C ${1:-$(hostname)}
 	if test "$OSTYPE" = "cygwin"
 	then cat ~/.ssh/id_rsa.pub>/dev/clipboard
-    else xclip -sel clip < ~/.ssh/id_rsa.pub
-    fi && echo "SSH Public key copied to clipboard"
+	else xclip -sel clip < ~/.ssh/id_rsa.pub | cat ~/.ssh/id_rsa.pub
+	fi && echo "SSH Public key copied to clipboard"
 }
 
 createproject() {
