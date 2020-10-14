@@ -115,7 +115,7 @@ gitremote() {
   git:*)  echo "$1" ;;
   *)  test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
     test "$3" = "btl" && 3="betweenthelinesev"
-    echo "git@${1:-github}.com:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
+    echo "git@${1:-github.com}:${3:-xerus2000}/${2:-$(basename $PWD)}.git" ;;
   esac
 }
 

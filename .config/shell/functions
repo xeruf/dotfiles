@@ -70,7 +70,6 @@ alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && rm -rf ${TIMEWARRIORDB} && m
 # Quick shortcuts
 alias c='clear'
 alias v='nvim'
-alias sudo='sudo -v; sudo '
 
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
