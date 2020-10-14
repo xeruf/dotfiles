@@ -6,7 +6,10 @@ sudo sysctl --system
 
 # Update sudoers configuration
 echo "Defaults	editor=/usr/bin/nvim" | sudo tee /etc/sudoers.d/editor
-echo "Defaults	timestamp_timeout=30" | sudo tee /etc/sudoers.d/timeout
+echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
+ # Password-free reboot
+echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /sbin/poweroff" | sudo tee /etc/sudoers.d/shutdown
+
 
 ## Hardware
 printf '\nHardware\n'
