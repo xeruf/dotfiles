@@ -31,6 +31,8 @@
       :leader "bq" 'doom/save-and-kill-buffer
       :leader "mj" 'org-insert-heading)
 
+(setq initial-major-mode 'org-mode)
+
 (desktop-save-mode 1)
 
 ;; Backups & auto-saves
