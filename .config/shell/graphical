@@ -1,6 +1,6 @@
 test "$DISPLAY" || return 0
 
-alias drag='dragon -x -a'
+which dragon >/dev/null && alias drag='dragon -x -a' || alias drag='dragon-drag-and-drop -x -a'
 
 mozedit() (
 	set -eo pipefail
