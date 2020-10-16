@@ -73,7 +73,7 @@ context.work=+work
 context.fog=+comm or +admin or +move or +config or +browse
 
 # Reports
-report.inbox.description=Interesting tasks without project
+report.inbox.description=Relevant tasks without project
 report.inbox.columns=id,priority,tags,scheduled.countdown,due.relative,description.desc,url,urgency
 report.inbox.labels=ID,Prio,Tags,⏰,Description,Url,Urg
 report.inbox.filter=status:pending project: -config -consume
