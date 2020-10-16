@@ -10,6 +10,10 @@ echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
  # Password-free reboot
 echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /sbin/poweroff" | sudo tee /etc/sudoers.d/shutdown
 
+sudo mkdir -p /etc/systemd/system/getty@tty1.service.d /etc/systemd/system/getty@tty2.service.d /etc/systemd/system/getty@tty3.service.d
+echo "[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" | sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
 ## Hardware
 printf '\nHardware\n'
@@ -31,8 +35,8 @@ printf '\nSoftware\n'
 
 echo 'text/csv; sc-im "%s"; edit=sc-im "%s"; compose=sc-im "%s"; description="CSV Document"; nametemplate=%s.csv' | tee $HOME/.mailcap
 
-# Colorize Pacman
-test -f /etc/pacman.conf && sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+# Colorize Pacman & enable multilib
+test -f /etc/pacman.conf && sudo sed -i 's/#Color/Color/' /etc/pacman.conf && sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
 
 # Block internet at night & on weekdays in the morning to force focus
 # https://askubuntu.com/a/124512 and https://blog.sleeplessbeastie.eu/2018/06/21/how-to-create-iptables-firewall-using-custom-chains/
@@ -52,7 +56,7 @@ echo "  0,20,40	*	*	*	*	janek	pgrep workrave || XAUTHORITY='$XDG_CACHE_HOME/Xaut
 
 # Cron logging
 echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
-sudo service rsyslog restart
+sudo service rsyslog restart || sudo systemctl restart rsyslog
 
 ## Finalize
-sudo service cron reload
+sudo service cron reload || sudo systemctl reload cronie
