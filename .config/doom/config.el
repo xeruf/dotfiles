@@ -73,9 +73,9 @@
 			       (lambda (directory)
 				 (directory-files-recursively
 				  directory org-agenda-file-regexp))
-			       '("Dropbox/dokumente/notes" "1-projects" "2-standards" "3-resources"))))
-  (setq org-roam-directory (expand-file-name "2-standards/org-roam"))
+			       '("1-projects" "2-standards" "3-resources"))))
 )
+(setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
 
 (setq default-directory org-directory)
 

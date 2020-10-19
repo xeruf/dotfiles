@@ -10,8 +10,8 @@ encrypt: false
 highlight: true
 indent_character: '|'
 journals:
-  default: ~/daten/Dropbox/dokumente/notes/journal/jrnl.txt
-  nug: ~/daten/Dropbox/dokumente/notes/journal/nugnug.txt
+  default: ~/data/2-standards/journal/jrnl.txt
+  nug: ~/data/2-standards/journal/nugnug.txt
 linewrap: 99
 tagsymbols: '@'
 template: false
