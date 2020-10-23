@@ -74,42 +74,57 @@ context.fog=+comm or +admin or +move or +config or +browse
 
 # Reports
 report.inbox.description=Relevant tasks without project
-report.inbox.columns=id,priority,tags,scheduled.countdown,due.relative,description.desc,url,urgency
+report.inbox.columns=id,priority,tags,scheduled.countdown,due.relative,description.truncated_count,url,urgency
 report.inbox.labels=ID,Prio,Tags,⏰,Description,Url,Urg
 report.inbox.filter=status:pending project: -config -consume
 report.inbox.sort=urgency-
 
-report.next.columns=id,depends,priority,tags,scheduled.relative,due.relative,project,description.count,urgency
+report.next.columns=id,depends,priority,tags,scheduled.relative,due.relative,project,description.truncated_count,urgency
 report.next.labels=ID,Deps,Prio,Tags,,⏰,Proj,Description,Urg
 report.next.filter=status:pending limit:20
 
 report.open.description=All non-completed tasks
-report.open.columns=id,depends,priority,tags,scheduled.relative,due.relative,project,description.count,urgency
+report.open.columns=id,depends,priority,tags,scheduled.relative,due.relative,project,description.truncated_count,urgency
 report.open.labels=ID,Deps,Prio,Tags,,⏰,Proj,Description,Urg
 report.open.filter=-DELETED -COMPLETED -PARENT
 
 report.waitfor.description=Tasks waiting for external work
-report.waitfor.columns=id,tags,due.relative,project,description.count,urgency
+report.waitfor.columns=id,tags,due.relative,project,description.truncated_count,urgency
 report.waitfor.labels=ID,Tags,⏰,Proj,Description,Urg
 report.waitfor.filter=+waitfor
 
 report.break.description=Physical tasks for a break
-report.break.columns=id,description.desc,due.relative,urgency
+report.break.columns=id,description.truncated_count,due.relative,urgency
 report.break.labels=ID,Description,Scheduled,Urgency
 report.break.filter=status:pending limit:9 (+phys or +move)
 report.break.sort=urgency-
 
 report.meeting.description=Mundane tasks that don't need a specific location
-report.meeting.columns=id,description.desc,due.relative,urgency
+report.meeting.columns=id,description.truncated_count,due.relative,urgency
 report.meeting.labels=ID,Description,Scheduled,Urgency
 report.meeting.filter=status:pending limit:9 (+phys or +msg or +menial)
 report.meeting.sort=urgency-
 
 report.relax.description=Brainless tasks for the evening on the computer
-report.relax.columns=id,description.desc,due.relative,urgency
+report.relax.columns=id,description.truncated_count,due.relative,urgency
 report.relax.labels=ID,Description,Scheduled,Urgency
 report.relax.filter=status:pending limit:9 +pc (+menial or +msg or +passive)
 report.relax.sort=urgency-
+
+report.upcoming.columns=id,description.truncated_count,due.relative
+report.upcoming.labels=ID,Description,Date
+report.upcoming.filter=status:pending
+report.upcoming.sort=urgency-
+
+report.minimal.columns=id,description.truncated_count
+report.minimal.labels=ID,Description
+report.minimal.filter=status:pending
+report.minimal.sort=urgency-
+
+report.desc.columns=description.truncated_count
+report.desc.labels=Description
+report.desc.filter=status:pending
+report.desc.sort=urgency-
 
 # General config
 bulk=5
