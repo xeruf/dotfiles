@@ -20,6 +20,9 @@ editright() {
 	(test ! -f "$1" -o -O "$1") && $EDITOR "$1" || sudoedit "$1"
 }
 
+# Underline arg
+highlight() { echo "[4m$1[0m" }
+
 alias dedup='awk '"'"'!a[$0]++'"'"
 edconf() {
 	conf_cache_dir="$XDG_CACHE_HOME/edconf"
@@ -29,7 +32,7 @@ edconf() {
 	mkdir -p "$conf_cache_dir"
 	touch "$conf_cache"
 	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
-	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra"; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
+	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra"; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
 	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & editright "$sel")
 }
 
@@ -48,7 +51,7 @@ edshell() {
 }
 
 edbin() {
-  file="$( (which $1 || echo "$HOME/.local/bin/$1") | tail -1 )"
+  file="$(f=$(which $1) && test -f "$f" && echo $f || echo "$HOME/.local/bin/$1")"
   editright "$file"
   case "$file" in $HOME) yadm add "$file";; esac
 }
@@ -67,7 +70,7 @@ t() {
   if test "$#" -eq 0
   then tn
   else if test "$1" = "do"
-    then test "$2" -gt 0 && task mod sched:today "${@:2}" || task add sched:today "${@:2}"
+    then test "$2" -gt 0 2>/dev/null && task mod sched:today "${@:2}" || task add sched:today "${@:2}"
     else task "$@"
     fi
   fi

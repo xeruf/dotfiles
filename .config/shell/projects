@@ -23,7 +23,7 @@ listprojects() {
     fi
 }
 
-# Underlines the project names
+# Underline the project names
 highlight() { echo "[4m$1[0m" }
 
 # Lists all projects and evaluates the given command.
