@@ -4,5 +4,10 @@ which pacman >/dev/null || return 0
 alias pac='sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R'
-alias yays='yay -Syu --needed'
+alias yays='yay -S --needed'
+alias yayr='yay -R'
+yas() {
+  pkg=$(yay -Pc | cut -d'	' -f1 | fzf --preview 'yay -Si {}')
+  test "$pkg" && echo "Install $pkg..." && yay -S "$pkg"
+}
 

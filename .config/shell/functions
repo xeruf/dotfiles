@@ -17,7 +17,7 @@ alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
 editright() {
 	echo "Editing $1..."
-	test -O "$1" && $EDITOR "$1" || sudoedit "$1"
+	(test ! -f "$1" -o -O "$1") && $EDITOR "$1" || sudoedit "$1"
 }
 
 alias dedup='awk '"'"'!a[$0]++'"'"
@@ -48,7 +48,7 @@ edshell() {
 }
 
 edbin() {
-  file="$( (which $1 || find $HOME/.local/bin -name "$1*" | grep . -m 1 || echo "$HOME/.local/bin/$1") | tail -1 )"
+  file="$( (which $1 || echo "$HOME/.local/bin/$1") | tail -1 )"
   editright "$file"
   case "$file" in $HOME) yadm add "$file";; esac
 }
@@ -63,8 +63,16 @@ swap() {
 }
 
 # Task management & time tracking
-alias t='task'
-alias tl='tasklite'
+t() {
+  if test "$#" -eq 0
+  then tn
+  else if test "$1" = "do"
+    then test "$2" -gt 0 && task mod sched:today "${@:2}" || task add sched:today "${@:2}"
+    else task "$@"
+    fi
+  fi
+}
+
 alias tw='timew'
 twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
 alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && rm -rf ${TIMEWARRIORDB} && mkdir -p ${TIMEWARRIORDB}/data && :> ${TIMEWARRIORDB}/timewarrior.cfg && $SHELL )'
@@ -184,35 +192,10 @@ cl() {
 	ls --almost-all --group-directories-first --file-type
 }
 
-# Show type & contents of given files or PWD
-b() {
-	#if test $# -gt 1
-	#then
-	#  for arg in "$@"; do
-	#    b --pager=never "$arg"
-	#  done
-	#else
-	  arg=$(test $# -gt 0 && echo "${@: -1}" || echo .)
-	  file $arg | grep -v --color=never directory
-	  case "$(file --dereference $arg)" in
-	  	*directory) ls -l --almost-all --human-readable --group-directories-first --file-type --dereference-command-line "$@";;
-	  	*text*) bat --style=numbers,header "$@";;
-	  esac
-	#fi
-}
-wh() { b $(which "$@"); }
-
-# Go up a number of dirs
-up() {
-	if [[ $# < 1 ]] ; then
-		cd ..
-	else
-		CDSTR=""
-		for i in {1..$1} ; do
-			CDSTR="../$CDSTR"
-		done
-		cd $CDSTR
-	fi
+# like "which", but shows contents if it resolves to a file
+wh() {
+	res=$(which "$@")
+	test -f "$res" && b "$res" || echo "$res"
 }
 
 # shows size statistics for subfolders
@@ -228,7 +211,7 @@ alias f1='find -mindepth 1 -maxdepth 1'
 
 # FILES
 
-alias lowercase='rename "y/A-Z/a-z/"'
+which perl-rename >/dev/null && alias lowercase='perl-rename "y/A-Z/a-z/"' || alias lowercase='rename "y/A-Z/a-z/"'
 
 mkcd() {
 	mkdir -p $1 && cd $1
@@ -316,9 +299,11 @@ clean() {
 		done
 	fi
 
-	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
-	test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
-	export aptclean_last=$aptclean_cur
+	if test -f "/var/log/apt/history.log"; then
+		aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
+		test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
+		export aptclean_last=$aptclean_cur
+	fi
 
 	highlight "e to delete empty folders"
 	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
