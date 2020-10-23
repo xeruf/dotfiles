@@ -49,7 +49,7 @@ let g:firenvim_config = {
             \ 'cmdline': 'firenvim',
             \ 'priority': 0,
             \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]), div[role="textbox"]:not([aria-label="Search"])',
-            \ 'takeover': 'always',
+            \ 'takeover': 'never',
         \ },
         \ '.*notion\.so.*': { 'priority': 9, 'takeover': 'never', },
         \ '.*docs\.google\.com.*': { 'priority': 9, 'takeover': 'never', },

@@ -66,6 +66,9 @@
 	root = rev-parse --show-toplevel
 	curbranch = symbolic-ref --short HEAD
   
+	f = fetch
+	fa = fetch --all
+
 	l = pull
 	lg = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	ln = !git --no-pager lg -5

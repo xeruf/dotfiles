@@ -29,7 +29,7 @@ test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so$
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
  # fzf defaults
 export FZF_DEFAULT_OPTS='--select-1 --exit-0 --tiebreak=end,length --history=/var/tmp/fzf-history --ansi --bind="alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {}),change:top,left-click:execute(xdg-open {})"'
-export FZF_DEFAULT_COMMAND="fd --hidden --type file --color=always"
+export FZF_DEFAULT_COMMAND="fd --hidden --type file --color=always --no-ignore-vcs"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
  # ctest
 export CTEST_PROGRESS_OUTPUT=1
