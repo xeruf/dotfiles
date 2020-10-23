@@ -58,16 +58,17 @@
 
 ; ORG
 
-(require 'org)
-
-(setq org-image-actual-width 300)
-
 (defvar user-data-dir "~/data" "Location of the main user data")
+
+(setq org-image-actual-width 200)
+
+(set-file-template! 'org-mode :ignore t)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (let ((default-directory user-data-dir))
   (setq org-directory (expand-file-name "1-projects"))
+  (require 'org)
   (setq org-agenda-files (apply 'append
 			      (mapcar
 			       (lambda (directory)
