@@ -31,9 +31,14 @@
       :leader "bq" 'doom/save-and-kill-buffer
       :leader "mj" 'org-insert-heading)
 
+(setq evil-want-fine-undo t)
+
 (setq initial-major-mode 'org-mode)
 
 (desktop-save-mode 1)
+
+(setq whitespace-global-modes -1)
+(whitespace-mode -1)
 
 ;; Backups & auto-saves
 
