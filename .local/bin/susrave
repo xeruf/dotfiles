@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# Sets Workrave mode to quiet and waits the given amount of minutes (default: 10)
+# If no amount is given or the -f flag is provided, it checks whether a fullscreen application is running and if no, exits
+# On exit or Ctrl-C (SIGINT) it sets the Workrave mode back to normal
+
+while true; do
+	case $1 in
+		(-q) quiet=1; shift 1;;
+		(-f) fullscreen=1; shift 1;;
+		(*) break;;
+	esac
+done
+
+getFullscreen() {
+	# See https://askubuntu.com/a/1265587
+	# Get screen size
+	root_geo=$(xwininfo -root | awk -F'[ +x]' '$3 ~ /-geometry/ {printf "%dx%d",$4/'"$(xrandr | grep ' connected ' | wc -l)"',$5}')
+	# Check if any window fills the screen
+	xwininfo -root -tree | grep $root_geo | grep -qv "\(Desktop\|has no name\)"
+}
+
+setWorkraveOperationMode() {
+    dbus-send --session --dest=org.workrave.Workrave --type=method_call \
+    /org/workrave/Workrave/Core org.workrave.CoreInterface.SetOperationMode \
+    string:"$1"
+}
+
+resetWorkraveMode() {
+    test "$quiet" || echo "Setting Workrave operation mode to normal"
+	setWorkraveOperationMode "normal"
+}
+trap resetWorkraveMode EXIT INT
+
+test "$quiet" || echo "Silencing workrave"
+setWorkraveOperationMode "quiet"
+while true; do
+	sleep ${1:-10}m
+	test "$fullscreen" && getFullscreen || break
+done
