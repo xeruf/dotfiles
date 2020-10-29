@@ -1,0 +1,2 @@
+#!/bin/sh
+note "box/$(date +%F)-$1"

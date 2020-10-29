@@ -1,0 +1,5 @@
+#!/bin/sh
+launch ferdi
+launch firefox MainThread
+launch jetbrains-clion
+timew

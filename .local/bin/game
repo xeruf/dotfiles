@@ -1,0 +1,4 @@
+#!/bin/sh
+steam >/dev/null 2>&1 &
+discord >/dev/null 2>&1 &
+
