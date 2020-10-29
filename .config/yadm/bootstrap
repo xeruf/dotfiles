@@ -17,7 +17,8 @@ echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /sbin/poweroff" | sudo tee
 
 highlight "Reduce system startup & shutdown timeout"
 sudo mkdir -p /etc/systemd/system.conf.d /etc/systemd/user.conf.d
-echo "DefaultTimeoutStartSec=5s
+echo "[Manager]
+DefaultTimeoutStartSec=5s
 DefaultTimeoutStopSec=10s" | sudo tee /etc/systemd/system.conf.d/boot.conf /etc/systemd/user.conf.d/boot.conf
 
 highlight "Default to current user in tty1,2,3"

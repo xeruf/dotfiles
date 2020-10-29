@@ -61,11 +61,11 @@ urgency.uda.priority.L.coefficient=-2
 urgency.due.coeffient=7
 urgency.scheduled.coeffient=5
 urgency.blocking.coefficient=3
-urgency.uda.recurDue.coefficient=-3
+urgency.uda.recurDue.coefficient=-2
  # Tags
 urgency.next.coefficient=9
-urgency.config.coefficient=-2
-urgency.reflect.coefficient=-3
+urgency.config.coefficient=-1
+urgency.reflect.coefficient=-2
 
 # Context
 context.dev=+dev
@@ -102,23 +102,23 @@ report.break.sort=urgency-
 report.meeting.description=Mundane tasks that don't need a specific location
 report.meeting.columns=id,description.truncated_count,due.relative,urgency
 report.meeting.labels=ID,Description,Scheduled,Urgency
-report.meeting.filter=status:pending limit:9 (+phys or +msg or +menial)
+report.meeting.filter=status:pending limit:9 (+phys or +menial)
 report.meeting.sort=urgency-
 
 report.relax.description=Brainless tasks for the evening on the computer
 report.relax.columns=id,description.truncated_count,due.relative,urgency
 report.relax.labels=ID,Description,Scheduled,Urgency
-report.relax.filter=status:pending limit:9 +pc (+menial or +msg or +passive)
+report.relax.filter=status:pending limit:9 +pc (+menial or +write or +consume or +audio)
 report.relax.sort=urgency-
 
-report.upcoming.columns=id,description.truncated_count,due.relative
-report.upcoming.labels=ID,Description,Date
+report.upcoming.columns=id,due.relative,description.truncated_count
+report.upcoming.labels=ID,Date,Description
 report.upcoming.filter=status:pending
 report.upcoming.sort=urgency-
 
 report.minimal.columns=id,description.truncated_count
 report.minimal.labels=ID,Description
-report.minimal.filter=status:pending
+report.minimal.filter=status:pending -waitfor
 report.minimal.sort=urgency-
 
 report.desc.columns=description.truncated_count

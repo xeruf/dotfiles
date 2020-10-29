@@ -55,6 +55,7 @@
 	stvv = --paginate status -vv
 
 	sta = stash
+	stl = stash list
 	stp = stash pop
 	std = stash drop
 
