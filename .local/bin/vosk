@@ -9,7 +9,7 @@ import subprocess
 
 SetLogLevel(0)
 
-modelBase = '/home/janek/data/projects/_forks/vosk-api/python/example/models'
+modelBase = os.path.join(os.getenv('XDG_DATA_HOME', os.environ['HOME']), 'vosk/models')
 modelPath = os.path.join(modelBase, sys.argv[2] if len(sys.argv) > 2 else 'daanzu')
 if not os.path.exists(modelPath):
     print (f"Please download a model from https://alphacephei.com/vosk/models and unpack it to {modelPath}.", file=sys.stderr)
@@ -24,13 +24,19 @@ process = subprocess.Popen(['ffmpeg', '-loglevel', 'quiet', '-i',
                             '-ar', str(sample_rate) , '-ac', '1', '-f', 's16le', '-'],
                             stdout=subprocess.PIPE)
 
+def getText(result):
+    res = json.loads(result)
+    if not 'result' in res:
+        return res['text']
+    sec = res['result'][0]['start']
+    time = "%02d:%02d" % (sec // 60, sec % 60)
+    return "%s %s" % (time, res['text'])
+
 while True:
     data = process.stdout.read(4000)
     if len(data) == 0:
         break
     if rec.AcceptWaveform(data):
-        res = json.loads(rec.Result())
-        print (res['text'])
+        print(getText(rec.Result()))
 
-res = json.loads(rec.FinalResult())
-print (res['text'])
+print(getText(rec.FinalResult()))

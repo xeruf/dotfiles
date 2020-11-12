@@ -4,6 +4,8 @@ if test "$ZSH_NAME" = "zsh"; then
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 alias -g G="| grp"
 alias -g X="| xargs"
+alias -g xdh="$XDG_DATA_HOME"
+alias -g xch="$XDG_CONFIG_HOME"
 fi
 
 ulimit -c unlimited # Enable core dumps
@@ -191,6 +193,19 @@ clearNpmCache() {
 alias rcd="cd $PWD"
 cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
 
+# Go up a number of dirs
+up() {
+	if [[ $# < 1 ]] ; then
+		cd ..
+	else
+		CDSTR=""
+		for i in {1..$1} ; do
+			CDSTR="../$CDSTR"
+		done
+		cd $CDSTR
+	fi
+}
+
 # Switch directory & ls
 cl() {
 	builtin cd $1
@@ -211,8 +226,9 @@ s() {
 # disk size usage information
 alias sd='df -B1M -x tmpfs  -x devtmpfs -x squashfs | awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" '"'"'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1000,$4/1000,$6; printf n}'"'"
 
-alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
-alias f1='find -mindepth 1 -maxdepth 1'
+alias f='noglob fd --no-ignore-vcs'
+#alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
+#alias f1='find -mindepth 1 -maxdepth 1'
 
 # FILES
 
@@ -234,7 +250,7 @@ mvf() {
 
 # Creates directory $2 and moves $1 into it
 mvk() {
-	mkdir -p $(dirname "$2")
+	mkdir -p $(case "$2" in (*/) echo "$2";; (*) dirname "$2";; esac)
 	mv "$1" "$2"
 }
 

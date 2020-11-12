@@ -12,6 +12,6 @@
   file $arg | grep -v --color=never directory
   case "$(file --dereference $arg)" in
   	*directory) ls -l --color=auto --almost-all --human-readable --group-directories-first --file-type --dereference-command-line "$@";;
-  	*text*) bat --style header "$@";;
+  	*text*|*JSON*) bat --style header "$@";;
   esac
 #fi
