@@ -56,6 +56,7 @@
 
 	sta = stash
 	stl = stash list
+	sts = stash show -v
 	stp = stash pop
 	std = stash drop
 
@@ -69,17 +70,19 @@
   
 	f = fetch
 	fa = fetch --all
+	l = !git pull --rebase --autostash || (>&2 echo "Error - aborting rebase!" && git rebase --abort)
 
-	l = pull
-	lg = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
-	ln = !git --no-pager lg -5
-	my = lg --author erus
-	standup = lg --since yesterday --author erus --all
+	lg = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
+	lo = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
+	ln = !git --no-pager lo -5
+	my = lo --author erus
+	standup = lo --since yesterday --author erus --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
 	dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
-	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{u} || echo origin/$(git curbranch)
+	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
+	sup = !git branch --set-upstream-to @{push}
 
 	a = add -u
 	aa = add -u .
@@ -98,14 +101,14 @@
 
 	rh = reset HEAD~
 	rs = reset --keep
-	ru = reset --keep @{u}
+	ru = reset --keep @{upstream}
 	unstage = reset HEAD --
 	gcr = !git gc && git repack -a -d
 	
-	ready = rebase -i @{u}
+	ready = rebase -i @{upstream}
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
-	sm = !git submodule init && git submodule update
+	sm = submodule update --init --recursive
 	
 	# yadm
 	add-git = !yadm add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git

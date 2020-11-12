@@ -64,7 +64,7 @@ gitrebranch() {
 gitrmbranch() {
   branch=${1:-$(git curbranch)}
   git push -d $(git rev-parse --abbrev-ref $branch@{u} | sed 's/\// /' || echo origin $branch)
-  test $1 || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -f4)
+  test $1 || git checkout main || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -f4)
   git branch -D $branch
 }
 
@@ -87,7 +87,7 @@ gitretag() {
 
 # Repo management {{{
 gitinit() {
-  git init
+  git init -b main
   git add .
   git commit -m "First strike"
   gitorigin "$@"
