@@ -26,22 +26,41 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
+(setq doom-font (font-spec :family "Fira Code" :size 22 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sans" :size 25))
+
+(setq display-line-numbers-type 'relative)
+
 (map! :leader "u" 'evil-prev-buffer
       :leader "i" 'evil-next-buffer
       :leader "bq" 'doom/save-and-kill-buffer
-      :leader "mj" 'org-insert-heading)
+      :leader "mj" 'org-insert-heading
+      :leader "aa" 'annotate-annotate
+      :leader "as" 'annotate-mode
+      )
 
+
+;; Undo
 (setq evil-want-fine-undo t)
+
+(setq undo-tree-auto-save-history t)
+(setq undo-tree-history-directory-alist `(("" . (expand-file-name "backups/undo" user-emacs-directory))))
+
+(setq amalgamating-undo-limit 5)
+
+; (advice-add 'undo-auto--last-boundary-amalgamating-number :override #'ignore)
+
+;; Global config
+(setq confirm-kill-emacs nil)
 
 (setq initial-major-mode 'org-mode)
 
 (desktop-save-mode 1)
 
-(setq whitespace-global-modes -1)
+(global-whitespace-mode -1)
 (whitespace-mode -1)
 
 ;; Backups & auto-saves
-
 (setq auto-save-default t)
 (setq auto-save-interval 40)
 
@@ -52,25 +71,21 @@
   version-control t)
 (setq vc-make-backup-files t)
 
-(setq undo-tree-auto-save-history t)
-(setq undo-tree-history-directory-alist `(("" . (expand-file-name "backups/undo" user-emacs-directory))))
+;; Data dirs
 
-(setq amalgamating-undo-limit 5)
-
-; (advice-add 'undo-auto--last-boundary-amalgamating-number :override #'ignore)
+(defvar user-data-dir "~/data" "Location of the main user data")
 
 (load! "./local.el" nil t)
 
 ; ORG
 
-(defvar user-data-dir "~/data" "Location of the main user data")
+;; Fix xdg-open - https://askubuntu.com/questions/646631/emacs-doesnot-work-with-xdg-open
+(setq process-connection-type nil)
 
 (setq org-image-actual-width 200)
 
 (set-file-template! 'org-mode :ignore t)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
 (let ((default-directory user-data-dir))
   (setq org-directory (expand-file-name "1-projects"))
   (require 'org)
@@ -99,10 +114,26 @@
 (add-hook 'org-mode-hook 'org-toggle-blocks)
 (add-hook 'org-mode-hook 'org-toggle-inline-images)
 (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
+(add-hook 'org-mode-hook (apply-partially 'whitespace-mode -1))
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+;; https://christiantietze.de/posts/2019/06/org-fold-heading/
+(defun ct/org-foldup ()
+  "Hide the entire subtree from root headline at point."
+  (interactive)
+  (while (ignore-errors (outline-up-heading 1)))
+  (org-flag-subtree t))
+
+(defun ct/org-shifttab (&optional arg)
+  (interactive "P")
+  (if (or (null (org-current-level))     ; point is before 1st heading, or
+          (and (= 1 (org-current-level)) ; at level-1 heading, or
+               (org-at-heading-p))
+          (org-at-table-p))              ; in a table (to preserve cell movement)
+      ; perform org-shifttab at root level elements and inside tables
+      (org-shifttab arg)
+      ; try to fold up elsewhere
+      (ct/org-foldup)))
+(define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
