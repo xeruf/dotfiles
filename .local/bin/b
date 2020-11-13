@@ -10,8 +10,9 @@
 #else
   arg=$(test $# -gt 0 && echo "${@:-1}" || echo .)
   file $arg | grep -v --color=never directory
-  case "$(file --dereference $arg)" in
+  case "$(file --dereference --mime $arg)" in
   	*directory) ls -l --color=auto --almost-all --human-readable --group-directories-first --file-type --dereference-command-line "$@";;
-  	*text*|*JSON*) bat --style header "$@";;
+	*binary*) ;;
+  	*) bat --style header "$@";;
   esac
 #fi
