@@ -20,7 +20,7 @@ alias editenv='sudoedit /etc/environment'
 editright() {
 	test ! -f "$1" && mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1")
 	echo "Editing $1..."
-	test -O "$1" && $EDITOR "$1" || sudoedit "$1"
+	(test -O "$1" || (test ! -f "$1" && test -O $(dirname "$1"))) && $EDITOR "$1" || sudoedit "$1"
 }
 
 # Underline arg

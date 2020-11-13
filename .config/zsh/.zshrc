@@ -164,11 +164,7 @@ alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
+which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 
 for file in $CONFIG_SHELLS/*; do source $file; done
 
