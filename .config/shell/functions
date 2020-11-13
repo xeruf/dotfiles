@@ -16,8 +16,9 @@ alias info='info --vi-keys'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
 editright() {
+	test ! -f "$1" && mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1")
 	echo "Editing $1..."
-	(test ! -f "$1" -o -O "$1") && $EDITOR "$1" || sudoedit "$1"
+	test -O "$1" && $EDITOR "$1" || sudoedit "$1"
 }
 
 # Underline arg
@@ -82,7 +83,7 @@ alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && rm -rf ${TIMEWARRIORDB} && m
 
 # Quick shortcuts
 alias c='clear'
-alias v='nvim'
+alias v='editright'
 
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
@@ -96,6 +97,7 @@ alias syslog='less +F /var/log/syslog'
 alias println='printf "\n"'
 alias graphics='lspci -vnn | grep VGA --color=never'
 alias vlch="vlc -H | ${PAGER:-less}"
+alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
 
 alias sc='sudo systemctl'
 alias scrw='sudo systemctl restart display-manager'
@@ -222,7 +224,7 @@ mkcd() {
 
 # mv with automatic sudo if neccessary
 smv() {
-	test -w "$1" && test -w "$(dirname $2)" && mv "$@" || sudo mv "${@}"
+	test -w "$1" && test -w "$(dirname $2)" && mv "$@" || sudo mv "$@"
 }
 
 # Rename the file, keep it in its directory
