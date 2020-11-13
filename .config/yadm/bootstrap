@@ -13,7 +13,7 @@ highlight "Default sudoers configuration"
 echo "Defaults	editor=/usr/bin/nvim" | sudo tee /etc/sudoers.d/editor
 echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
 highlight "password-free reboot"
-echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /sbin/poweroff" | sudo tee /etc/sudoers.d/shutdown
+echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /usr/sbin/reboot, /sbin/poweroff, /usr/sbin/shutdown" | sudo tee /etc/sudoers.d/shutdown
 
 highlight "Reduce system startup & shutdown timeout"
 sudo mkdir -p /etc/systemd/system.conf.d /etc/systemd/user.conf.d
@@ -66,8 +66,8 @@ echo "  0,20,40	*	*	*	*	janek	pgrep workrave || XAUTHORITY='$XDG_CACHE_HOME/Xaut
 
 highlight "Cron logging"
 echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
-alias hasService="which service 2>/dev/null"
-hasService && sudo service rsyslog restart || sudo systemctl restart rsyslog
+hasService=$(which service 2>/dev/null)
+test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
 
 highlight "Reload cron"
-hasService && sudo service cron reload || sudo systemctl reload cronie
+test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
