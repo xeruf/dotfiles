@@ -18,9 +18,9 @@ alias info='info --vi-keys'
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
 editright() {
-	test ! -f "$1" && mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1")
+	test ! -f "$1" && ( mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1") )
 	echo "Editing $1..."
-	(test -O "$1" || (test ! -f "$1" && test -O $(dirname "$1"))) && $EDITOR "$1" || sudoedit "$1"
+	(test -w "$1" || (test ! -f "$1" && test -w $(dirname "$1"))) && $EDITOR "$1" || sudoedit "$1"
 }
 
 # Underline arg
@@ -35,7 +35,10 @@ edconf() {
 	mkdir -p "$conf_cache_dir"
 	touch "$conf_cache"
 	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
-	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra"; fd --type file --size -1m --hidden --exact-depth 1 . ~; fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
+	sel="$({ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
+		fd --hidden --type file --size -1m --max-depth 1 . ~;
+		fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } |
+		  dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
 	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & editright "$sel")
 }
 
@@ -43,10 +46,10 @@ CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 alias r="reset && exec zsh"
 edshell() {
 	case $1 in
-		"") file="$CONFIG_SHELL_FUNCTIONS";;
-		zsh) file="$CONFIG_ZSH/.zshrc";;
-		prof*) file="$HOME/.zprofile";;
-		*) file=$(find $CONFIG_SHELLS -name "$1*" | head -1);;
+		("") file="$CONFIG_SHELL_FUNCTIONS";;
+		(zsh) file="$CONFIG_ZSH/.zshrc";;
+		(prof*) file="$HOME/.zprofile";;
+		(*) file=$(find $CONFIG_SHELLS -name "$1*" | head -1);;
 	esac
 	checksum="$(md5sum $file)"
 	$EDITOR $file
@@ -56,7 +59,7 @@ edshell() {
 edbin() {
   file="$(f=$(which $1) && test -f "$f" && echo $f || echo "$HOME/.local/bin/$1")"
   editright "$file"
-  case "$file" in $HOME) yadm add "$file";; esac
+  case "$file" in ($HOME*) yadm add "$file";; esac
 }
 
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
