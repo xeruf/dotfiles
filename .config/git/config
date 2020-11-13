@@ -105,7 +105,7 @@
 	unstage = reset HEAD --
 	gcr = !git gc && git repack -a -d
 	
-	ready = rebase -i @{upstream}
+	ready = rebase -i @{push}
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
 	sm = submodule update --init --recursive
