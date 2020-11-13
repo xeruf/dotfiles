@@ -1,0 +1,4 @@
+#!/bin/sh
+# Find a commit that follows the given one
+# Second argument can be used to specify the search range - default HEAD
+git log --reverse --ancestry-path --pretty=%H $1..${2:-HEAD} | head -1

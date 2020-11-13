@@ -24,7 +24,7 @@ git() {
   command git "$@";
 }
 
-# Log local and upstream commits side by side - useful to check before forcing an action
+# Log local and upstream commits side by side - useful to check when the history has been manipulated
 glno() {
   loc="$(git l --color=always "$@")"
   upstream="$(git l --color=always $(git upstream) "$@")"
@@ -34,23 +34,6 @@ glno() {
   for i in `seq 1 $([ $a -le $b ] && echo "$a" || echo "$b")`; do
     printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $upstream | head -n $i | tail -1)"
   done
-}
-
-# Shortcuts
-alias gcap!='git commit --all --amend --no-edit && git push --force-with-lease'
-gitweek() { git my --after "$(date -d "Mon ${1:-1} weeks ago")" --before "$(date -d "Mon $(expr ${1:-1} - 1) weeks ago")" "${@:2}" }
-# Find a commit that follows the given one - second argument can be used to specify the search range
-gitchild() { git log --reverse --ancestry-path --pretty=%H $1..${2:-HEAD} | head -1; }
-
-# Caching
-gitrecache() {
-  git rm --cached --quiet -r ${1:-.}
-  git add ${1:-.}
-  git status -s
-}
-gitrestore() {
-  git reset -- "$@"
-  git checkout -- "$@"
 }
 
 # BRANCHES

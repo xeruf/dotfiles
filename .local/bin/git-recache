@@ -1,0 +1,6 @@
+#!/bin/sh
+# Untracks and adds back all files (or the given path)
+# Useful to remove tracked files after adding them to the gitignore
+git rm --cached --quiet -r ${1:-.}
+git add ${1:-.}
+git status -s

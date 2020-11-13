@@ -1,0 +1,4 @@
+#!/bin/sh
+# Restores the repository version of given files
+git reset -- "$@"
+git checkout -- "$@"
