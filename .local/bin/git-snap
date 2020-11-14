@@ -1,0 +1,3 @@
+#!/bin/sh
+# Save HEAD commit hash to "snap" file in git dir
+echo Snapped $(git rev-parse HEAD | tee "$(git rev-parse --git-dir)/${1:-snap}")

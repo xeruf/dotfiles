@@ -6,6 +6,7 @@ alias magit='nvim -c MagitOnly'
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
 git() {
   case "$1" in
+    reset) test "$2" = "--hard" && return 1;;
     config) ;;
     clone) ;;
     *) case "$PWD" in
@@ -24,42 +25,7 @@ git() {
   command git "$@";
 }
 
-# Log local and upstream commits side by side - useful to check when the history has been manipulated
-glno() {
-  loc="$(git l --color=always "$@")"
-  upstream="$(git l --color=always $(git upstream) "$@")"
-  a=$(echo $loc | wc -l)
-  b=$(echo $upstream | wc -l)
-  halfcols="$(($(tput cols) / 2))"
-  for i in `seq 1 $([ $a -le $b ] && echo "$a" || echo "$b")`; do
-    printf "%-${halfcols}s %s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $upstream | head -n $i | tail -1)"
-  done
-}
-
 # BRANCHES
-# Cleans up remote branches and removes branches where the remote-tracking branches got removed.
-alias gitrmgonebranches='git fetch -p && for branch in `git branch -vv | grep ": gone]" | cut -d" " -f3`; do git branch -D "$branch"; done'
-# Recreates the current or given branch with the state from master or another given branch.
-gitrebranch() {
-  branch=${1:-$(git curbranch)}
-  test "$(git curbranch)" = "$branch" && git checkout ${2:-master}
-  git branch -D $branch
-  git checkout -b $branch
-}
-# Removes the given branch locally and remotely.
-# With no argument it switches to the default branch and deletes the current branch.
-gitrmbranch() {
-  branch=${1:-$(git curbranch)}
-  git push -d $(git rev-parse --abbrev-ref $branch@{push} | sed 's/\// /' || echo origin $branch)
-  test $1 || git checkout main || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -f4)
-  git branch -D $branch
-}
-
-# Save HEAD commit hash to "snap" file in git dir
-gitsnap() { echo Snapped $(git rev-parse HEAD | tee "$(git dir)/${1:-snap}") }
-# Hard reset HEAD to commit in "snap"-file
-gitsnaprestore() { git reset --hard $(cat "$(git dir)/${1:-snap}") }
-
 # Remove list of tags local & remote
 gitrmtag() {
   declare -a refs

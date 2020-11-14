@@ -22,7 +22,7 @@
 	cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
 	prompt = false
 [difftool "nvim"]
-    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 
 # Automatically push to branch with matching name
 [push]
@@ -66,17 +66,18 @@
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
 	root = rev-parse --show-toplevel
+	dir = rev-parse --git-dir
 	curbranch = symbolic-ref --short HEAD
-  
+
 	f = fetch
 	fa = fetch --all
 	l = !git pull --rebase --autostash || (>&2 echo "Error - aborting rebase!" && git rebase --abort)
 
-	lg = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
-	lo = log --pretty=tformat:'%C(auto)%h -%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
+	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
+	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	ln = !git --no-pager lo -5
-	my = lo --author erus
-	standup = lo --since yesterday --author erus --all
+	my = lo --author [Jj]anek
+	standup = lo --since yesterday --author [Jj]anek --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
@@ -98,6 +99,7 @@
 	fs = !git fetch && git st
 	lu = !git pull upstream $(git curbranch)
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
+	cap = git commit --all --amend --no-edit && git push --force-with-lease
 
 	rh = reset HEAD~
 	rs = reset --keep
@@ -111,7 +113,7 @@
 	sm = submodule update --init --recursive
 	
 	# yadm
-	add-git = !yadm add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git
+	add-git = !yadm add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git $HOME/.local/bin/git-*
 	add-vim = !yadm add $XDG_CONFIG_HOME/nvim/init*
 	add-shell = !yadm add $CONFIG_SHELLS
 	add-bin = !yadm add -u $HOME/.local/bin
@@ -121,4 +123,3 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-
