@@ -3,3 +3,6 @@ export KDEHOME="$XDG_DATA_HOME/kdehome"
 
 # Update keyboard layout to US if keyboardio is connected
 $HOME/.local/bin/update-keyboard-layout
+
+# Swap semicolon and colon - https://unix.stackexchange.com/questions/615799/swap-semicolon-colon-to-p-unexpected-cause-semicolon-colon-affected-by-cpas-lock
+xmodmap -e "keycode  47 = colon semicolon colon semicolon"

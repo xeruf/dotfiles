@@ -163,10 +163,10 @@ alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
 
-# Preferred editor for local and remote sessions
-which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
-
 for file in $CONFIG_SHELLS/*; do source $file; done
+
+# Preferred editor
+which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 
 # AUTOMATICALLY ADDED SHIT
 
@@ -177,4 +177,8 @@ export NVM_DIR="$HOME/.nvm"
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
 test -s $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
 
-test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh || return 0
+test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
+
+which direnv >/dev/null && eval "$(direnv hook zsh)"
+
+return 0
