@@ -57,14 +57,14 @@
 
 (desktop-save-mode 1)
 
-(global-whitespace-mode -1)
-(whitespace-mode -1)
+;(global-whitespace-mode -1)
+;(whitespace-mode -1)
 
 ;; Backups & auto-saves
 (setq auto-save-default t)
 (setq auto-save-interval 40)
 
-(setq backup-directory-alist `(("" . (expand-file-name "backups" user-emacs-directory))))
+(setq backup-directory-alist (expand-file-name "backups" user-emacs-directory))
 (setq delete-old-versions t
   kept-new-versions 6
   kept-old-versions 2
@@ -114,7 +114,6 @@
 (add-hook 'org-mode-hook 'org-toggle-blocks)
 (add-hook 'org-mode-hook 'org-toggle-inline-images)
 (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
-(add-hook 'org-mode-hook (apply-partially 'whitespace-mode -1))
 
 ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
 (defun ct/org-foldup ()
