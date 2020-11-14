@@ -7,15 +7,16 @@ command! WS write <bar> source $MYVIMRC
 
 command! FormatJSON %!python -m json.tool
 command! DiffSwap :diffsp % " Diff for swap - replaced by 'chrisbra/Recover.vim'
+"command! for dictcc
 
 " Sane yanking
 map Y y$
 " Disable Ex mode - https://vi.stackexchange.com/q/457
 nnoremap Q @q
-
+ 
 let mapleader=" "
 
-nnoremap <leader>" ysiW"
+nmap <leader>" ysiW"
 
  " Alias write and quit to leader
 nnoremap <leader>q :wq<CR>

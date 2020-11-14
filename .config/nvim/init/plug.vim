@@ -38,6 +38,7 @@ Plug 'junegunn/fzf'              " File selection with :FZF
  " Browse
 Plug 'tyru/open-browser.vim'     " :OpenBrowser, :OpenBrowserSearch
 Plug 'tyru/open-browser-github.vim'
+Plug 'KabbAmine/zeavim.vim'	" Integrate with Zeal (Dash) offline documentation
 
 " QOL
 Plug 'farmergreg/vim-lastplace'       " Automatically jump to last edit position

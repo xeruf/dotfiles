@@ -1,7 +1,15 @@
 set termguicolors
 set mouse=a " Enable mouse in all modes
 
+" persist undo & backup files
 set undofile
+set backup
+let &backupdir=expand(stdpath('data') . '/backup')
+if !isdirectory(&backupdir)
+  execute "!mkdir " . &backupdir
+endif
+let &backupext="_" . strftime("%y%m%dT%H%M")
+
 set wildmode=longest,list,full " Auto-completion for cmdline
 set clipboard+=unnamedplus " Merge with system clipboard
 
