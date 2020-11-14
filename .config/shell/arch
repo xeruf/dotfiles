@@ -1,13 +1,23 @@
 which pacman >/dev/null || return 0
 
 # Arch aliases
-alias pac='sudo pacman'
+alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R'
-alias yays='yay -S --needed'
-alias yayr='yay -R'
+alias yays='noglob yay -S --needed'
+alias yayr='noglob yay -R'
+
+yzf() {
+  query=$(test "$1" = "Q" && echo " -l")
+  pos=$(test "$query" && echo 1 || echo 2)
+  yay --color always -$1$2 | sed "s/ /\t/g" | fzf --history=/var/tmp/fzf-history-yay --preview "echo {} | cut -f$pos | xargs yay --color always -$1 -i $query" | cut -f$pos
+}
 yas() {
-  pkg=$(yay -Pc | cut -d'	' -f1 | fzf --preview 'yay -Si {}')
+  pkg=$(yzf S l)
   test "$pkg" && echo "Install $pkg..." && yay -S "$pkg"
+}
+yar() {
+  pkg=$(yzf Q)
+  test "$pkg" && echo "Removing $pkg..." && yay -R "$pkg"
 }
 
