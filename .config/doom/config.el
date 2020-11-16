@@ -58,7 +58,7 @@
 (desktop-save-mode 1)
 
 ;(global-whitespace-mode -1)
-;(whitespace-mode -1)
+(whitespace-mode -1)
 
 ;; Backups & auto-saves
 (setq auto-save-default t)
