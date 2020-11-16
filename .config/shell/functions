@@ -13,6 +13,13 @@ ulimit -c unlimited # Enable core dumps
 which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
 
 alias info='info --vi-keys'
+unalias rd
+rd() {
+  test -d "$1" && find "$1" -type d -empty -delete || rm "$@"
+}
+rr() { mv "$@" /tmp }
+
+alias logoff="loginctl terminate-user $USER"
 
 # Some aliases
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
@@ -20,7 +27,10 @@ alias editenv='sudoedit /etc/environment'
 editright() {
 	test ! -f "$1" && ( mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1") )
 	echo "Editing $1..."
-	(test -w "$1" || (test ! -f "$1" && test -w $(dirname "$1"))) && $EDITOR "$1" || sudoedit "$1"
+	if test -w "$1" || (test ! -f "$1" && test -w $(dirname "$1"))
+	then $EDITOR "$1"
+	else sudoedit "$1"
+	fi
 }
 
 # Underline arg
@@ -89,7 +99,6 @@ alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && mv ${TIMEWARRIORDB} /tmp/twd
 # Quick shortcuts
 alias c='clear'
 alias v='editright'
-alias rm='rm -d'
 
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
