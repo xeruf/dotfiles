@@ -26,7 +26,7 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
-(setq doom-font (font-spec :family "Fira Code" :size 22 :weight 'semi-light)
+(setq doom-font (font-spec :family "Fira Code" :size 24 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sans" :size 25))
 
 (setq display-line-numbers-type 'relative)
@@ -42,34 +42,33 @@
 
 ;; Undo
 (setq evil-want-fine-undo t)
-
-(setq undo-tree-auto-save-history t)
-(setq undo-tree-history-directory-alist `(("" . (expand-file-name "backups/undo" user-emacs-directory))))
-
 (setq amalgamating-undo-limit 5)
+
+(global-undo-tree-mode t)
+(setq   undo-tree-auto-save-history t
+        undo-tree-history-directory-alist `(("." . ,(expand-file-name "backups/undo/" user-emacs-directory))))
 
 ; (advice-add 'undo-auto--last-boundary-amalgamating-number :override #'ignore)
 
 ;; Global config
-(setq confirm-kill-emacs nil)
+(setq   confirm-kill-emacs nil)
 
-(setq initial-major-mode 'org-mode)
+(setq   initial-major-mode 'org-mode)
 
-(desktop-save-mode 1)
+(desktop-save-mode t)
 
-;(global-whitespace-mode -1)
 (whitespace-mode -1)
 
 ;; Backups & auto-saves
-(setq auto-save-default t)
-(setq auto-save-interval 40)
+(setq   auto-save-default t
+        auto-save-interval 40)
 
-(setq backup-directory-alist (expand-file-name "backups" user-emacs-directory))
-(setq delete-old-versions t
-  kept-new-versions 6
-  kept-old-versions 2
-  version-control t)
-(setq vc-make-backup-files t)
+(setq   backup-directory-alist `(("." . ,(expand-file-name "backups/" user-emacs-directory))))
+(setq   delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t
+        vc-make-backup-files t)
 
 ;; Data dirs
 
@@ -80,11 +79,7 @@
 ; ORG
 
 ;; Fix xdg-open - https://askubuntu.com/questions/646631/emacs-doesnot-work-with-xdg-open
-(setq process-connection-type nil)
-
-(setq org-image-actual-width 200)
-
-(set-file-template! 'org-mode :ignore t)
+(setq   process-connection-type nil)
 
 (let ((default-directory user-data-dir))
   (setq org-directory (expand-file-name "1-projects"))
@@ -98,7 +93,10 @@
 )
 (setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
 
+(set-file-template! 'org-mode :ignore t)
 (setq default-directory org-directory)
+(setq org-read-date-prefer-future nil)
+(setq org-image-actual-width 100)
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
@@ -110,10 +108,12 @@
     (org-hide-block-all))
   (setq-local org-blocks-hidden (not org-blocks-hidden)))
 (define-key org-mode-map (kbd "C-c t") 'org-toggle-blocks)
+(define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
 
 (add-hook 'org-mode-hook 'org-toggle-blocks)
 (add-hook 'org-mode-hook 'org-toggle-inline-images)
 (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
+(add-hook 'org-mode-hook (apply-partially 'whitespace-mode -1))
 
 ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
 (defun ct/org-foldup ()
