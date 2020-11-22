@@ -24,14 +24,6 @@ alias logoff="loginctl terminate-user $USER"
 # Some aliases
 alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias editenv='sudoedit /etc/environment'
-editright() {
-	test ! -f "$1" && ( mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1") )
-	echo "Editing $1..."
-	if test -w "$1" || (test ! -f "$1" && test -w $(dirname "$1"))
-	then $EDITOR "$1"
-	else sudoedit "$1"
-	fi
-}
 
 # Underline arg
 highlight() { echo "[4m$1[0m" }
@@ -49,7 +41,7 @@ edconf() {
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
 		fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } |
 		  dedup | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")"
-	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & editright "$sel")
+	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
 }
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
@@ -68,7 +60,7 @@ edshell() {
 
 edbin() {
   file="$(f=$(which $1) && test -f "$f" && echo $f || echo "$HOME/.local/bin/$1")"
-  editright "$file"
+  edit "$file"
   case "$file" in ($HOME*) yadm add "$file";; esac
 }
 
@@ -98,7 +90,7 @@ alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && mv ${TIMEWARRIORDB} /tmp/twd
 
 # Quick shortcuts
 alias c='clear'
-alias v='editright'
+alias v='edit'
 
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'

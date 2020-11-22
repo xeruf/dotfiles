@@ -163,12 +163,11 @@ alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
 
-for file in $CONFIG_SHELLS/*; do source $file; done
-
-# Preferred editor
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 
-# AUTOMATICALLY ADDED SHIT
+for file in $CONFIG_SHELLS/*; do source $file; done
+
+# GENERATED SHIT
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -178,6 +177,8 @@ export NVM_DIR="$HOME/.nvm"
 test -s $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
 
 test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
+
+test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && source $XDG_CONFIG_HOME/broot/launcher/bash/br
 
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 

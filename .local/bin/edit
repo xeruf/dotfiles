@@ -1,0 +1,8 @@
+#!/bin/sh
+
+test ! -f "$1" && ( mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1") )
+echo "Editing $1..."
+if test -w "$1" || (test ! -f "$1" && test -w $(dirname "$1"))
+then $EDITOR "$1"
+else sudoedit "$1"
+fi
