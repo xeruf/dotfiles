@@ -195,7 +195,7 @@ clearNpmCache() {
 	npm install
 }
 
-# NAVIGATION & DISK
+# NAVIGATION
 
 alias rcd="cd $PWD"
 cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
@@ -219,25 +219,11 @@ cl() {
 	ls --almost-all --group-directories-first --file-type
 }
 
-# like "which", but shows contents if it resolves to a file
-wh() {
-	res=$(which "$@")
-	test -f "$res" && b "$res" || echo "$res"
-}
-
-# shows size statistics for subfolders
-s() {
-	case "$1" in [0-9]) local depth=$1; shift;; esac
-	sudo du --max-depth "${depth:-1}" -xhat 50M "$@" | sort -h | grep -v "^0"
-}
-# disk size usage information
-alias sd='df -B1M -x tmpfs  -x devtmpfs -x squashfs | awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" '"'"'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1000,$4/1000,$6; printf n}'"'"
+# FILES
 
 alias f='noglob fd --no-ignore-vcs'
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 #alias f1='find -mindepth 1 -maxdepth 1'
-
-# FILES
 
 which perl-rename >/dev/null && alias lowercase='perl-rename "y/A-Z/a-z/"' || alias lowercase='rename "y/A-Z/a-z/"'
 
