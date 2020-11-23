@@ -51,3 +51,6 @@
 
 (package! annotate)
 (package! visual-fill-column)
+(package! togetherly)
+(package! plantuml-mode)
+;(package! plantuml-mode :recipe (:local-repo "plantuml-mode"))

@@ -24,25 +24,31 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-
-(setq doom-font (font-spec :family "Fira Code" :size 24 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sans" :size 25))
+(setq   doom-theme 'doom-one
+        doom-font (font-spec :family "Fira Code" :size 24 :weight 'semi-light)
+        doom-variable-pitch-font (font-spec :family "sans" :size 25))
 
 (setq display-line-numbers-type 'relative)
 
-(map! :leader "u" 'evil-prev-buffer
-      :leader "i" 'evil-next-buffer
-      :leader "bq" 'doom/save-and-kill-buffer
-      :leader "mj" 'org-insert-heading
-      :leader "aa" 'annotate-annotate
-      :leader "as" 'annotate-mode
-      )
+(map!   :leader "u" 'evil-prev-buffer
+        :leader "i" 'evil-next-buffer
+        :leader "bq" 'doom/save-and-kill-buffer
+        :leader "mj" 'org-insert-heading
+        :leader "aa" 'annotate-annotate
+        :leader "as" 'annotate-mode
+        )
 
+(setq   plantuml-executable-path "nostderr"
+        plantuml-executable-args '("plantuml" "-headless")
+        plantuml-default-exec-mode 'executable
+        plantuml-output-type "png"
+        plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+        plantuml-java-args '("-Djava.awt.headless=true" "-jar")
+        )
 
 ;; Undo
-(setq evil-want-fine-undo t)
-(setq amalgamating-undo-limit 5)
+(setq   evil-want-fine-undo t)
+(setq   amalgamating-undo-limit 5)
 
 (global-undo-tree-mode t)
 (setq   undo-tree-auto-save-history t
@@ -68,7 +74,8 @@
         kept-new-versions 6
         kept-old-versions 2
         version-control t
-        vc-make-backup-files t)
+        vc-make-backup-files t
+        )
 
 ;; Data dirs
 
@@ -96,7 +103,8 @@
 (set-file-template! 'org-mode :ignore t)
 (setq default-directory org-directory)
 (setq org-read-date-prefer-future nil)
-(setq org-image-actual-width 100)
+(setq org-image-actual-width 200)
+(setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
@@ -113,7 +121,6 @@
 (add-hook 'org-mode-hook 'org-toggle-blocks)
 (add-hook 'org-mode-hook 'org-toggle-inline-images)
 (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
-(add-hook 'org-mode-hook (apply-partially 'whitespace-mode -1))
 
 ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
 (defun ct/org-foldup ()
@@ -150,5 +157,3 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-
-(load! "./togetherly.el")
