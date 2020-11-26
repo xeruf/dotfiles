@@ -25,8 +25,8 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq   doom-theme 'doom-one
-        doom-font (font-spec :family "Fira Code" :size 24 :weight 'semi-light)
-        doom-variable-pitch-font (font-spec :family "sans" :size 25))
+        doom-font (font-spec :family "Fira Code" :size 28 :weight 'semi-light)
+        doom-variable-pitch-font (font-spec :family "sans" :size 28))
 
 (setq display-line-numbers-type 'relative)
 
@@ -36,14 +36,6 @@
         :leader "mj" 'org-insert-heading
         :leader "aa" 'annotate-annotate
         :leader "as" 'annotate-mode
-        )
-
-(setq   plantuml-executable-path "nostderr"
-        plantuml-executable-args '("plantuml" "-headless")
-        plantuml-default-exec-mode 'executable
-        plantuml-output-type "png"
-        plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
-        plantuml-java-args '("-Djava.awt.headless=true" "-jar")
         )
 
 ;; Undo
@@ -103,8 +95,11 @@
 (set-file-template! 'org-mode :ignore t)
 (setq default-directory org-directory)
 (setq org-read-date-prefer-future nil)
-(setq org-image-actual-width 200)
+(setq org-image-actual-width t)
+
+; Exporting
 (setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
+(setq org-export-with-sub-superscripts nil)
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
@@ -118,8 +113,6 @@
 (define-key org-mode-map (kbd "C-c t") 'org-toggle-blocks)
 (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
 
-(add-hook 'org-mode-hook 'org-toggle-blocks)
-(add-hook 'org-mode-hook 'org-toggle-inline-images)
 (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
 
 ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
@@ -140,6 +133,24 @@
       ; try to fold up elsewhere
       (ct/org-foldup)))
 (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+
+;; PLANTUML
+
+(setq   plantuml-executable-path "nostderr"
+        plantuml-executable-args '("plantuml" "-headless")
+        plantuml-default-exec-mode 'executable
+        plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+        org-plantuml-jar-path plantuml-jar-path
+        plantuml-java-args '("-Djava.awt.headless=true" "-jar")
+        )
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+(with-eval-after-load 'org
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(other Babel languages
+   (plantuml . t)
+   )))
+
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;

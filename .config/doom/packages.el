@@ -53,4 +53,5 @@
 (package! visual-fill-column)
 (package! togetherly)
 (package! plantuml-mode)
+(package! ox-reveal)
 ;(package! plantuml-mode :recipe (:local-repo "plantuml-mode"))
