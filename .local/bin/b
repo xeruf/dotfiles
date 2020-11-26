@@ -6,5 +6,5 @@ file "$last" | grep -v --color=never directory
 case "$(file --dereference --mime "$last")" in
   *inode/directory*) ls -l --color=auto --human-readable --group-directories-first --file-type --dereference-command-line --all --reverse "$@";;
   *binary) ;;
-  *) $(test -r "$last" && echo "bat" || echo "sudo bat") --style header "$@";;
+  *) $(test -f "$last" -a ! -r "$last") bat --style header "$@";;
 esac

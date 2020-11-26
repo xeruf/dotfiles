@@ -1,4 +1,0 @@
-#!/bin/sh
-# like "which", but shows contents if it resolves to a file
-res=$(which "$@")
-test -r "$res" && b --plain "$res" || echo "$res"

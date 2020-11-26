@@ -19,6 +19,15 @@ rd() {
 }
 rr() { mv "$@" /tmp }
 
+alias j='jrnl'
+alias jn='jrnl -to today | bat --style=plain --pager="less +G"'
+
+# like "which", but shows contents if it resolves to a file
+wh() {
+  res=$(which "$@")
+  test -r "$res" && b --plain "$res" || echo "$res"
+}
+
 alias logoff="loginctl terminate-user $USER"
 
 # Some aliases
@@ -86,7 +95,7 @@ t() {
 
 alias tw='timew'
 twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
-alias twtest='( TIMEWARRIORDB=/tmp/timewarriordb && mv ${TIMEWARRIORDB} /tmp/twdb && mkdir -p ${TIMEWARRIORDB}/data && :> ${TIMEWARRIORDB}/timewarrior.cfg && $SHELL )'
+alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
 
 # Quick shortcuts
 alias c='clear'
