@@ -112,11 +112,15 @@
 
 	sm = submodule update --init --recursive
 	
+	cme = commit -v --edit --message
 	# yadm
-	add-git = !yadm add $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git $HOME/.local/bin/git-*
-	add-vim = !yadm add $XDG_CONFIG_HOME/nvim/init*
-	add-shell = !yadm add $CONFIG_SHELLS
-	add-bin = !yadm add -u $HOME/.local/bin
+	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git $HOME/.local/bin/git-*
+	cvim    = !yadm cme "config/nvim:"  -- $XDG_CONFIG_HOME/nvim/init*
+	cshell  = !yadm cme "config/shell:" -- $CONFIG_SHELLS
+	cbin    = !yadm cme "bin:"          -- $HOME/.local/bin
+
+	# data
+	journal = !git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
