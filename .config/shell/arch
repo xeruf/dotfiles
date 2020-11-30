@@ -1,5 +1,7 @@
 which pacman >/dev/null || return 0
 
+alias dragon='dragon-drag-and-drop'
+
 # Arch aliases
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'

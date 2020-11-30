@@ -3,8 +3,9 @@
 for last; do true; done
 last=${last:-.}
 file "$last" | grep -v --color=never directory
+stat -c 'Permissions: %A, Created: %.10w, Modified %.10y, Size: %s' "${@:-$last}"
 case "$(file --dereference --mime "$last")" in
-  *inode/directory*) ls -l --color=auto --human-readable --group-directories-first --file-type --dereference-command-line --all --reverse "$@";;
+  *inode/directory*) ls -l --color=auto --human-readable --group-directories-first --file-type --dereference-command-line --almost-all "$@";;
   *binary) ;;
   *) $(test -f "$last" -a ! -r "$last") bat --style header "$@";;
 esac

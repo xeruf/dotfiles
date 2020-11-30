@@ -31,7 +31,7 @@ export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
 export FZF_DEFAULT_OPTS='--select-1 --exit-0 --tiebreak=end,length --history=/var/tmp/fzf-history --ansi --bind="alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {}),del:execute(gio trash {}),change:top,left-click:execute(xdg-open {})"'
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
-export FZF_CTRL_T_COMMAND="$FD_BASE -d 4"
+export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
  # ctest
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1

@@ -15,7 +15,7 @@ which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) 
 alias info='info --vi-keys'
 unalias rd
 rd() {
-  test -d "$1" && find "$1" -type d -empty -delete || rm "$@"
+  test -d "$1" && find "$1" -type d -empty -printf "Removing %p\n" -delete || rm "$@"
 }
 rr() { mv "$@" /tmp }
 
