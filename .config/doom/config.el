@@ -53,9 +53,7 @@
 
 (setq   initial-major-mode 'org-mode)
 
-(desktop-save-mode t)
-
-(whitespace-mode -1)
+(whitespace-mode 0)
 
 ;; Backups & auto-saves
 (setq   auto-save-default t
@@ -95,11 +93,13 @@
 (set-file-template! 'org-mode :ignore t)
 (setq default-directory org-directory)
 (setq org-read-date-prefer-future nil)
-(setq org-image-actual-width t)
+(setq org-image-actual-width nil)
 
-; Exporting
+; Exporting - https://orgmode.org/manual/Export-Settings.html
 (setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
 (setq org-export-with-sub-superscripts nil)
+(setq org-export-with-tags nil)
+(setq org-export-with-tasks nil)
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)

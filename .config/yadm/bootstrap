@@ -62,11 +62,6 @@ sudo iptables -L OUTPUT | grep -q "^chain-times" || sudo iptables -A OUTPUT -j c
 sudo iptables-save | sudo tee /etc/iptables.rules
 echo "@reboot root $(which iptables-restore) < /etc/iptables.rules" | sudo tee /etc/cron.d/iptables-times
 
-highlight "Workrave"
-sudo sed -i 's|Exec=workrave|Exec=sh -c "workrave \& sleep 1; dbus-send --session --dest=org.workrave.Workrave --type=method_call /org/workrave/Workrave/Core org.workrave.CoreInterface.SetOperationMode string:normal"|' /usr/share/applications/workrave.desktop
-ln -sfv /usr/share/applications/workrave.desktop $XDG_CONFIG_HOME/autostart
-echo "  0,20,40	*	*	*	*	janek	pgrep workrave || XAUTHORITY='$XDG_CACHE_HOME/Xauthority' DISPLAY=:0 /usr/bin/workrave" | sudo tee /etc/cron.d/workrave
-
 highlight "Cron logging"
 echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
 hasService=$(which service 2>/dev/null)
