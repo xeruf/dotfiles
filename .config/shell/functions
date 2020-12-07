@@ -4,6 +4,7 @@ if test "$ZSH_NAME" = "zsh"; then
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 alias -g G="| grp"
 alias -g X="| xargs"
+alias -g X1="| xargs -n 1"
 alias -g xdh="$XDG_DATA_HOME"
 alias -g xch="$XDG_CONFIG_HOME"
 fi
@@ -114,8 +115,13 @@ alias println='printf "\n"'
 alias graphics='lspci -vnn | grep VGA --color=never'
 alias vlch="vlc -H | ${PAGER:-less}"
 alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
+alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
+alias mdo="pandoc -f markdown -t org --wrap preserve"
+alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
+alias mdoh="sed '/^#\+ /{s/#/*/g;N;s/\n$//}'"
 
 alias sc='sudo systemctl'
+alias scu='systemctl --user'
 alias scrw='sudo systemctl restart display-manager'
 
 alias grp='grep --line-number --ignore-case --binary-files=without-match --directories=skip'
