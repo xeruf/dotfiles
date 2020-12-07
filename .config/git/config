@@ -62,6 +62,7 @@
 
 	r = remote -v
 	b = branch -vv
+	ba = b -a
 	ref = reflog
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
@@ -121,6 +122,7 @@
 
 	# data
 	journal = !git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
+	note = !git cme "notes:" -- $(git root)/2-standards/notes
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f

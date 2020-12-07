@@ -81,7 +81,7 @@ gitremote() {
 gitclone() {
   remote=$(gitremote "$@")
   echo $remote
-  git clone $remote ${@:4}
+  git clone $remote ${@:4} || return $?
   cd "$(test $4 && echo $4 || basename ${remote/.git})"
 }
 
