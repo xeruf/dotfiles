@@ -72,7 +72,6 @@
 
 	f = fetch
 	fa = fetch --all
-	l = !git pull --rebase --autostash || (>&2 echo "Error - aborting rebase!" && git rebase --abort)
 
 	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
