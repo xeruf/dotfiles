@@ -104,9 +104,10 @@
 	rh = reset HEAD~
 	rs = reset --keep
 	ru = reset --keep @{upstream}
+	rg = rmgonebranches
 	unstage = reset HEAD --
 	gcr = !git gc && git repack -a -d
-	
+
 	ready = rebase -i @{push}
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 

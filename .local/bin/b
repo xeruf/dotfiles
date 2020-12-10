@@ -1,11 +1,16 @@
 #!/bin/sh
 # Show type & contents of given files or PWD
+
+# gets the last arg or current dir
 for last; do true; done
 last=${last:-.}
-file "$last" | grep -v --color=never directory
-stat -c 'Permissions: %A, Created: %.10w, Modified %.10y, Size: %s' "$last"
+
+file "$last" | grep -v --color=never 'directory$'
+test -e "$last" || exit 1
+
 case "$(file --dereference --mime "$last")" in
   *inode/directory*) ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --almost-all "$@";;
   *binary) ;;
   *) $(test -f "$last" -a ! -r "$last") bat --style header "$@";;
 esac
+stat -c 'Permissions: %A, Created: %.10w, Modified %.10y, Size: %s' "$last"

@@ -106,7 +106,12 @@ alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
 tr() { tree -a -L 2 --du -h -C "$@" | ${PAGER:-less} }
 
-alias xo='xdg-open'
+xo() {
+  while test $# -gt 0; do
+    xdg-open "$1"
+    shift
+  done
+}
 alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
 alias loc='noglob locate --basename'
 alias uloc='noglob sudo updatedb && locate --basename'
