@@ -50,28 +50,23 @@
 	lowSpeedTime = 3
 
 [alias]
+	# GET INFO
 	st = status -sb
 	stv = --paginate status -v
 	stvv = --paginate status -vv
 
-	sta = stash
-	stl = stash list
-	sts = stash show -v
-	stp = stash pop
-	std = stash drop
-
 	r = remote -v
 	b = branch -vv
 	ba = b -a
+
 	ref = reflog
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
 	root = rev-parse --show-toplevel
 	dir = rev-parse --git-dir
 	curbranch = symbolic-ref --short HEAD
-
-	f = fetch
-	fa = fetch --all
+	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
+	#dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
 
 	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
@@ -81,38 +76,51 @@
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
-	dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
-	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
-	sup = !git branch --set-upstream-to @{push}
-
+	# Local Changes
 	a = add -u
 	aa = add -u .
 	ap = add -p
 	c = commit -v
 	co = checkout
 	cb = checkout -b
+
 	cp = cherry-pick
 	rb = rebase
 	rbc = rebase --continue
-	p = push
-	pf = push --force-with-lease
-	fs = !git fetch && git st
-	lu = !git pull upstream $(git curbranch)
-	luu = !git pull upstream $(git curbranch) && git push --no-verify
-	cap = git commit --all --amend --no-edit && git push --force-with-lease
+
+	sta = stash
+	stl = stash list
+	sts = stash show -v
+	stp = stash pop
+	std = stash drop
 
 	rh = reset HEAD~
 	rs = reset --keep
 	ru = reset --keep @{upstream}
-	rg = rmgonebranches
 	unstage = reset HEAD --
-	gcr = !git gc && git repack -a -d
 
-	ready = rebase -i @{push}
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
+	# Housekeeping
+	gcr = !git gc && git repack -a -d
+	sup = !git branch --set-upstream-to @{push}
+
+	# Update from remote
+	f = fetch
+	fa = fetch --all
+	fs = !git fetch && git st
+	lu = !git pull upstream $(git curbranch)
+
+	rg = rmgonebranches
 	sm = submodule update --init --recursive
-	
+
+	# Change remote
+	luu = !git pull upstream $(git curbranch) && git push --no-verify
+	p = push
+	pf = push --force-with-lease
+	cap = git commit --all --amend --no-edit && git push --force-with-lease
+
+	# COMMIT SHORTHANDS
 	cme = commit -v --edit --message
 	# yadm
 	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git $HOME/.local/bin/git-*

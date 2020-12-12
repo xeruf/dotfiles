@@ -1,0 +1,5 @@
+#!/bin/sh
+# Interactive rebase onto the remote
+remote="$1"
+shift
+git rebase -i ${remote:-'@{push}'} "$@"
