@@ -96,6 +96,7 @@
 (setq org-image-actual-width nil)
 
 ; Exporting - https://orgmode.org/manual/Export-Settings.html
+(setq org-latex-pdf-export "latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")
 (setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
 (setq org-export-with-sub-superscripts nil)
 (setq org-export-with-tags nil)
