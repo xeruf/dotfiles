@@ -77,7 +77,7 @@ edbin() {
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() {
   test ! -e "$1" && test $# -eq 1 && cd $DATA/$1* && return
-  builtin cd "$1" &&
+  builtin cd $1 &&
     command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
 }
 
