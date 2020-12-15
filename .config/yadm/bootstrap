@@ -45,9 +45,20 @@ fi
 ## Software
 section "Software"
 
-highlight "Colorize Pacman & enable multilib"
-test -f /etc/pacman.conf && sudo sed -i 's/#Color/Color/' /etc/pacman.conf && sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
-
+highlight "Configure pacman"
+if test -f /etc/pacman.conf; then
+  sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+  sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
+  highlight "Reflector"
+  echo "--save /etc/pacman.d/mirrorlist
+  --protocol https
+  --country Germany
+  --latest 20
+  --sort rate" | sudo tee /etc/xdg/reflector/reflector.conf
+  sudo systemctl start reflector &
+  sudo systemctl enable reflector.timer
+fi
+  
 highlight "Block internet at night & on weekdays in the morning to force focus"
 # https://askubuntu.com/a/124512 and https://blog.sleeplessbeastie.eu/2018/06/21/how-to-create-iptables-firewall-using-custom-chains/
 sudo iptables --new-chain chain-times 2>/dev/null || sudo iptables --flush chain-times
