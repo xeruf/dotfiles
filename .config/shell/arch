@@ -12,14 +12,14 @@ alias yayr='noglob yay -R'
 yzf() {
   query=$(test "$1" = "Q" && echo " -l")
   pos=$(test "$query" && echo 1 || echo 2)
-  yay --color always -$1$2 | sed "s/ /\t/g" | fzf --history=/var/tmp/fzf-history-yay --preview "echo {} | cut -f$pos | xargs yay --color always -$1 -i $query" | cut -f$pos
+  yay --color always -$1$2 | sed "s/ /\t/g" | fzf --tiebreak=length --history=/var/tmp/fzf-history-yay --bind='left-click:ignore' --preview "echo {} | cut -f$pos | xargs yay --color always -$1 -i $query" "${@:3}" | cut -f$pos
 }
 yas() {
-  pkg=$(yzf S l)
-  test "$pkg" && echo "Install $pkg..." && yay -S "$pkg"
+  pkg=$(yzf S  l -q "$1" "${@:2}")
+  test "$pkg" && echo "Install $pkg..." && print -s "yay -S $pkg" && yay -S "$pkg"
 }
 yar() {
-  pkg=$(yzf Q)
-  test "$pkg" && echo "Removing $pkg..." && yay -R "$pkg"
+  pkg=$(yzf Q "" -q "$1" "${@:2}")
+  test "$pkg" && echo "Removing $pkg..." && print -s "yay -R $pkg" && yay -R "$pkg"
 }
 
