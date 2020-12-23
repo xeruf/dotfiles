@@ -42,12 +42,6 @@
 (setq   evil-want-fine-undo t)
 (setq   amalgamating-undo-limit 5)
 
-(global-undo-tree-mode t)
-(setq   undo-tree-auto-save-history t
-        undo-tree-history-directory-alist `(("." . ,(expand-file-name "backups/undo/" user-emacs-directory))))
-
-; (advice-add 'undo-auto--last-boundary-amalgamating-number :override #'ignore)
-
 ;; Global config
 (setq   confirm-kill-emacs nil)
 
@@ -80,6 +74,7 @@
 
 (let ((default-directory user-data-dir))
   (setq org-directory (expand-file-name "1-projects"))
+  (setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
   (require 'org)
   (setq org-agenda-files (apply 'append
 			      (mapcar
@@ -88,7 +83,6 @@
 				  directory org-agenda-file-regexp))
 			       '("1-projects" "2-standards" "3-resources"))))
 )
-(setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
 
 (set-file-template! 'org-mode :ignore t)
 (setq default-directory org-directory)
