@@ -1,4 +1,5 @@
-data/
-daten/
-games/
-.cache/
+/data/
+/daten/
+/games/
+/.cache/
+build/
