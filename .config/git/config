@@ -118,7 +118,7 @@
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
 	p = push
 	pf = push --force-with-lease
-	cap = git commit --all --amend --no-edit && git push --force-with-lease
+	cap = !git commit --all --amend --no-edit && git push --force-with-lease
 
 	# COMMIT SHORTHANDS
 	cme = commit -v --edit --message

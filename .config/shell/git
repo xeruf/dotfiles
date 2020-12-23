@@ -105,15 +105,15 @@ gitorigin() {
 
 # set repo as upstream or add a new remote
 gitupstream() {
-  if test "$2"
+  if test "$3"
   then
-    local name="$2"
-    git remote remove "$2" 2>/dev/null
+    local name="$3"
+    git remote remove "$3" 2>/dev/null
   else
     git remote get-url upstream 2>/dev/null && local name="$1" || local name="upstream"
   fi
   local origin="$(git remote get-url origin)"
-  git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/$(echo $origin | cut -d'/' -f2)"
+  git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/${2:-$(echo $origin | cut -d'/' -f2)}"
   git remote -v
 }
 # }}}
