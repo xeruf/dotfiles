@@ -4,8 +4,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
  # adjust programs to use xdg
-#export XAUTHORITY="$XDG_CACHE_HOME/Xauthority"
-#export XAUTHORITY="/tmp/Xauthority"
+export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export GOPATH="$XDG_DATA_HOME"/go

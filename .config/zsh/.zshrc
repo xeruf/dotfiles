@@ -12,7 +12,7 @@ fi 2>/dev/null || return 0
 #	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 #fi
 
-export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH:/opt/android/sdk/platform-tools
 
 export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
 export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"

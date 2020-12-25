@@ -59,6 +59,7 @@ autocmd BufNewFile *.sh,$HOME/.local/bin/* execute 'silent! 1s/.*/#!\/bin\/sh\r\
 
 set spelllang=en_us,de_de
 autocmd BufEnter *.txt setlocal ts=4 sw=4 formatoptions+=t
+autocmd BufEnter *jrnl*.txt setlocal formatoptions+=a
 autocmd FileType markdown setlocal wrap spell colorcolumn= " Spell checking & no guiding columns in markdown
 
  " Center on insert mode
