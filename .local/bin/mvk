@@ -1,9 +1,5 @@
 #!/bin/sh
-# Creates the last arg as directory and moves everything else into it
-
+# Creates the last arg as directory (or its parent if not ending in a slash) and moves everything else into it
 for last; do true; done
-
 mkdir -p $(case "$last" in (*/) echo "$last";; (*) dirname "$last";; esac)
-mv "$@"
-
-
+mv -n "$@"
