@@ -95,7 +95,7 @@ swap() {
 
 # Task management & time tracking
 t() {
-  if test "$#" -eq 0
+  if test "$#" -eq 0 && which tn >/dev/null
   then tn
   else if test "$1" = "do"
     then test "$2" -gt 0 2>/dev/null && task mod sched:today "${@:2}" || task add sched:today "${@:2}"

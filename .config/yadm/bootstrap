@@ -11,7 +11,7 @@ sudo sysctl --system
 
 highlight "Default sudoers configuration"
 echo "Defaults	editor=/usr/bin/nvim" | sudo tee /etc/sudoers.d/editor
-echo "Defaults	timestamp_timeout=20" | sudo tee /etc/sudoers.d/timeout
+echo "Defaults	timestamp_timeout=120" | sudo tee /etc/sudoers.d/timeout
 highlight "password-free reboot"
 echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /usr/sbin/reboot, /sbin/poweroff, /usr/sbin/shutdown" | sudo tee /etc/sudoers.d/shutdown
 
