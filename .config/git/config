@@ -109,7 +109,7 @@
 	f = fetch
 	fa = fetch --all
 	fs = !git fetch && git st
-	lu = !git pull upstream $(git curbranch)
+	lu = !git pull --rebase upstream ${1:-$(git curbranch)}
 
 	rg = rmgonebranches
 	sm = submodule update --init --recursive
@@ -131,6 +131,7 @@
 	# data
 	journal = !git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
 	note = !git cme "notes:" -- $(git root)/2-standards/notes
+	write = !git cme "writings:" -- $(git root)/2-standards/writing
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
