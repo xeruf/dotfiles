@@ -1,3 +1,4 @@
 #!/bin/sh
+# restarts VLS with the given paths
 killall -q vlc
 vlc --no-qt-error-dialogs --qt-start-minimized --qt-notification 0 --loop --random "$@" >/dev/null 2>&1 &
