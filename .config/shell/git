@@ -135,8 +135,8 @@ git-withdate() {
 gitedit() {
   git stash
   gitcommits -q $1
-  git reset --hard $1
-  git stash pop -q
+  git reset --keep $1
+  git stash pop
   git-withdate $1 commit --all --amend "${@:2}"
   gitcommits
 }

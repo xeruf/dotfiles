@@ -123,7 +123,7 @@
 	# COMMIT SHORTHANDS
 	cme = commit -v --edit --message
 	# yadm
-	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git/config $CONFIG_SHELLS/git $HOME/.local/bin/git-*
+	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git $CONFIG_SHELLS/git $HOME/.local/bin/git-*
 	cvim    = !yadm cme "config/nvim:"  -- $XDG_CONFIG_HOME/nvim/init*
 	cshell  = !yadm cme "config/shell:" -- $CONFIG_SHELLS
 	cbin    = !yadm cme "bin:"          -- $HOME/.local/bin

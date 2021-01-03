@@ -8,6 +8,7 @@
 .idea/caches
 .idea/markdown-*
 .idea/compiler.xml
+.idea/kotlinc.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/encodings.xml
