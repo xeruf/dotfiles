@@ -1,7 +1,8 @@
-# Underline
+# Headings
 section() { printf "\n[1m[4m$1[0m\n"; }
 highlight() { printf "[1m[3m$1[0m\n"; }
 
+## System
 section "System"
 
 highlight "Enable REISUB and increase watch limit for Intellij & co"
@@ -80,3 +81,6 @@ test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsy
 
 highlight "Reload cron"
 test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
+
+highlight "SSH Permissions"
+chmod og= ~/.ssh -R
