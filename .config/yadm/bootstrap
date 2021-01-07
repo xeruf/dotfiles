@@ -66,6 +66,10 @@ if test -f /etc/pacman.conf; then
   sudo systemctl start reflector &
   sudo systemctl enable reflector.timer
 fi
+
+highlight "Mixxx symlinks"
+mkdir -p ~/.mixxx
+ln -s -t ~/.mixxx ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
   
 highlight "Block internet at night & on weekdays in the morning to force focus"
 # https://askubuntu.com/a/124512 and https://blog.sleeplessbeastie.eu/2018/06/21/how-to-create-iptables-firewall-using-custom-chains/
