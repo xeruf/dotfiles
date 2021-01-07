@@ -11,6 +11,7 @@ highlight: true
 indent_character: '|'
 journals:
   default: ~/data/2-standards/notes/journal/jrnl.txt
+  intentions: ~/data/2-standards/notes/journal/intentions.txt
   nug: ~/data/2-standards/notes/journal/nugnug.txt
 linewrap: 99
 tagsymbols: '@'

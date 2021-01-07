@@ -43,3 +43,10 @@ export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
+
+if test -z "${DISPLAY}" && test "${XDG_VTNR}" -eq 1 ; then
+  echo "What do you want to do?"
+  read response
+  jrnl intentions "$response"
+  exec startx
+fi
