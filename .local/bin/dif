@@ -1,0 +1,3 @@
+#!/bin/sh
+# diff with pagination
+diff --color=always "$@" | less --quit-if-one-screen

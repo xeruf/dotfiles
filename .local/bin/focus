@@ -1,3 +1,6 @@
 playlistPath="$MUSIC/Playlists"
-result="$(test "$1" && (find -L $playlistPath -iname "focus-$1.m3u8" | grep . || find -L $playlistPath -iname "$1.m3u*" | grep . || find -L $MUSIC -iname "*$1*") | head -1 || echo "$playlistPath/focus.m3u8" )"
-test "$result" && vp "$result"
+test -z "$1" && vp "$playlistPath/focus.m3u8" ||
+(find -L $playlistPath -iname "focus-$1.m3u8" -print0 | grep --null-data . ||
+  find -L $playlistPath -iname "$1.m3u*" -print0 | grep --null-data . ||
+  find -L $MUSIC -iname "*$1*" -prune -exec find {} -size +2M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \;) |
+  xargs -0 vp
