@@ -11,7 +11,7 @@ alias info='info --vi-keys'
 
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
-da=$(cd $DATA/_* && pwd)
+da=$(cd $DATA/_* && pwd) 2>/dev/null
 d1=$(cd $DATA/1* && pwd)
 d2=$(cd $DATA/2* && pwd)
 d3=$(cd $DATA/3* && pwd)
