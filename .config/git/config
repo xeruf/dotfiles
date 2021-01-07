@@ -51,7 +51,7 @@
 
 [alias]
 	# GET INFO
-	st = status -sb
+	st = status --short --branch --show-stash
 	stv = --paginate status -v
 	stvv = --paginate status -vv
 
@@ -59,7 +59,7 @@
 	b = branch -vv
 	ba = b -a
 
-	ref = reflog
+	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
 	root = rev-parse --show-toplevel
