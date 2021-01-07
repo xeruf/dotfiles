@@ -28,6 +28,13 @@ echo "[Service]
 ExecStart=
 ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" | sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
+highlight '/etc/locale.conf'
+echo 'LANG=en_IE.UTF-8
+LANGUAGE=en_IE.UTF-8
+LC_ALL=en_IE.UTF-8
+LC_MONETARY=de_DE.UTF-8
+LC_COLLATE=C' | sudo tee /etc/locale.conf
+
 ## Hardware
 section 'Hardware'
 
