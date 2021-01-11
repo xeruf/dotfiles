@@ -1,6 +1,9 @@
 [core]
 	autocrlf = input
 	editor = nvim
+	pager = diffr | less -R
+[interactive]
+	diffFilter = diffr
 [submodule]
 	recurse = true
 [rerere]
@@ -75,6 +78,12 @@
 	standup = lo --since yesterday --author [Jj]anek --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
+
+	d = diff
+	dw = diff --color-words
+	dc = diff --color-words="[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+"
+
+	# MODIFY
 
 	# Local Changes
 	a = add -u
