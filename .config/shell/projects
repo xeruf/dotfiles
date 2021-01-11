@@ -4,7 +4,7 @@
 # The standard command I execute daily is "p status", it updates all projects and shows their status.
 
 # Common root for all projects
-projects_dir=${projects_dir:-$DATA/projects}
+projects_dir=${projects_dir:-$DATA/4-incubator/programming}
 
 # The max depth to search for when listing projects. The actual depth is this value minus one, since it searches for ".git" folders at that depth.
 projects_subfolder_level=4

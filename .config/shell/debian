@@ -12,7 +12,7 @@ snapinstall() {
 
 alias aptupdate='sudo apt-get update'
 alias aptremove='sudo apt-get remove'
-alias aptpurge='sudo apt-get purge'
+alias aptpurge='sudo apt-get purge --autoremove'
 alias aptclean='sudo apt-get clean && sudo apt-get autoremove'
 upgrade() {
 	if test -x /usr/bin/pkcon
