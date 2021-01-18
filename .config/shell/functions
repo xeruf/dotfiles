@@ -145,6 +145,10 @@ alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias scrw='sudo systemctl restart display-manager'
 
+alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
+alias jc='jcl -u'
+alias jcj='jcl -o json-pretty -u'
+
 alias grp='grep --line-number --ignore-case --binary-files=without-match --directories=skip'
 alias grpr='grp --recursive'
 # Use grep and sed to replace $1 with $2 recursively
