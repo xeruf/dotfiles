@@ -1,2 +1,0 @@
-#!/bin/sh
-git pull --rebase --recurse-submodules --autostash "$@" || (printf "\e[31;1mError - aborting rebase!\e[0m\n" >&2 && git rebase --abort)

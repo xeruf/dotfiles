@@ -1,0 +1,7 @@
+#!/bin/sh
+# Removes the given branch locally and remotely.
+# With no argument it switches to the default branch and deletes the current branch.
+branch=${1:-$(git curbranch)}
+echo "${@:-$branch}" | sed 's/\([^ ]\+\)/\1@{push}/g' | xargs git rev-parse --abbrev-ref --revs-only | sed 's/\// /' | git push -d
+test $1 || git checkout main || git checkout master || git checkout $(cat .git/refs/remotes/origin/HEAD | cut -d'/' -a)
+git branch -D "${@:-$branch}"

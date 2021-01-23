@@ -1,0 +1,3 @@
+#!/bin/sh
+case "$1" in [0-9]) depth=$1; shift;; esac
+tree -a -L ${depth:-3} --du -h -C "$@" | ${PAGER:-less}

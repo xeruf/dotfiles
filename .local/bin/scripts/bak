@@ -1,0 +1,2 @@
+#!/bin/sh
+test -e "$1.bak" && ((test -e "$1" && mv "$1" /tmp); mv -n "$1.bak" "$1") || mv -n "$1" "$1.bak"

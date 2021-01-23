@@ -1,2 +1,0 @@
-#!/bin/sh
-tree -a -L 3 --du -h -C "$@" | ${PAGER:-less}

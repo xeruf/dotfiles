@@ -1,9 +1,9 @@
 [core]
 	autocrlf = input
 	editor = nvim
-	pager = diffr | less -R
+	pager = diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less --RAW-CONTROL-CHARS --quit-on-intr
 [interactive]
-	diffFilter = diffr
+	diffFilter = diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33
 [submodule]
 	recurse = true
 [rerere]
@@ -19,6 +19,7 @@
 
 [diff]
 	tool = nvim
+	submodule = log
 [merge]
 	tool = nvim
 [mergetool "nvim"]
@@ -125,7 +126,7 @@
 
 	# Change remote
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
-	p = push
+	p = push -u
 	pf = push --force-with-lease
 	cap = !git commit --all --amend --no-edit && git push --force-with-lease
 
@@ -135,7 +136,7 @@
 	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git $CONFIG_SHELLS/git $HOME/.local/bin/git-*
 	cvim    = !yadm cme "config/nvim:"  -- $XDG_CONFIG_HOME/nvim/init*
 	cshell  = !yadm cme "config/shell:" -- $CONFIG_SHELLS
-	cbin    = !yadm cme "bin:"          -- $HOME/.local/bin
+	cbin    = !yadm cme "bin:"          -- $HOME/.local/bin/scripts/
 
 	# data
 	journal = !git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
