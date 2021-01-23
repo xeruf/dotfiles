@@ -1,5 +1,5 @@
 set termguicolors
-set mouse=a " Enable mouse in all modes
+set mouse=nvh " Disable mouse in insert mode to allow middle-click paste in remote session - https://vi.stackexchange.com/q/23080
 
 " persist undo & backup files
 set undofile
