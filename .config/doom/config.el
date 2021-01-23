@@ -108,8 +108,6 @@
 (define-key org-mode-map (kbd "C-c t") 'org-toggle-blocks)
 (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
 
-(add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
-
 ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
 (defun ct/org-foldup ()
   "Hide the entire subtree from root headline at point."
