@@ -1,0 +1,2 @@
+#!/bin/sh
+cat "$@" | while read -r line; do echo -n "$line" | python -m json.tool 2>/dev/null; done | bat --language json --style numbers
