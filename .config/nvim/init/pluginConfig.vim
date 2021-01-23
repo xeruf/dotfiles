@@ -60,8 +60,6 @@ let g:firenvim_config = {
     \ }
 \ }
 if exists('g:started_by_firenvim')
-	let g:smoothie_no_default_mappings=1 "extremely slow, see https://github.com/psliwka/vim-smoothie/issues/17
-
 	nnoremap <Esc><Esc> :call firenvim#focus_page()<CR>
 
 	autocmd FocusLost,InsertLeave,BufLeave * ++nested call WriteSilent()

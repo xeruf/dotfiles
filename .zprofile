@@ -24,6 +24,9 @@ export TASKDATA="$XDG_DATA_HOME/task"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export _Z_DATA="$XDG_DATA_HOME/zsh/z"
 export HISTFILE="$XDG_DATA_HOME/zsh/history"
+ # ccache - can be removed with version 4 - https://github.com/ccache/ccache/issues/191
+export CCACHE_CONFIGPATH="$XDG_CONFIG_HOME"/ccache.config
+export CCACHE_DIR="$XDG_CACHE_HOME"/ccache
 
 # environment
 export EDITOR=/usr/bin/nvim
