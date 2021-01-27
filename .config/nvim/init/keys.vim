@@ -51,4 +51,7 @@ map <leader>ls :setlocal colorcolumn=81,121 nowrap<CR>
 map <leader>lw :setlocal colorcolumn=81 textwidth=80<CR>
 map <leader>ln :setlocal colorcolumn= textwidth=0 wrap<CR>
 
+map <leader>t :setlocal shiftwidth=4 tabstop=4 noexpandtab<CR>
+map <leader>T :setlocal shiftwidth=2 expandtab<CR>
+
 " }}}

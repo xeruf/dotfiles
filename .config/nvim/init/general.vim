@@ -13,8 +13,7 @@ let &backupext="_" . strftime("%y%m%dT%H%M")
 set wildmode=longest,list,full " Auto-completion for cmdline
 set clipboard+=unnamedplus " Merge with system clipboard
 
-set shiftwidth=2 expandtab " Indentation
-"set shiftwidth=4 tabstop = 4 " Indentation for programming
+set shiftwidth=2 expandtab " Default simple indentation
 
 " visuals
 set number relativenumber " Relative line numbering on the left
