@@ -53,6 +53,15 @@
 	lowSpeedLimit = 1000
 	lowSpeedTime = 3
 
+[url "ssh://github.com/"]
+	pushInsteadOf = https://github.com/
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
 [alias]
 	# GET INFO
 	st = status --short --branch --show-stash
@@ -126,7 +135,8 @@
 
 	# Change remote
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
-	p = push -u
+	p = push
+	pu = push -u
 	pf = push --force-with-lease
 	cap = !git commit --all --amend --no-edit && git push --force-with-lease
 
@@ -142,9 +152,3 @@
 	journal = !git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
 	note = !git cme "notes:" -- $(git root)/2-standards/notes
 	write = !git cme "writings:" -- $(git root)/2-standards/writing
-
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
