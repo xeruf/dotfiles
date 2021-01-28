@@ -1,3 +1,4 @@
+GITSTATUS_LOG_LEVEL=DEBUG
 # Commands
 if test "$PWD" = "$HOME" && test "$0" !=  "$SHELL"; then
 	neofetch --config $XDG_CONFIG_HOME/neofetch/config-short.conf

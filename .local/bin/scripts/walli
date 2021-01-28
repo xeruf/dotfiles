@@ -1,0 +1,13 @@
+#!/bin/sh
+# https://askubuntu.com/a/124512 and https://blog.sleeplessbeastie.eu/2018/06/21/how-to-create-iptables-firewall-using-custom-chains/
+sudo iptables --new-chain chain-times 2>/dev/null || sudo iptables --flush chain-times
+time9=$(date -u -d "$(date -d 09:00)" +%k)
+# Always allow local connections - https://serverfault.com/a/550278
+sudo iptables -A chain-times -m owner --uid-owner janek -d 192.168.1.0/24 -j ACCEPT
+sudo iptables -A chain-times -m owner --uid-owner janek -d 127.0.0.0/8 -j ACCEPT
+sudo iptables -A chain-times -m owner --uid-owner janek -j DROP -m time                --timestart $(date -u -d "$(date -d ${1:-22})" +%k):00 --timestop             $time9:00
+sudo iptables -A chain-times -m owner --uid-owner janek -j DROP -m time --weekdays 1-5 --timestart                           $time9:20 --timestop $(expr $time9 + 1):00
+sudo iptables -A chain-times -m owner --uid-owner janek -j DROP -m time --weekdays 1-5 --timestart               $(expr $time9 + 1):20 --timestop $(expr $time9 + 2):00
+sudo iptables -L OUTPUT | grep -q "^chain-times" || sudo iptables -A OUTPUT -j chain-times
+sudo iptables-save | sudo tee /etc/iptables.rules
+echo "@reboot root $(which iptables-restore) < /etc/iptables.rules" | sudo tee /etc/cron.d/iptables-times
