@@ -96,6 +96,11 @@
 (setq org-export-with-tags nil)
 (setq org-export-with-tasks nil)
 
+; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
+(setq org-startup-folded t)
+(setq org-startup-with-inline-images t)
+; (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
+
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
 (defun org-toggle-blocks ()
