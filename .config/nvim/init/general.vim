@@ -44,7 +44,7 @@ set foldopen+=jump " Automatically open folds on jump
 syntax on
 filetype plugin on
 " comments
-autocmd Filetype * setlocal formatoptions-=o | setlocal formatoptions+=qn12jr " Change comment behavior
+autocmd Filetype * setlocal formatoptions-=o | setlocal formatoptions+=qjln12r " Change comment behavior
 autocmd Filetype json syntax match Comment +\/\/.\+$+ " Comment highlighting in JSON
 autocmd Filetype markdown let &comments = "b:*,b:-,b:+," . &comments
 " custom hardcoded types
@@ -57,8 +57,7 @@ autocmd BufNewFile *.sh,$HOME/.local/bin/* execute 'silent! 1s/.*/#!\/bin\/sh\r\
 "autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
 
 set spelllang=en_us,de_de
-autocmd BufEnter *.txt setlocal ts=4 sw=4 formatoptions+=t
-autocmd BufEnter *jrnl*.txt setlocal formatoptions+=a
+autocmd BufEnter *.txt,*jrnl* setlocal formatoptions+=b textwidth=78 ts=4 sw=4
 autocmd FileType markdown setlocal wrap spell colorcolumn= " Spell checking & no guiding columns in markdown
 
  " Center on insert mode

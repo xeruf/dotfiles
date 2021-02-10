@@ -135,7 +135,7 @@ alias loc='noglob locate --basename'
 alias uloc='noglob sudo updatedb && locate --basename'
 alias syslog='less +F /var/log/syslog'
 alias println='printf "\n"'
-alias graphics='lspci -vnn | grep VGA --color=never'
+alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
 alias vlch="vlc -H | ${PAGER:-less}"
 alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
 alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
