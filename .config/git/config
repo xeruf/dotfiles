@@ -31,11 +31,13 @@
 # Automatically push to branch with matching name
 [push]
 	default = current
+[status]
+	showStash = true
 # Disable pagination for branch commmand by default
 [pager]
 	branch = false
 [grep]
-	lineNumber = 1
+	lineNumber = true
 
 [color "status"]
 	added = green
@@ -72,6 +74,9 @@
 	b = branch -vv
 	ba = b -a
 
+	co = checkout
+	cb = checkout -b
+
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
@@ -100,15 +105,14 @@
 	aa = add -u .
 	ap = add -p
 	c = commit -v
-	co = checkout
-	cb = checkout -b
+	cme = commit -v --edit --message
 
 	cp = cherry-pick
 	rb = rebase
 	rbc = rebase --continue
 
 	sta = stash
-	stl = stash list
+	stl = !git --no-pager stash list
 	sts = stash show -v
 	stp = stash pop
 	std = stash drop
@@ -120,10 +124,6 @@
 
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
-	# Housekeeping
-	gcr = !git gc && git repack -a -d
-	sup = !git branch --set-upstream-to @{push}
-
 	# Update from remote
 	f = fetch
 	fa = fetch --all
@@ -132,6 +132,7 @@
 
 	rg = rmgonebranches
 	sm = submodule update --init --recursive
+	gcr = !git gc && git repack -a -d
 
 	# Change remote
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
@@ -140,15 +141,8 @@
 	pf = push --force-with-lease
 	cap = !git commit --all --amend --no-edit && git push --force-with-lease
 
-	# COMMIT SHORTHANDS
-	cme = commit -v --edit --message
-	# yadm
-	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git $CONFIG_SHELLS/git $HOME/.local/bin/git-*
-	cvim    = !yadm cme "config/nvim:"  -- $XDG_CONFIG_HOME/nvim/init*
-	cshell  = !yadm cme "config/shell:" -- $CONFIG_SHELLS
-	cbin    = !yadm cme "bin:"          -- $HOME/.local/bin
+[includeIf "gitdir:~/.config/yadm/repo.git"]
+	path = "~/.config/yadm/gitconfig"
 
-	# data
-	journal = !git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
-	note = !git cme "notes:" -- $(git root)/2-standards/notes
-	write = !git cme "writings:" -- $(git root)/2-standards/writing
+[includeIf "gitdir:~/data/.git"]
+	path = "config-data"
