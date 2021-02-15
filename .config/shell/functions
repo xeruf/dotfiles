@@ -23,7 +23,7 @@ ulimit -c unlimited # Enable core dumps
 
 which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
 
-unalias rd
+unalias rd 2>/dev/null
 rd() {
   test -d "$1" && find "$1" -type d -empty -printf "Removing %p\n" -delete || rm "$@"
 }
@@ -41,8 +41,9 @@ wh() {
 alias logoff="loginctl terminate-user $USER"
 
 # Some aliases
-alias editgrub='sudoedit /etc/default/grub && sudo update-grub'
-alias editenv='sudoedit /etc/environment'
+alias edgrub='sudoedit /etc/default/grub && sudo update-grub'
+alias edenv='sudoedit /etc/environment'
+alias edpart='sudoedit /etc/fstab && sudo findmnt --verify'
 
 # Underline arg
 highlight() { echo "[4m$1[0m" }

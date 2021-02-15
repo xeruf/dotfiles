@@ -159,7 +159,7 @@ setopt pipefail
 # Enable zmv (see ZSHCONTRIB(1))
 autoload zmv
 alias zmv='noglob zmv'
-alias zmw='zmv -W'
+alias zmw='noglob zmv -W'
 alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
