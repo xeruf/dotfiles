@@ -146,6 +146,7 @@ alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
 alias sc='sudo systemctl'
+scs() { sudo systemctl status "*$1*" }
 alias scu='systemctl --user'
 alias scrw='sudo systemctl restart display-manager'
 

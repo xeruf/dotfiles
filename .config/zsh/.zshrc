@@ -152,7 +152,8 @@ setopt correct
 # don't save duplicates in command history
 setopt histignoredups
 
-setopt extended_glob
+setopt EXTENDED_GLOB
+unsetopt CASE_GLOB
 
 setopt pipefail
 
@@ -183,4 +184,4 @@ test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && source $XDG_CONFIG_HOME/broot
 
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 
-return 0
+true

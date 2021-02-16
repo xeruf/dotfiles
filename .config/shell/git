@@ -212,4 +212,4 @@ gitcommits() {
 # }}}
 
 # Testing
-gittestcommit() { touch file$((++i)) && git add . && git commit -m "Create file$i"; }
+gittestcommit() { touch file$((++i)) && git add 'file*' && git commit -m "Create file$i"; }
