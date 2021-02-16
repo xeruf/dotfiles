@@ -136,12 +136,10 @@
 
 	# Change remote
 	luu = !git pull upstream $(git curbranch) && git push --no-verify
-	p = push
-	pu = push -u
 	pf = push --force-with-lease
 	cap = !git commit --all --amend --no-edit && git push --force-with-lease
 
-[includeIf "gitdir:~/.config/yadm/repo.git"]
+[includeIf "gitdir:yadm/repo.git"]
 	path = "~/.config/yadm/gitconfig"
 
 [includeIf "gitdir:~/data/.git"]

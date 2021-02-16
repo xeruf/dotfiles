@@ -1,0 +1,2 @@
+#!/bin/sh
+git rev-parse @{u} 2>/dev/null >/dev/null && git push || git push --set-upstream
