@@ -49,9 +49,10 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
-(package! annotate)
-(package! visual-fill-column)
-(package! togetherly)
-(package! plantuml-mode)
-(package! ox-reveal)
+(package! annotate) ; Annotations
+(package! visual-fill-column) ; Soft line wrapping at character count
+(package! togetherly) ; Collaborative editing
+(package! plantuml-mode) ; Diagrams
+(package! ox-reveal) ; Presentations
+(package! direnv) ; nix-shell stuffs
 ;(package! plantuml-mode :recipe (:local-repo "plantuml-mode"))
