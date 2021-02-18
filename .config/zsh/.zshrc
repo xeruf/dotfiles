@@ -182,6 +182,8 @@ test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/
 
 test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && source $XDG_CONFIG_HOME/broot/launcher/bash/br
 
+# Nix
+test -e /home/janek/.nix-profile/etc/profile.d/nix.sh && source /home/janek/.nix-profile/etc/profile.d/nix.sh
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 
 true
