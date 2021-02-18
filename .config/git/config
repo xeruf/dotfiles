@@ -74,8 +74,9 @@
 	b = branch -vv
 	ba = b -a
 
-	co = checkout
-	cb = checkout -b
+
+	s = switch
+	sc = switch -c
 
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	rev = rev-parse --short
