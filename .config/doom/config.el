@@ -25,7 +25,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq   doom-theme 'doom-one
-        doom-font (font-spec :family "Fira Code" :size 26 :weight 'semi-light)
+        doom-font (font-spec :family "Fira Code" :size 30 :weight 'semi-light)
         doom-variable-pitch-font (font-spec :family "sans" :size 28))
 
 (setq display-line-numbers-type 'relative)
@@ -97,9 +97,8 @@
 (setq org-export-with-tasks nil)
 
 ; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
-(setq org-startup-folded t)
+(setq org-startup-folded 'show2levels)
 (setq org-startup-with-inline-images t)
-; (add-hook 'org-mode-hook (apply-partially '+org/close-all-folds 2))
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
@@ -149,6 +148,13 @@
    (plantuml . t)
    )))
 
+;; OTHERS
+(add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
+
+;; https://emacs.stackexchange.com/questions/16744/magit-help-popup-enabled-by-default
+(defadvice magit-status (after my-magit-status-dispatch-popup)
+  (magit-dispatch-popup))
+(ad-activate 'magit-status)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;

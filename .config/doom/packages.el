@@ -55,4 +55,5 @@
 (package! plantuml-mode) ; Diagrams
 (package! ox-reveal) ; Presentations
 (package! direnv) ; nix-shell stuffs
+(package! adoc-mode) ; Asciidoc, a md alternative
 ;(package! plantuml-mode :recipe (:local-repo "plantuml-mode"))
