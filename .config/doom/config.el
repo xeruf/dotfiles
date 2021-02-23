@@ -131,31 +131,45 @@
       (ct/org-foldup)))
 (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
 
-;; PLANTUML
-
-(setq   plantuml-executable-path "nostderr"
-        plantuml-executable-args '("plantuml" "-headless")
-        plantuml-default-exec-mode 'executable
-        plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
-        org-plantuml-jar-path plantuml-jar-path
-        plantuml-java-args '("-Djava.awt.headless=true" "-jar")
-        )
-(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-(with-eval-after-load 'org
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '(other Babel languages
-   (plantuml . t)
-   )))
-
-;; OTHERS
-(add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
-
 ;; https://emacs.stackexchange.com/questions/16744/magit-help-popup-enabled-by-default
 (defadvice magit-status (after my-magit-status-dispatch-popup)
-  (magit-dispatch-popup))
+  (call-interactively 'magit-dispatch))
 (ad-activate 'magit-status)
 
+(use-package! direnv ; nix-shell stuffs
+  :config
+    (setq direnv-always-show-summary nil)
+    (direnv-mode)
+  )
+(use-package! evil-replace-with-register ; gr
+  :init
+    (setq evil-replace-with-register-key (kbd "gr"))
+    (evil-replace-with-register-install)
+  :config
+    (map! :nv "gR" #'+eval/line-or-region)
+  )
+
+(use-package! plantuml-mode ; Diagrams
+  :config
+    (setq   plantuml-executable-path "nostderr"
+            plantuml-executable-args '("plantuml" "-headless")
+            plantuml-default-exec-mode 'executable
+            plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+            org-plantuml-jar-path plantuml-jar-path
+            plantuml-java-args '("-Djava.awt.headless=true" "-jar")
+            )
+    (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+    (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '(other Babel languages
+       (plantuml . t)
+       )))
+  )
+(use-package! adoc-mode ; Asciidoc, a md alternative
+  :config
+    (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
+  )
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one

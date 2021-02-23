@@ -52,8 +52,10 @@
 (package! annotate) ; Annotations
 (package! visual-fill-column) ; Soft line wrapping at character count
 (package! togetherly) ; Collaborative editing
-(package! plantuml-mode) ; Diagrams
 (package! ox-reveal) ; Presentations
+
 (package! direnv) ; nix-shell stuffs
+(package! evil-replace-with-register) ; grrrrr
+
+(package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
-;(package! plantuml-mode :recipe (:local-repo "plantuml-mode"))
