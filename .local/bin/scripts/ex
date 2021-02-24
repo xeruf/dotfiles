@@ -1,24 +1,26 @@
 #!/bin/sh
 # ex - archive extractor
 # usage: ex <file>
-if test -f $1 && test -r $1; then
-  case $1 in
-    *.tar.bz2)   tar xjf $1   ;;
-    *.tar.gz)    tar xzf $1   ;;
-    *.bz2)       bunzip2 $1   ;;
-    *.rar)       unrar x $1   ;;
-    *.gz)        gunzip $1    ;;
-    *.tar)       tar xf $1    ;;
-    *.tbz2)      tar xjf $1   ;;
-    *.tgz)       tar xzf $1   ;;
-    *.zip)       unzip $1     ;;
-    *.Z)         uncompress $1;;
-    *.7z)        7z x $1      ;;
-    *.deb)       ar x $1      ;;
-    *.tar.xz)    tar xf $1    ;;
-    *.zst)   unzstd $1    ;;
-    *)           echo "'$1' cannot be extracted via ex()" ;;
-  esac
-else
-  echo "'$1' is not a readable file"
-fi
+for arg do
+  if test -r "$arg"; then
+    case "$arg" in
+      *.tar.bz2)   tar xjf "$arg"   ;;
+      *.tar.gz)    tar xzf "$arg"   ;;
+      *.bz2)       bunzip2 "$arg"   ;;
+      *.rar)       unrar x "$arg"   ;;
+      *.gz)        gunzip "$arg"    ;;
+      *.tar)       tar xf "$arg"    ;;
+      *.tbz2)      tar xjf "$arg"   ;;
+      *.tgz)       tar xzf "$arg"   ;;
+      *.zip)       unzip "$arg"     ;;
+      *.Z)         uncompress "$arg";;
+      *.7z)        7z x "$arg"      ;;
+      *.deb)       ar x "$arg"      ;;
+      *.tar.xz)    tar xf "$arg"    ;;
+      *.zst)   unzstd "$arg"    ;;
+      *)           echo "'$arg' cannot be extracted by ex" ;;
+    esac
+  else
+    echo "'$1' is not a readable file"
+  fi
+done
