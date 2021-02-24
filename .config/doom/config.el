@@ -50,16 +50,17 @@
 (whitespace-mode 0)
 
 ;; Backups & auto-saves
-(setq   auto-save-default t
-        auto-save-interval 40)
+(setq auto-save-default t
+      auto-save-interval 40)
 
-(setq   backup-directory-alist `(("." . ,(expand-file-name "backups/" user-emacs-directory))))
-(setq   delete-old-versions t
-        kept-new-versions 6
-        kept-old-versions 2
-        version-control t
-        vc-make-backup-files t
-        )
+(setq make-backup-files t
+      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
+      delete-old-versions t
+      version-control t
+      vc-make-backup-files t
+      kept-new-versions 5
+      kept-old-versions 3
+      )
 
 ;; Data dirs
 
@@ -67,10 +68,7 @@
 
 (load! "./local.el" nil t)
 
-; ORG
-
-;; Fix xdg-open - https://askubuntu.com/questions/646631/emacs-doesnot-work-with-xdg-open
-(setq   process-connection-type nil)
+;; ORG
 
 (let ((default-directory user-data-dir))
   (setq org-directory (expand-file-name "1-projects"))
@@ -81,7 +79,8 @@
 			       (lambda (directory)
 				 (directory-files-recursively
 				  directory org-agenda-file-regexp))
-			       '("1-projects" "2-standards" "3-resources"))))
+			       '("1-projects" "2-standards" "3-resources")
+                               )))
 )
 
 (set-file-template! 'org-mode :ignore t)
@@ -89,16 +88,23 @@
 (setq org-read-date-prefer-future nil)
 (setq org-image-actual-width nil)
 
-; Exporting - https://orgmode.org/manual/Export-Settings.html
+;; Exporting - https://orgmode.org/manual/Export-Settings.html
 (setq org-latex-pdf-export "latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")
 (setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
 (setq org-export-with-sub-superscripts nil)
 (setq org-export-with-tags nil)
 (setq org-export-with-tasks nil)
 
-; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
+;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
 (setq org-startup-folded 'show2levels)
 (setq org-startup-with-inline-images t)
+
+;; Fix xdg-open & open PDF in Emacs - https://depp.brause.cc/dotemacs/#orgd97f08c
+(setq org-file-apps '((remote . emacs)
+                      (auto-mode . emacs)
+                      (directory . emacs)
+                      (system . "setsid -w xdg-open %s")
+                      (t . system)))
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
@@ -160,11 +166,11 @@
             )
     (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
     (with-eval-after-load 'org
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '(other Babel languages
-       (plantuml . t)
-       )))
+      (org-babel-do-load-languages
+        'org-babel-load-languages
+        '(other Babel languages (plantuml . t))
+        )
+      )
   )
 (use-package! adoc-mode ; Asciidoc, a md alternative
   :config
