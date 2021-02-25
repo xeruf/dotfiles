@@ -24,30 +24,39 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq   doom-theme 'doom-one
-        doom-font (font-spec :family "Fira Code" :size 30 :weight 'semi-light)
-        doom-variable-pitch-font (font-spec :family "sans" :size 28))
+(setq doom-theme 'doom-one
+      doom-font (font-spec :family "Fira Code" :size 30 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sans" :size 28))
 
 (setq display-line-numbers-type 'relative)
 
-(map!   :leader "u" 'evil-prev-buffer
-        :leader "i" 'evil-next-buffer
-        :leader "bq" 'doom/save-and-kill-buffer
-        :leader "mj" 'org-insert-heading
-        :leader "aa" 'annotate-annotate
-        :leader "as" 'annotate-mode
-        )
+(defun dragon ()
+  ; Share file in current buffer via dragon
+  (interactive)
+  (shell-command (concat "dragon-drag-and-drop -x " (buffer-file-name)))
+  )
+
+(map! :leader "u"  'evil-prev-buffer
+      :leader "i"  'evil-next-buffer
+      :leader "bq" 'doom/save-and-kill-buffer
+      :leader "mj" 'org-insert-heading
+      :leader "aa" 'annotate-annotate
+      :leader "as" 'annotate-mode
+      :leader "d"  'dragon
+      )
 
 ;; Undo
-(setq   evil-want-fine-undo t)
-(setq   amalgamating-undo-limit 5)
+(setq evil-want-fine-undo t)
+(setq amalgamating-undo-limit 5)
 
 ;; Global config
-(setq   confirm-kill-emacs nil)
+(setq confirm-kill-emacs nil)
 
-(setq   initial-major-mode 'org-mode)
+(setq initial-major-mode 'org-mode)
 
 (whitespace-mode 0)
+
+(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
 ;; Backups & auto-saves
 (setq auto-save-default t
