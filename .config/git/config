@@ -73,10 +73,11 @@
 	r = remote -v
 	b = branch -vv
 	ba = b -a
-
+	main = !cat $(git rev-parse --git-dir)/refs/remotes/origin/HEAD | cut -d'/' -f4
 
 	s = switch
 	sc = switch -c
+	sm = !git switch $(git main)
 
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	rev = rev-parse --short
@@ -110,6 +111,7 @@
 
 	cp = cherry-pick
 	rb = rebase
+	rbm = !git rebase $(git main)
 	rbc = rebase --continue
 
 	sta = stash
@@ -132,7 +134,7 @@
 	lu = !git pull --rebase upstream ${1:-$(git curbranch)}
 
 	rg = rmgonebranches
-	sm = submodule update --init --recursive
+	su = submodule update --init --recursive
 	gcr = !git gc && git repack -a -d
 
 	# Change remote
