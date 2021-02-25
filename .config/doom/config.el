@@ -105,6 +105,9 @@
                       (directory . emacs)
                       (system . "setsid -w xdg-open %s")
                       (t . system)))
+;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
+;(after! org
+;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
 
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
@@ -142,11 +145,6 @@
   (call-interactively 'magit-dispatch))
 (ad-activate 'magit-status)
 
-(use-package! direnv ; nix-shell stuffs
-  :config
-    (setq direnv-always-show-summary nil)
-    (direnv-mode)
-  )
 (use-package! evil-replace-with-register ; gr
   :init
     (setq evil-replace-with-register-key (kbd "gr"))
@@ -154,7 +152,27 @@
   :config
     (map! :nv "gR" #'+eval/line-or-region)
   )
+(use-package! evil-args ; https://github.com/wcsmith/evil-args
+  :config
+    ;; bind evil-args text objects
+    (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+    (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
 
+    ;; bind evil-forward/backward-args
+    (define-key evil-normal-state-map "L" 'evil-forward-arg)
+    (define-key evil-normal-state-map "H" 'evil-backward-arg)
+    (define-key evil-motion-state-map "L" 'evil-forward-arg)
+    (define-key evil-motion-state-map "H" 'evil-backward-arg)
+
+    ;; bind evil-jump-out-args
+    (define-key evil-normal-state-map "K" 'evil-jump-out-args)
+  )
+
+(use-package! direnv ; nix-shell stuffs
+  :config
+    (setq direnv-always-show-summary nil)
+    (direnv-mode)
+  )
 (use-package! plantuml-mode ; Diagrams
   :config
     (setq   plantuml-executable-path "nostderr"

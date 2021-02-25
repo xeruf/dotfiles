@@ -54,8 +54,9 @@
 (package! togetherly) ; Collaborative editing
 (package! ox-reveal) ; Presentations
 
-(package! direnv) ; nix-shell stuffs
+(package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
 
+(package! direnv) ; nix-shell stuffs
 (package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
