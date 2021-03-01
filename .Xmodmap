@@ -1,0 +1,2 @@
+! Swap semicolon and colon - https://unix.stackexchange.com/questions/615799/swap-semicolon-colon-to-p-unexpected-cause-semicolon-colon-affected-by-cpas-lock
+keycode  47 = colon semicolon colon semicolon

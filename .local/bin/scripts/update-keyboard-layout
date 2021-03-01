@@ -1,6 +1,7 @@
 #!/bin/sh
+echo $XDG_RUNTIME_DIR
 test "$ACTION" && case $ACTION in
 	add) id=1;;
 	remove) id=0;;
 esac || id=$(test -c /dev/ttyACM0 && echo 1 || echo 0)
-test "$id" && XAUTHORITY="/home/janek/.cache/Xauthority" DISPLAY=:0 xkblayout-state set $id
+test "$id" && XAUTHORITY="/run/user/1000/Xauthority" DISPLAY=:0 xkblayout-state set $id
