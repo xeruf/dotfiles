@@ -107,6 +107,7 @@
 ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
 (setq org-startup-folded 'show2levels)
 (setq org-startup-with-inline-images t)
+(setq org-display-remote-inline-images 'cache)
 
 ;; Fix xdg-open & open PDF in Emacs - https://depp.brause.cc/dotemacs/#orgd97f08c
 (setq org-file-apps '((remote . emacs)

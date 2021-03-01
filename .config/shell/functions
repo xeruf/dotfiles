@@ -120,7 +120,7 @@ alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
 
 # Listen to loopback of mic
-alias listen='pactl load-module module-loopback; read; pactl unload-module module-loopback'
+alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
 
 alias browse-safe='sudo systemctl disable --now systemd-resolved && sudo rm -f /etc/resolv.conf && echo "nameserver 185.228.168.10" | sudo tee /etc/resolv.conf && sudo chattr +i /etc/resolv.conf'
 alias browse-unsafe='sudo chattr -i /etc/resolv.conf && sudo mv /etc/resolv.conf /etc/resolv.conf.bak && sudo systemctl enable --now systemd-resolved && sleep 100 && browse-safe'
@@ -146,9 +146,11 @@ alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
 alias sc='sudo systemctl'
+alias sce='sudo systemctl enable --now'
 scs() { sudo systemctl status "*$1*" }
 alias scu='systemctl --user'
-alias scrw='sudo systemctl restart display-manager'
+alias scue='systemctl --user enable --now'
+scus() { systemctl --user status "*$1*" }
 
 alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
 alias jc='jcl -u'
