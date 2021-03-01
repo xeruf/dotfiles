@@ -30,7 +30,7 @@ rd() {
 rr() { mv "$@" /tmp }
 
 alias j='jrnl'
-alias jn='jrnl -to today | bat --style=plain --pager="less +G"'
+jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
 
 # like "which", but shows contents if it resolves to a file
 wh() {
@@ -140,7 +140,7 @@ alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
 alias vlch="vlc -H | ${PAGER:-less}"
 alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
 alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
-alias mdo="pandoc -f gfm -t org --wrap preserve"
+alias mdo="pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org --wrap preserve"
 alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
