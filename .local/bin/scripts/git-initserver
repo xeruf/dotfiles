@@ -1,0 +1,8 @@
+#!/bin/sh
+git init -b main
+git config -v receive.denyCurrentBranch false
+hook=".git/hooks/post-receive"
+echo '#!/bin/sh
+git --work-tree=.. checkout -f' >$hook
+chmod -v +x $hook
+

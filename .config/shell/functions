@@ -268,7 +268,7 @@ cl() {
 
 # FILES
 
-alias f='noglob fd --hidden --no-ignore-vcs'
+alias f="noglob $(test -x "$(which fd)" && echo fd || echo "fdfind") --hidden --no-ignore-vcs"
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 #alias f1='find -mindepth 1 -maxdepth 1'
 
