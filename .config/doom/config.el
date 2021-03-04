@@ -25,8 +25,8 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one
-      doom-font (font-spec :family "Fira Code" :size 30 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sans" :size 28))
+      doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sans" :size 20))
 
 (setq display-line-numbers-type 'relative)
 
