@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=/home/janek/.local/bin/scripts/update-keyboard-layout
+Icon=
+Name=update-keyboard-layout
+Path=
+Terminal=False
+Type=Application
