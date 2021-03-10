@@ -1,2 +1,2 @@
-*.font:	mono:pixelsize=24:antialias=true:autohint=true;
+*.font:	mono:pixelsize=28:antialias=true:autohint=true;
 *.background: #222
