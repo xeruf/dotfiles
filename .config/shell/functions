@@ -272,7 +272,7 @@ alias f="noglob $(test -x "$(which fd)" && echo fd || echo "fdfind") --hidden --
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 #alias f1='find -mindepth 1 -maxdepth 1'
 
-which perl-rename >/dev/null && alias lowercase='perl-rename "y/A-Z/a-z/"' || alias lowercase='rename "y/A-Z/a-z/"'
+alias lowercase='tr "A-Z " "a-z-"'
 
 mkcd() {
 	mkdir -p "$1" && cd "$1"
