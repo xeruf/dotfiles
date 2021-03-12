@@ -1,2 +1,5 @@
 #!/bin/sh
-git rev-parse @{u} 2>/dev/null >/dev/null && git push || git push --set-upstream
+if git rev-parse @{u} 2>/dev/null >/dev/null
+  then git push
+  else git push --set-upstream
+fi

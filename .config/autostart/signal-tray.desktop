@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Network;InstantMessaging;
+Comment[en_IE]=Signal Private Messenger for Linux
+Comment=Signal Private Messenger for Linux
+Exec=signal-desktop --use-tray-icon --start-in-tray
+GenericName[en_IE]=
+GenericName=
+Icon=signal-desktop
+MimeType=
+Name[en_IE]=Signal-Tray
+Name=Signal-Tray
+Path=
+StartupNotify=true
+StartupWMClass=Signal
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

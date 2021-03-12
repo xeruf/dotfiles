@@ -1,14 +1,15 @@
 #!/bin/sh
-(
+{
 case $ACTION in
 	add) id=1;;
 	remove) id=0;;
-esac || id=$(test -c /dev/ttyACM0 && echo 1 || echo 0)
+	*) id=$(test -c /dev/ttyACM0 && echo 1 || echo 0);;
+esac
 echo "Keyboard layout update to $id($ACTION) at $(date)" >>/tmp/scripts.log
 export XAUTHORITY="/run/user/1000/Xauthority" DISPLAY=:0
 # setxkbmap "$id" #nodeadkeys
-$(dirname $(dirname $0))/xkblayout-state set $id
+test $(xkblayout-state print '%C') -gt 1 && $(dirname $(dirname $0))/xkblayout-state set $id
 # Swap semicolon and colon - https://unix.stackexchange.com/questions/615799/swap-semicolon-colon-to-p-unexpected-cause-semicolon-colon-affected-by-cpas-lock
 # test "$id" = "eu" && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon'
 test "$id" = "1" && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon' || setxkbmap de nodeadkeys
-) >>/tmp/scripts.log 2>&1
+} 2>&1 | tee -a /tmp/scripts.log
