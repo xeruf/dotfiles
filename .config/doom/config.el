@@ -25,7 +25,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one
-      doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
+      doom-font (font-spec :family "monospace" :size 20 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sans" :size 20))
 
 (setq display-line-numbers-type 'relative)
@@ -80,6 +80,7 @@
 ;; ORG
 
 (let ((default-directory user-data-dir))
+  (setq initial-buffer-choice (expand-file-name "2-standards/notes/journal/log.org"))
   (setq org-directory (expand-file-name "1-projects"))
   (setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
   (require 'org)
@@ -98,9 +99,9 @@
 (setq org-image-actual-width nil)
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-(setq org-latex-pdf-export "latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")
+(setq org-latex-pdf-process '("latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
 (setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
-(setq org-export-with-sub-superscripts "{}")
+(setq org-export-with-sub-superscripts '{})
 (setq org-export-with-tags nil)
 (setq org-export-with-tasks nil)
 
@@ -111,6 +112,7 @@
 
 ;; Fix xdg-open & open PDF in Emacs - https://depp.brause.cc/dotemacs/#orgd97f08c
 (setq org-file-apps '((remote . emacs)
+                      ("\\.pdf\\'" . default)
                       (auto-mode . emacs)
                       (directory . emacs)
                       (system . "setsid -w xdg-open %s")

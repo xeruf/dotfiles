@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: org-superscript-reference
+# key: ^
+# --
+^{[$0]}

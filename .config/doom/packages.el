@@ -52,7 +52,7 @@
 (package! annotate) ; Annotations
 (package! visual-fill-column) ; Soft line wrapping at character count
 (package! togetherly) ; Collaborative editing
-(package! ox-reveal) ; Presentations
+;(package! ox-reveal) ; Presentations
 
 (package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
