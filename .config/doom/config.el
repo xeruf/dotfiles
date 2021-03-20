@@ -25,8 +25,8 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one
-      doom-font (font-spec :family "monospace" :size 20 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sans" :size 20))
+      doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sans" :size 24))
 
 (setq display-line-numbers-type 'relative)
 
@@ -57,6 +57,8 @@
 (whitespace-mode 0)
 
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
+
+(setq lazy-highlight-cleanup nil)
 
 ;; Backups & auto-saves
 (setq auto-save-default t
@@ -100,10 +102,10 @@
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
 (setq org-latex-pdf-process '("latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
-(setq org-latex-packages-alist '(("margin=3cm" "geometry") ("avoid-all" "widows-and-orphans")))
-(setq org-export-with-sub-superscripts '{})
+(setq org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans")))
 (setq org-export-with-tags nil)
-(setq org-export-with-tasks nil)
+(setq org-export-with-tasks 'done)
+(setq org-export-with-todo-keywords nil)
 
 ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
 (setq org-startup-folded 'show2levels)

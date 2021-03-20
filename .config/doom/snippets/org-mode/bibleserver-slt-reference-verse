@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Org Reference Bibleserver Verse
+# key: bv
+# binding: C-c C-c b
+# --
+^{[[https://www.bibleserver.com/SLT.KJV/$1$2[$2]}$0
