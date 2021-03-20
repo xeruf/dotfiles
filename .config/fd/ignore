@@ -1,3 +1,12 @@
-.sync/
-.Trash-1000/
 .ignore
+
+.Trash-1000/
+lost+found/
+
+.sync/
+.gradle/
+cache/
+cmake_build/
+dist_newstyle/
+
+build/
