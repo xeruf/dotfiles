@@ -1,0 +1,2 @@
+#!/bin/sh
+scanimage --progress --device airscan --format=png "$@"

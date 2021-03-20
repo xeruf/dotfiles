@@ -75,11 +75,11 @@ addalbum() {
 
 formatsongs() {
 	_pwd="$PWD"
-	find "$PWD" "$@" -type d | while read d; do cd $d; findsongs | while read song; do
+	find "$PWD" "$@" -type d | while read d; do builtin cd $d; findsongs | while read song; do
 		new="$(formatsong "$song")"
 		test "$new" != "$song" && mv -v "$song" "$new"
 	done; done
-	cd "$_pwd"
+	builtin cd "$_pwd"
 	IFS=$'\n'
 	for f in $(find "$@" -name "*.wav"); do
 		echo "Converting $f to ${f%.*}.flac"
@@ -89,5 +89,12 @@ formatsongs() {
 }
 
 formatsong() {
-	echo "$1" | sed -e 's/\([ ([]\)\(ft\|Ft\|Feat\)\([ .]\)/\1feat\3/;s/\([ ([]\)feat /\1feat. /;s/ \((Original Mix)\|(Original)\|(Full Stream)\|.NCS Release.\)//i;s/ \(\..\{2,4\}\)$/\1/;s/---/ - /;s/^[0-9]\{6\}_//;s/  / /g;s/\(\w\)+\(\w\)/\1 \2/g' -
+	echo "$1" | sed -e 's/\([ ([]\)\(ft\|Ft\|Feat\|featuring\)\([ .]\)/\1feat\3/;
+		s/\([ ([]\)feat /\1feat. /;
+		s/ \((Original Mix)\|(Original)\|(Full Stream)\|.NCS Release.\)//i;
+		s/ \(\..\{2,4\}\)$/\1/;
+		s/---/ - /;
+		s/^[0-9]\{6\}_//;
+		s/  / /g;
+		s/\(\w\)+\(\w\)/\1 \2/g' -
 }
