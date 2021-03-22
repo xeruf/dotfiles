@@ -66,7 +66,8 @@
 
 [alias]
 	# GET INFO
-	st = status --short --branch --show-stash
+	st = !git stl && git stb
+	stb = status --short --branch --show-stash
 	stv = --paginate status -v
 	stvv = --paginate status -vv
 

@@ -4,9 +4,10 @@
 lost+found/
 
 .sync/
+.stversions/
+
 .gradle/
 cache/
 cmake_build/
 dist_newstyle/
-
 build/
