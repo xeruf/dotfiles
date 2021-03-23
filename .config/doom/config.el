@@ -1,11 +1,10 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq user-full-name "xerus"
+(setq user-full-name "Janek"
       user-mail-address "27jf@pm.me")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
@@ -36,10 +35,13 @@
   (shell-command (concat "dragon-drag-and-drop -x " (buffer-file-name)))
   )
 
+;; rebing C-u - https://emacs.stackexchange.com/a/58320
+(global-set-key (kbd "C-#") 'universal-argument)
+(define-key universal-argument-map (kbd "C-#") 'universal-argument-more)
+
 (map! :leader "u"  'evil-prev-buffer
       :leader "i"  'evil-next-buffer
       :leader "bq" 'doom/save-and-kill-buffer
-      :leader "mj" 'org-insert-heading
       :leader "aa" 'annotate-annotate
       :leader "as" 'annotate-mode
       :leader "d"  'dragon
@@ -99,6 +101,7 @@
 (setq default-directory org-directory)
 (setq org-read-date-prefer-future nil)
 (setq org-image-actual-width nil)
+(setq org-ellipsis "▼")
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
 (setq org-latex-pdf-process '("latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
@@ -123,6 +126,7 @@
 ;(after! org
 ;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
 
+
 ;; org toggle source blocks with C-c t
 (defvar org-blocks-hidden nil)
 (defun org-toggle-blocks ()
@@ -134,6 +138,14 @@
   (setq-local org-blocks-hidden (not org-blocks-hidden)))
 (define-key org-mode-map (kbd "C-c t") 'org-toggle-blocks)
 (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
+
+;; Automated created date stamps for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
+(require 'org-expiry)
+(org-expiry-insinuate)
+(setq org-expiry-inactive-timestamps t)
+
+(setq org-log-into-drawer t)
+(setq org-treat-insert-todo-heading-as-state-change t)
 
 ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
 (defun ct/org-foldup ()
@@ -153,6 +165,16 @@
       ; try to fold up elsewhere
       (ct/org-foldup)))
 (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+
+(defun org-todo-or-insert (&optional arg)
+  (interactive "P")
+  (if (org-at-heading-p) (org-todo arg) (org-insert-todo-heading arg)))
+(map! :map org-mode-map
+      :localleader
+      "j" 'org-insert-heading
+      "t" 'org-todo-or-insert)
+
+;; PACKAGES
 
 ;; https://emacs.stackexchange.com/questions/16744/magit-help-popup-enabled-by-default
 (defadvice magit-status (after my-magit-status-dispatch-popup)
