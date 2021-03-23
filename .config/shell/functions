@@ -31,6 +31,7 @@ rr() { mv "$@" /tmp }
 
 alias j='jrnl'
 jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
+alias jnc='jn -contains'
 
 # like "which", but shows contents if it resolves to a file
 wh() {
@@ -376,44 +377,6 @@ clean() {
 
 function zipdiff() {
 	diff -W200 -y <(unzip -vql $1 | sort -k8) <(unzip -vql $2 | sort -k8) #--suppress-common-lines
-}
-
-# PROJECTS
-
-pdiff() {
-	diff -r $1 $2 -x .git -x .idea -x .gradle
-}
-
-genssh() {
-	mkdir -p ~/.ssh
-	test -f ~/.ssh/id_rsa.pub || ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N ""
-	cat ~/.ssh/id_rsa.pub
-	if test "$OSTYPE" = "cygwin"
-	then cat ~/.ssh/id_rsa.pub>/dev/clipboard
-	else xclip -sel clip 2>/dev/null < ~/.ssh/id_rsa.pub
-	fi && echo "SSH Public key copied to clipboard" || return 0
-}
-
-createproject() {
-	mkcd $1
-
-	echo 'plugins {
-	kotlin("jvm") version "1.3.41"
-	application
-	id("com.github.johnrengelman.shadow") version "5.1.0"
-	id("com.github.ben-manes.versions") version "0.21.0"
-}
-
-sourceSets {
-	main {
-		java.srcDir("src/main")
-		resources.srcDir("src/resources")
-	}
-	test {
-		java.srcDir("src/test")
-	}
-}' > build.gradle.kts
-
 }
 
 # SWAP

@@ -1,0 +1,2 @@
+#!/bin/sh
+diff -r $1 $2 -x .git -x .idea -x .gradle -x build -x cmake_build -x dist_newstyle

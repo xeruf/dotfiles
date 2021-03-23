@@ -20,7 +20,7 @@ git() {
       yadm "$@"
       return
       ;;
-    $XDG_CONFIG_HOME*)
+    $XDG_CONFIG_HOME*|$HOME/.local*)
       if ! command git rev-parse --show-toplevel &>/dev/null; then
         export LAST_YADM="$PWD"
         yadm "$@"
