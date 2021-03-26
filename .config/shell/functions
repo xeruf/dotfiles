@@ -269,7 +269,7 @@ cl() {
 
 # FILES
 
-alias f="noglob $(test -x "$(which fd)" && echo fd || echo "fdfind") --hidden --no-ignore-vcs"
+alias f="noglob $(test -x "$(which fd)" && echo fd || echo "fdfind") --hidden --no-ignore-vcs --one-file-system"
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 #alias f1='find -mindepth 1 -maxdepth 1'
 
@@ -308,9 +308,9 @@ pathadd() {
 	local IFS=":"
 	local result="$@"
 	unset IFS
-	cat /etc/environment | head -1 | cut -d'"' -f2 | tr ":" "\n" | while read v; do
-		[[ " $@ " =~ " $v " ]] || result+=":$v"
-	done
+	cat /etc/environment | head -1 | cut -d'"' -f2 | tr ":" "\n" | while read v
+			do [[ " $@ " =~ " $v " ]] || result+=":$v"
+		done
 	echo PATH=\"${result}\"\\n$(cat /etc/environment | tail -n +2) | sudo tee /etc/environment
 }
 
@@ -370,6 +370,8 @@ clean() {
 		test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
 		export aptclean_last=$aptclean_cur
 	fi
+
+	which yay &>/dev/null && yay -Sc
 
 	highlight "e to delete empty folders"
 	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
