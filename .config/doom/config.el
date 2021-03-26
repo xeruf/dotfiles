@@ -1,11 +1,11 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "Janek"
       user-mail-address "27jf@pm.me")
+
+;;;; VISUALS
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -29,6 +29,8 @@
 
 (setq display-line-numbers-type 'relative)
 
+;;;; BINDINGS
+
 (defun dragon ()
   ; Share file in current buffer via dragon
   (interactive)
@@ -38,6 +40,8 @@
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
 (global-set-key (kbd "C-#") 'universal-argument)
 (define-key universal-argument-map (kbd "C-#") 'universal-argument-more)
+(global-set-key (kbd "C-*") 'universal-argument)
+(define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
 
 (map! :leader "u"  'evil-prev-buffer
       :leader "i"  'evil-next-buffer
@@ -47,11 +51,12 @@
       :leader "d"  'dragon
       )
 
+;;;; GLOBAL SETUP
+
 ;; Undo
 (setq evil-want-fine-undo t)
 (setq amalgamating-undo-limit 5)
 
-;; Global config
 (setq confirm-kill-emacs nil)
 
 (setq initial-major-mode 'org-mode)
@@ -81,27 +86,87 @@
 
 (load! "./local.el" nil t)
 
-;; ORG
+(setq org-directory (expand-file-name "2-standards/notes" user-data-dir))
+(setq default-directory org-directory)
+(setq initial-buffer-choice (expand-file-name "journal/log.org" org-directory))
+(setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
 
-(let ((default-directory user-data-dir))
-  (setq initial-buffer-choice (expand-file-name "2-standards/notes/journal/log.org"))
-  (setq org-directory (expand-file-name "1-projects"))
-  (setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
-  (require 'org)
-  (setq org-agenda-files (apply 'append
-			      (mapcar
-			       (lambda (directory)
-				 (directory-files-recursively
-				  directory org-agenda-file-regexp))
-			       '("1-projects" "2-standards" "3-resources")
-                               )))
+;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
+;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+(setq utf-translate-cjk-mode nil)
+
+(set-language-environment 'utf-8)
+(setq locale-coding-system 'utf-8)
+
+;; set the default encoding system
+(prefer-coding-system 'utf-8)
+(setq default-file-name-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+;; backwards compatibility as default-buffer-file-coding-system
+;; is deprecated in 23.2.
+(if (boundp buffer-file-coding-system)
+    (setq buffer-file-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8))
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+
+;;;; ORG
+(after! org
+  (setq org-agenda-files
+    (apply 'append
+           (mapcar
+            (lambda (directory) (directory-files-recursively (expand-file-name directory user-data-dir) org-agenda-file-regexp))
+            '("1-projects" "2-standards" "3-resources")
+            )))
+
+  (map! :map org-mode-map
+        :localleader
+        "j" 'org-insert-heading
+        "t" 'org-todo-or-insert)
+  (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
+
+  ;; Toggle source blocks with C-c t
+  (defvar org-blocks-hidden nil)
+  (defun org-toggle-blocks ()
+    "Toggle all source code blocks."
+    (interactive)
+    (if org-blocks-hidden
+        (org-show-block-all)
+      (org-hide-block-all))
+    (setq-local org-blocks-hidden (not org-blocks-hidden)))
+  (define-key org-mode-map (kbd "C-c t") 'org-toggle-blocks)
+
+  ;; https://christiantietze.de/posts/2019/06/org-fold-heading/
+  (defun ct/org-foldup ()
+    "Hide the entire subtree from root headline at point."
+    (interactive)
+    (while (ignore-errors (outline-up-heading 1)))
+    (org-flag-subtree t))
+
+  (defun ct/org-shifttab (&optional arg)
+    (interactive "P")
+    (if (or (null (org-current-level))     ; point is before 1st heading, or
+            (and (= 1 (org-current-level)) ; at level-1 heading, or
+                 (org-at-heading-p))
+            (org-at-table-p))              ; in a table (to preserve cell movement)
+        ; perform org-shifttab at root level elements and inside tables
+        (org-shifttab arg)
+        ; try to fold up elsewhere
+        (ct/org-foldup)))
+  (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
 )
 
+;; Behavior
 (set-file-template! 'org-mode :ignore t)
-(setq default-directory org-directory)
 (setq org-read-date-prefer-future nil)
+
+;; Visuals
 (setq org-image-actual-width nil)
-(setq org-ellipsis "▼")
+(setq org-ellipsis "↴")
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
 (setq org-latex-pdf-process '("latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
@@ -115,7 +180,7 @@
 (setq org-startup-with-inline-images t)
 (setq org-display-remote-inline-images 'cache)
 
-;; Fix xdg-open & open PDF in Emacs - https://depp.brause.cc/dotemacs/#orgd97f08c
+;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
 (setq org-file-apps '((remote . emacs)
                       ("\\.pdf\\'" . default)
                       (auto-mode . emacs)
@@ -126,55 +191,17 @@
 ;(after! org
 ;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
 
-
-;; org toggle source blocks with C-c t
-(defvar org-blocks-hidden nil)
-(defun org-toggle-blocks ()
-  "Toggle all source code blocks."
-  (interactive)
-  (if org-blocks-hidden
-      (org-show-block-all)
-    (org-hide-block-all))
-  (setq-local org-blocks-hidden (not org-blocks-hidden)))
-(define-key org-mode-map (kbd "C-c t") 'org-toggle-blocks)
-(define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
-
-;; Automated created date stamps for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
-(require 'org-expiry)
-(org-expiry-insinuate)
-(setq org-expiry-inactive-timestamps t)
-
-(setq org-log-into-drawer t)
-(setq org-treat-insert-todo-heading-as-state-change t)
-
-;; https://christiantietze.de/posts/2019/06/org-fold-heading/
-(defun ct/org-foldup ()
-  "Hide the entire subtree from root headline at point."
-  (interactive)
-  (while (ignore-errors (outline-up-heading 1)))
-  (org-flag-subtree t))
-
-(defun ct/org-shifttab (&optional arg)
-  (interactive "P")
-  (if (or (null (org-current-level))     ; point is before 1st heading, or
-          (and (= 1 (org-current-level)) ; at level-1 heading, or
-               (org-at-heading-p))
-          (org-at-table-p))              ; in a table (to preserve cell movement)
-      ; perform org-shifttab at root level elements and inside tables
-      (org-shifttab arg)
-      ; try to fold up elsewhere
-      (ct/org-foldup)))
-(define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
-
+;;; Org-todos
 (defun org-todo-or-insert (&optional arg)
   (interactive "P")
   (if (org-at-heading-p) (org-todo arg) (org-insert-todo-heading arg)))
-(map! :map org-mode-map
-      :localleader
-      "j" 'org-insert-heading
-      "t" 'org-todo-or-insert)
 
-;; PACKAGES
+;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+(setq org-treat-insert-todo-heading-as-state-change t)
+
+;;;; PACKAGES
 
 ;; https://emacs.stackexchange.com/questions/16744/magit-help-popup-enabled-by-default
 (defadvice magit-status (after my-magit-status-dispatch-popup)
@@ -211,15 +238,15 @@
   )
 (use-package! plantuml-mode ; Diagrams
   :config
-    (setq   plantuml-executable-path "nostderr"
-            plantuml-executable-args '("plantuml" "-headless")
-            plantuml-default-exec-mode 'executable
-            plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
-            org-plantuml-jar-path plantuml-jar-path
-            plantuml-java-args '("-Djava.awt.headless=true" "-jar")
-            )
-    (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-    (with-eval-after-load 'org
+    (setq plantuml-executable-path "nostderr"
+          plantuml-executable-args '("plantuml" "-headless")
+          plantuml-default-exec-mode 'executable
+          plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+          org-plantuml-jar-path plantuml-jar-path
+          plantuml-java-args '("-Djava.awt.headless=true" "-jar")
+          )
+    (after! org
+      (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
       (org-babel-do-load-languages
         'org-babel-load-languages
         '(other Babel languages (plantuml . t))
@@ -230,6 +257,7 @@
   :config
     (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
   )
+
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
