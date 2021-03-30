@@ -49,6 +49,12 @@
       :leader "aa" 'annotate-annotate
       :leader "as" 'annotate-mode
       :leader "d"  'dragon
+      ;; Buffer-local font resizing
+      :n "M-C-="   'text-scale-increase
+      :n "M-C--"   'text-scale-decrease
+      ;; Frame-local font resizing
+      :n "C-="     'doom/increase-font-size
+      :n "C--"     'doom/decrease-font-size
       )
 
 ;;;; GLOBAL SETUP
@@ -123,11 +129,20 @@
             '("1-projects" "2-standards" "3-resources")
             )))
 
+  (defun org-timestamp-up-week ()
+    (interactive)
+    (setq current-prefix-arg '(7))
+    (call-interactively 'org-timestamp-up-day))
+
   (map! :map org-mode-map
         :localleader
         "j" 'org-insert-heading
-        "t" 'org-todo-or-insert)
+        "t" 'org-todo-or-insert
+        "d=" 'org-timestamp-up-week)
+
   (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
+  (define-key org-mode-map (kbd "M-C-+") 'org-timestamp-up)
+  (define-key org-mode-map (kbd "M-C--") 'org-timestamp-down)
 
   ;; Toggle source blocks with C-c t
   (defvar org-blocks-hidden nil)
