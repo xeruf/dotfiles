@@ -375,6 +375,8 @@ clean() {
 
 	highlight "e to delete empty folders"
 	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
+
+	nix-collect-garbage
 }
 
 function zipdiff() {
