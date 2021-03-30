@@ -111,8 +111,9 @@
 
 	cp = cherry-pick
 	rb = rebase
-	rbm = !git rebase $(git main)
+	rbi = rebase --interactive
 	rbc = rebase --continue
+	rbm = !git rebase $(git main)
 
 	sta = stash
 	stl = !git --no-pager stash list

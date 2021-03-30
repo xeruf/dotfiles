@@ -129,10 +129,14 @@
             '("1-projects" "2-standards" "3-resources")
             )))
 
+  (defun org-todo-or-insert (&optional arg)
+    (interactive "P")
+    (if (org-at-heading-p) (org-todo arg) (org-insert-todo-heading arg t)))
+
   (defun org-timestamp-up-week ()
     (interactive)
-    (setq current-prefix-arg '(7))
-    (call-interactively 'org-timestamp-up-day))
+    (let ((setq current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
+    )
 
   (map! :map org-mode-map
         :localleader
@@ -173,6 +177,14 @@
         ; try to fold up elsewhere
         (ct/org-foldup)))
   (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+
+  ;; https://emacs.stackexchange.com/questions/38529/make-multiple-lines-todos-at-once-in-org-mode
+  (defun org-todo-region ()
+    (interactive)
+    (let ((scope (if mark-active 'region 'tree))
+          (state (org-fast-todo-selection))
+          (org-enforce-todo-dependencies nil))
+      (org-map-entries (lambda () (org-todo state)) nil scope)))
 )
 
 ;; Behavior
@@ -205,11 +217,6 @@
 ;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
 ;(after! org
 ;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
-
-;;; Org-todos
-(defun org-todo-or-insert (&optional arg)
-  (interactive "P")
-  (if (org-at-heading-p) (org-todo arg) (org-insert-todo-heading arg)))
 
 ;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
 (setq org-log-done 'time)
