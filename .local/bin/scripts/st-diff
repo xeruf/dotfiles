@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 dif "$(st-unarchive "$1")" "$@"
 echo "y to restore"
 read answer
