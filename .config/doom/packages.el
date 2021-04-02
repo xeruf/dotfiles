@@ -49,13 +49,13 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(package! evil-args) ; motions in args
+(package! evil-replace-with-register) ; grrrrr
+(package! evil-better-visual-line)
+
 (package! annotate) ; Annotations
 (package! visual-fill-column) ; Soft line wrapping at character count
 (package! togetherly) ; Collaborative editing
-;(package! ox-reveal) ; Presentations
-
-(package! evil-args) ; motions in args
-(package! evil-replace-with-register) ; grrrrr
 
 (package! direnv) ; nix-shell stuffs
 (package! plantuml-mode) ; Diagrams

@@ -28,6 +28,8 @@
       doom-variable-pitch-font (font-spec :family "sans" :size 24))
 
 (setq display-line-numbers-type 'relative)
+(setq evil-respect-visual-line-mode nil)
+(add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
 
 ;;;; BINDINGS
 
@@ -119,7 +121,6 @@
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-
 ;;;; ORG
 (after! org
   (setq org-agenda-files
@@ -135,14 +136,17 @@
 
   (defun org-timestamp-up-week ()
     (interactive)
-    (let ((setq current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
+    (let ((current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
     )
 
   (map! :map org-mode-map
         :localleader
         "j" 'org-insert-heading
         "t" 'org-todo-or-insert
-        "d=" 'org-timestamp-up-week)
+        "d=" 'org-timestamp-up-week
+        "rt" 'org-todo-region
+        "ra" 'org-change-tag-in-region
+        )
 
   (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
   (define-key org-mode-map (kbd "M-C-+") 'org-timestamp-up)
@@ -252,6 +256,10 @@
     ;; bind evil-jump-out-args
     (define-key evil-normal-state-map "K" 'evil-jump-out-args)
   )
+; (use-package evil-better-visual-line
+;   :ensure t
+;   :config
+;   (evil-better-visual-line-on))
 
 (use-package! direnv ; nix-shell stuffs
   :config
