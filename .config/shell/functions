@@ -159,15 +159,6 @@ alias jcj='jcl -o json-pretty -u'
 
 alias grp='grep --line-number --ignore-case --binary-files=without-match --directories=skip'
 alias grpr='grp --recursive'
-# Use grep and sed to replace $1 with $2 recursively
-rpl() {
-	grep --null --recursive --files-with-matches "$1" |
-		xargs -0 sed -i "/${1}/{
-			s//${2}/g
-			w /dev/stdout
-		}"
-}
-
 
 # Recover stray swap files from neovim
 alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs -r nvim"

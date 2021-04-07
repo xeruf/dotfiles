@@ -1,4 +1,4 @@
 #!/bin/sh
 set -o pipefail
 # interactive diff with pagination
-diff --color=always --report-identical-files -U 2 "$@" | less --quit-if-one-screen
+diff --color=always --report-identical-files -U 2 "$@" | diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less --RAW-CONTROL-CHARS --quit-on-intr
