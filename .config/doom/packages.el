@@ -51,12 +51,15 @@
 
 (package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
-(package! evil-better-visual-line)
+(package! evil-better-visual-line) ; not sure if this actually helps
 
-(package! annotate) ; Annotations
 (package! visual-fill-column) ; Soft line wrapping at character count
 (package! togetherly) ; Collaborative editing
 
-(package! direnv) ; nix-shell stuffs
+(package! direnv) ; directory-local environment for haskell-nix things
 (package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
+
+;(package! annotate) ; Annotations
+;      :leader "aa" 'annotate-annotate
+;      :leader "as" 'annotate-mode

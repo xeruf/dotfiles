@@ -48,8 +48,6 @@
 (map! :leader "u"  'evil-prev-buffer
       :leader "i"  'evil-next-buffer
       :leader "bq" 'doom/save-and-kill-buffer
-      :leader "aa" 'annotate-annotate
-      :leader "as" 'annotate-mode
       :leader "d"  'dragon
       ;; Buffer-local font resizing
       :n "M-C-="   'text-scale-increase
@@ -139,10 +137,16 @@
     (let ((current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
     )
 
+  (defun org-export-repeat ()
+    (interactive)
+    (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
+    )
+
   (map! :map org-mode-map
         :localleader
         "j" 'org-insert-heading
         "t" 'org-todo-or-insert
+        "E" 'org-export-repeat
         "d=" 'org-timestamp-up-week
         "rt" 'org-todo-region
         "ra" 'org-change-tag-in-region
@@ -239,8 +243,15 @@
     (setq evil-replace-with-register-key (kbd "gr"))
     (evil-replace-with-register-install)
   :config
-    (map! :nv "gR" #'+eval/line-or-region)
+    (defun eval-paragraph ()
+      (interactive)
+      (er/mark-paragraph)
+      (call-interactively '+eval:region)
+    )
+    (map! :n "gR" 'eval-paragraph
+          :v "gR" '+eval/region)
   )
+
 (use-package! evil-args ; https://github.com/wcsmith/evil-args
   :config
     ;; bind evil-args text objects
