@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: Org mode reading list book entry with search links
+# key: B
+# expand-env: ((yas-wrap-around-region 'nil))
+# --
+INTEREST $1
+:PROPERTIES:
+:Author:      ${2:+}
+:Buch7:       https://www.buch7.de/suche?search=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&bindings%5B%5D=Taschenbuch&bindings%5B%5D=Gebunden&bindings%5B%5D=Leinen+%28Buchleinen%29&bindings%5B%5D=Softcover-Buch&items_per_page=50
+:Amazon:      https://smile.amazon.de/s?k=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&rh=n%3A186606
+:LibErlangen: https://stadtbibliothek-recherche.erlangen.de/Mediensuche/Einfache-Suche?search=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&top=y&facets=v_____Sachb%C3%BCcher%7CJugendsachbuch%7CJugendroman%7CBuch+Romane%7CSachb%C3%BCcher+Weih.%2fOst&facetsc=_____15
+:Ebay:        https://www.ebay.de/sch/i.html?_nkw=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&_sop=15
+:gebraucht-kaufen: https://www.gebraucht-kaufen.de/f/search?query=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}
+:END:
