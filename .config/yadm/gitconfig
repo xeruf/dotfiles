@@ -2,4 +2,5 @@
 	cgit    = !yadm cme "config/git:"   -- $XDG_CONFIG_HOME/git $CONFIG_SHELLS/git $HOME/.local/bin/scripts/git-*
 	cvim    = !yadm cme "config/nvim:"  -- $XDG_CONFIG_HOME/nvim/init*
 	cshell  = !yadm cme "config/shell:" -- $CONFIG_SHELLS
+	cf      = !yadm cme "bin:"          -- $CONFIG_SHELLS/functions $HOME/.local/bin/scripts
 	cbin    = !yadm cme "bin:"          -- $HOME/.local/bin/scripts

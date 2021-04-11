@@ -1,5 +1,5 @@
 #!/bin/sh
 # create a diff of diffs - https://stackoverflow.com/a/23527631
-dif "${@:3}" <(git show $1) <(git show $2)
+#dif "${@:3}" <(git show $1) <(git show $2)
 
-#git range-diff $1~..$1 $2~..$2 "${@:3}"
+git range-diff $1~..$1 $2~..$2 "${@:3}"

@@ -1,7 +1,6 @@
 #!/bin/sh
-set -e
-
 dif "$(st-unarchive "$1")" "$@"
+test "$?" -eq "2" && exit 1
 echo "y to restore"
 read answer
 test "$answer" = "y" && st-restore "$1" || exit 0

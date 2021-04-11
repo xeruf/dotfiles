@@ -368,7 +368,7 @@ filextype */
 
 " Displaying pictures in terminal
 "
-" fileviewer *.jpg,*.png shellpic %c
+fileviewer *.jpg,*.png shellpic %c
 
 " Open all other files with default system programs (you can also remove all
 " :file[x]type commands above to ensure they don't interfere with system-wide
@@ -376,7 +376,7 @@ filextype */
 " uncommenting one of lines below will result in ignoring 'vi[x]cmd' option
 " for unknown file types.
 " For *nix:
-" filetype * xdg-open
+filetype * xdg-open
 " For OS X:
 " filetype * open
 " For Windows:
