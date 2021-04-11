@@ -142,13 +142,35 @@
     (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
     )
 
+  (defun org-export-dispatch-custom-date ()
+    (interactive)
+    (let ((org-time-stamp-custom-formats
+           '("<%d.%m.%Y>" . "<%d.%m.%Y>"))
+          (org-display-custom-times 't))
+      (org-export-dispatch))
+  )
+
+  ;; https://emacs.stackexchange.com/questions/38529/make-multiple-lines-todos-at-once-in-org-mode
+  (defun org-change-todo-in-region ()
+    (interactive)
+    (let ((scope (if mark-active 'region 'tree))
+          (state (org-fast-todo-selection))
+          (org-enforce-todo-dependencies nil))
+      (org-map-entries (lambda () (org-todo state)) nil scope)))
+
   (map! :map org-mode-map
+        :leader
+        "j" 'org-insert-heading
+        "e" 'org-export-dispatch-custom-date
+        "E" 'org-export-repeat
+        "\\" 'org-ctrl-c-ctrl-c
         :localleader
         "j" 'org-insert-heading
         "t" 'org-todo-or-insert
+        "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
         "d=" 'org-timestamp-up-week
-        "rt" 'org-todo-region
+        "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
         )
 
@@ -159,7 +181,7 @@
   ;; Toggle source blocks with C-c t
   (defvar org-blocks-hidden nil)
   (defun org-toggle-blocks ()
-    "Toggle all source code blocks."
+    "Toggle all org blocks."
     (interactive)
     (if org-blocks-hidden
         (org-show-block-all)
@@ -185,14 +207,20 @@
         ; try to fold up elsewhere
         (ct/org-foldup)))
   (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+)
 
-  ;; https://emacs.stackexchange.com/questions/38529/make-multiple-lines-todos-at-once-in-org-mode
-  (defun org-todo-region ()
-    (interactive)
-    (let ((scope (if mark-active 'region 'tree))
-          (state (org-fast-todo-selection))
-          (org-enforce-todo-dependencies nil))
-      (org-map-entries (lambda () (org-todo state)) nil scope)))
+(after! ox
+  ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
+  (defun org/get-headline-string-element (headline backend info)
+    (let ((prop-point (next-property-change 0 headline)))
+      (if prop-point (plist-get (text-properties-at prop-point headline) :parent))))
+  (defun org/ensure-latex-clearpage (headline backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (let ((elmnt (org/get-headline-string-element headline backend info)))
+        (when (member "newpage" (org-element-property :tags elmnt))
+          (concat "\\clearpage\n" headline)))))
+  (add-to-list 'org-export-filter-headline-functions
+               'org/ensure-latex-clearpage)
 )
 
 ;; Behavior
