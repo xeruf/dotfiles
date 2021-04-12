@@ -74,6 +74,7 @@
 (setq lazy-highlight-cleanup nil)
 
 ;; Backups & auto-saves
+;; Doom defaults: /home/janek/.config/emacs/core/core-editor.el::89
 (setq auto-save-default t
       auto-save-interval 40)
 
@@ -96,6 +97,11 @@
 (setq default-directory org-directory)
 (setq initial-buffer-choice (expand-file-name "journal/log.org" org-directory))
 (setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
+
+(after! recentf
+  (add-to-list 'recentf-exclude "writing\\/tug")
+  (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\)")
+)
 
 ;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
@@ -125,7 +131,7 @@
     (apply 'append
            (mapcar
             (lambda (directory) (directory-files-recursively (expand-file-name directory user-data-dir) org-agenda-file-regexp))
-            '("1-projects" "2-standards" "3-resources")
+            '("1-projects" "2-standards")
             )))
 
   (defun org-todo-or-insert (&optional arg)
@@ -228,6 +234,7 @@
 (setq org-read-date-prefer-future nil)
 
 ;; Visuals
+; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
 (setq org-image-actual-width nil)
 (setq org-ellipsis "↴")
 

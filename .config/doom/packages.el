@@ -51,7 +51,7 @@
 
 (package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
-(package! evil-better-visual-line) ; not sure if this actually helps
+;(package! evil-better-visual-line) ; not sure if this actually helps
 
 (package! visual-fill-column) ; Soft line wrapping at character count
 (package! togetherly) ; Collaborative editing
