@@ -172,6 +172,7 @@
         "\\" 'org-ctrl-c-ctrl-c
         :localleader
         "j" 'org-insert-heading
+        "k" 'org-latex-export-to-pdf
         "t" 'org-todo-or-insert
         "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
