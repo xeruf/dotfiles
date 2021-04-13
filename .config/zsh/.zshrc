@@ -13,7 +13,7 @@ fi 2>/dev/null || return 0
 #	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 #fi
 
-export PATH=$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:/opt/android-sdk/platform-tools:$XDG_CONFIG_HOME/emacs/bin:$XDG_DATA_HOME/gem/ruby/2.7.0/bin
+export PATH=$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:/opt/android-sdk/platform-tools:$XDG_CONFIG_HOME/emacs/bin
 
 export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
 export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"

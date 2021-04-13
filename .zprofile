@@ -4,13 +4,17 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_HOME="$HOME/.config"
  # adjust programs to use xdg
-export KDEHOME="$XDG_DATA_HOME"/kdehome
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
+
+export KDEHOME="$XDG_DATA_HOME"/kdehome
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export GOPATH="$XDG_DATA_HOME"/go
+
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
-export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
+export RLWRAP_HOME="$XDG_CACHE_HOME"/rlwrap
+export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
+export CABAL_DIR="$XDG_CACHE_HOME"/cabal
  # Java & Android
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle

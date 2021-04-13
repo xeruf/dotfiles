@@ -1,6 +1,6 @@
 #!/bin/sh
 # Use grep and sed to replace $1 with $2 recursively and print what is done
-grep --null --recursive --files-with-matches "$1" |
+grep --null --recursive --files-with-matches --binary-files=without-match "$1" |
 	xargs -0 sed -i "/${1}/{
 		s//${2}/g
 		w /dev/stdout
