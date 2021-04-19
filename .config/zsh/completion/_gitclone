@@ -1,0 +1,6 @@
+#compdef gitclone gitremote
+_arguments '-hub[GitHub]:hub:->github.com' '-lab[Gitlab]:GitLab:->gitlab.com'
+case "$state" in
+  (github.com|'""') compadd $(curl -s https://api.github.com/users/xerus2000/repos?per_page=100 | grep '"name"' | grep -v '      ' | cut -d'"' -f4);;
+  (gitlab.com) _values -s , 'flags' a b c d e;;
+esac

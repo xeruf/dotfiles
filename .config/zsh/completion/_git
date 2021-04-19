@@ -1,0 +1,2 @@
+#compdef git_rmbranch git_rebranch
+compadd $(git branch --format='%(refname:short)' | grep -v master | grep -v main)

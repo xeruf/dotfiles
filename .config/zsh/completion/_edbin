@@ -1,0 +1,2 @@
+#compdef edbin
+compadd $(echo $PATH | cut -d':' -f1 | xargs ls -pA)

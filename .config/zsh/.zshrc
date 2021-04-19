@@ -47,12 +47,14 @@ plugins=(
 )
 
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
-fpath=($fpath "$CONFIG_ZSH/zsh_completion") # Custom completions
+fpath=($fpath "$CONFIG_ZSH/completion") # Custom completions
 ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION" # Cache completions
 DISABLE_UPDATE_PROMPT=true
 ZSH_DISABLE_COMPFIX=true
 
 source $ZSH/oh-my-zsh.sh
+
+compdef wh=which
 
 ## Functions
 

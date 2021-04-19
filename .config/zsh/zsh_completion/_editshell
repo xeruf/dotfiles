@@ -1,2 +1,0 @@
-#compdef editshell
-compadd $(ls -pA $SHELL_CONFIG | grep -v / )
