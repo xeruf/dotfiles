@@ -1,11 +1,14 @@
-.Trash-1000/
+.*Trash-1000/
 lost+found/
 
 .sync/
-.stversions/
+.stfolder/
 
 .gradle/
 cache/
 cmake_build/
 dist_newstyle/
+node_modules/
 build/
+generated/
+out/

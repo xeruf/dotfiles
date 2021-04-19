@@ -1,6 +1,13 @@
 #!/bin/sh
-dif "$(st-unarchive "$1")" "$@"
-test "$?" -eq "2" && exit 1
-echo "y to restore"
-read answer
-test "$answer" = "y" && st-restore "$1" || exit 0
+if test "$#" -gt 0
+  then
+    dif "$(st-unarchive "$1")" "$@"
+    test "$?" -eq "2" && exit 1
+    echo "y|r to restore, n|d to delete"
+    read reply
+    case "$reply" in
+      (y|r) st-restore "$1";;
+      (n|d) rm -v "$1";;
+    esac
+  else find -name '*sync-conflict*' -exec st-diff '{}' \;
+fi

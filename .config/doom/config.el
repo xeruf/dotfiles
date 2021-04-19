@@ -148,6 +148,7 @@
     (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
     )
 
+  ;; TODO name file according to subtree headline
   (defun org-export-dispatch-custom-date ()
     (interactive)
     (let ((org-time-stamp-custom-formats
@@ -176,6 +177,7 @@
         "t" 'org-todo-or-insert
         "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
+        "n" 'org-add-note
         "d=" 'org-timestamp-up-week
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
