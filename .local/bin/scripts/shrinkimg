@@ -1,0 +1,10 @@
+#!/bin/sh
+while true
+  do case $1 in
+    (-o) out=$2; shift 2;;
+    (-q) quality=$2; shift 2;;
+    (*) break;;
+  esac
+done
+magick '$@' -strip -interlace Plane -define jpeg:dct-method=float -sampling-factor 4:2:0 -gaussian-blur 0.05 -quality "${quality:-85}" "$out"
+
