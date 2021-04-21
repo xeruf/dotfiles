@@ -2,3 +2,4 @@
 echo "Args: $@"
 echo "Number of args: $#"
 echo "${@:-default}" | sed 's/\(\w\+\)/\1+sed/g'
+echo "Last arg: ${@:$#}"

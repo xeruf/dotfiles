@@ -358,7 +358,7 @@ clean() {
 	highlight "m to clean mac-files"
 	if [[ $1 =~ "m" ]]; then
 		find -iname '.spotlight*' -print -exec rm -r {} \;
-		find -name "*.DS_Store" -delete
+		find -name '*.DS_Store' -delete
 	fi
 
 	if test "$BASH_VERSION"; then
@@ -380,12 +380,16 @@ clean() {
 		export aptclean_last=$aptclean_cur
 	fi
 
-	which yay &>/dev/null && yay -Sc
 
 	highlight "e to delete empty folders"
 	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
 
-	nix-collect-garbage
+	highlight "o to optimize extensively"
+	if [[ $1 =~ "o" ]]; then
+		which yay &>/dev/null && yay -Sc
+		nix-collect-garbage -d
+		nix-store --optimize
+	fi
 }
 
 function zipdiff() {
