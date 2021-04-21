@@ -135,14 +135,15 @@
 	f = fetch
 	fa = fetch --all
 	fs = !git fetch && git st
-	lu = !git pull --rebase upstream ${1:-$(git curbranch)}
+	lu = !git pull upstream ${1:-$(git curbranch)}
 
 	rg = rmgonebranches
 	su = submodule update --init --recursive
 	gcr = !git gc && git repack -a -d
 
 	# Change remote
-	luu = !git pull upstream $(git curbranch) && git push --no-verify
+	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease
+	luu = !git pull upstream ${1:-(git curbranch)} && git push --no-verify
 	pf = push --force-with-lease
 	cap = !git commit --all --amend --no-edit && git push --force-with-lease
 
