@@ -5,6 +5,7 @@ alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 alias -g G="| grp"
 alias -g X="| xargs"
 alias -g X1="| xargs -n 1"
+alias -g XC="| xclip -selection clipboard"
 alias -g L="--color=always | less"
 fi
 
@@ -282,7 +283,8 @@ alias f="noglob $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-i
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 #alias f1='find -mindepth 1 -maxdepth 1'
 
-alias lowercase='tr "A-Z " "a-z-"'
+lowercase_transliterate="y/A-Z /a-z-/"
+which perl-rename >/dev/null && alias lowercase="perl-rename '$lowercase_transliterate'" || alias lowercase="rename '$lowercase_transliterate'"
 
 mkcd() {
 	mkdir -p "$1" && cd "$1"

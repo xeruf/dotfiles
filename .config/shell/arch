@@ -11,8 +11,16 @@ alias yayr='noglob yay -R'
 
 yzf() {
   query=$(test "$1" = "Q" && echo " -l")
+  sync=$(test "$1" = "S" && echo "true" || echo "")
   pos=$(test "$query" && echo 1 || echo 2)
-  yay --color always -$1$2 | sed "s/ /\t/g" | fzf --multi --tiebreak=length --history=/var/tmp/fzf-history-yay --bind='left-click:ignore' --preview "echo {} | cut -f$pos | xargs yay --color always -$1 -i $query" "${@:3}" | cut -f$pos
+  list_cache="/tmp/yzf-$1$2"
+  (test "$sync" && cat "$list_cache" 2>/dev/null || yay --color always -$1$2 | sed "s/ /\t/g" | tee "$list_cache") |
+    fzf --nth=$pos --multi --tiebreak=length --history=/var/tmp/fzf-history-yay \
+      --bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}')" \
+      --preview "$(test "$sync" && echo "cat /tmp/yzf-{$pos} 2>/dev/null | grep -v 'Querying' | grep . ||") yay --color always -$1 -i $query {$pos} | tee /tmp/yzf-{$pos}" "${@:3}" --preview-window=wrap |
+        cut -f$pos
+  # TODO get xdg-open URL for aur as well
+  # yay -S -i {$pos} | grep URL | tail -1 | cut -d ':' -f2- | xargs xdg-open
 }
 yas() {
   pkg=$(yzf S  l -q "$1" "${@:2}")
