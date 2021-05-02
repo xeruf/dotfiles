@@ -271,10 +271,18 @@
 
 ;;;; PACKAGES
 
-;; https://emacs.stackexchange.com/questions/16744/magit-help-popup-enabled-by-default
-(defadvice magit-status (after my-magit-status-dispatch-popup)
-  (call-interactively 'magit-dispatch))
-(ad-activate 'magit-status)
+(use-package! tramp
+  :config
+    (add-to-list 'tramp-methods
+     '("yadm"
+       (tramp-login-program "yadm")
+       (tramp-login-args (("enter")))
+       (tramp-login-env (("SHELL") ("/bin/sh")))
+       (tramp-remote-shell "/bin/sh")
+       (tramp-remote-shell-args ("-c"))))
+    (map! :leader
+          :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
+  )
 
 (use-package! evil-replace-with-register ; gr
   :init
