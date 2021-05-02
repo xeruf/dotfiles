@@ -48,7 +48,7 @@
 
 [user]
 	email = 27jf@pm.me
-	name = xerus2000
+	name = xeruf
 
 [mailmap]
 	file = /home/janek/.config/yadm/.mailmap
@@ -113,10 +113,10 @@
 	cme = commit -v --edit --message
 
 	cp = cherry-pick
-	rb = rebase
+	rb = rebase --autostash
 	rbi = rebase --interactive
 	rbc = rebase --continue
-	rbm = !git rebase $(git main)
+	rbm = !git rb $(git main)
 
 	sta = stash
 	stl = !git --no-pager stash list

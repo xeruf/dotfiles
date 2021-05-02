@@ -9,6 +9,19 @@ yc() {
   yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$1"
 }
 
+gcn() {
+  if test $# -eq 0 || test -e $1
+  then
+    fulldir="$(realpath ${1:-$PWD})"
+    dir="${fulldir#$DATA/*/}"
+  else
+    dir="notes/$1"
+    fulldir="$DATA/2-standards/$dir"
+  fi
+  echo "$dir:" >/tmp/gcn-msg
+  git commit -v --template /tmp/gcn-msg ${@:2} -- $fulldir
+}
+
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
 git() {
   case "$1" in
