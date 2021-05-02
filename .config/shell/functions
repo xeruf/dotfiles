@@ -152,8 +152,9 @@ xo() {
   done
 }
 alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
-alias loc='noglob locate --basename'
-alias uloc='noglob sudo updatedb && locate --basename'
+__loci='locate --ignore-case --basename'
+alias loc="noglob $__loci"
+alias uloc="noglob sudo updatedb && $__loci"
 alias syslog='less +F /var/log/syslog'
 alias println='printf "\n"'
 alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
@@ -167,10 +168,20 @@ alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
-scs() { sudo systemctl status "*$1*" }
+scs() {
+  sudo systemctl status "*$1*"
+  systemctl --user status "*$1*"
+}
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
-scus() { systemctl --user status "*$1*" }
+
+scb() {
+  sudo systemctl stop -T "$1"
+  systemctl --user stop -T "$1"
+  read
+  sudo systemctl start -T "$1"
+  systemctl --user start -T "$1"
+}
 
 alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
 alias jc='jcl -u'
