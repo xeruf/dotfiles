@@ -242,7 +242,7 @@
 (setq org-ellipsis "↴")
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-(setq org-latex-pdf-process '("latexmk -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
+(setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
 (setq org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans")))
 (setq org-export-with-tags nil)
 (setq org-export-with-tasks 'done)
@@ -319,17 +319,13 @@
   :config
     (setq plantuml-executable-path "nostderr"
           plantuml-executable-args '("plantuml" "-headless")
-          plantuml-default-exec-mode 'executable
+          plantuml-default-exec-mode 'jar
           plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
           org-plantuml-jar-path plantuml-jar-path
           plantuml-java-args '("-Djava.awt.headless=true" "-jar")
           )
     (after! org
-      (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-      (org-babel-do-load-languages
-        'org-babel-load-languages
-        '(other Babel languages (plantuml . t))
-        )
+      (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
       )
   )
 (use-package! adoc-mode ; Asciidoc, a md alternative
