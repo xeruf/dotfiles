@@ -1,0 +1,32 @@
+Thank you for filling out a Git bug report!
+Please answer the following questions to help us understand your issue.
+
+What did you do before the bug happened? (Steps to reproduce your issue)
+git status --short --show-stash --branch
+
+What did you expect to happen? (Expected behavior)
+The status shows info about the stash, e.g. next to the branch infos
+
+What happened instead? (Actual behavior)
+--show-stash is ignored in short mode
+
+
+[System Info]
+git version:
+git version 2.30.1
+cpu: x86_64
+no commit associated with this build
+sizeof-long: 8
+sizeof-size_t: 8
+shell-path: /bin/sh
+uname: Linux 5.10.15-arch1-1 #1 SMP PREEMPT Wed, 10 Feb 2021 18:32:40 +0000 x86_64
+compiler info: gnuc: 10.2
+libc info: glibc: 2.33
+$SHELL (typically, interactive shell): /bin/zsh
+
+
+[Enabled Hooks]
+post-commit
+post-checkout
+post-merge
+pre-push

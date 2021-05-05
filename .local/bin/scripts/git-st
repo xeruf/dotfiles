@@ -1,2 +1,0 @@
-#!/bin/sh
-git stl && git stb "$@"

@@ -68,7 +68,9 @@
 
 [alias]
 	# GET INFO
-	stb = status --short --branch --show-stash
+	s = !git stl && git stb
+	st = stb .
+	stb = status --short --branch
 	stv = --paginate status -v
 	stvv = --paginate status -vv
 
@@ -77,7 +79,7 @@
 	ba = b -a
 	main = !cat $(git rev-parse --git-dir)/refs/remotes/origin/HEAD | cut -d'/' -f4
 
-	s = switch
+	sw = switch
 	sc = switch -c
 	sm = !git switch $(git main)
 
@@ -119,10 +121,10 @@
 	rbm = !git rb $(git main)
 
 	sta = stash
-	stl = !git --no-pager stash list
+	stl = !git --no-pager stash list --pretty=tformat:'%gd%h - %s (%cr)'
 	sts = stash show -v
 	stp = stash pop
-	std = stash drop
+	std = !git stash drop && git stl
 
 	rh = reset HEAD~
 	rs = reset --keep
