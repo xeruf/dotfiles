@@ -110,6 +110,10 @@ swap() {
 	mv -n $1.tmp $2
 }
 
+p() {
+	pass "$@" || pass edit "$@"
+}
+
 # Task management & time tracking
 t() {
 	if test "$#" -eq 0 && which tn >/dev/null
