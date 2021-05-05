@@ -14,11 +14,11 @@ alias info='info --vi-keys'
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
 if test -d "$DATA"; then
-  da=$(cd $DATA/_* && pwd)
-  d1=$(cd $DATA/1* && pwd)
-  d2=$(cd $DATA/2* && pwd)
-  d3=$(cd $DATA/3* && pwd)
-  d4=$(cd $DATA/4* && pwd)
+	da=$(cd $DATA/_* && pwd)
+	d1=$(cd $DATA/1* && pwd)
+	d2=$(cd $DATA/2* && pwd)
+	d3=$(cd $DATA/3* && pwd)
+	d4=$(cd $DATA/4* && pwd)
 fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps
@@ -27,11 +27,11 @@ which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) 
 
 unalias rd 2>/dev/null
 rd() {
-  while test $# -gt 0
-  do
-    test -d "$1" && find "$1" -maxdepth 1 -type d -empty -printf "Removing %p\n" -delete || rm -iv "$@"
-    shift
-  done
+	while test $# -gt 0
+	do
+		test -d "$1" && find "$1" -maxdepth 1 -type d -empty -printf "Removing %p\n" -delete || rm -iv "$@"
+		shift
+	done
 }
 rr() { mv "$@" /tmp }
 
@@ -43,8 +43,8 @@ alias jnc='jn -contains'
 
 # like "which", but shows contents if it resolves to a file
 wh() {
-  res=$(which "$@")
-  test -r "$res" && b --plain "$res" || echo "$res"
+	res=$(which "$@")
+	test -r "$res" && b --plain "$res" || echo "$res"
 }
 
 alias logoff="loginctl terminate-user $USER"
@@ -91,17 +91,17 @@ edshell() {
 }
 
 edbin() {
-  file="$(f=$(which $1) && test -f "$f" && echo $f || echo "$HOME/.local/bin/scripts/$1")"
-  edit "$file"
-  case "$file" in ($HOME*) yadm add "$file";; esac
+	file="$(f=$(which $1) && test -f "$f" && echo $f || echo "$HOME/.local/bin/scripts/$1")"
+	edit "$file"
+	case "$file" in ($HOME*) yadm add "$file";; esac
 }
 
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() {
-  test ! -d "$1" && test $# -eq 1 && dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
-    test -n "$dir" && cd "$dir" && return
-  builtin cd $1 &&
-    command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
+	test ! -d "$1" && test $# -eq 1 && dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
+		test -n "$dir" && cd "$dir" && return
+	builtin cd $1 &&
+		command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
 }
 
 swap() {
@@ -112,13 +112,14 @@ swap() {
 
 # Task management & time tracking
 t() {
-  if test "$#" -eq 0 && which tn >/dev/null
-  then tn
-  else if test "$1" = "do"
-    then test "$2" -gt 0 2>/dev/null && task mod sched:today "${@:2}" || task add sched:today "${@:2}"
-    else task "$@"
-    fi
-  fi
+	if test "$#" -eq 0 && which tn >/dev/null
+	then tn
+	else
+		if test "$1" = "do"
+		then test "$2" -gt 0 2>/dev/null && task mod sched:today "${@:2}" || task add sched:today "${@:2}"
+		else task "$@"
+		fi
+	fi
 }
 
 alias tw='timew'
@@ -146,10 +147,10 @@ browse-unsafe() {
 }
 
 xo() {
-  while test $# -gt 0; do
-    xdg-open "$1"
-    shift
-  done
+	while test $# -gt 0; do
+		xdg-open "$1"
+		shift
+	done
 }
 alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
 __loci='locate --ignore-case --basename'
@@ -169,18 +170,18 @@ alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 scs() {
-  sudo systemctl status "*$1*"
-  systemctl --user status "*$1*"
+	sudo systemctl status "*$1*"
+	systemctl --user status "*$1*"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
 
 scb() {
-  sudo systemctl stop -T "$1"
-  systemctl --user stop -T "$1"
-  read
-  sudo systemctl start -T "$1"
-  systemctl --user start -T "$1"
+	sudo systemctl stop -T "$1"
+	systemctl --user stop -T "$1"
+	read
+	sudo systemctl start -T "$1"
+	systemctl --user start -T "$1"
 }
 
 alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
@@ -233,7 +234,7 @@ updateDeps() {
 	done
 	echo name $name depth $depth pattern $oldversion version $version
 	find -maxdepth $depth -type f -name $name | while read f
-	do  echo $f
+	do	echo $f
 		sed -i "s/\($pattern\)$oldversion/\1$version/gw /dev/stdout" $f
 	done
 }

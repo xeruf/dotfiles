@@ -1,7 +1,7 @@
 # A tool for managing multiple git projects quickly. Simply source this in your bashrc or zshrc.
 # This assumes a common directory that contains all projects. Subfolders are detected as well.
 # You can set $projects_dir before or after sourcing this script, or adjust it below.
-# The standard command I execute daily is "p status", it updates all projects and shows their status.
+# The regular command is "p status" to update all projects and show their status.
 
 # Common root for all projects
 projects_dir=${projects_dir:-$DATA/4-incubator/dev}
@@ -13,14 +13,14 @@ projects_subfolder_level=4
 # Lists all projects under $projects_dir or the current directory if that is a subfolder of $projects_dir and not a git repository.
 # This is done by searching for corresponding ".git" folders and then listing their parent directories via "dirname"
 listprojects() {
-    if test "$1" = "--all"
-    then find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
-    else
-        if test "$(echo $PWD | grep $projects_dir/)" && ! git rev-parse --git-dir > /dev/null 2>&1
-        then find $PWD -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname 2> /dev/null || listprojects --all
-        else find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -not -path "*_*" -name ".git" | xargs dirname
-        fi
-    fi
+	if test "$1" = "--all"
+	then find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
+	else
+		if test "$(echo $PWD | grep $projects_dir/)" && ! git rev-parse --git-dir > /dev/null 2>&1
+		then find $PWD -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname 2> /dev/null || listprojects --all
+		else find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -not -path "*_*" -name ".git" | xargs dirname
+		fi
+	fi
 }
 
 # Underline the project names
@@ -29,10 +29,11 @@ highlight() { echo "[4m$1[0m" }
 # Lists all projects and evaluates the given command.
 alias p=projects
 projects() {
-    test "$1" = "--all" && all="$1" && shift
+	test "$1" = "--all" && all="$1" && shift
 	case $1 in
 	"build")
-		# Builds all found gradle projects in parallel and then prints the results in batches - WARNING: This is likely to considerably slow down your computer!
+		# Builds all found gradle projects in parallel and then prints the results in batches
+		# WARNING: This is likely to considerably slow down your computer!
 		listprojects $all | while read d; do
 			if test "$(find $d -maxdepth 1 -name "*gradle*")"; then
 				builtin cd $d
@@ -73,7 +74,7 @@ projects() {
 				test $behind -gt 0 && st+=("behind $behind")
 				local stashes=$(git stash list | wc -l)
 				test $stashes -gt 0 && st+=("stashed $stashes")
-				test "$st"  && name+=" [$(IFS=, eval 'JOINED="${st[*]}"' && echo $JOINED)]"
+				test "$st" && name+=" [$(IFS=, eval 'JOINED="${st[*]}"' && echo $JOINED)]"
 				highlight $(basename $d)
 				eval "$com"
 			fi
