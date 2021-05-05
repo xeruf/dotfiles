@@ -60,6 +60,6 @@
 (package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
 
-;(package! annotate) ; Annotations
+;(package! annotate) ; Annotations - replaced by org-noter
 ;      :leader "aa" 'annotate-annotate
 ;      :leader "as" 'annotate-mode

@@ -93,15 +93,21 @@
 
 (load! "./local.el" nil t)
 
-(setq org-directory (expand-file-name "2-standards/notes" user-data-dir))
-(setq default-directory org-directory)
-(setq initial-buffer-choice (expand-file-name "journal/log.org" org-directory))
-(setq org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam"))
+(setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
+      default-directory org-directory
+      initial-buffer-choice (expand-file-name "journal/log.org" org-directory)
+      org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam")
+      )
+
+(setq org-journal-file-type 'weekly
+      org-journal-file-format "%Y%m%d.org"
+      org-journal-created-property-timestamp-format "[%Y-%m-%d]"
+      )
 
 (after! recentf
   (add-to-list 'recentf-exclude "writing\\/tug")
   (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\)")
-)
+  )
 
 ;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
@@ -142,6 +148,9 @@
     (interactive)
     (let ((current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
     )
+
+  (setq org-export-with-toc nil
+        org-export-with-section-numbers nil)
 
   (defun org-export-repeat ()
     (interactive)
