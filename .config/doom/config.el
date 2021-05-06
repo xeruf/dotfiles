@@ -95,7 +95,6 @@
 
 (setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
       default-directory org-directory
-      initial-buffer-choice (expand-file-name "journal/log.org" org-directory)
       org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam")
       )
 
@@ -251,16 +250,16 @@
 (setq org-ellipsis "↴")
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-(setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o")) ; https://emacs.stackexchange.com/a/48351
-(setq org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans")))
-(setq org-export-with-tags nil)
-(setq org-export-with-tasks 'done)
-(setq org-export-with-todo-keywords nil)
+(setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+      org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans"))
+      org-export-with-tags nil
+      org-export-with-tasks 'done
+      org-export-with-todo-keywords nil)
 
 ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
-(setq org-startup-folded 'show2levels)
-(setq org-startup-with-inline-images t)
-(setq org-display-remote-inline-images 'cache)
+(setq org-startup-folded 'show2levels
+      org-startup-with-inline-images t
+      org-display-remote-inline-images 'cache)
 
 ;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
 (setq org-file-apps '((remote . emacs)
