@@ -115,7 +115,7 @@
 	cme = commit -v --edit --message
 
 	cp = cherry-pick
-	rb = rebase --autostash
+	rb = rebase
 	rbi = rebase --interactive
 	rbc = rebase --continue
 	rbm = !git rb $(git main)

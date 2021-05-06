@@ -1,5 +1,8 @@
 #!/bin/sh
-# Interactive rebase onto the remote
-remote="$1"
-test $# -gt 0 && shift
-git rebase -i ${remote:-'@{push}'} "$@"
+# Interactive rebase onto the given committish, the matching upstream branch
+# or the first named ref from the history if there is no upstream yet.
+if test $# -gt 0
+  then remote="$1"; shift
+  else remote=$(git rev-parse --verify --quiet @{push} || git rev-parse $(git describe --all HEAD~ | cut -d '-' -f-2))
+fi
+git rebase -i "$remote" "$@"
