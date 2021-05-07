@@ -12,7 +12,7 @@ for arg do
       *.tar)       tar xf "$arg"    ;;
       *.tbz2)      tar xjf "$arg"   ;;
       *.tgz)       tar xzf "$arg"   ;;
-      *.zip)       unzip "$arg"     ;;
+      *.zip|*.jar) unzip "$arg"     ;;
       *.Z)         uncompress "$arg";;
       *.7z)        7z x "$arg"      ;;
       *.deb)       ar x "$arg"      ;;

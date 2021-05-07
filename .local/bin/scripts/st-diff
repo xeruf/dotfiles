@@ -1,7 +1,12 @@
 #!/bin/sh
+stats() {
+  stat --format '%n	%A size %sB, birth: %.10w mod %.10y' "$@"
+}
 if test "$#" -gt 0
   then
-    dif "$(st-unarchive "$1")" "$@"
+    orig="$(st-unarchive "$1")"
+    ( stats "$orig" "$1"; dif "$orig" "$@"  ) |
+      less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
     test "$?" -eq "2" && exit 1
     echo "y|r to restore, n|d to delete"
     read reply

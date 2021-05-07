@@ -12,5 +12,5 @@ case "$(file --dereference --mime "$last")" in
   *inode/directory*) ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --almost-all "$@";;
   *binary) ;;
   *) $(test -f "$last" -a ! -r "$last" && echo "sudo") bat --style header "$@"
-     stat -c '%A size %sB, birth: %.10w mod %.10y' "$last";;
+     stat --format '%A size %sB, birth: %.10w mod %.10y' "$last";;
 esac
