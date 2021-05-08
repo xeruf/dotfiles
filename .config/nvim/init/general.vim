@@ -1,5 +1,33 @@
 set termguicolors
 set mouse=nvh " Disable mouse in insert mode to allow middle-click paste in remote session - https://vi.stackexchange.com/q/23080
+set clipboard+=unnamedplus " Merge with system clipboard
+
+set shiftwidth=2 expandtab " Default simple indentation
+set wildmode=longest,list,full " Auto-completion for cmdline
+set splitright diffopt+=vertical,filler
+
+" matchpairs
+set showmatch " Highlight matchpairs
+set matchpairs+=<:> " More pairings for '%'
+
+" visuals
+set number relativenumber
+set linebreak " Wrap at word boundaries
+set scrolloff=7 sidescrolloff=20 " Keep some context when scrolling
+
+set cursorline cursorcolumn
+set colorcolumn=81,121
+highlight ColorColumn ctermbg=grey guibg=#888888
+" call matchadd('ColorColumn', '\%81v', 100)
+
+" search
+set incsearch hlsearch " Handier search, even though nvim seems to enable it by default
+set ignorecase smartcase " Only search case-sensitive when searching with uppercase
+set inccommand=split " Replace preview in separate window
+
+" Folding
+set foldmethod=marker " Use triple curly braces for folds
+set foldopen+=jump " Automatically open folds on jump
 
 " persist undo & backup files
 set undofile
@@ -9,36 +37,6 @@ if !isdirectory(&backupdir)
   execute "!mkdir " . &backupdir
 endif
 let &backupext="_" . strftime("%y%m%dT%H%M")
-
-set wildmode=longest,list,full " Auto-completion for cmdline
-set clipboard+=unnamedplus " Merge with system clipboard
-
-set shiftwidth=2 expandtab " Default simple indentation
-
-" visuals
-set number relativenumber " Relative line numbering on the left
-set linebreak
-set cursorline cursorcolumn
-set scrolloff=7 sidescrolloff=20 " Keep some context when scrolling
-
-set colorcolumn=81,121
-highlight ColorColumn ctermbg=grey guibg=#888888
-" call matchadd('ColorColumn', '\%81v', 100)
-
-" search
-set incsearch hlsearch " Handier search, even though nvim seems to enable it by default
-set ignorecase smartcase " Only search case-sensitive when searching with uppercase
-set inccommand=split
-" matching
-set showmatch " Highlight matching parenthesis
-set matchpairs+=<:> " More pairings for '%'
-
-set splitright " Vertical split to right by default
-set diffopt+=vertical
-
-" Folding
-set foldmethod=marker " Use triple curly braces for folds
-set foldopen+=jump " Automatically open folds on jump
 
 " FILETYPES
 syntax on
