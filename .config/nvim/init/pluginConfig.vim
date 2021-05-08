@@ -1,6 +1,3 @@
-" Don't show current mode because airline already does and it inhibits echo in visual mode
-set noshowmode
-
 command! PU PlugUpdate | PlugUpgrade
 
 lua require 'colorizer'.setup({ '*'; markdown = { names = false; }; })
@@ -11,12 +8,6 @@ let g:show_spaces_that_precede_tabs=1
 let g:better_whitespace_skip_empty_lines=1
 let g:better_whitespace_guicolor=$THEME == 'light' ? 'LightGrey' : 'DarkGrey'
 " see https://github.com/ntpeters/vim-better-whitespace/issues/134 - autocmd OptionSet background let g:better_whitespace_guicolor=&background == 'light' ? 'LightYellow' : 'Brown'
-
-let g:blamer_enabled = 1
-let g:blamer_template = '<committer>: <summary> • <commit-short> <committer-time>'
-let g:blamer_relative_time = 1
-let g:blamer_delay = 300
-" let g:blamer_show_in_visual_modes = 0
 
 " remap movement commands to respect CamelCase
 map <silent> w <Plug>CamelCaseMotion_w
@@ -30,15 +21,6 @@ xmap <silent> ib <Plug>CamelCaseMotion_ib
 omap <silent> ie <Plug>CamelCaseMotion_ie
 xmap <silent> ie <Plug>CamelCaseMotion_ie
 
-" open-browser
-let g:openbrowser_default_search="duckduckgo"
-let g:netrw_nogx = 1 " disable netrw's gx mapping.
-nmap gs <Plug>(openbrowser-smart-search)
-vmap gs <Plug>(openbrowser-smart-search)
-nmap gx yi':OpenGithubProject <C-R>"<CR>
-command! S OpenBrowserSmartSearch <C-R>"<CR>
-command! GH OpenGithubProject <C-R>"<CR>
-
 " firenvim
 let g:firenvim_config = {
     \ 'globalSettings': {
@@ -49,14 +31,14 @@ let g:firenvim_config = {
             \ 'cmdline': 'firenvim',
             \ 'priority': 0,
             \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]), div[role="textbox"]:not([aria-label="Search"])',
-            \ 'takeover': 'never',
+            \ 'takeover': 'always',
         \ },
-        \ '.*notion\.so.*': { 'priority': 9, 'takeover': 'never', },
-        \ '.*docs\.google\.com.*': { 'priority': 9, 'takeover': 'never', },
+        \ '.*notion\.so.*':            { 'priority': 9, 'takeover': 'never', },
+        \ '.*docs\.google\.com.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*mail\.protonmail\.com.*': { 'priority': 9, 'takeover': 'never', },
-	\ '.*cloud.atomtoast.xyz.*': { 'priority': 9, 'takeover': 'never', },
-	\ 'https://bigbluebutton.*': { 'priority': 9, 'takeover': 'never', },
-	\ 'https://dhall-lang.org.*': { 'priority': 9, 'takeover': 'never', },
+	\ '.*cloud.atomtoast.xyz.*':   { 'priority': 9, 'takeover': 'never', },
+	\ 'https://bigbluebutton.*':   { 'priority': 9, 'takeover': 'never', },
+	\ 'https://dhall-lang.org.*':  { 'priority': 9, 'takeover': 'never', },
     \ }
 \ }
 if exists('g:started_by_firenvim')
