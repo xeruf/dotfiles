@@ -183,9 +183,6 @@ Version 2019-11-04 2021-02-16"
     (let ((current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
     )
 
-  (setq org-export-with-toc nil
-        org-export-with-section-numbers nil)
-
   (defun org-export-repeat ()
     (interactive)
     (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
@@ -289,7 +286,10 @@ Version 2019-11-04 2021-02-16"
       org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans"))
       org-export-with-tags nil
       org-export-with-tasks 'done
-      org-export-with-todo-keywords nil)
+      org-export-with-todo-keywords nil
+      org-export-with-toc nil
+      org-export-with-section-numbers nil
+      )
 
 ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
 (setq org-startup-folded 'show2levels
