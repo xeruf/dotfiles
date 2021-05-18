@@ -6,7 +6,7 @@ alias dragon='dragon-drag-and-drop'
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R'
-alias yays='noglob yay -S --needed'
+alias yays='noglob yay -S --needed --ignore ferdi'
 alias yayr='noglob yay -R'
 
 yzf() {

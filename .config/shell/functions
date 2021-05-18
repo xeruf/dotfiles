@@ -174,18 +174,18 @@ alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 scs() {
-	sudo systemctl status "*$1*"
-	systemctl --user status "*$1*"
+	systemctl --user status "$1" "*$1*"
+	sudo systemctl status "$1" "*$1*"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
 
 scb() {
-	sudo systemctl stop -T "$1"
 	systemctl --user stop -T "$1"
+	sudo systemctl stop -T "$1"
 	read
-	sudo systemctl start -T "$1"
 	systemctl --user start -T "$1"
+	sudo systemctl start -T "$1"
 }
 
 alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
@@ -404,7 +404,7 @@ clean() {
 
 	highlight "o to optimize extensively"
 	if [[ $1 =~ "o" ]]; then
-		which yay &>/dev/null && yay -Sc
+		which yay &>/dev/null && yay -Sc --noconfirm
 		nix-collect-garbage -d
 		nix-store --optimize
 	fi
