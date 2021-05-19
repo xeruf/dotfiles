@@ -130,17 +130,18 @@ Version 2019-11-04 2021-02-16"
 
 (setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
       default-directory org-directory
-      org-roam-directory (concat (file-name-as-directory (getenv "XDG_DATA_HOME")) "org-roam")
+      org-roam-directory (expand-file-name "roam" org-directory)
       )
 
 (setq org-journal-file-type 'weekly
       org-journal-file-format "%Y%m%d.org"
       org-journal-created-property-timestamp-format "[%Y-%m-%d]"
+      org-journal-carryover-delete-empty-journal 'always
       )
 
 (after! recentf
   (add-to-list 'recentf-exclude "writing\\/tug")
-  (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\)")
+  (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
   )
 
 ;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
@@ -283,7 +284,7 @@ Version 2019-11-04 2021-02-16"
 
 ;; Exporting - https://orgmode.org/manual/Export-Settings.html
 (setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
-      org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans"))
+      org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans") ("" "svg"))
       org-export-with-tags nil
       org-export-with-tasks 'done
       org-export-with-todo-keywords nil
@@ -313,6 +314,11 @@ Version 2019-11-04 2021-02-16"
       org-treat-insert-todo-heading-as-state-change t)
 
 ;;;; PACKAGES
+
+(after! dired
+  (define-key dired-mode-map (kbd "<tab>") 'other-window)
+  )
+
 
 (use-package! tramp
   :config
@@ -356,6 +362,7 @@ Version 2019-11-04 2021-02-16"
     ;; bind evil-jump-out-args
     (define-key evil-normal-state-map "K" 'evil-jump-out-args)
   )
+
 ; (use-package evil-better-visual-line
 ;   :ensure t
 ;   :config
@@ -382,7 +389,30 @@ Version 2019-11-04 2021-02-16"
 (use-package! adoc-mode ; Asciidoc, a md alternative
   :config
     (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
+    )
+
+(use-package! lilypond-mode
+  :config
+    (setq LilyPond-pdf-command "xdg-open")
+    (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
+    (setq auto-mode-alist
+          (cons '("\\.ly$" . LilyPond-mode) auto-mode-alist))
+    (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+    (setq auto-revert-interval 2)
   )
+
+(setq custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
+(setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
+
+;(with-eval-after-load "ispell"
+;  (setq ispell-program-name "hunspell")
+;  (setq hunspell-default-dict "en_US")
+;  (setq ispell-dictionary "en_US,de_DE")
+;  ;; ispell-set-spellchecker-params has to be called
+;  ;; before ispell-hunspell-add-multi-dic will work
+;  (ispell-set-spellchecker-params)
+;  (ispell-hunspell-add-multi-dic ispell-dictionary)
+;  )
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
