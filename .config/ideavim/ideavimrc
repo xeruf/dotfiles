@@ -11,3 +11,6 @@ set multiple-cursors
 
 " see https://github.com/JetBrains/ideavim/blob/master/doc/set-commands.md
 set ideajoin
+
+" use IDEA jump history https://youtrack.jetbrains.com/issue/VIM-44
+nnoremap <C-o> :action Back<CR>
