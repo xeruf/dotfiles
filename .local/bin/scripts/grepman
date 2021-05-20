@@ -1,0 +1,2 @@
+#!/bin/sh
+find /usr/share/man -name "*$1*" | xargs gunzip -c | grep $2 --color=auto

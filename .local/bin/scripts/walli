@@ -11,6 +11,9 @@ iptables -A chain-times -m owner --uid-owner janek -d 127.0.0.0/8 -j ACCEPT
 time9=$(date -u -d "$(date -d 09:00)" +%k)
 iptables -A chain-times -m owner --uid-owner janek -j DROP -m time \
   --timestart $(date -u -d "$(date -d "${1:-15 min}")" +%k:%M) --timestop $(expr $time9 - 2):00
+
+# TODO Only 10 minutes every hour, anything else needs justification
+
 # Only allow periodical internet access in the morning
 #iptables -A chain-times -m owner --uid-owner janek -j DROP -m time --weekdays 1-5 \
 #  --timestart             $time9:20 --timestop $(expr $time9 + 1):00
