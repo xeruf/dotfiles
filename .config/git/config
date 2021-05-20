@@ -71,8 +71,8 @@
 	s = !git stl && git stb
 	st = stb .
 	stb = status --short --branch
-	stv = --paginate status -v
-	stvv = --paginate status -vv
+	sv = --paginate status -v
+	svv = --paginate status -vv
 
 	r = remote -v
 	b = branch -vv
@@ -81,6 +81,7 @@
 
 	sw = switch
 	sc = switch -c
+	sd = switch -d
 	sm = !git switch $(git main)
 
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
@@ -102,6 +103,7 @@
 	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
 	d = diff
+	dm = !git diff $(git merge-base $(git main) HEAD)
 	dw = diff --color-words
 	dc = diff --color-words="[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+"
 
