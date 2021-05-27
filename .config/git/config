@@ -143,6 +143,7 @@
 
 	rg = rmgonebranches
 	su = submodule update --init --recursive
+	sun = submodule update --no-fetch
 	gcr = !git gc && git repack -a -d
 
 	# Change remote
