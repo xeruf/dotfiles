@@ -36,9 +36,11 @@ let g:firenvim_config = {
         \ '.*notion\.so.*':            { 'priority': 9, 'takeover': 'never', },
         \ '.*docs\.google\.com.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*mail\.protonmail\.com.*': { 'priority': 9, 'takeover': 'never', },
-	\ '.*cloud.atomtoast.xyz.*':   { 'priority': 9, 'takeover': 'never', },
+	\ '.*cloud\.atomtoast\.xyz.*': { 'priority': 9, 'takeover': 'never', },
 	\ 'https://bigbluebutton.*':   { 'priority': 9, 'takeover': 'never', },
 	\ 'https://dhall-lang.org.*':  { 'priority': 9, 'takeover': 'never', },
+	\ '.*stackexchange\.com.*':  { 'priority': 9, 'takeover': 'never', },
+	\ '.*stackoverflow\.com.*':  { 'priority': 9, 'takeover': 'never', },
     \ }
 \ }
 if exists('g:started_by_firenvim')
