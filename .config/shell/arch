@@ -6,18 +6,21 @@ alias dragon='dragon-drag-and-drop'
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R'
-alias yays='noglob yay -S --needed --ignore ferdi'
+alias yays='noglob yay -Sy --needed --ignore ferdi'
 alias yayr='noglob yay -R'
 
 yzf() {
   query=$(test "$1" = "Q" && echo " -l")
   sync=$(test "$1" = "S" && echo "true" || echo "")
   pos=$(test "$query" && echo 1 || echo 2)
-  list_cache="/tmp/yzf-$1$2"
+  cache_dir="/tmp/yzf"
+  mkdir -p $cache_dir
+  list_cache="$cache_dir/list_$1$2"
+  preview_cache="$cache_dir/preview_{$pos}"
   (test "$sync" && cat "$list_cache" 2>/dev/null || yay --color always -$1$2 | sed "s/ /\t/g" | tee "$list_cache") |
     fzf --nth=$pos --multi --tiebreak=length --history=/var/tmp/fzf-history-yay \
       --bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}')" \
-      --preview "$(test "$sync" && echo "cat /tmp/yzf-{$pos} 2>/dev/null | grep -v 'Querying' | grep . ||") yay --color always -$1 -i $query {$pos} | tee /tmp/yzf-{$pos}" "${@:3}" --preview-window=wrap |
+      --preview "$(test "$sync" && echo "cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . ||") yay --color always -$1 -i $query {$pos} | tee $preview_cache" "${@:3}" --preview-window=wrap |
         cut -f$pos
   # TODO get xdg-open URL for aur as well
   # yay -S -i {$pos} | grep URL | tail -1 | cut -d ':' -f2- | xargs xdg-open

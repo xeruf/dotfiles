@@ -193,7 +193,7 @@ alias jc='jcl -u'
 alias jcj='jcl -o json-pretty -u'
 
 alias grp='grep --line-number --ignore-case --binary-files=without-match --directories=skip'
-alias grpr='grp --recursive --exclude-dir={.sync,.stfolder,.git}'
+alias grpr='grp --recursive --exclude-dir={.sync,.stfolder,.git,dev,\*build}'
 
 # Recover stray swap files from neovim
 alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs -r nvim"
@@ -225,14 +225,14 @@ updateDeps() {
 	pattern="$2"
 	depth="4"
 	case $name in
-		gradle-wrapper.properties) depth=6;;
+		(gradle-wrapper.properties) depth=6;;
 	esac
 	shift 2
 	oldversion="[0-9.]\+"
 	while test $# -gt 1; do
 		case "$1" in
-			--pattern) oldversion="$2";;
-			--version) version="$2";;
+			(--pattern) oldversion="$2";;
+			(--version) version="$2";;
 		esac
 		shift 2
 	done
