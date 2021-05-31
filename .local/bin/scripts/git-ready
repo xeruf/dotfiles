@@ -3,6 +3,6 @@
 # or the first named ref from the history if there is no upstream yet.
 if test $# -gt 0
   then remote="$1"; shift
-  else remote=$(git rev-parse --verify --quiet @{push} || git rev-parse $(git describe --all HEAD~ | cut -d '-' -f-2))
+  else remote=$(git rev-parse --verify --quiet @{push} || git rev-parse $(git describe --all HEAD~ | rev | cut -d '-' -f3- | rev))
 fi
 git rebase -i "$remote" "$@"

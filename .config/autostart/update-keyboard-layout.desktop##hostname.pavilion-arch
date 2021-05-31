@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/home/janek/.local/bin/scripts/update-keyboard-layout
+Exec=sh -c "sleep 3 && /home/janek/.local/bin/scripts/update-keyboard-layout"
 Icon=
 Name=update-keyboard-layout
 Path=

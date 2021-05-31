@@ -96,7 +96,7 @@
 	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
-	ln = !git --no-pager lo "-$(a=$(git rev-list --count HEAD...@{u} 2>/dev/null); test ${a:-0} -gt 4 && expr $a + 3 || echo 7)" --graph HEAD @{u} 2>/dev/null || git --no-pager lo -7
+	ln = !git --no-pager lo "-$(a=$(git rev-list --count HEAD...@{push} 2>/dev/null); expr $a + 3 \\& ${a:-0} \\> 4 \\| 7)" --color=always --graph HEAD @{u} 2>/dev/null | head -9 || git --no-pager lo -7
 	my = lo --author [Jj]anek
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
