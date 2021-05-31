@@ -390,7 +390,10 @@ Version 2019-11-04 2021-02-16"
   :config
     (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
     )
-
+(use-package! nov
+  :config
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+    )
 (use-package! lilypond-mode
   :config
     (setq LilyPond-pdf-command "xdg-open")

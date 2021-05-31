@@ -58,6 +58,7 @@
 (package! direnv) ; directory-local environment for haskell-nix things
 (package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
+(package! nov) ; epub reader
 
 (package! evil-tutor)
 
