@@ -319,8 +319,8 @@ Version 2019-11-04 2021-02-16"
   (define-key dired-mode-map (kbd "<tab>") 'other-window)
   )
 
-
 (use-package! tramp
+  :defer t
   :config
     (add-to-list 'tramp-methods
      '("yadm"
@@ -369,11 +369,13 @@ Version 2019-11-04 2021-02-16"
 ;   (evil-better-visual-line-on))
 
 (use-package! direnv ; nix-shell stuffs
+  :defer t
   :config
     (setq direnv-always-show-summary nil)
     (direnv-mode)
   )
 (use-package! plantuml-mode ; Diagrams
+  :defer t
   :config
     (setq plantuml-executable-path "nostderr"
           plantuml-executable-args '("plantuml" "-headless")
@@ -387,19 +389,16 @@ Version 2019-11-04 2021-02-16"
       )
   )
 (use-package! adoc-mode ; Asciidoc, a md alternative
-  :config
-    (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
-    )
+  :mode "\\.adoc\\'"
+  )
 (use-package! nov
-  :config
-    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-    )
+  :mode ("\\.epub\\'" . nov-mode)
+  )
 (use-package! lilypond-mode
+  :mode ("\\.ly\\'" . LilyPond-mode)
   :config
     (setq LilyPond-pdf-command "xdg-open")
     (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
-    (setq auto-mode-alist
-          (cons '("\\.ly$" . LilyPond-mode) auto-mode-alist))
     (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
     (setq auto-revert-interval 2)
   )
