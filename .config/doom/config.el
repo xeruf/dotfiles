@@ -27,7 +27,11 @@
       doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sans" :size 24))
 
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 'relative
+      scroll-margin 7
+      hscroll-margin 20
+      )
+
 (setq evil-respect-visual-line-mode nil)
 (add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
 
@@ -94,19 +98,17 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; GLOBAL SETUP
 
-;; Undo
-(setq evil-want-fine-undo t)
-(setq amalgamating-undo-limit 5)
-
 (setq confirm-kill-emacs nil)
 
 (setq initial-major-mode 'org-mode)
 
 (whitespace-mode 0)
 
-(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
-
 (setq lazy-highlight-cleanup nil)
+
+;; Undo
+(setq evil-want-fine-undo t)
+(setq amalgamating-undo-limit 5)
 
 ;; Backups & auto-saves
 ;; Doom defaults: /home/janek/.config/emacs/core/core-editor.el::89
@@ -314,6 +316,8 @@ Version 2019-11-04 2021-02-16"
       org-treat-insert-todo-heading-as-state-change t)
 
 ;;;; PACKAGES
+
+(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
 (after! dired
   (define-key dired-mode-map (kbd "<tab>") 'other-window)
