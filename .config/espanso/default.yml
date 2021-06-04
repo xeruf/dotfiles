@@ -1,0 +1,97 @@
+# espanso configuration file
+# https://espanso.org/docs/
+
+matches:
+  # Simple replacements
+  - trigger: ":regards"
+    replace: "Kind Regards,\nJanek"
+
+  - trigger: ":date"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%Y-%m-%d"
+
+  # Shell commands
+  - trigger: ":ip"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "curl 'https://api.ipify.org'"
+
+  # Sensitive data through pass
+  - trigger: ":ep"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/email/personal"
+
+  - trigger: ":ec"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/email/church"
+
+  - trigger: ":eu"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/email/uni"
+
+  - trigger: ":a0"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address | head -1"
+
+  - trigger: ":a1"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address | head -2 | tail -1"
+
+  - trigger: ":a2"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address | tail -1"
+
+  - trigger: ":add"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address"
+
+  - trigger: ":tax"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/tax-id | head -1"
+
+  - trigger: ":ss"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/social-security | head -1"
