@@ -3,7 +3,9 @@ alias g="git"
 alias bfg="java -jar $HOME/daten/applications/bfg-1.13.0.jar"
 alias magit='nvim -c MagitOnly'
 
-alias y='yadm'
+y() {
+  test "$#" -eq 0 && yadm s || yadm "$@"
+}
 yc() {
   echo "config/$1:" >/tmp/yc-msg
   yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$1"

@@ -8,11 +8,12 @@ if test "$#" -gt 0
     ( stats "$orig" "$1"; dif "$orig" "$@"  ) |
       less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
     test "$?" -eq "2" && exit 1
-    echo "y|r to restore, n|d to delete"
+    echo "y|r to restore, n|d to delete, m to merge"
     read reply
     case "$reply" in
       (y|r) st-restore "$1";;
       (n|d) rm -v "$1";;
+      (m) touch /tmp/empty && git merge-file "$orig" /tmp/empty "$1" && nvim "$orig" && rm "$1";;
     esac
   else find -name '*sync-conflict*' -exec st-diff '{}' \;
 fi
