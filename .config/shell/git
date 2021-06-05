@@ -1,9 +1,9 @@
 # Tools
 alias g="git"
-alias bfg="java -jar $HOME/daten/applications/bfg-1.13.0.jar"
-alias magit='nvim -c MagitOnly'
 
 y() {
+  unignore="$XDG_CONFIG_HOME/yadm/unignore"
+  test -r "$unignore" && cat "$unignore" | envsubst | yadm add --intent-to-add --pathspec-from-file=-
   test "$#" -eq 0 && yadm s || yadm "$@"
 }
 yc() {

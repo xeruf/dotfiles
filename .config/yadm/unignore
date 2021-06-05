@@ -1,0 +1,6 @@
+$XDG_CONFIG_HOME/yadm
+$XDG_CONFIG_HOME/doom
+$XDG_CONFIG_HOME/git
+$XDG_CONFIG_HOME/nvim
+$CONFIG_SHELLS
+$HOME/.local/bin/scripts
