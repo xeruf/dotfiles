@@ -320,8 +320,21 @@ Version 2019-11-04 2021-02-16"
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
 (after! dired
-  (define-key dired-mode-map (kbd "<tab>") 'other-window)
+  (map! :map dired-mode-map
+        :localleader
+        "i" (lambda () (interactive) (image-dired buffer-file-name)))
   )
+
+(after! spell-fu
+  (remove-hook 'text-mode-hook #'spell-fu-mode)
+  )
+
+(map! :map special-mode-map
+      "<tab>" 'other-window
+      :map image-mode-map
+      "<tab>" 'other-window
+      :n "+" 'image-increase-size
+      :n "-" 'image-decrease-size)
 
 (use-package! tramp
   :defer t
