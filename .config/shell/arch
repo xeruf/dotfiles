@@ -6,37 +6,36 @@ alias dragon='dragon-drag-and-drop'
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R'
-alias yays='noglob yay -Sy --needed --ignore ferdi'
+alias yays='noglob yay -Sy --needed'
 alias yayr='noglob yay -R'
 
-cache_dir="/tmp/yzf"
 yzf() {
-  query=$(test "$1" = "Q" && echo " -l")
-  sync=$(test "$1" = "S" && echo "true" || echo "")
-  pos=$(test "$query" && echo 1 || echo 2)
-  mkdir -p $cache_dir
-  list_cache="$cache_dir/list_$1$2"
-  (test "$sync" && cat "$list_cache" 2>/dev/null || yay --color always -$1$2 | sed "s/ /\t/g" | tee "$list_cache") |
-    fzf --nth=$pos --multi --tiebreak=length --history=/var/tmp/fzf-history-yzf \
+  pos=$1
+  shift
+  sed "s/ /\t/g" |
+    fzf --nth=$pos --multi --tiebreak=length --history=/var/tmp/fzf-history-yzf$pos \
+      --preview-window=60%,border-left \
       --bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}')" \
-       "${@:3}" --preview-window=60% |
-        cut -f$pos | tr '\n' ' '
-  # TODO get xdg-open URL for aur as well
-  # yay -S -i {$pos} | grep URL | tail -1 | cut -d ':' -f2- | xargs xdg-open
+       "$@" | cut -f$pos | tr '\n' ' '
 }
+
 # print -s adds a history entry
 yas() {
+  cache_dir="/tmp/yas"
+  mkdir -p "$cache_dir"
   preview_cache="$cache_dir/preview_{2}"
-  pkg=$(yzf S  l -q "$1" "${@:2}" --preview "cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache")
+  list_cache="$cache_dir/list"
+  pkg=$((cat "$list_cache" 2>/dev/null || yay --color always -Sl | tee "$list_cache") |
+    yzf 2 --preview="cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache" "$@")
   if test -n "$pkg"
-    then echo "Install $pkg..."
+    then echo "Installing $pkg..."
       cmd="yay -S $pkg"
       print -s "$cmd"
       eval "$cmd"
   fi
 }
 yar() {
-  pkg=$(yzf Q "" -q "$1" "${@:2}" --preview "yay --color always -Qli {1}")
+  pkg=$(yzf 1 -q "$@" --preview "yay --color always -Qli {1}")
   if test -n "$pkg"
     then echo "Removing $pkg..."
       cmd="yay -R $pkg"
