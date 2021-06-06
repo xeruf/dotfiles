@@ -157,3 +157,5 @@
 
 [includeIf "gitdir:~/data/.git"]
 	path = "config-data"
+[init]
+	defaultBranch = main
