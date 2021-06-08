@@ -201,6 +201,8 @@ alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r -i mv {} /tmp"
 
 unv() { strings $1 | sed 's/5$//' | dedup }
 
+hex() { hexyl "$@" | "${PAGER:-less}" }
+
 # Applications
 alias dict="(builtin cd $XDG_DATA_HOME/dictcc && rlwrap perl dictcc-helper.pl)"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
