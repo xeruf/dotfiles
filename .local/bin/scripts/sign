@@ -1,5 +1,5 @@
 #!/bin/sh
-signature=$(pass tools/signature)
+signature=$(pass information/signature)
 
 # TODO make filenames unique and don't rerun unneccessarily
 tmp_base=/tmp/sign
@@ -8,8 +8,17 @@ tmp_signed=$tmp_base/$1_last-signature.pdf
 tmp_reversed=$tmp_base/$1_reverse.pdf
 sig=$tmp_base/signature_offset.pdf
 result="${1%.pdf}_signed.pdf"
-pdfjam "$signature" --outfile "$sig" --offset "${2:-0}pt ${3:-0}pt" --papersize "{595pt, 842pt}" --noautoscale true --scale "${4:-1}"
+
+pdfjam "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
+    --offset "${2:-0}pt ${3:-0}pt" --scale "${4:-1}"
 pdfjam "$1" last "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
-pdfjam "$1" last-1 --outfile "$tmp_reversed"
-pdfjam "$tmp_reversed" last-2 "$tmp_signed" --outfile "$result"
+
+# https://apple.stackexchange.com/questions/198854/shell-command-to-count-pages-in-a-pdf-other-than-pdftk
+if test $(pdftk "" dump_data | grep Pages | cut -d' ' -f2) -gt 1
+  then
+    pdfjam "$1" last-1 --outfile "$tmp_reversed"
+    pdfjam "$tmp_reversed" last-2 "$tmp_signed" --outfile "$result"
+  else cp "$tmp_signed" "$result"
+fi
+
 xdg-open "$result"
