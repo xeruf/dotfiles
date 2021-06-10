@@ -296,7 +296,6 @@ Version 2019-11-04 2021-02-16"
 
 ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
 (setq org-startup-folded 'show2levels
-      org-startup-with-inline-images t
       org-display-remote-inline-images 'cache)
 
 ;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
