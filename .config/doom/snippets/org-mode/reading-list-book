@@ -11,4 +11,5 @@ INTEREST $1
 :LibErlangen: https://stadtbibliothek-recherche.erlangen.de/Mediensuche/Einfache-Suche?search=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&top=y&facets=v_____Sachb%C3%BCcher%7CJugendsachbuch%7CJugendroman%7CBuch+Romane%7CSachb%C3%BCcher+Weih.%2fOst&facetsc=_____15&pagesize=20
 :Ebay:        https://www.ebay.de/sch/i.html?_nkw=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&_sop=15
 :gebraucht-kaufen: https://www.gebraucht-kaufen.de/f/search?query=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}
+:betterworldbooks: https://www.betterworldbooks.com/search/results?q=${1:$(replace-regexp-in-string " " "%20" yas-text)}%20${2:$(replace-regexp-in-string " " "%20" yas-text)}
 :END:
