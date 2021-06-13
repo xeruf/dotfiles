@@ -42,8 +42,25 @@ test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so$
 # software config
  # enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
- # fzf defaults
-export FZF_DEFAULT_OPTS='--select-1 --exit-0 --tiebreak=end,length --history=/var/tmp/fzf-history --ansi --bind="alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {}),alt-bspace:execute(gio trash {}),change:top,double-click:execute(xdg-open {}),alt-c:yank"'
+# fzf defaults
+FZF_BINDINGS=$(echo '
+change:top
+alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
+alt-bspace:execute(gio trash {})
+double-click:execute(xdg-open {})
+ctrl-a:select-all
+alt-a:select-all
+alt-c:yank
+alt-w:toggle-preview-wrap
+alt-j:preview-half-page-down,alt-k:preview-half-page-up
+shift-down:preview-half-page-down,shift-up:preview-half-page-up
+alt-shift-down:preview-down,alt-shift-up:preview-up
+esc:close
+' | xargs -I% echo -n "%," | head -c-1)
+#alt-r:preview(bat {}),
+export FZF_DEFAULT_OPTS="--select-1 --ansi --marker=o
+--tiebreak=end,length --history=/var/tmp/fzf-history --bind='$FZF_BINDINGS'
+--preview-window=60%,border-left"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
@@ -54,7 +71,9 @@ export CTEST_PARALLEL_LEVEL=3
 
 if test -z "${DISPLAY}" && test "${XDG_VTNR}" -eq 1 ; then
   echo "What do you want to do?"
-  read response
-  jrnl intentions "$response"
+  while test $(echo "$intention" | wc -c) -lt 6
+  do read intention
+  done
+  jrnl intentions "$intention"
   exec startx
 fi

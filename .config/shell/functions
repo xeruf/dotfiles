@@ -142,11 +142,16 @@ alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; rea
 
 alias browse-safe='sudo systemctl disable --now systemd-resolved && sudo rm -f /etc/resolv.conf && echo "nameserver 185.228.168.10" | sudo tee /etc/resolv.conf && sudo chattr +i /etc/resolv.conf'
 browse-unsafe() {
+	echo "Why do you want to browse unsafe?"
+	while test ${#intention} -lt 10
+	do read intention
+	done
+	jrnl intentions-nug "$intention"
 	trap 'echo Browsing safe; browse-safe' INT
 	sudo chattr -i /etc/resolv.conf &&
 		sudo mv /etc/resolv.conf /etc/resolv.conf.bak &&
 		sudo systemctl enable --now systemd-resolved &&
-		sleep 100
+		sleep ${1:-100}
 	browse-safe
 }
 
