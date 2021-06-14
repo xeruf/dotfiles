@@ -224,6 +224,7 @@ Version 2019-11-04 2021-02-16"
         "d=" 'org-timestamp-up-week
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
+        "lk" 'counsel-org-link
         )
 
   (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
@@ -318,22 +319,48 @@ Version 2019-11-04 2021-02-16"
 
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
+(map! :map special-mode-map
+      "<tab>" 'other-window
+      "q"     'kill-this-buffer
+      :map image-mode-map
+      "<tab>" 'other-window
+      :n "+"  'image-increase-size
+      :n "-"  'image-decrease-size)
+
 (after! dired
+  ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
+  ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
+  (defvar unsupported-mime-types
+    '("image/x-xcf"))
+
+  (load "subr-x")
+
+  (defun get-mimetype (filepath)
+    (string-trim
+     (shell-command-to-string (concat "file -b --mime-type " filepath))))
+
+  (defun dired-find-file-dwim ()
+    (interactive)
+    (let* ((file (dired-get-filename nil t))
+           (mime (get-mimetype file)))
+      (if (or (s-prefix? "video" mime) (member mime unsupported-mime-types))
+        (call-process "xdg-open" nil 0 nil file)
+        (find-file file))))
+
   (map! :map dired-mode-map
+        :n "RET" 'dired-find-file-dwim
         :localleader
-        "i" (lambda () (interactive) (image-dired buffer-file-name)))
+        "i" (lambda () (interactive) (image-dired buffer-file-name))
+        )
+  (map! :map wdired-mode-map
+        :n "RET" 'dired-find-file-dwim
+        )
+
   )
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)
   )
-
-(map! :map special-mode-map
-      "<tab>" 'other-window
-      :map image-mode-map
-      "<tab>" 'other-window
-      :n "+" 'image-increase-size
-      :n "-" 'image-decrease-size)
 
 (use-package! tramp
   :defer t
