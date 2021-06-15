@@ -33,14 +33,20 @@ let g:firenvim_config = {
             \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]), div[role="textbox"]:not([aria-label="Search"])',
             \ 'takeover': 'always',
         \ },
-        \ '.*notion\.so.*':            { 'priority': 9, 'takeover': 'never', },
-        \ '.*docs\.google\.com.*':     { 'priority': 9, 'takeover': 'never', },
-        \ '.*mail\.protonmail\.com.*': { 'priority': 9, 'takeover': 'never', },
-	\ '.*cloud\.atomtoast\.xyz.*': { 'priority': 9, 'takeover': 'never', },
-	\ 'https://bigbluebutton.*':   { 'priority': 9, 'takeover': 'never', },
-	\ 'https://dhall-lang.org.*':  { 'priority': 9, 'takeover': 'never', },
-	\ '.*stackexchange\.com.*':  { 'priority': 9, 'takeover': 'never', },
-	\ '.*stackoverflow\.com.*':  { 'priority': 9, 'takeover': 'never', },
+        \ '.*mail\.protonmail\.com.*':   { 'priority': 9, 'takeover': 'never', },
+        \ '.*twitter\.com.*':            { 'priority': 9, 'takeover': 'never', },
+        \ '.*openstreetmap\.org.*':      { 'priority': 9, 'takeover': 'never', },
+        \ '.*wikipedia\.org.*':          { 'priority': 9, 'takeover': 'never', },
+        \
+        \ '.*notion\.so.*':              { 'priority': 9, 'takeover': 'never', },
+        \ '.*docs\.google\.com.*':       { 'priority': 9, 'takeover': 'never', },
+        \ '.*cloud\.atomtoast\.xyz.*':   { 'priority': 9, 'takeover': 'never', },
+        \ 'https://bigbluebutton.*':     { 'priority': 9, 'takeover': 'never', },
+        \ 'https://dhall-lang.org.*':    { 'priority': 9, 'takeover': 'never', },
+        \
+        \ '.*stackexchange\.com.*':      { 'priority': 9, 'takeover': 'never', },
+        \ '.*stackoverflow\.com.*':      { 'priority': 9, 'takeover': 'never', },
+        \ '.*com/questions/[0-9]{7}/.*': { 'priority': 9, 'takeover': 'never', },
     \ }
 \ }
 if exists('g:started_by_firenvim')
