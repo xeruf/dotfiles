@@ -97,7 +97,7 @@
 	lgo = lg HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
-	ln = !git --no-pager lo "-$(a=$(git rev-list --count HEAD...@{push} 2>/dev/null); expr $a + 3 \\& ${a:-0} \\> 4 \\| 7)" --color=always --graph HEAD @{u} 2>/dev/null | head -9 || git --no-pager lo -7
+	ln = !git --no-pager lo "-$(a=$(git rev-list --count HEAD...@{push} 2>/dev/null); expr $a + 3 \\& ${a:-0} \\> 3 \\| 6)" --color=always --graph HEAD @{u} 2>/dev/null | head -9 || git --no-pager lo -7
 	my = lo --author [Jj]anek
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
@@ -133,6 +133,7 @@
 	rs = reset --keep
 	ru = reset --keep @{upstream}
 	unstage = restore --staged --
+	recover = restore --worktree --staged --
 
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
@@ -151,7 +152,7 @@
 	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease
 	luu = !git pull upstream ${1:-(git curbranch)} && git push --no-verify
 	pf = push --force-with-lease
-	cap = !git commit --all --amend --no-edit && git push --force-with-lease
+	cap = !git commit --amend --no-edit && git push --force-with-lease
 
 [includeIf "gitdir:yadm/repo.git"]
 	path = "~/.config/yadm/gitconfig"

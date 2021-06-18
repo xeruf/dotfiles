@@ -1,0 +1,6 @@
+#!/bin/sh
+# Creates a bare clone parallel to the current repository
+p="$(basename "$(git rev-parse --show-toplevel)")"
+builtin cd ..
+git clone --mirror $p
+builtin cd $p

@@ -72,36 +72,12 @@ gitinit() {
   git push
 }
 
-gitbackup() {
-  p=$(basename $PWD)
-  builtin cd ..
-  git clone --mirror $p
-  cd $p
-}
-
 project() {
   cd $projects_dir
   if [ -d $2 ]
   then cd "$2" && gitorigin "$@"
   else gitclone "$@"
   fi
-}
-
-gitremote() {
-  case "$1" in
-  http*)  echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
-  git:*)  echo "$1" ;;
-  *)  test "$3" = "cau" && 3="CAU-Kiel-Tech-Inf"
-    test "$3" = "btl" && 3="betweenthelinesev"
-    echo "git@${1:-github.com}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
-  esac
-}
-
-gitclone() {
-  remote=$(gitremote "$@")
-  echo $remote
-  git clone $remote ${@:4} || return $?
-  cd "$(test $4 && echo $4 || basename ${remote%.git})"
 }
 
 gitfork() {
@@ -111,30 +87,6 @@ gitfork() {
   git remote -v
 }
 
-# set repo as origin and set all branches upstream to their respective remote branch, if available
-gitorigin() {
-  git remote remove origin 2>/dev/null
-  git remote add origin $(gitremote "$@")
-  git remote -v && git fetch || ( last=$? && echo "git fetch failed, aborting\!" && return $last )
-
-  git branch | sed 's/ //g' | sed 's/*//' | while read branch
-  do test $(git branch -a | grep origin/$branch | wc -l) -gt 0 && git branch -u origin/$branch $branch
-  done
-}
-
-# set repo as upstream or add a new remote
-gitupstream() {
-  if test "$3"
-  then
-    local name="$3"
-    git remote remove "$3" 2>/dev/null
-  else
-    git remote get-url upstream 2>/dev/null && local name="$1" || local name="upstream"
-  fi
-  local origin="$(git remote get-url origin)"
-  git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/${2:-$(echo $origin | cut -d'/' -f2)}"
-  git remote -v
-}
 # }}}
 
 # Rewriting history {{{
