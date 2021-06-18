@@ -5,9 +5,9 @@ alias dragon='dragon-drag-and-drop'
 # Arch aliases
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
-alias pacr='pac -R'
+alias pacr='pac -R --recursive'
 alias yays='noglob yay -Sy --needed'
-alias yayr='noglob yay -R'
+alias yayr='noglob yay -R --cascade --recursive'
 
 yzf() {
   pos=$1
@@ -38,7 +38,7 @@ yar() {
   pkg=$(yay --color=always -Q "$@" | yzf 1 --preview="yay --color always -Qli {1}")
   if test -n "$pkg"
     then echo "Removing $pkg..."
-      cmd="yay -R $pkg"
+      cmd="yay -R --cascade --recursive $pkg"
       print -s "$cmd"
       eval "$cmd"
   fi
