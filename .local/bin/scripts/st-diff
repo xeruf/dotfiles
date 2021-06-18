@@ -1,19 +1,24 @@
 #!/bin/sh
 stats() {
-  stat --format '%n	%A size %sB, birth: %.10w mod %.10y' "$@"
+  stat --format '%.10y %n %sB - birth %.10w' "$@"
 }
+test "$1" = "-q" && quick=-q && shift
 if test "$#" -gt 0
   then
     orig="$(st-unarchive "$1")"
-    ( stats "$orig" "$1"; dif "$orig" "$@"  ) |
-      less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
-    test "$?" -eq "2" && exit 1
-    echo "y|r to restore, n|d to delete, m to merge"
-    read reply
-    case "$reply" in
-      (y|r) st-restore "$1";;
-      (n|d) rm -v "$1";;
-      (m) touch /tmp/empty && git merge-file "$orig" /tmp/empty "$1" && nvim "$orig" && rm "$1";;
-    esac
-  else find -name '*sync-conflict*' -exec st-diff '{}' \;
+    if test -n "$quick"
+    then stats "$orig" "$1"
+    else
+      ( stats "$orig" "$1"; dif "$orig" "$@"  ) |
+        less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
+      test "$?" -eq "2" && exit 1
+      echo "y|r to restore, n|d to delete, m to merge"
+      read reply
+      case "$reply" in
+        (y|r) st-restore "$1";;
+        (n|d) rm -v "$1";;
+        (m) touch /tmp/empty && git merge-file "$orig" /tmp/empty "$1" && nvim "$orig" && rm "$1";;
+      esac
+    fi
+  else find -name '*sync-conflict*' -exec st-diff $quick '{}' \;
 fi

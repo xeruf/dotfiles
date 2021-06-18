@@ -90,12 +90,6 @@ edshell() {
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 
-edbin() {
-	file="$(f=$(which $1) && test -f "$f" && echo $f || echo "$HOME/.local/bin/scripts/$1")"
-	edit "$file"
-	case "$file" in ($HOME*) yadm add "$file";; esac
-}
-
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() {
 	test ! -d "$1" && test $# -eq 1 && dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&

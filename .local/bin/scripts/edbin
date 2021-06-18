@@ -1,0 +1,3 @@
+#!/bin/sh
+file="$(f="$(which $1 2>/dev/null)" && test -f "$f" && echo $f || echo "$HOME/.local/bin/scripts/$1")"
+edit "$file"
