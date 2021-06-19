@@ -1,7 +1,7 @@
 #!/bin/sh
 # Use grep and sed to replace $1 with $2 recursively and print what is done
 grep --null --recursive --files-with-matches \
-  --binary-files=without-match --exclude-dir={.sync,.stfolder,.git} "$1" |
+  --binary-files=without-match "--exclude-dir={$IGNOREDIRS}" "$1" |
 	xargs -0 sed -i "\|${1}|{
 		s||${2}|g
 		w /dev/stdout

@@ -15,6 +15,11 @@ export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export RLWRAP_HOME="$XDG_CACHE_HOME"/rlwrap
 export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
 export CABAL_DIR="$XDG_CACHE_HOME"/cabal
+
+export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME"/bundle
+export BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
+export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME"/bundle
+
  # Java & Android
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GRADLE_USER_HOME="$XDG_DATA_HOME"/gradle
@@ -34,6 +39,7 @@ export CCACHE_CONFIGPATH="$XDG_CONFIG_HOME"/ccache.config
 export CCACHE_DIR="$XDG_CACHE_HOME"/ccache
 
 # environment
+export IGNOREDIRS=".sync,.stfolder,.git,out,build,dev"
 export EDITOR=/usr/bin/nvim
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export LESS='--RAW-CONTROL-CHARS --ignore-case'
