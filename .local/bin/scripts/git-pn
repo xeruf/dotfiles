@@ -1,0 +1,3 @@
+#!/bin/sh
+# Push HEAD to a new branch in origin
+git push origin "HEAD:$1"
