@@ -350,7 +350,8 @@ Version 2019-11-04 2021-02-16"
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
         :localleader
-        "i" (lambda () (interactive) (image-dired buffer-file-name))
+        :desc "Open dir in image-dired" "i" (lambda () (interactive) (image-dired buffer-file-name))
+        :desc "Compress/Extract" "c" 'dired-do-compress
         )
   (map! :map wdired-mode-map
         :n "RET" 'dired-find-file-dwim
@@ -417,6 +418,7 @@ Version 2019-11-04 2021-02-16"
     (setq direnv-always-show-summary nil)
     (direnv-mode)
   )
+
 (use-package! plantuml-mode ; Diagrams
   :defer t
   :config
