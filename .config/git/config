@@ -101,12 +101,13 @@
 	my = lo --author [Jj]anek
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
-	when = git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
+	when = !git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
 	d = diff
 	dm = !git diff $(git merge-base $(git main) HEAD)
 	dw = diff --color-words
 	dc = diff --color-words="[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+"
+	du = diff @{push}
 
 	# MODIFY
 
@@ -115,13 +116,14 @@
 	aa = add -u .
 	ap = add -p
 	c = commit -v
-	cme = commit -v --edit --message
+	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
+	cme = commit -v --edit --message # Commit with message but edit it
 
 	cp = cherry-pick
 	rb = rebase
 	rbi = rebase --interactive
 	rbc = rebase --continue
-	rbm = !git rb $(git main)
+	rbm = !git rebase $(git main)
 
 	sta = stash
 	stl = !git --no-pager stash list --pretty=tformat:'%gd%h - %s (%cr)'
