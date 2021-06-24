@@ -263,6 +263,7 @@ Version 2019-11-04 2021-02-16"
 )
 
 (after! ox
+  (setq org-latex-toc-command "\\tableofcontents*\n\n")
   ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
   (defun org/get-headline-string-element (headline backend info)
     (let ((prop-point (next-property-change 0 headline)))
@@ -274,6 +275,28 @@ Version 2019-11-04 2021-02-16"
           (concat "\\clearpage\n" headline)))))
   (add-to-list 'org-export-filter-headline-functions
                'org/ensure-latex-clearpage)
+
+  ;; Exporting - https://orgmode.org/manual/Export-Settings.html
+  (setq org-export-with-tags nil
+        org-export-with-tasks 'done
+        org-export-with-todo-keywords nil
+        org-export-with-toc nil
+        org-export-with-section-numbers nil
+        org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+        org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans") ("" "svg"))
+        )
+  (add-to-list 'org-latex-classes
+       '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
+          ("\\chapter{%s}" . "\\chapter*{%s}")
+          ("\\section{%s}" . "\\section*{%s}")
+          ("\\subsection{%s}" . "\\subsection*{%s}")
+          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+          ("\\paragraph{%s}" . "\\paragraph*{%s}")
+          ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
 )
 
 ;; Behavior
@@ -284,16 +307,6 @@ Version 2019-11-04 2021-02-16"
 ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
 (setq org-image-actual-width nil)
 (setq org-ellipsis "↴")
-
-;; Exporting - https://orgmode.org/manual/Export-Settings.html
-(setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
-      org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans") ("" "svg"))
-      org-export-with-tags nil
-      org-export-with-tasks 'done
-      org-export-with-todo-keywords nil
-      org-export-with-toc nil
-      org-export-with-section-numbers nil
-      )
 
 ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
 (setq org-startup-folded 'show2levels
