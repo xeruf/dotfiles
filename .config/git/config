@@ -73,6 +73,7 @@
 	stb = status --short --branch
 	sv = --paginate status -v
 	svv = --paginate status -vv
+	sf = !git diff-index HEAD --name-only | fzf --preview='git diff HEAD --color=always -- {}' --multi | git commit -v --pathspec-from-file=-
 
 	r = remote -v
 	b = branch -vv
@@ -94,7 +95,7 @@
 	#dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
 
 	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
-	lgo = lg HEAD @{push}
+	lgu = lg HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
 	ln = !git --no-pager lo "-$(a=$(git rev-list --count HEAD...@{push} 2>/dev/null); expr $a + 3 \\& ${a:-0} \\> 3 \\| 6)" --color=always --graph HEAD @{u} 2>/dev/null | head -9 || git --no-pager lo -7
