@@ -13,7 +13,7 @@ yzf() {
   pos=$1
   shift
   sed "s/ /\t/g" |
-    fzf --nth=$pos --multi --tiebreak=length --history=/var/tmp/fzf-history-yzf$pos \
+    fzf --nth=$pos --multi --history=/var/tmp/fzf-history-yzf$pos \
       --preview-window=60%,border-left \
       --bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}')" \
        "$@" | cut -f$pos | xargs
@@ -25,17 +25,17 @@ yas() {
   mkdir -p "$cache_dir"
   preview_cache="$cache_dir/preview_{2}"
   list_cache="$cache_dir/list"
-  pkg=$((cat "$list_cache$@" 2>/dev/null || yay --color=always -Sl "$@" | tee "$list_cache$@") |
-    yzf 2 --preview="cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache")
+  pkg=$((cat "$list_cache$@" 2>/dev/null || { pacman --color=always -Sl "$@"; yay --color=always -Sl aur "$@" } | sed 's/ [^ ]*unknown-version[^ ]*//' | tee "$list_cache$@") |
+    yzf 2 --tiebreak=index --preview="cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache")
   if test -n "$pkg"
     then echo "Installing $pkg..."
-      cmd="yay -S $pkg"
+      cmd="yay -S --nobatchinstall $pkg"
       print -s "$cmd"
       eval "$cmd"
   fi
 }
 yar() {
-  pkg=$(yay --color=always -Q "$@" | yzf 1 --preview="yay --color always -Qli {1}")
+  pkg=$(yay --color=always -Q "$@" | yzf 1 --tiebreak=length --preview="yay --color always -Qli {1}")
   if test -n "$pkg"
     then echo "Removing $pkg..."
       cmd="yay -R --cascade --recursive $pkg"
