@@ -42,7 +42,7 @@ export CCACHE_DIR="$XDG_CACHE_HOME"/ccache
 export IGNOREDIRS=".sync,.stfolder,.git,out,build,dev"
 export EDITOR=/usr/bin/nvim
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export LESS='--RAW-CONTROL-CHARS --ignore-case'
+export LESS='--RAW-CONTROL-CHARS --ignore-case --incsearch'
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
