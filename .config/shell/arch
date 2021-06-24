@@ -32,6 +32,7 @@ yas() {
       cmd="yay -S --nobatchinstall $pkg"
       print -s "$cmd"
       eval "$cmd"
+      rehash
   fi
 }
 yar() {

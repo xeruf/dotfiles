@@ -78,6 +78,13 @@ edconf() {
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 alias r="reset && exec zsh"
+edcomp() {
+	file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
+	$EDITOR "${fpath[-1]}/$file"
+	unfunction "$file" && compinit
+}
+compdef "_files -W ${fpath[-1]}/" edcomp
+
 edshell() {
 	case $1 in
 		("") file="$CONFIG_SHELL_FUNCTIONS";;
