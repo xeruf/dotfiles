@@ -55,7 +55,7 @@ autocmd BufNewFile *.sh,$HOME/.local/bin/* execute 'silent! 1s/.*/#!\/bin\/sh\r'
 "autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
 
 set spelllang=en_us,de_de
-autocmd BufEnter *.txt,*jrnl* setlocal formatoptions+=b textwidth=78 ts=4 sw=4
+autocmd BufEnter *.txt,*jrnl* setlocal ts=4 sw=4 " formatoptions+=b textwidth=78
 autocmd FileType markdown setlocal wrap spell colorcolumn= " Spell checking & no guiding columns in markdown
 
  " Center on insert mode

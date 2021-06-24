@@ -30,7 +30,8 @@ let g:firenvim_config = {
         \ '.*': {
             \ 'cmdline': 'firenvim',
             \ 'priority': 0,
-            \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]), div[role="textbox"]:not([aria-label="Search"])',
+            \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]),
+                \ div[role="textbox"]:not([aria-label="Search"])',
             \ 'takeover': 'always',
         \ },
         \ '.*mail\.protonmail\.com.*':   { 'priority': 9, 'takeover': 'never', },
