@@ -146,6 +146,10 @@ Version 2019-11-04 2021-02-16"
   (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
   )
 
+(after! ivy
+  (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
+  )
+
 ;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 (setq utf-translate-cjk-mode nil)
@@ -225,6 +229,7 @@ Version 2019-11-04 2021-02-16"
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
+        "lI" '(lambda () (interactive) (org-set-property "ID" nil))
         )
 
   (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
@@ -277,13 +282,13 @@ Version 2019-11-04 2021-02-16"
                'org/ensure-latex-clearpage)
 
   ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-  (setq org-export-with-tags nil
+  (setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+        org-latex-packages-alist '(("avoid-all" "widows-and-orphans") ("" "svg"))
+        org-export-with-tags nil
         org-export-with-tasks 'done
         org-export-with-todo-keywords nil
         org-export-with-toc nil
         org-export-with-section-numbers nil
-        org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
-        org-latex-packages-alist '(("margin=2cm" "geometry") ("avoid-all" "widows-and-orphans") ("" "svg"))
         )
   (add-to-list 'org-latex-classes
        '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
