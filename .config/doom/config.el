@@ -230,6 +230,7 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "lI" '(lambda () (interactive) (org-set-property "ID" nil))
+        "gR" 'org-mode-restart
         )
 
   (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
