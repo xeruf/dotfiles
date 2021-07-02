@@ -11,6 +11,7 @@ test -e "$last" || exit 1
 case "$(file --dereference --mime "$last")" in
   *inode/directory*) ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --almost-all "$@";;
   *binary) ;;
-  *) $(test -f "$last" -a ! -r "$last" && echo "sudo") bat --style header "$@"
-     stat --format '%A size %sB, birth: %.10w mod %.10y' "$last";;
+  *) $(test -f "$last" -a ! -r "$last" && echo "sudo") bat --style header --pager "less --LONG-PROMPT --quit-if-one-screen" "$@"
+     tput setaf 3 && stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
+     ;;
 esac

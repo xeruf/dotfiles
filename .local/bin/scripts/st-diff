@@ -20,5 +20,7 @@ if test "$#" -gt 0
         (m) touch /tmp/empty && git merge-file "$orig" /tmp/empty "$1" && nvim "$orig" && rm "$1";;
       esac
     fi
-  else find -name '*sync-conflict*' -exec st-diff $quick '{}' \;
+  else
+    find "$DATA/2-standards/notes/journal" -name "intentions.sync-conflict*" -exec jrnl intentions --import --file {} \; -delete
+    find -name '*sync-conflict*' -exec st-diff $quick '{}' \;
 fi
