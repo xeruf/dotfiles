@@ -3,7 +3,10 @@
 
 matches:
   # Simple replacements
-  - trigger: ":regards"
+  - trigger: ":gr"
+    replace: "Grüße,\nJanek"
+
+  - trigger: ":reg"
     replace: "Kind Regards,\nJanek"
 
   - trigger: ":date"
@@ -64,6 +67,14 @@ matches:
         params:
           cmd: "pass information/address | head -2 | tail -1"
 
+  - trigger: ":as"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address | head -2 | tail -1 | cut -d' ' -f1"
+
   - trigger: ":a2"
     replace: "{{output}}"
     vars:
@@ -95,3 +106,19 @@ matches:
         type: shell
         params:
           cmd: "pass information/social-security | head -1"
+
+  - trigger: ":ep"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/email/personal"
+
+  - trigger: ":sign"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/signature"
