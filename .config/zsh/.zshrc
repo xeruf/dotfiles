@@ -39,7 +39,6 @@ plugins=(
 	#git
 	gitfast
 	#git-auto-fetch
-	z
 	fast-syntax-highlighting
 	zsh-autosuggestions
 	zsh-vim-mode
@@ -53,8 +52,6 @@ DISABLE_UPDATE_PROMPT=true
 ZSH_DISABLE_COMPFIX=true
 
 source $ZSH/oh-my-zsh.sh
-
-compdef wh=which
 
 ## Functions
 
@@ -182,6 +179,8 @@ export NVM_DIR="$HOME/.nvm"
 test -s $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
 
 test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
+
+eval "$(zoxide init zsh)"
 
 test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && source $XDG_CONFIG_HOME/broot/launcher/bash/br
 

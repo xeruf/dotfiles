@@ -32,7 +32,6 @@ export TASKRC="$XDG_CONFIG_HOME/task/taskrc"
 export TASKDATA="$XDG_DATA_HOME/task"
  # zsh dirs
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-export _Z_DATA="$XDG_DATA_HOME/zsh/z"
 export HISTFILE="$XDG_DATA_HOME/zsh/history"
  # ccache - can be removed with version 4 - https://github.com/ccache/ccache/issues/191
 export CCACHE_CONFIGPATH="$XDG_CONFIG_HOME"/ccache.config
@@ -41,14 +40,23 @@ export CCACHE_DIR="$XDG_CACHE_HOME"/ccache
 # environment
 export IGNOREDIRS=".sync,.stfolder,.git,out,build,dev"
 export EDITOR=/usr/bin/nvim
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export LESS='--RAW-CONTROL-CHARS --ignore-case --incsearch'
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
- # enable pass extensions
+## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
-# fzf defaults
+## man
+export MANPAGER="less --squeeze-blank-lines +Gg"
+export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
+export LESS_TERMCAP_md=$'\e[1;33m'     # begin blink
+export LESS_TERMCAP_so=$'\e[36m'       # bottom blue
+export LESS_TERMCAP_us=$'\e[01;37m'    # begin underline
+export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
+export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
+export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
+export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
+## fzf defaults
 FZF_BINDINGS=$(echo '
 change:top
 alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
@@ -70,7 +78,7 @@ export FZF_DEFAULT_OPTS="--select-1 --ansi --marker=o
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
- # ctest
+## ctest
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3

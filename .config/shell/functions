@@ -9,7 +9,12 @@ alias -g XC="| xclip -selection clipboard"
 alias -g L="--color=always | ${PAGER:-less}"
 fi
 
+alias h='help'
 alias info='info --vi-keys'
+
+alias c=z
+alias d=z
+alias v=edit
 
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
@@ -35,17 +40,19 @@ rd() {
 }
 rr() { mv "$@" /tmp }
 
-calc='rlwrap -a bc -l'
-
-alias j='jrnl'
-jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
-alias jnc='jn -contains'
-
 # like "which", but shows contents if it resolves to a file
 wh() {
 	res=$(which "$@")
-	test -r "$res" && b --plain "$res" || echo "$res"
+	test -r "$res" && b --style=numbers,header "$res" || echo "$res"
 }
+compdef wh=which
+
+alias calc='rlwrap -a bc -l'
+
+alias j='jrnl'
+jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
+compdef jn=jrnl
+alias jnc='jn -contains'
 
 alias logoff="loginctl terminate-user $USER"
 
@@ -131,10 +138,6 @@ alias tw='timew'
 twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
 alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
 
-# Quick shortcuts
-alias c='clear'
-alias v='edit'
-
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
 
@@ -169,7 +172,6 @@ alias uloc="noglob sudo updatedb && $__loci"
 alias syslog='less +F /var/log/syslog'
 alias println='printf "\n"'
 alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
-alias vlch="vlc -H | ${PAGER:-less}"
 alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
 alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
 alias mdo="pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org --wrap preserve"
@@ -219,11 +221,6 @@ test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -P
 #if [ command -v notify-send >/dev/null 2>&1 ]; then
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 #fi
-
-# Find zmv in man because I need to look it up all the time ^^
-man() {
-	(test "$1" = "zmv" && LESS="$LESS+/^ *zmv *\\[" /usr/bin/man zshcontrib) || /usr/bin/man "$@"
-}
 
 sedcomment() { sed -i 's/$1/#\0/' "${@:2}" }
 seduncomment() { sed -i 's/#\($1\)/\0/' "${@:2}" }
