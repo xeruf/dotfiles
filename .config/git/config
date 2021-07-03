@@ -124,6 +124,7 @@
 	rb = rebase
 	rbi = rebase --interactive
 	rbc = rebase --continue
+	rbu = rebase @{upstream}
 	rbm = !git rebase $(git main)
 
 	sta = stash
@@ -134,21 +135,22 @@
 
 	rh = reset HEAD~
 	rs = reset --keep
-	ru = reset --keep @{upstream}
+	rsu = reset --keep @{upstream}
 	unstage = restore --staged --
 	recover = restore --worktree --staged --
 
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
+	sun = submodule update --no-fetch
 	# Update from remote
+	su = submodule update --init --recursive
+
 	f = fetch
 	fa = fetch --all
 	fs = !git fetch && git st
 	lu = !git pull upstream ${1:-$(git curbranch)}
 
 	rg = rmgonebranches
-	su = submodule update --init --recursive
-	sun = submodule update --no-fetch
 	gcr = !git gc && git repack -a -d
 
 	# Change remote
