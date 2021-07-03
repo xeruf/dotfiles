@@ -37,18 +37,6 @@
 
 ;;;; BINDINGS
 
-(defun dragon ()
-  ; Share file in current buffer via dragon
-  (interactive)
-  (shell-command (concat "dragon-drag-and-drop -x " (buffer-file-name)))
-  )
-
-;; rebing C-u - https://emacs.stackexchange.com/a/58320
-(global-set-key (kbd "C-#") 'universal-argument)
-(define-key universal-argument-map (kbd "C-#") 'universal-argument-more)
-(global-set-key (kbd "C-*") 'universal-argument)
-(define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
-
 (defun xah-open-in-external-app (&optional @fname)
   "Open the current file or dired marked files in external app.
 When called in emacs lisp, if @fname is given, open that.
@@ -81,6 +69,19 @@ Version 2019-11-04 2021-02-16"
         (mapc
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
+
+(defun dragon ()
+  ; Share file in current buffer via dragon
+  (interactive)
+  (shell-command (concat "dragon-drag-and-drop -x " (buffer-file-name)))
+  )
+
+;; rebing C-u - https://emacs.stackexchange.com/a/58320
+(global-set-key (kbd "C-#") 'universal-argument)
+(define-key universal-argument-map (kbd "C-#") 'universal-argument-more)
+(global-set-key (kbd "C-*") 'universal-argument)
+(define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
+
 (map! :leader
       "u"  'evil-prev-buffer
       "i"  'evil-next-buffer

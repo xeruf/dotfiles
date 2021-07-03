@@ -29,7 +29,7 @@ yas() {
     yzf 2 --tiebreak=index --preview="cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache")
   if test -n "$pkg"
     then echo "Installing $pkg..."
-      cmd="yay -S --nobatchinstall $pkg"
+      cmd="yay -S --sudoloop --nobatchinstall $pkg"
       print -s "$cmd"
       eval "$cmd"
       rehash

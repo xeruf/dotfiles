@@ -30,6 +30,7 @@ ulimit -c unlimited # Enable core dumps
 
 which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
 
+compdef help=info
 unalias rd 2>/dev/null
 rd() {
 	while test $# -gt 0
