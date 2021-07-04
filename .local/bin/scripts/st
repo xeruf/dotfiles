@@ -5,8 +5,11 @@ if test -f "$subscript"
 then shift && $subscript "$@"
 else
   apikey=$(grep apikey $XDG_CONFIG_HOME/syncthing/config.xml | cut -d '>' -f2 | cut -d '<' -f1)
+  parseargs() {
+    echo hi
+  }
   case "$1" in
-    (browse|need)
+    (browse|completion|file|ignores|need|status)
       for arg in "${@:2}"
       do case "$arg" in ([0-9]) depth=$arg;; (*) path="$arg";; esac
       done

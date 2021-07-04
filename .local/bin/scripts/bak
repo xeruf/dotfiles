@@ -1,3 +1,10 @@
 #!/bin/sh
 suffix="${2:-bak}"
-test -e "$1.$suffix" && ((test -e "$1" && mv -v "$1" /tmp); mv -vn "$1.$suffix" "$1") || mv -vn "$1" "$1.$suffix"
+orig="${1%%.$suffix}"
+echo $orig
+if test -e "$orig.$suffix"
+then
+  test -e "$orig" && mv -v "$orig" /tmp
+  mv -vn "$orig.$suffix" "$orig"
+else mv -vn "$1" "$1.$suffix"
+fi

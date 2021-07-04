@@ -139,6 +139,7 @@ alias tw='timew'
 twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
 alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
 
+alias expr='noglob expr'
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias lar='last | tac'
 
