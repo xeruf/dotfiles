@@ -1,2 +1,3 @@
 #!/bin/sh
-test -e "$1.bak" && ((test -e "$1" && mv "$1" /tmp); mv -n "$1.bak" "$1") || mv -n "$1" "$1.bak"
+suffix="${2:-bak}"
+test -e "$1.$suffix" && ((test -e "$1" && mv -v "$1" /tmp); mv -vn "$1.$suffix" "$1") || mv -vn "$1" "$1.$suffix"

@@ -90,10 +90,11 @@ Version 2019-11-04 2021-02-16"
       "#"  'xah-open-in-external-app
       ;; Buffer-local font resizing
       :n
-      "M-C-="   'text-scale-increase
+      "M-C-+"   'text-scale-increase
       "M-C--"   'text-scale-decrease
       ;; Frame-local font resizing
-      "C-="     'doom/increase-font-size
+      "C-="     'doom/reset-font-size
+      "C-+"     'doom/increase-font-size
       "C--"     'doom/decrease-font-size
       )
 
