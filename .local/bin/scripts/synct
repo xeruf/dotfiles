@@ -1,9 +1,0 @@
-#!/bin/sh
-apikey=$(grep apikey $XDG_CONFIG_HOME/syncthing/config.xml | cut -d '>' -f2 | cut -d '<' -f1)
-curl -H 'Content-Type: application/json' -H "X-API-Key: $apikey" "http://localhost:8384/rest/$1" "${@:2}" | bat --style=numbers -l json
-
-# https://docs.syncthing.net/rest/db-browse-get.html
-# synct 'db/browse?folder=data&levels=1'
-
-# https://docs.syncthing.net/rest/db-need-get.html
-# synct 'db/need?folder=music'
