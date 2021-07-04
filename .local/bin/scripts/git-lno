@@ -3,10 +3,10 @@
 # Useful when the history has been manipulated
 loc="$(git lo --color=always "$@")"
 upstream="$(git lo --color=always @{push} "$@")"
-a=$(echo $loc | wc -l)
-b=$(echo $upstream | wc -l)
+countLoc=$(echo $loc | wc -l)
+countUp=$(echo $upstream | wc -l)
 halfcols="$(expr $(tput cols) / 2)"
-for i in $(seq 1 $(test $a -le $b && echo "$a" || echo "$b")); do
+for i in $(seq 1 $(expr $countLoc \& $countLoc \< $countUp \| $countUp)); do
   printf "%-${halfcols}s $(test $halfcols -lt 100 && echo '\\n')%s\n" "$(echo $loc | head -n $i | tail -1)" "$(echo $upstream | head -n $i | tail -1)"
   # use columns instead? - need to interleave!
 done | ${PAGER:-less}

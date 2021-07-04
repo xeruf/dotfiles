@@ -5,6 +5,9 @@ case "$1" in ([0-9]*) code=$1; shift;; esac
 
 task="${1:-test}"
 test $# -gt 1 && prefix=":$2:"
-gradle=$(test -x "./gradlew" && echo "./gradlew" || echo "gradle")
+gradle=$(test -x "./gradlew"; expr gradle \& $? \| ./gradlew)
 
-( exit $code ); while test $? -eq $code; do $gradle ${prefix}clean$(echo $task | sed -e 's/^./\U&/') ${prefix}$task "${@:3}"; done
+( exit $code )
+while test $? -eq $code
+do $gradle ${prefix}clean$(echo $task | sed -e 's/^./\U&/') ${prefix}$task "${@:3}"
+done

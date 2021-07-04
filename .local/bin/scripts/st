@@ -5,15 +5,15 @@ if test -f "$subscript"
 then shift && $subscript "$@"
 else
   apikey=$(grep apikey $XDG_CONFIG_HOME/syncthing/config.xml | cut -d '>' -f2 | cut -d '<' -f1)
-  parseargs() {
-    echo hi
-  }
   case "$1" in
     (browse|completion|file|ignores|need|status)
       for arg in "${@:2}"
       do case "$arg" in ([0-9]) depth=$arg;; (*) path="$arg";; esac
       done
-      query="db/$1?folder=$(test -n "$path" && echo "${path%%/*}" || echo "data")&levels=${depth:-1}$(case "$path" in (*/*) echo "&prefix=${path#*/}";; esac)";;
+      query=$(echo "db/$1?folder=$(expr "${path%%/*}" \& "$path" \| data)
+        $(expr levels \& "$1" = "browse" \| page)=${depth:-1}
+        $(case "$path" in (*/*) echo "$(expr "prefix" \& "$1" = "browse" \| "$1")=${path#*/}";; esac)" |
+          tr -d ' ' | paste -s -d'&');;
     (*) query="$1";;
   esac
   shift

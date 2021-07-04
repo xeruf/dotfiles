@@ -4,7 +4,7 @@ umask 0
 case $ACTION in
 	(add) id=1;;
 	(remove) id=0;;
-	(*) id=$(test -c /dev/ttyACM0 && echo 1 || echo 0);;
+	(*) id=$(! test -c /dev/ttyACM0; echo $?);;
 esac
 echo "Keyboard layout update to $id($ACTION) at $(date)"
 export XAUTHORITY="/run/user/1000/Xauthority" DISPLAY=:0

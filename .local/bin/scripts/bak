@@ -1,7 +1,6 @@
 #!/bin/sh
 suffix="${2:-bak}"
 orig="${1%%.$suffix}"
-echo $orig
 if test -e "$orig.$suffix"
 then
   test -e "$orig" && mv -v "$orig" /tmp
