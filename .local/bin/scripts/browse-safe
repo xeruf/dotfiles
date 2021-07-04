@@ -1,0 +1,11 @@
+#!/bin/sh
+# Replace systemd-resolved with the Adult Filter DNS of https://cleanbrowsing.org/filters
+set -e
+sudo systemctl disable --now systemd-resolved
+resolvconf="/etc/resolv.conf"
+dns="nameserver 185.228.168.10
+nameserver 185.228.169.11"
+test "$(cat "$resolvconf" 2>/dev/null)" = "$dns" && exit 0
+test -f "$resolvconf" && sudo chattr -i "$resolvconf" && sudo rm -vf "$resolvconf"
+echo "$dns" | sudo tee "$resolvconf"
+sudo chattr +i "$resolvconf"
