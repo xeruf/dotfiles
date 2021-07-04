@@ -8,9 +8,16 @@
 	recurse = true
 [rerere]
 	enabled = true
-# Accelerate packing by automatically determining thread count
+
+# Parallelize
 [pack]
 	threads = 0
+[checkout]
+	workers = 0
+[fetch]
+	parallel = 0
+[submodule]
+	fetchJobs = 0
 
 [pull]
 	ff = only
