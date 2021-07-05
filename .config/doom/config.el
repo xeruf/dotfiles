@@ -286,13 +286,14 @@ Version 2019-11-04 2021-02-16"
 
   ;; Exporting - https://orgmode.org/manual/Export-Settings.html
   (setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
-        org-latex-packages-alist '(("avoid-all" "widows-and-orphans") ("" "svg"))
+        org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
         org-export-with-tags nil
         org-export-with-tasks 'done
         org-export-with-todo-keywords nil
         org-export-with-toc nil
         org-export-with-section-numbers nil
         )
+
   (add-to-list 'org-latex-classes
        '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
           ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -301,7 +302,6 @@ Version 2019-11-04 2021-02-16"
           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
           ("\\paragraph{%s}" . "\\paragraph*{%s}")
           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
 
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
