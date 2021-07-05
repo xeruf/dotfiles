@@ -105,7 +105,6 @@
 	lgu = lg HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
-	ln = !git --no-pager lo "-$(a=$(git rev-list --count HEAD...@{push} 2>/dev/null); expr $a + 3 \\& ${a:-0} \\> 3 \\| 6)" --color=always --graph HEAD @{u} 2>/dev/null | head -9 || git --no-pager lo -7
 	my = lo --author [Jj]anek
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'

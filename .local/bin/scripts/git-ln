@@ -1,0 +1,4 @@
+#!/bin/sh
+upCount=$(git rev-list --count HEAD...@{push} 2>/dev/null)
+count=$(expr $a + 3 \& ${upCount:-0} \> 3 \| 6)
+git --no-pager lo -$count --color=always --graph HEAD @{push} | head -9 || git --no-pager lo -7
