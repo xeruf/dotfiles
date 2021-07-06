@@ -231,7 +231,7 @@ Version 2019-11-04 2021-02-16"
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
-        "lI" '(lambda () (interactive) (org-set-property "ID" nil))
+        :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
         "gR" 'org-mode-restart
         )
 
@@ -371,11 +371,14 @@ Version 2019-11-04 2021-02-16"
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
         :localleader
-        :desc "Open dir in image-dired" "i" (lambda () (interactive) (image-dired buffer-file-name))
+        :desc "Open dir in image-dired" "i"
+                (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Compress/Extract" "c" 'dired-do-compress
         )
   (map! :map wdired-mode-map
-        :n "RET" 'dired-find-file-dwim
+        :n "RET" (lambda () (interactive) (progn
+                                             (wdired-exit)
+                                             (dired-find-file-dwim)))
         )
 
   )
