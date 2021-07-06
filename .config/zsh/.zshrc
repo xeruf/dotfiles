@@ -13,11 +13,6 @@ fi 2>/dev/null || return 0
 #	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 #fi
 
-export PATH=$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:/opt/android-sdk/platform-tools:$XDG_CONFIG_HOME/emacs/bin
-
-export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
-export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
-export ZSH="$XDG_DATA_HOME/oh-my-zsh"
 DEFAULT_USER=$USER
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -164,8 +159,6 @@ alias zmw='noglob zmv -W'
 alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
-
-which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 
 for file in $CONFIG_SHELLS/*; do source $file; done
 
