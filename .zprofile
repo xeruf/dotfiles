@@ -40,7 +40,7 @@ export CCACHE_DIR="$XDG_CACHE_HOME"/ccache
 # environment
 export IGNOREDIRS=".sync,.stfolder,.git,out,build,dev"
 export EDITOR=/usr/bin/nvim
-export LESS='--RAW-CONTROL-CHARS --ignore-case --incsearch --jump-target=5'
+export LESS='--RAW-CONTROL-CHARS --ignore-case --incsearch --LONG-PROMPT --jump-target=5'
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config

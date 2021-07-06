@@ -84,6 +84,8 @@ edconf() {
 	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
 }
 
+alias hist='print -z $(history | fzf --nth 4.. | tr -s " " | cut -d" " -f5-)'
+
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 alias r="reset && exec zsh"
 edcomp() {
