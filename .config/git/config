@@ -27,6 +27,7 @@
 [diff]
 	tool = nvim
 	submodule = log
+	context = 2
 [merge]
 	tool = nvim
 [mergetool "nvim"]
@@ -74,13 +75,17 @@
 	required = true
 
 [alias]
+	fzf = !fzf --preview='git diff HEAD --color=always -- {}' --tiebreak=end,index --multi
+	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --preview='test {1} != \\? && git diff --color HEAD -- {2..} | $(git config interactive.diffFilter) || diff --color=always -u /dev/null {2..}' | cut -c3-
+
 	# GET INFO
 	s = !git stl && git stb
 	st = stb .
 	stb = status --short --branch
 	sv = --paginate status -v
 	svv = --paginate status -vv
-	sf = !git diff-index HEAD --name-only | fzf --preview='git diff HEAD --color=always -- {}' --multi | git commit -v --pathspec-from-file=-
+	sf = !git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs | git commit -v --pathspec-from-file=-
+
 
 	r = remote -v
 	b = branch -vv
@@ -122,6 +127,8 @@
 	a = add -u
 	aa = add -u .
 	ap = add -p
+	af = !git status --porcelain --no-renames -z | grep -v '^\\w ' -z | git fzs | git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=-
+
 	c = commit -v
 	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
 	cme = commit -v --edit --message # Commit with message but edit it
