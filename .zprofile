@@ -45,7 +45,7 @@ export CCACHE_DIR="$XDG_CACHE_HOME"/ccache
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS='--RAW-CONTROL-CHARS --ignore-case --incsearch --LONG-PROMPT --jump-target=5'
-export IGNOREDIRS=".sync,.stfolder,.git,out,build,dev"
+export IGNOREDIRS="-x dev -x .sync -x .stfolder -x .git -x .gradle -x .idea -x out -x *build -x dist_newstyle -x generated -x cache -x node_modules"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config

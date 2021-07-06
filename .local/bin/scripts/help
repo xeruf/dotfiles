@@ -1,8 +1,8 @@
 #!/bin/sh
 case $1 in
   (vlc) unbuffer vlc --full-help "${@:2}" | ${PAGER:-less} --quit-if-one-screen;;
-  (zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
+  (zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
     # need to install zsh-doc for info
-    info --index-search=zmv zsh || LESS="$LESS +/^ *zmv *\\[" man zshcontrib;;
-  (*) man "$@" || "$@" --help | ${PAGER:-less} --quit-if-one-screen;;
+    info --vi-keys --index-search="${@:$#}" zsh || LESS="$LESS +/^ *zmv *\\[" man zshcontrib;;
+  (*) info "$1" -w | grep -v "manpages" && pinfo "$@" || man "$@" || "$@" --help | ${PAGER:-less} --quit-if-one-screen;;
 esac
