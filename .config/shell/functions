@@ -50,9 +50,9 @@ rd() {
 wh() {
 	res=$(which "$@")
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null
-	then echo "$res" && wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f4)
+	then echo "$res" | bat --style=plain --language=sh && wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f4)
 		# use command which for other shells
-	else test -r "$res" && b --style=header "$res" || echo "$res" | bat --style=plain --language=sh
+	else test -r "$res" && b --style=header "$res" || echo "$res"  | bat --style=plain --language=sh
 	fi
 }
 compdef wh=which
