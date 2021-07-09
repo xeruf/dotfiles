@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: Lib Berlin Audiobook
+# key: Ba
+# --
+READ Audiobook
+CLOSED:
+:PROPERTIES:
+:LibBerlin: Audiobook
+:END:
