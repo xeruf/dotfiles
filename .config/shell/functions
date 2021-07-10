@@ -10,6 +10,7 @@ alias -g L="--color=always | ${PAGER:-less}"
 fi
 
 alias h='help'
+compdef help=which
 alias info='info --vi-keys'
 
 d() { cd $(zf "$@") }
@@ -30,7 +31,6 @@ ulimit -c unlimited # Enable core dumps
 
 which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
 
-compdef help=info
 unalias rd 2>/dev/null
 rd() {
 	for f in "$@"
@@ -58,13 +58,13 @@ wh() {
 compdef wh=which
 
 alias calc='rlwrap -a bc -l'
+alias logoff="loginctl terminate-user $USER"
+blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
 
 alias j='jrnl'
 jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
 compdef jn=jrnl
 alias jnc='jn -contains'
-
-alias logoff="loginctl terminate-user $USER"
 
 # Some aliases
 alias edgrub='sudoedit /etc/default/grub && sudo update-grub'

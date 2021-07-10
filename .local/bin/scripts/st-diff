@@ -22,5 +22,5 @@ if test "$#" -gt 0
     fi
   else
     find "$DATA/2-standards/notes/journal" -name "intentions*sync-conflict*" -exec sh -c 'basename {} | cut -d. -f1 | xargs -i% jrnl % --import --file {}' \; -delete
-    find -name '*sync-conflict*' -exec st-diff $quick '{}' \;
+    find -name '.stfolder' -prune -o -name '*sync-conflict*' -exec st-diff $quick '{}' \;
 fi

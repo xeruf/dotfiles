@@ -19,7 +19,7 @@ Plug 'bkad/CamelCaseMotion'             " move through camel case words
  " commands
 Plug 'inkarkat/vim-ReplaceWithRegister' " gr to replace with register
 Plug 'tpope/vim-commentary'             " gc to comment out (gcap for paragraph)
-Plug 'junegunn/vim-easy-align'          " ga to align stuff
+Plug 'junegunn/vim-easy-align'          " gaip*= - align in paragraph all equal signs
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
  " libs
