@@ -53,6 +53,8 @@ fi
 ## Software
 section "Software"
 
+ln -s "$HOME/.local/share/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
+
 highlight "Configure pacman"
 if test -f /etc/pacman.conf; then
   sudo sed -i 's/#Color/Color/' /etc/pacman.conf
