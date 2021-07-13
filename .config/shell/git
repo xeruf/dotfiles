@@ -13,7 +13,7 @@ yc() {
 
 alias sy="sysyadm"
 alias sysyadm="sudo yadm -Y /etc/yadm"
-alias sysinit="sysyadm init -w /; sysyadm config include.path '$XDG_CONFIG_HOME/git/config'"
+alias sysinit="sysyadm init -b main -w / && sysyadm gitconfig include.path '$XDG_CONFIG_HOME/git/config'"
 
 gcn() {
   if test $# -eq 0 || test -e $1
