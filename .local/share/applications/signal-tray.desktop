@@ -1,15 +1,13 @@
 [Desktop Entry]
+Type=Application
 Categories=Network;InstantMessaging;
-Comment=Signal Private Messenger for Linux
-Exec=signal-desktop --use-tray-icon --start-in-tray
+Comment=Signal - Private Messenger starting hidden
+Comment[de]=Signal - Sicherer Messenger
+Exec=signal-desktop --use-tray-icon --start-in-tray -- %u
 Icon=signal-desktop
+Keywords=sgnl;chat;im;messaging;messenger;sms;security;privat;
 Name=Signal-Tray
 StartupNotify=true
 StartupWMClass=Signal
 Terminal=false
-TerminalOptions=
-Type=Application
-X-DBUS-ServiceName=
-X-DBUS-StartupType=
-X-KDE-SubstituteUID=false
-X-KDE-Username=
+X-GNOME-UsesNotifications=true
