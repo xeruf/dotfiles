@@ -50,7 +50,7 @@ rd() {
 wh() {
 	res=$(which "$@")
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null
-	then echo "$res" | bat --style=plain --language=sh && wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f4)
+	then echo "$res" | bat --style=plain --language=sh && wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*\(sudo\|noglob\)" '|' 4))
 		# use command which for other shells
 	else test -r "$res" && b --style=header "$res" || echo "$res"  | bat --style=plain --language=sh
 	fi
@@ -78,7 +78,7 @@ alias dedup='awk '"'"'!a[$0]++'"'"
 listconf() {
 	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup
+		sudo fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup
 }
 
 edconf() {
@@ -88,12 +88,12 @@ edconf() {
 	conf_extra="$XDG_CONFIG_HOME/edconf-extra"
 	mkdir -p "$conf_cache_dir"
 	touch "$conf_cache"
-	sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview 'bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
+	sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
 	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
 	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
 }
 
-alias hist='print -z $(history | tac | fzf --tiebreak=index | tr -s " " | cut -d" " -f5-)'
+alias hist='print -z $(history | tac | fzf --tiebreak=index --bind="'"del:execute(echo \"'/;{4..}$/d'\" && sed '/;{4..}$/d' -i.bak $HISTFILE)"'" | sed "s|^ \+||" | cut -d" " -f5-)'
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 alias rs="reset && exec zsh"
@@ -164,8 +164,9 @@ xo() {
 	done
 }
 alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
-loc() { noglob locate --ignore-case --basename --existing "$@" | grep --color=always "$@" | less -F }
-alias uloc='noglob sudo updatedb && loc'
+loci() { locate --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|$@" | sed 's/ /|/g') | less -F }
+alias loc='noglob loci'
+alias uloc='noglob sudo updatedb && loci'
 alias syslog='less +F /var/log/syslog'
 alias println='printf "\n"'
 alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'

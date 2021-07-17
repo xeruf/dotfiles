@@ -34,8 +34,8 @@ plugins=(
 	#git
 	gitfast
 	#git-auto-fetch
-	fast-syntax-highlighting
 	zsh-autosuggestions
+	fast-syntax-highlighting
 	zsh-vim-mode
 	history-substring-search
 )

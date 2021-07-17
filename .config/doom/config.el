@@ -371,6 +371,7 @@ Version 2019-11-04 2021-02-16"
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
         :localleader
+        "s" 'dired-do-symlink
         :desc "Open dir in image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Compress/Extract" "c" 'dired-do-compress

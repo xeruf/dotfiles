@@ -39,8 +39,9 @@ let g:firenvim_config = {
         \ '.*openstreetmap\.org.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*wikipedia\.org.*':         { 'priority': 9, 'takeover': 'never', },
         \
-        \ '.*notion\.so.*':             { 'priority': 9, 'takeover': 'never', },
         \ '.*docs\.google\.com.*':      { 'priority': 9, 'takeover': 'never', },
+        \ '.*contacts\.google\.com.*':  { 'priority': 9, 'takeover': 'never', },
+        \ '.*notion\.so.*':             { 'priority': 9, 'takeover': 'never', },
         \ '.*cloud\.atomtoast\.xyz.*':  { 'priority': 9, 'takeover': 'never', },
         \ 'https://bigbluebutton.*':    { 'priority': 9, 'takeover': 'never', },
         \ 'https://dhall-lang.org.*':   { 'priority': 9, 'takeover': 'never', },

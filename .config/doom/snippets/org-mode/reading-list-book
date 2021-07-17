@@ -3,7 +3,7 @@
 # key: B
 # expand-env: ((yas-wrap-around-region 'nil))
 # --
-INTEREST $1
+$1
 :PROPERTIES:
 :Author:      ${2:+}
 :LibErlangen: https://stadtbibliothek-recherche.erlangen.de/Mediensuche/Einfache-Suche?search=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&top=y&facets=v_____Sachb%C3%BCcher%7CJugendsachbuch%7CJugendroman%7CBuch+Romane%7CSachb%C3%BCcher+Weih.%2fOst&facetsc=_____15&pagesize=20

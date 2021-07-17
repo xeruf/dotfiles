@@ -122,3 +122,11 @@ matches:
         type: shell
         params:
           cmd: "pass information/signature"
+
+  - trigger: ":iban"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/banking/dkb | head -1"
