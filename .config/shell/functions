@@ -13,7 +13,19 @@ alias h='help'
 compdef help=which
 alias info='info --vi-keys'
 
-d() { cd $(zf "$@") }
+d() {
+  local query="$(zf "$@")"
+  # First find out whether there is an obvious match
+  # (at least 3 matches & score at least ten times above runner-up or score above 20)
+  # If not select with fzf, using locate to find extra options
+  cd "$(if expr "$(echo "$query" | head -1 | cut -d' ' -f2)" \> 20 \& $(echo "$query" | sed 'N;s|/.*\n|> 10 *|;q' | sed 's| */.*||') >/dev/null 2>&1
+      then echo "$query" | head -1
+      else echo "$query"; locz "$@"
+    fi | zfz)"
+}
+di() {
+  cd "$( ( zf "$@"; locz "$@" ) | zfz)"
+}
 alias c=z
 alias v=edit
 
@@ -78,7 +90,7 @@ alias dedup='awk '"'"'!a[$0]++'"'"
 listconf() {
 	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		sudo fd --hidden --type file --size -1m --max-depth 3 . --full-path "$XDG_CONFIG_HOME" /etc } | dedup
+		sudo find "$XDG_CONFIG_HOME" /etc -maxdepth 3 -type f -exec grep -lI '' {} + } | dedup
 }
 
 edconf() {
@@ -247,7 +259,7 @@ updateDeps() {
 }
 alias updateKotlin="updateDeps build.gradle.kts 'kotlin(\"jvm\") version ' --version"
 alias updateGradle='updateDeps gradle-wrapper.properties "services.gradle.org\/distributions\/gradle-" --version'
-alias updateUtils='updateDeps build.gradle.kts '\''\"com.github.Xerus2000.util\", \".*\", \"'\'' --pattern '\''[^\"]\+'\'' --version'
+alias updateUtils="updateDeps build.gradle.kts '"'"com.github.Xerus2000.util", ".*", "'" --pattern '[^\"]\+' --version"
 
 # Kill all shell background processes
 alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
@@ -378,14 +390,17 @@ clean() {
 
 	highlight "m to clean mac-files"
 	if [[ $1 =~ "m" ]]; then
-		find -iname '.spotlight*' -print -exec rm -r {} \;
+		find -iname '.spotlight*' -exec rm -rI {} +
 		find -name '*.DS_Store' -delete
 	fi
+
+	highlight "e to clean electron caches"
+	[[ $1 =~ "e" ]] && find "$XDG_CONFIG_HOME" -type d -name "*Cache" -exec rm -r {} + -prune
 
 	highlight "c to clean local caches"
 	if [[ $1 =~ "c" ]]; then
 		find -name ".gradle" -o -name "generated" -o -name "dist_newstyle" -o -name "cache" -o -name "node_modules" -print -exec rm -r {} +
-		find -name "*build" -ok rm -r {} \; -prune
+		find -name "*build" -exec rm -rI {} +
 	fi
 
 	if test "$BASH_VERSION"; then
@@ -407,9 +422,8 @@ clean() {
 		export aptclean_last=$aptclean_cur
 	fi
 
-
-	highlight "e to delete empty folders"
-	[[ $1 =~ "e" ]] && find -empty -type d -delete -print
+	highlight "f to delete empty folders"
+	[[ $1 =~ "f" ]] && find -empty -type d -delete -print
 
 	highlight "o to optimize extensively"
 	if [[ $1 =~ "o" ]]; then

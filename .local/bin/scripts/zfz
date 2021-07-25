@@ -1,0 +1,3 @@
+#!/bin/sh
+# fzf for zoxide
+fzf -0 -1 -n2.. --tiebreak=index --preview="ls -a --color --human-readable --group-directories-first --file-type {2..}" --preview-window=20% | tr -s ' ' | cut -d' ' -f3-

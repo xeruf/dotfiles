@@ -1,0 +1,5 @@
+#!/bin/sh
+# Locate existing directories in zoxide format
+locate --basename --ignore-case "$@" |
+  while read -r file; do test -d "$file" && echo "$file"; done |
+    sed 's/^/   0 /'

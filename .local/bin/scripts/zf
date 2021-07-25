@@ -1,14 +1,8 @@
 #!/bin/sh
-# Quick directory switcher based on zoxide and fzf
+# Listing for quick directory switcher based on zoxide and fzf
 if test -d "$1" -o "$1" = "-"
 then echo "$@"
 else
 set -o noglob
-query=$(zoxide query -sl "$@")
-# First find out whether there is an obvious match (score at least ten times that of runner-up)
-# If not select with fzf, using locate to find extra options
-( expr $(echo "$query" | sed 'N;s|/.*\n|> 10 *|;q' | sed 's| */.*||') >/dev/null 2>&1 &&
-  echo "$query" | head -1 ||
-  ( echo "$query"; locate --basename --existing "$@" | while read -r file; do test -d "$file" && echo "$file"; done | sed 's/^/   0 /' ) |
-  fzf -0 -1 -n2.. --tiebreak=index --preview="ls -a --color --human-readable --group-directories-first --file-type {2..}" --preview-window=20% ) | tr -s ' ' | cut -d' ' -f3-
+zoxide query -sl "$@"
 fi
