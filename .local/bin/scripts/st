@@ -1,5 +1,6 @@
 #!/bin/sh
 # Query local syncthing REST API
+test $# -eq 0 && echo "Usage: st <command> [args...]" && exit 1
 subscript="$(which "$(basename $0)-$1" 2>/dev/null)"
 if test -f "$subscript"
 then shift && $subscript "$@"
