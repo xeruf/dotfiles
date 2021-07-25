@@ -87,7 +87,6 @@
 	svv = --paginate status -vv
 	sf = !git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs | git commit -v --pathspec-from-file=-
 
-
 	r = remote -v
 	b = branch -vv
 	ba = b -a
@@ -100,6 +99,7 @@
 
 	find = log --patch --all --full-history
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
+	hf = log --patch --follow --find-renames=1 --
 
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
