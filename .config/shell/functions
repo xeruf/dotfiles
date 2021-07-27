@@ -101,7 +101,6 @@ edconf() {
 	mkdir -p "$conf_cache_dir"
 	touch "$conf_cache"
 	sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
-	# | xargs file | grep text | cut -d':' -f1 # this filters out non-text files, but it's ridiculously slow
 	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
 }
 
