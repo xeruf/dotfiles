@@ -10,9 +10,9 @@ tput setaf 4 && $(test -r "$last" || echo "sudo") file -E "$last" | ( grep -v --
 
 elevate="$(test -r "$last" || echo "sudo")"
 case "$($elevate file --dereference --mime "$last")" in
-  *inode/directory*) tput sgr0 && $(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@";;
+  *inode/directory*) tput sgr0 && $(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -XF;;
   *binary) ;;
-  *) $elevate bat --style header "$@"
+  *) $elevate bat --style header --force-colorization "$@" | less -XF
      tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
      ;;
 esac
