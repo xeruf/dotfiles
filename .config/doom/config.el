@@ -204,7 +204,7 @@ Version 2019-11-04 2021-02-16"
            '("<%d.%m.%Y>" . "<%d.%m.%Y>"))
           (org-display-custom-times 't))
       (org-export-dispatch))
-  )
+    )
 
   ;; https://emacs.stackexchange.com/questions/38529/make-multiple-lines-todos-at-once-in-org-mode
   (defun org-change-todo-in-region ()
@@ -352,13 +352,15 @@ Version 2019-11-04 2021-02-16"
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
-    '("image/x-xcf"))
+    '("image/x-xcf" "application/zip"))
 
   (load "subr-x")
 
   (defun get-mimetype (filepath)
     (string-trim
      (shell-command-to-string (concat "file -b --mime-type " filepath))))
+
+  ;;(let ((mime "image/x-xcf")) (msg mime))
 
   (defun dired-find-file-dwim ()
     (interactive)
