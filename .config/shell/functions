@@ -16,7 +16,7 @@ alias info='info --vi-keys'
 d() {
   local query="$(zf "$@")"
   # First find out whether there is an obvious match
-  # (at least 3 matches & score at least ten times above runner-up or score above 20)
+  # (score at least ten times above runner-up and score above 20)
   # If not select with fzf, using locate to find extra options
   cd "$(if expr "$(echo "$query" | head -1 | cut -d' ' -f2)" \> 20 \& $(echo "$query" | sed 'N;s|/.*\n|> 10 *|;q' | sed 's| */.*||') >/dev/null 2>&1
       then echo "$query" | head -1
@@ -28,6 +28,7 @@ di() {
 }
 alias c=z
 alias v=edit
+alias hx='sudo hexedit --maximize --color'
 
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
@@ -64,7 +65,7 @@ wh() {
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null
 	then echo "$res" | bat --style=plain --language=sh && wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*\(sudo\|noglob\)" '|' 4))
 		# use command which for other shells
-	else test -r "$res" && b --style=header "$res" || echo "$res"  | bat --style=plain --language=sh
+	else test -r "$res" && b --style=header "$res" || echo "$res" | bat --style=plain --language=sh
 	fi
 }
 compdef wh=which
@@ -320,6 +321,9 @@ mkcd() {
 	mkdir -p "$1" && cd "$1"
 }
 
+alias move='rsync --recursive --progress --human-readable --remove-source-files'
+alias rdiff='rsync --recursive --progress --delete --links --dry-run'
+
 # mv with automatic sudo if neccessary
 smv() {
 	test -w "$1" && test -w "$(dirname $2)" && mv "$@" || sudo mv "$@"
@@ -398,8 +402,8 @@ clean() {
 
 	highlight "c to clean local caches"
 	if [[ $1 =~ "c" ]]; then
-		find -name ".gradle" -o -name "generated" -o -name "dist_newstyle" -o -name "cache" -o -name "node_modules" -print -exec rm -r {} +
-		find -name "*build" -exec rm -rI {} +
+		find -name ".gradle" -o -name "generated" -o -name "dist_newstyle" -o -name "cache" -o -name "node_modules" -print -exec rm -r {} + -prune
+		find -name "*build" -print -exec rm -rI {} + -prune
 	fi
 
 	if test "$BASH_VERSION"; then

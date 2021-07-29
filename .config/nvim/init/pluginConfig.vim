@@ -49,6 +49,7 @@ let g:firenvim_config = {
         \ '.*stackexchange\.com.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*stackoverflow\.com.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*com/questions/[0-9]+/.*':  { 'priority': 9, 'takeover': 'never', },
+        \ '.*com/posts/[0-9]+/.*':      { 'priority': 9, 'takeover': 'never', },
     \ }
 \ }
 if exists('g:started_by_firenvim')
