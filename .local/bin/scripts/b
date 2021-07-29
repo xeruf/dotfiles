@@ -1,4 +1,5 @@
 #!/bin/sh
+# [b]rowse - custom ls or bat depending on file type
 # Show type & contents of given files or PWD
 
 set -eo pipefail

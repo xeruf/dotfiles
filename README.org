@@ -2,6 +2,13 @@
 I mainly use Arch Linux,
 currently with the KDE desktop environment
 with the intention to move to Awesome soon.
+
+If you are looking to snag some of my handy tools,
+focus on =.local/bin/scripts= and =.config/shell=.
+Among daily use are ~b~, ~edbin~, ~edconf~, ~edit~, ~yas~, ~walli~
+and [[https://github.com/ajeetdsouza/zoxide][zoxide]]-based ~d~/~di~ which in turn use ~zfz~, ~zf~ & ~locz~.
+
+~ex~, ~help~, ~moul~, ~mvk~, ~rpl~, ~s~, ~sd~, ~tl~ are also commonly used conveniences.
 ** Root
 I am trying to keep my home clean,
 but some files unfortunately cannot be moved.
@@ -10,7 +17,8 @@ it contains lots of mappings to store files according to XDG
 and configuration for ~less~ and ~fzf~.
 ** .config
 - [[.config/shell][shell]] :: shell aliases & functions grouped into a few different areas, focused on zsh but mostly usable with bash
-- doom :: [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration with personalized snippets
+- [[.config/zsh][zsh]] :: zsh plugin configuration & custom completions
+- [[.config/doom][doom]] :: [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration with personalized snippets
 - ideavim, vifm, nvim :: vi-related tools
 - git, yadm :: version control
 ** .local

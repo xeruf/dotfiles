@@ -1,4 +1,5 @@
 #!/bin/sh
+# Run a program in the background if it is not running already
 #ps aux | grep -v $0 | grep -m 1 $1
 echo -n "$1: "
 pgrep ${2:-$1} -a | grep --color=never -m 1 . || ( echo Launching && ($1 >/dev/null 2>&1 &) )

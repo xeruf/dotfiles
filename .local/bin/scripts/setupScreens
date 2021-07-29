@@ -1,3 +1,4 @@
+# Reconfigure two side-by-side 4k and FHD displays via xrandr
 k4=$(xrandr | grep -1 '   3840' | grep ' connected ' | cut -d' ' -f1)
 k2=$(xrandr | grep -1 '   1920' | grep ' connected ' | cut -d' ' -f1)
 

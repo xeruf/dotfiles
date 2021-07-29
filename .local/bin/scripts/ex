@@ -17,7 +17,7 @@ for arg do
       *.7z)        7z x "$arg"      ;;
       *.deb)       ar x "$arg"      ;;
       *.tar.xz)    tar xf "$arg"    ;;
-      *.zst)   unzstd "$arg"    ;;
+      *.zst)       unzstd "$arg"    ;;
       *)           echo "'$arg' cannot be extracted by ex" ;;
     esac
   else

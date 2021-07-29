@@ -1,5 +1,5 @@
 #!/bin/sh
+# interactive diff with pagination and nice coloring
 set -o pipefail
-# interactive diff with pagination
 diff-color --report-identical-files "$@" |
   less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen

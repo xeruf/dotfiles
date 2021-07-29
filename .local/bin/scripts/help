@@ -1,4 +1,5 @@
 #!/bin/sh
+# open info-page, man-page or buffered help flag
 case $1 in
   (vlc) unbuffer vlc --full-help "${@:2}" | ${PAGER:-less} --quit-if-one-screen;;
   (zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
