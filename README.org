@@ -1,0 +1,17 @@
+* Dotfiles
+I mainly use Arch Linux,
+currently with the KDE desktop environment
+with the intention to move to Awesome soon.
+** Root
+I am trying to keep my home clean,
+but some files unfortunately cannot be moved.
+Out of these, only [[.zprofile][.zprofile]] is of interest,
+it contains lots of mappings to store files according to XDG
+and configuration for ~less~ and ~fzf~.
+** .config
+- [[.config/shell][shell]] :: shell aliases & functions grouped into a few different areas, focused on zsh but mostly usable with bash
+- doom :: [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration with personalized snippets
+- ideavim, vifm, nvim :: vi-related tools
+- git, yadm :: version control
+** .local
+- [[.local/bin/scripts][scripts]] :: lots of useful scripts, most have a short documentation header - including many essential git scripts
