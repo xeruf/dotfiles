@@ -4,9 +4,10 @@ currently with the KDE desktop environment
 with the intention to move to Awesome soon.
 
 If you are looking to snag some of my handy tools,
-focus on =.local/bin/scripts= and =.config/shell=.
+focus on [[.local/bin/scripts]] and [[.config/shell]].
 Among daily use are ~b~, ~edbin~, ~edconf~, ~edit~, ~yas~, ~walli~
-and [[https://github.com/ajeetdsouza/zoxide][zoxide]]-based ~d~/~di~ which in turn use ~zfz~, ~zf~ & ~locz~.
+and [[https://github.com/ajeetdsouza/zoxide][zoxide]]-based ~d~ / ~di~
+which in turn use ~zfz~, ~zf~ & ~locz~.
 
 ~ex~, ~help~, ~moul~, ~mvk~, ~rpl~, ~s~, ~sd~, ~tl~ are also commonly used conveniences.
 ** Root
