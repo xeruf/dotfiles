@@ -466,6 +466,9 @@ Version 2019-11-04 2021-02-16"
 (use-package! nov
   :mode ("\\.epub\\'" . nov-mode)
   )
+(use-package! chordpro-mode
+  :mode "\\.chord"
+  )
 (use-package! lilypond-mode
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config

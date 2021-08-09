@@ -61,6 +61,8 @@
 (package! nov) ; epub reader
 
 (package! evil-tutor)
+(package! chordpro-mode
+  :recipe (:host github :repo "hading/chordpro-mode")) ; chord sheets
 
 ;(package! annotate) ; Annotations - replaced by org-noter
 ;      :leader "aa" 'annotate-annotate
