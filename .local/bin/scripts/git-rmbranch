@@ -3,5 +3,5 @@
 # With no argument it switches to the default branch and deletes the current branch.
 branch=${1:-$(git curbranch)}
 echo "${@:-$branch}" | sed 's/\([^ ]\+\)/\1@{push}/g' | xargs git rev-parse --abbrev-ref --revs-only | sed 's/\// /' | xargs --no-run-if-empty git push -d
-test -n "$1" || git checkout main || git checkout master || git checkout $(cat "$(git rev-parse --git-path "refs/remotes/origin/HEAD")" | sed 's|.*/||')
+test -n "$1" || git checkout main || git checkout master || git checkout $(cat "$(git rev-parse --git-path refs/remotes/origin/HEAD)" | sed 's|.*/||')
 git branch -D "${@:-$branch}"

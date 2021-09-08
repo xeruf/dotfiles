@@ -63,15 +63,7 @@ gitretag() {
   git push origin refs/tags/${1}:refs/tags/${2} :refs/tags/$1 && git tag -d $1
 }
 
-# Repo management {{{
-gitinit() {
-  git init -b main
-  git add .
-  git commit -m "First strike"
-  gitorigin "$@"
-  git push
-}
-
+# Open or select a project
 project() {
   cd $projects_dir
   if [ -d $2 ]
@@ -79,8 +71,6 @@ project() {
   else gitclone "$@"
   fi
 }
-
-# }}}
 
 # Rewriting history {{{
 

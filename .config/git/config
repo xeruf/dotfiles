@@ -24,6 +24,8 @@
 	ff = only
 [checkout]
 	defaultRemote = origin
+[init]
+	defaultBranch = main
 
 [diff]
 	tool = nvim
@@ -77,7 +79,7 @@
 
 [alias]
 	fzf = !fzf --preview='git diff HEAD --color=always -- {}' --tiebreak=end,index --multi
-	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --preview='test {1} != \\? && git diff --color HEAD -- {2..} | $(git config interactive.diffFilter) || diff --color=always -u /dev/null {2..}' | cut -c3-
+	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' --preview='test {1} != \\? && git diff --color HEAD -- {2..} | $(git config interactive.diffFilter) || diff --color=always -u /dev/null {2..}' | cut -c3-
 
 	# GET INFO
 	s = !git stl && git stb
@@ -85,12 +87,11 @@
 	stb = status --short --branch
 	sv = --paginate status -v
 	svv = --paginate status -vv
-	sf = !git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs | git commit -v --pathspec-from-file=-
 
 	r = remote -v
 	b = branch -vv
 	ba = b -a
-	main = !cat $(git rev-parse --git-dir)/refs/remotes/origin/HEAD | cut -d'/' -f4
+	main = !cat "$(git rev-parse --git-path refs/remotes/origin/HEAD)" | cut -d'/' -f4
 
 	sw = switch
 	sc = switch -c
@@ -107,7 +108,6 @@
 	dir = rev-parse --git-dir
 	curbranch = symbolic-ref --short HEAD
 	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
-	#dir = !git root | sed 's/$/\\/.git/' | grep --color=never "/" # grep ensures a proper exit status on fail
 
 	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
 	lgu = lg HEAD @{push}
@@ -130,7 +130,8 @@
 	a = add -u
 	aa = add -u .
 	ap = add -p
-	af = !git status --porcelain --no-renames -z | grep -v '^\\w ' -z | git fzs | git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=-
+	af = !git status --porcelain --no-renames --untracked-files=all -z | grep -v '^\\w ' -z | git fzs git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=-
+	sf = !git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs >/tmp/git-sf && git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file=/tmp/git-sf && git commit --only -v --pathspec-from-file=/tmp/git-sf
 
 	c = commit -v
 	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
@@ -180,5 +181,3 @@
 
 [includeIf "gitdir:~/data/.git"]
 	path = "config-data"
-[init]
-	defaultBranch = main

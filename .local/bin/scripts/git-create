@@ -1,0 +1,7 @@
+#!/bin/sh
+# Create a new repo, commit and push
+git init
+git add .
+git commit -m "First strike"
+git origin "$@"
+git push

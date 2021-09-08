@@ -1,0 +1,19 @@
+#!/bin/sh -e
+command=$1
+shift
+case $command in
+  (clone)
+    cd "$DATA/2-standards/dev/aur"
+    git -c init.defaultBranch=master clone ssh://aur@aur.archlinux.org/$1.git
+    cd "$1"
+    echo '*' > .gitignore
+    exec $SHELL;;
+  (create)
+    git add -f .gitignore PKGBUILD .SRCINFO
+    git commit -m "Create package" "$@"
+    git aur push --amend;;
+  (push) makepkg --printsrcinfo > .SRCINFO
+    git commit -v -a "$@"
+    git push;;
+esac
+
