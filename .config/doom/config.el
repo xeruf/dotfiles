@@ -70,10 +70,10 @@ Version 2019-11-04 2021-02-16"
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 
-(defun dragon ()
+(defun dragon (&optional file)
   ; Share file in current buffer via dragon
   (interactive)
-  (shell-command (concat "dragon-drag-and-drop -x " (buffer-file-name)))
+  (shell-command (concat "dragon-drag-and-drop -a -x " (or file buffer-file-name)))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -236,6 +236,7 @@ Version 2019-11-04 2021-02-16"
         )
 
   (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
+  (define-key org-mode-map (kbd "C-c C-.") 'org-time-stamp)
   (define-key org-mode-map (kbd "M-C-+") 'org-timestamp-up)
   (define-key org-mode-map (kbd "M-C--") 'org-timestamp-down)
 
@@ -349,10 +350,11 @@ Version 2019-11-04 2021-02-16"
       :n "-"  'image-decrease-size)
 
 (after! dired
+
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
-    '("image/x-xcf" "application/zip"))
+    '("image/x-xcf")) ; "application/zip"))
 
   (load "subr-x")
 
@@ -372,8 +374,11 @@ Version 2019-11-04 2021-02-16"
 
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
+        :leader
+        :desc "Dragon" "d" (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
         :localleader
-        "s" 'dired-do-symlink
+        :desc "Size information" "s" (lambda () (interactive) (dired-smart-shell-command "s"))
+        :desc "Symlink to this" "l" 'dired-do-symlink
         :desc "Open dir in image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Compress/Extract" "c" 'dired-do-compress
@@ -389,6 +394,12 @@ Version 2019-11-04 2021-02-16"
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)
   )
+(after! json-mode
+  (defconst json-mode-comments-re (rx (group "//" (zero-or-more nonl) line-end)))
+  (push (list json-mode-comments-re 1 font-lock-comment-face) json-font-lock-keywords-1)
+  )
+
+(global-activity-watch-mode)
 
 (use-package! tramp
   :defer t
@@ -466,8 +477,11 @@ Version 2019-11-04 2021-02-16"
 (use-package! nov
   :mode ("\\.epub\\'" . nov-mode)
   )
+
 (use-package! chordpro-mode
-  :mode "\\.chord"
+  :mode "\\.cho"
+  :config
+    (define-key chordpro-mode-map (kbd "C-c C-c") 'chordpro-insert-chord)
   )
 (use-package! lilypond-mode
   :mode ("\\.ly\\'" . LilyPond-mode)

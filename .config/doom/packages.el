@@ -62,7 +62,12 @@
 
 (package! evil-tutor)
 (package! chordpro-mode
-  :recipe (:host github :repo "hading/chordpro-mode")) ; chord sheets
+  :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets
+
+(package! activity-watch-mode)
+
+(package! osm-mode
+  :recipe (:host github :repo "ruediger/osm-mode"))
 
 ;(package! annotate) ; Annotations - replaced by org-noter
 ;      :leader "aa" 'annotate-annotate
