@@ -1,9 +1,13 @@
 #!/bin/sh
 # open info-page, man-page or buffered help flag
+set -o pipefail
+paginate="${PAGER:-less} +Gg"
 case $1 in
-  (vlc) unbuffer vlc --full-help "${@:2}" | ${PAGER:-less} --quit-if-one-screen;;
   (zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
-    # need to install zsh-doc for info
-    info --vi-keys --index-search="${@:$#}" zsh || LESS="$LESS +/^ *zmv *\\[" man zshcontrib;;
-  (*) info "$1" -w | grep -v "manpages" && pinfo "$@" || man "$@" || "$@" --help | ${PAGER:-less} --quit-if-one-screen;;
+    search="${@:$#}"
+    # need to install zsh-doc package for info pages
+    info --vi-keys $(test $search != zsh && echo --index-search=$search) zsh || LESS="$LESS +/^ *${@:$#} *\\[" man zshall;;
+  (vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
+  (gh|chordpro) $@ --help | $paginate;;
+  (*) info "$1" -w | grep -v "manpages" && pinfo "$@" || man "$@" || ( "$@" --help || "$@" -help ) 2>&1 | $paginate;;
 esac

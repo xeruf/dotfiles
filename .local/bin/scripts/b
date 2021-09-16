@@ -7,9 +7,11 @@ set -eo pipefail
 for last; do true; done
 last=${last:-.}
 
-tput setaf 4 && $(test -r "$last" || echo "sudo") file -E "$last" | ( grep -v --color=never 'directory$' || true )
+# Elevate permissions if the file exists but is not readable
+# TODO: find the first visible directory up the tree and check if that is accessible
+test -e "$last" || test -e "$(dirname $last)" && { test -r "$last" || elevate=sudo; }
+tput setaf 4 && $elevate file -E "$last" | ( grep -v --color=never 'directory$' || true )
 
-elevate="$(test -r "$last" || echo "sudo")"
 case "$($elevate file --dereference --mime "$last")" in
   *inode/directory*) tput sgr0 && $(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -XF;;
   *binary) ;;

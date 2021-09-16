@@ -45,25 +45,14 @@ ulimit -c unlimited # Enable core dumps
 which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
 
 unalias rd 2>/dev/null
-rd() {
-	for f in "$@"
-	do
-		if test -d "$f"; then
-			if test -d "$f/.git"
-				then echo "Force delete git project?" && read answer && test "$answer" = "y" && rm -rf "$f"
-				else find "$f" -maxdepth 1 -type d -empty -printf "Removing empty %p\n" -delete
-			fi
-			else rm -i "$f"
-		fi
-		shift
-	done
-}
 
 # like "which", but shows contents if it resolves to a file
+# and resolves recursive aliases
 wh() {
 	res=$(which "$@")
-	if expr "$res" : "${@:$#}: aliased to" >/dev/null
-	then echo "$res" | bat --style=plain --language=sh && wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*\(sudo\|noglob\)" '|' 4))
+	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
+	then echo "$res" | bat --style=plain --language=sh &&
+		wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*\(sudo\|noglob\)" '|' 4) | cut -d'(' -f2)
 		# use command which for other shells
 	else test -r "$res" && b --style=header "$res" || echo "$res" | bat --style=plain --language=sh
 	fi
@@ -74,6 +63,8 @@ alias calc='rlwrap -a bc -l'
 alias logoff="loginctl terminate-user $USER"
 blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
 
+alias u='topgrade'
+
 alias j='jrnl'
 jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
 compdef jn=jrnl
@@ -83,9 +74,6 @@ alias jnc='jn -contains'
 alias edgrub='sudoedit /etc/default/grub && sudo update-grub'
 alias edenv='sudoedit /etc/environment'
 alias edpart='sudoedit /etc/fstab && sudo findmnt --verify'
-
-# Underline arg
-highlight() { echo "[4m$1[0m" }
 
 alias dedup='awk '"'"'!a[$0]++'"'"
 listconf() {
@@ -102,7 +90,7 @@ edconf() {
 	mkdir -p "$conf_cache_dir"
 	touch "$conf_cache"
 	sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
-	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -30 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
+	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
 }
 
 alias hist='print -z $(history | tac | fzf --tiebreak=index --bind="'"del:execute(echo \"'/;{4..}$/d'\" && sed '/;{4..}$/d' -i.bak $HISTFILE)"'" | sed "s|^ \+||" | cut -d" " -f5-)'
@@ -130,7 +118,7 @@ edshell() {
 
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() {
-	test ! -d "$1" && test $# -eq 1 && dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
+	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 && dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
 		test -n "$dir" && cd "$dir" && return
 	builtin cd $1 &&
 		command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
@@ -157,9 +145,8 @@ t() {
 		fi
 	fi
 }
-
 alias tw='timew'
-twsm() { timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} }
+# Create a temporary timewarrior database for testing
 alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
 
 alias expr='noglob expr'
@@ -222,7 +209,7 @@ unv() { strings $1 | sed 's/5$//' | dedup }
 hex() { hexyl "$@" | "${PAGER:-less}" }
 
 # Applications
-alias dict="(builtin cd $XDG_DATA_HOME/dictcc && rlwrap perl dictcc-helper.pl)"
+alias dict="rdictcc -d $XDG_DATA_HOME/dictcc" #"(builtin cd $XDG_DATA_HOME/dictcc && rlwrap perl dictcc-helper.pl)"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
@@ -377,7 +364,7 @@ resetdocker() {
 typeset -A _clean_map
 if test "$BASH_VERSION"
 then _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp)
-else _clean_map=(h $XDG_CACHE_HOME t /var/tmp)
+else _clean_map=(h $XDG_CACHE_HOME t /var/tmp v /var/cache)
 fi
 _clean_folders=()
 clean() {
@@ -391,20 +378,8 @@ clean() {
 		find $projects_dir -name .gradle -print -exec rm -r {} +
 	fi
 
-	highlight "m to clean mac-files"
-	if [[ $1 =~ "m" ]]; then
-		find -iname '.spotlight*' -exec rm -rI {} +
-		find -name '*.DS_Store' -delete
-	fi
-
 	highlight "e to clean electron caches"
 	[[ $1 =~ "e" ]] && find "$XDG_CONFIG_HOME" -type d -name "*Cache" -exec rm -r {} + -prune
-
-	highlight "c to clean local caches"
-	if [[ $1 =~ "c" ]]; then
-		find -name ".gradle" -o -name "generated" -o -name "dist_newstyle" -o -name "cache" -o -name "node_modules" -print -exec rm -r {} + -prune
-		find -name "*build" -print -exec rm -rI {} + -prune
-	fi
 
 	if test "$BASH_VERSION"; then
 		for k in "${!_clean_map[@]}"; do
@@ -414,8 +389,9 @@ clean() {
 		done
 	else
 		for k in "${(@k)_clean_map}"; do
-			highlight "$k to delete $_clean_map[$k]"
-			[[ $1 =~ "$k" ]] && rm -rfv "$_clean_map[$k]"
+			folder=$_clean_map[$k]
+			highlight "$k to delete $folder"
+			[[ $1 =~ "$k" ]] && sudo rm -rf "$folder" && echo "Deleted $folder"
 		done
 	fi
 
@@ -425,7 +401,19 @@ clean() {
 		export aptclean_last=$aptclean_cur
 	fi
 
-	highlight "f to delete empty folders"
+	highlight "c to recursively remove development caches"
+	if [[ $1 =~ "c" ]]; then
+		find -name ".gradle" -o -name "generated" -o -name "dist_newstyle" -o -name "cache" -o -name "node_modules" -print -exec rm -r {} + -prune
+		find -name "*build" -print -exec rm -rI {} + -prune
+	fi
+
+	highlight "m to recursively remove mac-files"
+	if [[ $1 =~ "m" ]]; then
+		find -iname '.spotlight*' -exec rm -rI {} +
+		find -name '*.DS_Store' -delete
+	fi
+
+	highlight "f to recursively remove empty folders"
 	[[ $1 =~ "f" ]] && find -empty -type d -delete -print
 
 	highlight "o to optimize extensively"

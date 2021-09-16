@@ -1,0 +1,16 @@
+#!/bin/sh
+# Remove recursively safely
+for f in "$@"
+do
+	if test -d "$f"; then
+		if test -e "$f/.git" || test -e "$f/packed-refs"
+			then echo -n "Force delete git project $f?"
+				read answer
+				test "$answer" = "y" && rm -rf "$f"
+			else find "$f" -maxdepth 1 -type d -empty -printf "Removing empty %p\n" -delete
+				test -e "$f" && echo -n "$f " >&2 && rm -rI "$f"
+		fi
+		else rm -i "$f"
+	fi
+	shift
+done

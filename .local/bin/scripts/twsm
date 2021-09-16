@@ -1,0 +1,4 @@
+#!/bin/sh
+# Timewarrior summary of the last n weeks
+timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} |
+  less --quit-if-one-screen +G

@@ -2,5 +2,5 @@
 # shows size statistics for subfolders
 # max depth is equal to the first argument if it is a number or 1
 case "$1" in [0-9]) depth=$1; shift;; esac
-(sudo du --max-depth "${depth:-1}" -xhat 50M "$@" | sort -h | grep -v "^0") ||
-  (sudo du --max-depth "${depth:-1}" -xha "$@" | sort -h | tail)
+(du --max-depth "${depth:-1}" -xhat 50M "$@" | sort -h | grep -v "^0") ||
+  (du --max-depth "${depth:-1}" -xha "$@" | sort -h | tail)
