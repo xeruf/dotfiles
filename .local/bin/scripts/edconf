@@ -4,13 +4,20 @@ alias dedup='awk '"'"'!a[$0]++'"'"
 listconf() {
 	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		find "$XDG_CONFIG_HOME" /etc -maxdepth 3 -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
+		find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc -maxdepth 3 -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
 }
-conf_cache_dir="$XDG_CACHE_HOME/edconf"
+conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/edconf"
 conf_cache="$conf_cache_dir/files"
 conf_tmp="${conf_cache}.tmp"
-conf_extra="$XDG_CONFIG_HOME/edconf-extra"
+conf_extra="${XDG_CONFIG_HOME:-$HOME/.config}/edconf-extra"
 mkdir -p "$conf_cache_dir"
 touch "$conf_cache"
 sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
-test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
+case "$sel" in
+  "") exit 1;;
+  /etc/sudoers) sudo visudo;;
+  /etc/fstab) sudoedit "$sel" && sudo findmnt --verify;;
+  /etc/default/grub) sudoedit "$sel" && sudo grub-mkconfig -o /boot/grub/grub.cfg;;
+  *) edit "$sel";;
+esac
+echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"

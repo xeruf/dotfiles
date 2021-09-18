@@ -41,17 +41,13 @@ wh() {
 	res=$(which "$@")
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
 	then echo "$res" | bat --style=plain --language=sh &&
-		wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*\(sudo\|noglob\)" '|' 4) | cut -d'(' -f2)
+		wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)
 		# use command which for other shells
 	else test -r "$res" && b --style=header "$res" || echo "$res" | bat --style=plain --language=sh
 	fi
 }
 compdef wh=which
 
-# Some configuration aliases that include sane verification
-alias edgrub='sudoedit /etc/default/grub && sudo update-grub'
-alias edpart='sudoedit /etc/fstab && sudo findmnt --verify'
-alias edenv='sudoedit /etc/environment'
 pathadd() {
 	local IFS=":"
 	local result="$@"
