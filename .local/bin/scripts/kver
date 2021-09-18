@@ -1,0 +1,6 @@
+#!/bin/sh
+# Prints the latest Gradle and Kotlin versions
+highlight "Kotlin"
+curl https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/maven-metadata.xml 2>/dev/null | grep 'version>' | grep -iv '\(m\|rc\)' | sed 's/.*>\(.*\)<.*/\1/' | tail -6
+highlight "Gradle"
+curl https://services.gradle.org/distributions/ 2>/dev/null | grep 'name.*all.*sha' | grep -v rc | head -6 | cut -d- -f2

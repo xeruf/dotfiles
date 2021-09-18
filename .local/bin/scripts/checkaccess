@@ -1,0 +1,9 @@
+#!/bin/sh
+# Checks whether the current user has rights to the respective file,
+# even if it does not exist.
+# First parameter defines which rights are required and is passed to "test".
+dir="$2"
+while ! test -e "$dir"
+do dir="$(dirname "$dir")"
+done
+test $1 "$dir"
