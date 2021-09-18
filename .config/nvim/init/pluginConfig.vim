@@ -30,7 +30,7 @@ let g:firenvim_config = {
         \ '.*': {
             \ 'cmdline': 'firenvim',
             \ 'priority': 0,
-            \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]),
+            \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]):not([title="Replace"]):not([title="Search"]),
                 \ div[role="textbox"]:not([aria-label="Search"])',
             \ 'takeover': 'always',
         \ },
@@ -38,6 +38,7 @@ let g:firenvim_config = {
         \ '.*twitter\.com.*':           { 'priority': 9, 'takeover': 'never', },
         \ '.*openstreetmap\.org.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*wikipedia\.org.*':         { 'priority': 9, 'takeover': 'never', },
+        \ '.*wikidata\.org.*':          { 'priority': 9, 'takeover': 'never', },
         \
         \ '.*docs\.google\.com.*':      { 'priority': 9, 'takeover': 'never', },
         \ '.*contacts\.google\.com.*':  { 'priority': 9, 'takeover': 'never', },

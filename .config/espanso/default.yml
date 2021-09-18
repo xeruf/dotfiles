@@ -3,11 +3,11 @@
 
 matches:
   # Simple replacements
-  - trigger: ":gr"
+  - trigger: ":grue"
     replace: "Grüße,\nJanek"
 
-  - trigger: ":reg"
-    replace: "Kind Regards,\nJanek"
+  - trigger: ":gree"
+    replace: "Best,\nJanek"
 
   - trigger: ":date"
     replace: "{{mydate}}"
@@ -51,6 +51,14 @@ matches:
         params:
           cmd: "pass information/email/uni"
 
+  - trigger: ":eaur"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/email/aur"
+
   - trigger: ":a0"
     replace: "{{output}}"
     vars:
@@ -82,6 +90,14 @@ matches:
         type: shell
         params:
           cmd: "pass information/address | tail -1"
+
+  - trigger: ":tel"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/phone"
 
   - trigger: ":add"
     replace: "{{output}}"

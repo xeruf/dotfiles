@@ -46,7 +46,7 @@ autocmd Filetype * setlocal formatoptions-=o | setlocal formatoptions+=qjln12r "
 autocmd Filetype json syntax match Comment +\/\/.\+$+ " Comment highlighting in JSON
 autocmd Filetype markdown let &comments = "b:*,b:-,b:+," . &comments
 " custom hardcoded types
-autocmd BufRead,BufNewFile $CONFIG_SHELLS/*,$CONFIG_ZSH/* setlocal filetype=zsh
+autocmd BufRead,BufNewFile $CONFIG_SHELLS/*,$CONFIG_ZSH/* setlocal filetype=bash
 autocmd BufRead $XDG_CONFIG_HOME/yadm/bootstrap setlocal filetype=sh
 
 " shebang shortcut - https://www.reddit.com/r/vim/comments/4z7z7s/add_shebang_lines_to_your_vim_files_automatically/d6v7op8 and https://stackoverflow.com/a/52135425

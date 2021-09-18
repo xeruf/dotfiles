@@ -49,6 +49,7 @@ Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup = 1
 
 " Integrations
+Plug 'weinshec/vim-dictcc'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'mipmip/vim-scimark'             " Edit markdown tables with sc-im
 
