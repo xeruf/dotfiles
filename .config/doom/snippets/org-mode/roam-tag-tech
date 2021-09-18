@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Tag roam file as tech
+# key: +tech
+# --
+#+roam_tags: tech
