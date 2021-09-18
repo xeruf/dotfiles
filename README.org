@@ -5,11 +5,11 @@ with the intention to move to Awesome soon.
 
 If you are looking to snag some of my handy tools,
 focus on [[.local/bin/scripts]] and [[.config/shell]].
-Among daily use are ~b~, ~edbin~, ~edconf~, ~edit~, ~yas~, ~walli~
+Among daily use are ~b~, ~edbin~, ~edconf~, ~edit~, ~help~, [[.config/shell/arch][~yas~]]
 and [[https://github.com/ajeetdsouza/zoxide][zoxide]]-based ~d~ / ~di~
 which in turn use ~zfz~, ~zf~ & ~locz~.
 
-~ex~, ~help~, ~moul~, ~mvk~, ~rpl~, ~s~, ~sd~, ~tl~ are also commonly used conveniences.
+~ex~, ~m~, ~moul~, ~rpl~, ~s~, ~sd~, ~tl~, ~walli~ are also commonly used conveniences.
 ** Root
 I am trying to keep my home clean,
 but some files unfortunately cannot be moved.
@@ -23,4 +23,6 @@ and configuration for ~less~ and ~fzf~.
 - ideavim, vifm, nvim :: vi-related tools
 - git, yadm :: version control
 ** .local
-- [[.local/bin/scripts][scripts]] :: lots of useful scripts, most have a short documentation header - including many essential git scripts
+- [[.local/bin/scripts][scripts]] :: lots of useful scripts,
+  most have a short documentation header -
+  including many essential git scripts

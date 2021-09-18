@@ -1,0 +1,9 @@
+#!/bin/sh -e
+# Creates the last arg as directory (or its parent if not ending in a slash)
+# and moves the preceding arguments into it.
+# Automatically elevates if missing permissions.
+for last; do true; done
+! test -e "$1" && echo "$1 does not exist" && exit 1
+checkaccess -w "$last" || elevate=sudo
+$elevate mkdir -p $(case "$last" in (*/) echo "$last";; (*) dirname "$last";; esac)
+$elevate mv -n "$@"

@@ -10,10 +10,11 @@ alias -g L="--color=always | ${PAGER:-less}"
 fi
 
 alias h='help'
-compdef help=which
+compdef help=man
 alias info='info --vi-keys'
 
 d() {
+  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return }
   local query="$(zf "$@")"
   # First find out whether there is an obvious match
   # (score at least ten times above runner-up and score above 20)
@@ -24,7 +25,8 @@ d() {
     fi | zfz)"
 }
 di() {
-  cd "$( ( zf "$@"; locz "$@" ) | zfz)"
+  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 && local dir=$({ zf "$@"; locz "$@" } | zfz)
+  cd "${dir:-1}"
 }
 alias c=z
 alias v=edit
@@ -118,7 +120,8 @@ edshell() {
 
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 cd() {
-	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 && dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
+	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 &&
+		dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
 		test -n "$dir" && cd "$dir" && return
 	builtin cd $1 &&
 		command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
@@ -163,7 +166,7 @@ xo() {
 	done
 }
 alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
-loci() { locate --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|$@" | sed 's/ /|/g') | less -F }
+loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|$@" | sed 's/ /|/g') | less -F }
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
 alias syslog='less +F /var/log/syslog'
@@ -179,8 +182,8 @@ alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 scs() {
-	systemctl --user status "$1" "*$1*"
-	sudo systemctl status "$1" "*$1*"
+	systemctl --user status "$1" "*$1*" ||
+		sudo systemctl status "$1" "*$1*"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
@@ -211,6 +214,7 @@ hex() { hexyl "$@" | "${PAGER:-less}" }
 # Applications
 alias dict="rdictcc -d $XDG_DATA_HOME/dictcc" #"(builtin cd $XDG_DATA_HOME/dictcc && rlwrap perl dictcc-helper.pl)"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
+alias delta="sc start openvpn-client@deltaPeak.service"
 
 test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
 
