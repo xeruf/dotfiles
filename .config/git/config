@@ -130,8 +130,8 @@
 	a = add -u
 	aa = add -u .
 	ap = add -p
-	af = !git status --porcelain --no-renames --untracked-files=all -z | grep -v '^\\w ' -z | git fzs git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=-
-	sf = !git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs >/tmp/git-sf && git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file=/tmp/git-sf && git commit --only -v --pathspec-from-file=/tmp/git-sf
+	af = !git status --porcelain --no-renames --untracked-files=all -z | grep -v '^\\w ' -z | git fzs | git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=-
+	sf = "!git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs >/tmp/git-sf && git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file=/tmp/git-sf; git commit --only -v --pathspec-from-file=/tmp/git-sf"
 
 	c = commit -v
 	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
@@ -172,7 +172,7 @@
 
 	# Change remote
 	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease
-	luu = !git pull upstream ${1:-(git curbranch)} && git push --no-verify
+	luu = !git pull upstream ${1:-$(git curbranch)} && git push --no-verify
 	pf = push --force-with-lease
 	cap = !git commit --amend --no-edit && git push --force-with-lease
 

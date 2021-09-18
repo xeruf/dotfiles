@@ -1,4 +1,4 @@
 [alias]
 	journal = !git add $(git root)/2-standards/notes/journal && git cme "notes/journal:" -- $(git root)/2-standards/notes/journal
 	note = !git cme "notes:" -- $(git root)/2-standards/notes
-	write = !git cme "write:" -- $(git root)/2-standards/writing
+	write = !git add $(git root)/2-standards/writing && git cme "write:" -- $(git root)/2-standards/writing
