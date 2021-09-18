@@ -6,13 +6,16 @@ case $command in
     cd "$DATA/2-standards/dev/aur"
     git -c init.defaultBranch=master clone ssh://aur@aur.archlinux.org/$1.git
     cd "$1"
-    echo '*' > .gitignore
+    test -f PKGBUILD || sed "s/PKG/${1%%-git}/" ../PKGBUILD > PKGBUILD
+    test -f .gitignore || echo '*' > .gitignore
     exec $SHELL;;
   (create)
-    git add -f .gitignore PKGBUILD .SRCINFO
+    git add -f .gitignore PKGBUILD
     git commit -m "Create package" "$@"
     git aur push --amend;;
-  (push) makepkg --printsrcinfo > .SRCINFO
+  (push)
+    makepkg --printsrcinfo > .SRCINFO
+    git add -f .SRCINFO
     git commit -v -a "$@"
     git push;;
 esac

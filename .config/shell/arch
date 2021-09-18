@@ -8,24 +8,26 @@ alias pacs='pac -Syu --needed'
 alias pacr='pac -R --recursive'
 alias yays='noglob yay -Sy --needed'
 alias yayr='noglob yay -R --cascade --recursive'
+alias yau='yay -Syu --sudoloop --nobatchinstall'
 
 yzf() {
   pos=$1
   shift
   sed "s/ /\t/g" |
-    fzf --nth=$pos --multi --history=/var/tmp/fzf-history-yzf$pos \
+    fzf --nth=$pos --multi --history="${FZF_HISTDIR:-$XDG_STATE_HOME/fzf}/history-yzf$pos" \
       --preview-window=60%,border-left \
-      --bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}')" \
+      --bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}'),alt-enter:execute(xdg-open 'https://aur.archlinux.org/packages?K={$pos}&SB=p&SO=d&PP=100')" \
        "$@" | cut -f$pos | xargs
 }
 
 # print -s adds a shell history entry
 yas() {
   cache_dir="/tmp/yas"
+  test "$1" = "-y" && rm -r "$cache_dir" && shift
   mkdir -p "$cache_dir"
   preview_cache="$cache_dir/preview_{2}"
   list_cache="$cache_dir/list"
-  pkg=$((cat "$list_cache$@" 2>/dev/null || { pacman --color=always -Sl "$@"; yay --color=always -Sl aur "$@" } | sed 's/ [^ ]*unknown-version[^ ]*//' | tee "$list_cache$@") |
+  pkg=$( (cat "$list_cache$@" 2>/dev/null || { pacman --color=always -Sl "$@"; yay --color=always -Sl aur "$@" } | sed 's/ [^ ]*unknown-version[^ ]*//' | tee "$list_cache$@") |
     yzf 2 --tiebreak=index --preview="cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache")
   if test -n "$pkg"
     then echo "Installing $pkg..."
