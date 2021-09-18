@@ -1,9 +1,10 @@
 #!/bin/sh
 # Find and edit config files utilizing fzf
+alias dedup='awk '"'"'!a[$0]++'"'"
 listconf() {
 	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		find "$XDG_CONFIG_HOME" /etc -maxdepth 3 -type f -exec grep -lI '' {} +; } | dedup
+		find "$XDG_CONFIG_HOME" /etc -maxdepth 3 -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
 }
 conf_cache_dir="$XDG_CACHE_HOME/edconf"
 conf_cache="$conf_cache_dir/files"
