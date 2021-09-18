@@ -1,0 +1,15 @@
+#!/bin/sh
+# Find and edit config files utilizing fzf
+listconf() {
+	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
+		fd --hidden --type file --size -1m --max-depth 1 . ~;
+		find "$XDG_CONFIG_HOME" /etc -maxdepth 3 -type f -exec grep -lI '' {} +; } | dedup
+}
+conf_cache_dir="$XDG_CACHE_HOME/edconf"
+conf_cache="$conf_cache_dir/files"
+conf_tmp="${conf_cache}.tmp"
+conf_extra="$XDG_CONFIG_HOME/edconf-extra"
+mkdir -p "$conf_cache_dir"
+touch "$conf_cache"
+sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
+test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")

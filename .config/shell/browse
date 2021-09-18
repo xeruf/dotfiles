@@ -1,0 +1,55 @@
+# Utilities regarding file system navigation
+
+# Useful when the current directory was recreated
+alias rcd="cd $PWD"
+# cd into the parent if arg is a file
+cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
+
+# Go up a number of dirs
+up() {
+	if [[ $# < 1 ]] ; then
+		cd ..
+	else
+		CDSTR=""
+		for i in {1..$1} ; do
+			CDSTR="../$CDSTR"
+		done
+		cd $CDSTR
+	fi
+}
+
+# Switch directory & ls
+cl() {
+	builtin cd $1
+	ls --almost-all --group-directories-first --file-type
+}
+
+mkcd() {
+	mkdir -p "$1" && cd "$1"
+}
+
+cd() {
+	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 &&
+		dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
+		test -n "$dir" && cd "$dir" && return
+	builtin cd $1 &&
+		command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
+}
+
+# ZOXIDE
+alias c=z
+d() {
+  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return }
+  local query="$(zf "$@")"
+  # First find out whether there is an obvious match
+  # (score at least ten times above runner-up and score above 20)
+  # If not select with fzf, using locate to find extra options
+  cd "$(if expr "$(echo "$query" | head -1 | cut -d' ' -f2)" \> 20 \& $(echo "$query" | sed 'N;s|/.*\n|> 10 *|;q' | sed 's| */.*||') >/dev/null 2>&1
+      then echo "$query" | head -1
+      else echo "$query"; locz "$@"
+    fi | zfz)"
+}
+di() {
+  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 && local dir=$({ zf "$@"; locz "$@" } | zfz)
+  cd "${dir:-1}"
+}

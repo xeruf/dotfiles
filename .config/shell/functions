@@ -1,5 +1,5 @@
-# Shell aliases & functions for Zsh, works almost completely for Bash as well
-
+# Shell aliases & functions for Zsh, almost all work for Bash too
+# data directory aliases {{{1
 if test "$ZSH_NAME" = "zsh"; then
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 alias -g G="| grp"
@@ -8,29 +8,6 @@ alias -g X1="| xargs -n 1"
 alias -g XC="| xclip -selection clipboard"
 alias -g L="--color=always | ${PAGER:-less}"
 fi
-
-alias h='help'
-compdef help=man
-alias info='info --vi-keys'
-
-d() {
-  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return }
-  local query="$(zf "$@")"
-  # First find out whether there is an obvious match
-  # (score at least ten times above runner-up and score above 20)
-  # If not select with fzf, using locate to find extra options
-  cd "$(if expr "$(echo "$query" | head -1 | cut -d' ' -f2)" \> 20 \& $(echo "$query" | sed 'N;s|/.*\n|> 10 *|;q' | sed 's| */.*||') >/dev/null 2>&1
-      then echo "$query" | head -1
-      else echo "$query"; locz "$@"
-    fi | zfz)"
-}
-di() {
-  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 && local dir=$({ zf "$@"; locz "$@" } | zfz)
-  cd "${dir:-1}"
-}
-alias c=z
-alias v=edit
-alias hx='sudo hexedit --maximize --color'
 
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
@@ -48,8 +25,18 @@ which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) 
 
 unalias rd 2>/dev/null
 
-# like "which", but shows contents if it resolves to a file
-# and resolves recursive aliases
+# Basic aliases {{{1
+
+alias h='help'
+compdef help=man
+alias info='info --vi-keys'
+
+alias v=edit
+
+alias println='printf "\n"'
+alias dedup='awk '"'"'!a[$0]++'"'"
+
+# Shows source code for command, resolving nested aliases
 wh() {
 	res=$(which "$@")
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
@@ -61,44 +48,38 @@ wh() {
 }
 compdef wh=which
 
-alias calc='rlwrap -a bc -l'
-alias logoff="loginctl terminate-user $USER"
-blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
-
-alias u='topgrade'
-
-alias j='jrnl'
-jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
-compdef jn=jrnl
-alias jnc='jn -contains'
-
-# Some aliases
+# Some configuration aliases that include sane verification
 alias edgrub='sudoedit /etc/default/grub && sudo update-grub'
-alias edenv='sudoedit /etc/environment'
 alias edpart='sudoedit /etc/fstab && sudo findmnt --verify'
-
-alias dedup='awk '"'"'!a[$0]++'"'"
-listconf() {
-	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
-		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		sudo find "$XDG_CONFIG_HOME" /etc -maxdepth 3 -type f -exec grep -lI '' {} + } | dedup
+alias edenv='sudoedit /etc/environment'
+pathadd() {
+	local IFS=":"
+	local result="$@"
+	unset IFS
+	cat /etc/environment | head -1 | cut -d'"' -f2 | tr ":" "\n" | while read v
+			do [[ " $@ " =~ " $v " ]] || result+=":$v"
+		done
+	echo PATH=\"${result}\"\\n$(cat /etc/environment | tail -n +2) | sudo tee /etc/environment
 }
 
-edconf() {
-	conf_cache_dir="$XDG_CACHE_HOME/edconf"
-	conf_cache="$conf_cache_dir/files"
-	conf_tmp="${conf_cache}.tmp"
-	conf_extra="$XDG_CONFIG_HOME/edconf-extra"
-	mkdir -p "$conf_cache_dir"
-	touch "$conf_cache"
-	sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
-	test "$sel" && ((echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache") & edit "$sel")
-}
+# ZSH completion and stuff {{{1
 
+alias rs="reset && exec $SHELL"
 alias hist='print -z $(history | tac | fzf --tiebreak=index --bind="'"del:execute(echo \"'/;{4..}$/d'\" && sed '/;{4..}$/d' -i.bak $HISTFILE)"'" | sed "s|^ \+||" | cut -d" " -f5-)'
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
-alias rs="reset && exec zsh"
+edshell() {
+	case $1 in
+		("") file="$CONFIG_SHELL_FUNCTIONS";;
+		(zsh) file="$CONFIG_ZSH/.zshrc";;
+		(prof*) file="$HOME/.zprofile";;
+		(*) file=$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1");;
+	esac
+	checksum="$(md5sum "$file")"
+	$EDITOR "$file"
+	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
+}
+
 edcomp() {
 	file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
 	$EDITOR "${fpath[-1]}/$file"
@@ -106,38 +87,12 @@ edcomp() {
 }
 compdef "_files -W ${fpath[-1]}/" edcomp
 
-edshell() {
-	case $1 in
-		("") file="$CONFIG_SHELL_FUNCTIONS";;
-		(zsh) file="$CONFIG_ZSH/.zshrc";;
-		(prof*) file="$HOME/.zprofile";;
-		(*) file=$(find $CONFIG_SHELLS -name "$1*" | head -1);;
-	esac
-	checksum="$(md5sum $file)"
-	$EDITOR $file
-	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
+writecompletion() {
+	echo "#compdef $1" > "_$1"
+	$EDITOR "_$1"
 }
 
-alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
-cd() {
-	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 &&
-		dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
-		test -n "$dir" && cd "$dir" && return
-	builtin cd $1 &&
-		command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
-}
-
-swap() {
-	mv -n $1 $1.tmp
-	mv -n $2 $1
-	mv -n $1.tmp $2
-}
-
-p() {
-	pass "$@" || pass edit "$@"
-}
-
-# Task management & time tracking
+# Task management & time tracking {{{1
 t() {
 	if test "$#" -eq 0 && which tn >/dev/null
 	then tn
@@ -152,32 +107,9 @@ alias tw='timew'
 # Create a temporary timewarrior database for testing
 alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
 
-alias expr='noglob expr'
-alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
-alias lar='last | tac'
+# Systemd {{{1
 
-# Listen to loopback of mic
-alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
-
-xo() {
-	while test $# -gt 0; do
-		xdg-open "$1"
-		shift
-	done
-}
-alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
-loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|$@" | sed 's/ /|/g') | less -F }
-alias loc='noglob loci'
-alias uloc='noglob sudo updatedb && loci'
 alias syslog='less +F /var/log/syslog'
-alias println='printf "\n"'
-alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
-alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
-alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
-alias mdo="pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org --wrap preserve"
-alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
-
-alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
@@ -200,6 +132,36 @@ alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
 alias jc='jcl -u'
 alias jcj='jcl -o json-pretty -u'
 
+# Applications {{{1
+
+alias calc='rlwrap -a bc -l'
+alias logoff="loginctl terminate-user $USER"
+blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
+
+loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|$@" | sed 's/ /|/g') | less -F }
+alias loc='noglob loci'
+alias uloc='noglob sudo updatedb && loci'
+
+alias expr='noglob expr'
+
+alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
+alias lar='last | tac'
+
+# Listen to loopback of mic
+alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
+
+alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
+
+alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
+
+p() { pass "$@" || pass edit "$@"; }
+
+alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
+alias mdo="pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org --wrap preserve"
+alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
+
+alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
+
 alias grp='grep --color=auto --line-number --ignore-case --binary-files=without-match --directories=skip'
 grpr() { grp --color=always --recursive $(echo $IGNOREDIRS | sed 's/-x/--exclude-dir/g') "$@" | less -F }
 
@@ -207,21 +169,33 @@ grpr() { grp --color=always --recursive $(echo $IGNOREDIRS | sed 's/-x/--exclude
 alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs -r nvim"
 alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r -i mv {} /tmp"
 
+# I think this was something about recovering backup files
 unv() { strings $1 | sed 's/5$//' | dedup }
 
+alias hx='sudo hexedit --maximize --color'
+# Paginated hexyl
 hex() { hexyl "$@" | "${PAGER:-less}" }
 
-# Applications
-alias dict="rdictcc -d $XDG_DATA_HOME/dictcc" #"(builtin cd $XDG_DATA_HOME/dictcc && rlwrap perl dictcc-helper.pl)"
+alias dict="rdictcc -d $XDG_DATA_HOME/dictcc"
+alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 alias delta="sc start openvpn-client@deltaPeak.service"
 
-test -d $HOME/.dropbox && dropbox_path="$(cat $HOME/.dropbox/info.json | grep -Po '"'"path"'"\s*:\s*"\K([^"]*)')"
+alias u='topgrade'
 
-# Add an "alert" alias for long running commands. Use like so: sleep 10; alert
-#if [ command -v notify-send >/dev/null 2>&1 ]; then
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-#fi
+alias j='jrnl'
+jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
+compdef jn=jrnl
+alias jnc='jn -contains'
+
+npm-reinstall() {
+	rm -rf $TMPDIR/react-*
+	rm -rf node_modules/
+	npm cache verify
+	npm install
+}
+
+# Custom tools {{{1
 
 sedcomment() { sed -i 's/$1/#\0/' "${@:2}" }
 seduncomment() { sed -i 's/#\($1\)/\0/' "${@:2}" }
@@ -268,38 +242,18 @@ killJava() {
 		fi; done
 }
 
-clearNpmCache() {
-	rm -rf $TMPDIR/react-*
-	rm -rf node_modules/
-	npm cache verify
-	npm install
+# Files {{{1
+
+alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
+
+# Swap the names of two files
+swap() {
+	test $# -eq 2 || exit 1
+	mv -n $1 $1.tmp
+	mv -n $2 $1
+	mv -n $1.tmp $2
 }
 
-# NAVIGATION
-
-alias rcd="cd $PWD"
-cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
-
-# Go up a number of dirs
-up() {
-	if [[ $# < 1 ]] ; then
-		cd ..
-	else
-		CDSTR=""
-		for i in {1..$1} ; do
-			CDSTR="../$CDSTR"
-		done
-		cd $CDSTR
-	fi
-}
-
-# Switch directory & ls
-cl() {
-	builtin cd $1
-	ls --almost-all --group-directories-first --file-type
-}
-
-# FILES
 
 alias f="noglob $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system"
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
@@ -307,10 +261,6 @@ alias f="noglob $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-i
 
 lowercase_transliterate="y/A-Z /a-z-/"
 which perl-rename >/dev/null && alias lowercase="perl-rename '$lowercase_transliterate'" || alias lowercase="rename '$lowercase_transliterate'"
-
-mkcd() {
-	mkdir -p "$1" && cd "$1"
-}
 
 alias move='rsync --recursive --progress --human-readable --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
@@ -338,22 +288,7 @@ mvln() {
 	ln -vsr "$2" "$1"
 }
 
-# OTHER
-
-pathadd() {
-	local IFS=":"
-	local result="$@"
-	unset IFS
-	cat /etc/environment | head -1 | cut -d'"' -f2 | tr ":" "\n" | while read v
-			do [[ " $@ " =~ " $v " ]] || result+=":$v"
-		done
-	echo PATH=\"${result}\"\\n$(cat /etc/environment | tail -n +2) | sudo tee /etc/environment
-}
-
-writecompletion() {
-	echo "#compdef $1" > "_$1"
-	$EDITOR "_$1"
-}
+# Other stuff {{{1
 
 resetdocker() {
 	#aptremove docker-ce
@@ -361,71 +296,6 @@ resetdocker() {
 	sudo rm -rf /var/run/docker /var/lib/docker
 	sudo rm /var/run/docker.*
 	#aptinstall docker-ce
-}
-
-# RANDOM
-
-typeset -A _clean_map
-if test "$BASH_VERSION"
-then _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp)
-else _clean_map=(h $XDG_CACHE_HOME t /var/tmp v /var/cache)
-fi
-_clean_folders=()
-clean() {
-	for f in $_clean_folders
-	do test -d $f && rm -rv $f
-	done
-
-	highlight "g to clean gradle"
-	if [[ $1 =~ "g" ]]; then
-		find ${GRADLE_USER_HOME:-$HOME/.gradle} -mindepth 1 -maxdepth 1 -type d -print -exec rm -r {} +
-		find $projects_dir -name .gradle -print -exec rm -r {} +
-	fi
-
-	highlight "e to clean electron caches"
-	[[ $1 =~ "e" ]] && find "$XDG_CONFIG_HOME" -type d -name "*Cache" -exec rm -r {} + -prune
-
-	if test "$BASH_VERSION"; then
-		for k in "${!_clean_map[@]}"; do
-			highlight "$k to delete $_clean_map[$k]"
-			echo "key  : $k"
-			echo "value: ${_clean_map[$k]}"
-		done
-	else
-		for k in "${(@k)_clean_map}"; do
-			folder=$_clean_map[$k]
-			highlight "$k to delete $folder"
-			[[ $1 =~ "$k" ]] && sudo rm -rf "$folder" && echo "Deleted $folder"
-		done
-	fi
-
-	if test -f "/var/log/apt/history.log"; then
-		aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
-		test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
-		export aptclean_last=$aptclean_cur
-	fi
-
-	highlight "c to recursively remove development caches"
-	if [[ $1 =~ "c" ]]; then
-		find -name ".gradle" -o -name "generated" -o -name "dist_newstyle" -o -name "cache" -o -name "node_modules" -print -exec rm -r {} + -prune
-		find -name "*build" -print -exec rm -rI {} + -prune
-	fi
-
-	highlight "m to recursively remove mac-files"
-	if [[ $1 =~ "m" ]]; then
-		find -iname '.spotlight*' -exec rm -rI {} +
-		find -name '*.DS_Store' -delete
-	fi
-
-	highlight "f to recursively remove empty folders"
-	[[ $1 =~ "f" ]] && find -empty -type d -delete -print
-
-	highlight "o to optimize extensively"
-	if [[ $1 =~ "o" ]]; then
-		which yay &>/dev/null && yay -Sc --noconfirm
-		nix-collect-garbage -d
-		nix-store --optimize
-	fi
 }
 
 function zipdiff() {

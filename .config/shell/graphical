@@ -1,5 +1,19 @@
+# Pop up a message, for long running commands
+command -v notify-send >/dev/null &&
+  alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+xo() {
+	while test $# -gt 0; do
+		xdg-open "$1"
+		shift
+	done
+}
+
 test "$DISPLAY" || return 0
 
+alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
+
+# WIP Edit mozilla config
 mozedit() (
 	set -eo pipefail
 	file="$1"
@@ -14,9 +28,10 @@ mozedit() (
 
 test "$XDG_CURRENT_DESKTOP" = "KDE" || return 0
 
-# Fix broken mime messages
+# Fix errors regarding broken mim database
 alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-database /usr/share/mime'
 
+# Switch theme across KDE system and taskwarrior
 theme_save="$XDG_CACHE_HOME/theme"
 #theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
 theme_default="dark"
