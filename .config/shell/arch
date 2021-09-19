@@ -22,8 +22,8 @@ yzf() {
 
 # print -s adds a shell history entry
 yas() {
-  cache_dir="/tmp/yas"
-  test "$1" = "-y" && rm -r "$cache_dir" && shift
+  cache_dir="/tmp/yas-$USER"
+  test "$1" = "-y" && rm -rf "$cache_dir" && shift
   mkdir -p "$cache_dir"
   preview_cache="$cache_dir/preview_{2}"
   list_cache="$cache_dir/list"
