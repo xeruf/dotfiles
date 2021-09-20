@@ -214,6 +214,10 @@ Version 2019-11-04 2021-02-16"
           (org-enforce-todo-dependencies nil))
       (org-map-entries (lambda () (org-todo state)) nil scope)))
 
+  (defun org-yank-visible ()
+    (interactive)
+    (if mark-active (org-copy-visible) (org-copy-visible (point) (progn (end-of-line) (point)))))
+
   (map! :map org-mode-map
         :leader
         "j" 'org-insert-heading
@@ -227,6 +231,7 @@ Version 2019-11-04 2021-02-16"
         "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
         "n" 'org-add-note
+        "y" 'org-yank-visible
         "d=" 'org-timestamp-up-week
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region

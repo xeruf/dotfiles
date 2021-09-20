@@ -54,17 +54,18 @@
 ;(package! evil-better-visual-line) ; not sure if this actually helps
 (package! visual-fill-column) ; Soft line wrapping at character count
 
+(package! activity-watch-mode)
+(package! evil-tutor)
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
+
 (package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
 (package! nov) ; epub reader
+(package! pkgbuild-mode)
 
-(package! evil-tutor)
 (package! chordpro-mode
   :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets
-
-(package! activity-watch-mode)
 
 (package! osm-mode
   :recipe (:host github :repo "ruediger/osm-mode"))
