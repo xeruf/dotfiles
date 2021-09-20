@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # [b]rowse - custom ls or bat depending on file type
 # Show type & contents of given files or PWD
 

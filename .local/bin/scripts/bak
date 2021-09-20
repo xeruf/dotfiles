@@ -1,9 +1,12 @@
 #!/bin/sh
 suffix="${2:-bak}"
 orig="${1%%.$suffix}"
+smv () {
+  test -w "$1" && mv -v "$@" || sudo mv -v "$@"
+}
 if test -e "$orig.$suffix"
 then
-  test -e "$orig" && mv -v "$orig" /tmp
-  mv -vn "$orig.$suffix" "$orig"
-else mv -vn "$1" "$1.$suffix"
+  test -e "$orig" && smv "$orig" /tmp
+  smv -n "$orig.$suffix" "$orig"
+else smv -n "$1" "$1.$suffix"
 fi
