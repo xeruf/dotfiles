@@ -1,0 +1,6 @@
+#!/bin/sh
+# Extract song metadata with ffprobe
+while read f; do
+  highlight "$f"
+  ffprobe "$f" 2>&1 | grep -A90 'Metadata:'
+done | less

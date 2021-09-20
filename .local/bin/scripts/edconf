@@ -20,6 +20,7 @@ case "$sel" in
   /etc/sudoers) sudo visudo;;
   /etc/fstab) sudoedit "$sel" && sudo findmnt --verify;;
   /etc/default/grub) sudoedit "$sel" && sudo grub-mkconfig -o /boot/grub/grub.cfg;;
+  /etc/locale.gen) sudoedit "$sel" && sudo locale-gen;;
   *) edit "$sel";;
 esac
 echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"

@@ -130,6 +130,10 @@ alias jcj='jcl -o json-pretty -u'
 
 # Applications {{{1
 
+# Remote
+alias delta="sc restart openvpn-client@deltaPeak.service"
+alias sshl="lemonade server -allow 127.0.0.1 & ssh -R 2489:127.0.0.1:2489"
+
 alias calc='rlwrap -a bc -l'
 alias logoff="loginctl terminate-user $USER"
 blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
@@ -175,7 +179,6 @@ hex() { hexyl "$@" | "${PAGER:-less}" }
 alias dict="rdictcc -d $XDG_DATA_HOME/dictcc"
 alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
-alias delta="sc start openvpn-client@deltaPeak.service"
 
 alias u='topgrade'
 

@@ -1,10 +1,15 @@
 #!/bin/sh -e
+aurdir="$DATA/2-standards/dev/aur"
+test $# -eq 0 && cd "$aurdir" && exec $SHELL
 command=$1
 shift
+url="ssh://aur@aur.archlinux.org/${1:-$(basename $PWD)}.git"
 case $command in
+  (origin)
+    test "$(git rev-parse --git-dir)" = ".git" && git remote set-url origin "$url";;
   (clone)
-    cd "$DATA/2-standards/dev/aur"
-    git -c init.defaultBranch=master clone ssh://aur@aur.archlinux.org/$1.git
+    cd "$aurdir"
+    git -c init.defaultBranch=master clone "$url"
     cd "$1"
     test -f PKGBUILD || sed "s/PKG/${1%%-git}/" ../PKGBUILD > PKGBUILD
     test -f .gitignore || echo '*' > .gitignore
