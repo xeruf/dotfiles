@@ -5,18 +5,16 @@ for arg do
   if test -r "$arg"; then
     case "$arg" in
       *.tar.bz2)   tar xjf "$arg"   ;;
-      *.tar.gz)    tar xzf "$arg"   ;;
+      *.tar.*|*.tar) tar --extract --file "$arg";;
       *.bz2)       bunzip2 "$arg"   ;;
       *.rar)       unrar x "$arg"   ;;
       *.gz)        gunzip "$arg"    ;;
-      *.tar)       tar xf "$arg"    ;;
       *.tbz2)      tar xjf "$arg"   ;;
       *.tgz)       tar xzf "$arg"   ;;
       *.zip|*.jar) unzip "$arg"     ;;
       *.Z)         uncompress "$arg";;
       *.7z)        7z x "$arg"      ;;
       *.deb)       ar x "$arg"      ;;
-      *.tar.xz)    tar xf "$arg"    ;;
       *.zst)       unzstd "$arg"    ;;
       *)           echo "'$arg' cannot be extracted by ex" ;;
     esac

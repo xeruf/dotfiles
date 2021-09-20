@@ -9,5 +9,6 @@ case $1 in
     info --vi-keys $(test $search != zsh && echo --index-search=$search) zsh || LESS="$LESS +/^ *${@:$#} *\\[" man zshall;;
   (vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
   (gh|chordpro) $@ --help | $paginate;;
+  (caddy) $1 help ${@:2} | $paginate;;
   (*) info "$1" -w | grep -v "manpages" && pinfo "$@" || man "$@" || ( "$@" --help || "$@" -help ) 2>&1 | $paginate;;
 esac

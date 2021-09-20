@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 # set repo as origin and set all branches upstream to a corresponding remote branch, if available
 git remote remove origin 2>/dev/null
 git remote add origin $(git-repo "$@")
-git remote -v && git fetch || ( last=$? && echo "git fetch failed, aborting\!" && return $last )
+git remote -v && git fetch
 
 git branch | sed 's/ //g' | sed 's/*//' | while read branch
 do test $(git branch -a | grep origin/$branch | wc -l) -gt 0 && git branch -u origin/$branch $branch
