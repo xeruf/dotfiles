@@ -1,17 +1,19 @@
 #!/bin/sh
 # Find and edit config files utilizing fzf
 alias dedup='awk '"'"'!a[$0]++'"'"
+
 listconf() {
-	{ cat "$conf_cache"; test -f "$conf_extra" && cat "$conf_extra";
+	{ cat "$conf_cache";
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc -maxdepth 3 -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
+		find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc -maxdepth 3 -follow -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
 }
+
 conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/edconf"
 conf_cache="$conf_cache_dir/files"
 conf_tmp="${conf_cache}.tmp"
-conf_extra="${XDG_CONFIG_HOME:-$HOME/.config}/edconf-extra"
 mkdir -p "$conf_cache_dir"
 touch "$conf_cache"
+
 sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r "{}" || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
 case "$sel" in
   "") exit 1;;
