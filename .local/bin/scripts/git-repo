@@ -3,5 +3,5 @@
 case "$1" in
 http*) echo "git@$(echo "$1" | cut -d'/' -f3):$(echo "$1" | cut -d'/' -f4)/$(echo "$1" | cut -d'/' -f5)" ;;
 git:*) echo "$1" ;;
-*) echo "git@${1:-github.com}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
+*) echo "${1:-git.jfischer.org}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
 esac

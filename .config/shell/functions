@@ -176,7 +176,7 @@ alias hx='sudo hexedit --maximize --color'
 # Paginated hexyl
 hex() { hexyl "$@" | "${PAGER:-less}" }
 
-alias dict="rdictcc -d $XDG_DATA_HOME/dictcc"
+alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
 alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 

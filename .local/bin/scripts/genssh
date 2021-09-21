@@ -1,8 +1,8 @@
 #!/bin/sh
 keys="$HOME/.ssh/keys"
-name="${1:-id_rsa}"
+name="${1:-id_ed25519}"
 mkdir -p "$keys"
-test -f "$keys/$name.pub" || ssh-keygen -t rsa -b 4096 -f "$keys/$name" -q -N ""
+test -f "$keys/$name.pub" || ssh-keygen -t ${2:-ed25519} -b 4096 -f "$keys/$name" -q -N ""
 cat "$keys/$name.pub"
 if test "$OSTYPE" = "cygwin"
 then cat "$keys/$name.pub">/dev/clipboard
