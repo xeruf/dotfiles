@@ -254,7 +254,9 @@ swap() {
 }
 
 
-alias f="noglob $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system"
+alias f="noglob fdd"
+fdd() { $(which fd >/dev/null && echo fd || echo fdfind) --color=always --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
+compdef f=fd
 #alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 #alias f1='find -mindepth 1 -maxdepth 1'
 

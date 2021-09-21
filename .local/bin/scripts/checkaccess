@@ -1,9 +1,13 @@
-#!/bin/sh
-# Checks whether the current user has rights to the respective file,
+#!/bin/sh -e
+# Checks whether the current user has rights to the respective file(s),
 # even if it does not exist.
 # First parameter defines which rights are required and is passed to "test".
-dir="$2"
-while ! test -e "$dir"
-do dir="$(dirname "$dir")"
+flag=$1
+while test $# -gt 1; do
+  shift
+  dir="$1"
+  while ! test -e "$dir"
+  do dir="$(dirname "$dir")"
+  done
+  test $flag "$dir"
 done
-test $1 "$dir"

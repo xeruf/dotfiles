@@ -1,2 +1,3 @@
 #!/bin/sh
+git rev-parse @{upstream} >/dev/null 2>&1 || git branch --set-upstream-to=@{push}
 git pull --rebase --autostash "$@" || (printf "\e[31;1mError - aborting rebase!\e[0m\n" >&2 && git rebase --abort)

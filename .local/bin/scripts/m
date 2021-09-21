@@ -4,6 +4,6 @@
 # Automatically elevates if missing permissions.
 for last; do true; done
 ! test -e "$1" && echo "$1 does not exist" && exit 1
-checkaccess -w "$last" || elevate=sudo
+checkaccess -w "$@" || elevate=sudo
 $elevate mkdir -p $(case "$last" in (*/) echo "$last";; (*) dirname "$last";; esac)
 $elevate mv -n "$@"

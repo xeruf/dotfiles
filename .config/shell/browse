@@ -7,33 +7,33 @@ cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
 
 # Go up a number of dirs
 up() {
-	if [[ $# < 1 ]] ; then
-		cd ..
-	else
-		CDSTR=""
-		for i in {1..$1} ; do
-			CDSTR="../$CDSTR"
-		done
-		cd $CDSTR
-	fi
+  if [[ $# < 1 ]] ; then
+    cd ..
+  else
+    CDSTR=""
+    for i in {1..$1} ; do
+      CDSTR="../$CDSTR"
+    done
+    cd $CDSTR
+  fi
 }
 
 # Switch directory & ls
 cl() {
-	builtin cd $1
-	ls --almost-all --group-directories-first --file-type
+  builtin cd $1
+  ls --almost-all --group-directories-first --file-type
 }
 
 mkcd() {
-	mkdir -p "$1" && cd "$1"
+  mkdir -p "$1" && cd "$1"
 }
 
 cd() {
-	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 &&
-		dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
-		test -n "$dir" && cd "$dir" && return
-	builtin cd $1 &&
-		command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
+  test -d "$DATA" && test "$1" != "-" -a ! -d "$1" -a $# -eq 1 &&
+    dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
+    test -n "$dir" && cd "$dir" && return
+  builtin cd $1 &&
+    command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
 }
 
 # ZOXIDE

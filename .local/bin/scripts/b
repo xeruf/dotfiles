@@ -8,7 +8,7 @@ for last; do true; done
 last=${last:-.}
 
 # Elevate permissions if the file exists but is not accessible
-test -r "$(dirname $last)" || elevate=sudo
+test -x "$(dirname $last)" || elevate=sudo
 tput setaf 4 && $elevate file -E "$last" | ( grep -v --color=never 'directory$' || true )
 
 case "$($elevate file --dereference --mime "$last")" in

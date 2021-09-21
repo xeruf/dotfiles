@@ -12,7 +12,8 @@ echo "fs.inotify.max_user_watches=800000" | sudo tee /etc/sysctl.d/60-max-user-w
 sudo sysctl --system
 
 highlight "Default sudoers configuration"
-echo "Defaults	editor=/usr/bin/nvim" | sudo tee /etc/sudoers.d/editor
+echo 'Defaults	editor=/usr/bin/nvim
+Defaults env_keep="EDITOR"' | sudo tee /etc/sudoers.d/editor
 echo -e "Defaults	timestamp_timeout=120\nDefaults	passwd_timeout=30" | sudo tee /etc/sudoers.d/timeout
 highlight "password-free reboot"
 echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /usr/sbin/reboot, /sbin/poweroff, /usr/sbin/shutdown" | sudo tee /etc/sudoers.d/shutdown

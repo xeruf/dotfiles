@@ -5,7 +5,7 @@ alias dedup='awk '"'"'!a[$0]++'"'"
 listconf() {
 	{ cat "$conf_cache";
 		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc -maxdepth 3 -follow -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
+		find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc /var/lib/postgres -maxdepth 4 -follow -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
 }
 
 conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/edconf"
@@ -21,6 +21,6 @@ case "$sel" in
   /etc/fstab) sudoedit "$sel" && sudo findmnt --verify;;
   /etc/default/grub) sudoedit "$sel" && sudo grub-mkconfig -o /boot/grub/grub.cfg;;
   /etc/locale.gen) sudoedit "$sel" && sudo locale-gen;;
-  *) edit "$sel";;
+  *) $(test -w "$sel" || echo sudo) "$EDITOR" "$sel";;
 esac
 echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"
