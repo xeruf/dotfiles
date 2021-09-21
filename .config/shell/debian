@@ -1,6 +1,7 @@
 which apt >/dev/null || return 0
 
 which fd >/dev/null || alias fd='fdfind'
+which bat >/dev/null || alias bat='batcat'
 
 addalternative() {
 	sudo update-alternatives --install /usr/bin/$1 $1 "$(which "$1$2")" 1

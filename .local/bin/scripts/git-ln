@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -o pipefail
 upCount=$(git rev-list --count HEAD...@{push} 2>/dev/null)
 count=$(expr ${upCount:-0} + 3 \& ${upCount:-0} \> 3 \| 6)

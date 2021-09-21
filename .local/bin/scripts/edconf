@@ -3,9 +3,9 @@
 alias dedup='awk '"'"'!a[$0]++'"'"
 
 listconf() {
-	{ cat "$conf_cache";
-		fd --hidden --type file --size -1m --max-depth 1 . ~;
-		find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc /var/lib/postgres -maxdepth 4 -follow -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
+  { cat "$conf_cache";
+    $(which fd || echo fdfind) --hidden --type file --size -1m --max-depth 1 . ~;
+    find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc /var/lib/postgres /var/lib/pleroma -maxdepth 4 -follow -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
 }
 
 conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/edconf"
