@@ -95,7 +95,7 @@ export CTEST_PARALLEL_LEVEL=3
 
 export JOURNAL="$DATA/2-standards/notes/journal"
 
-if test -z "${DISPLAY}" && test "${XDG_VTNR}" -eq 1 ; then
+if test -z "${DISPLAY}" && test "$XDG_VTNR" -eq 1 && test -d "$JOURNAL"; then
   echo "What do you want to do?"
   while test $(echo "$intention" | wc -c) -lt 6
   do read intention
