@@ -217,7 +217,7 @@ updateDeps() {
 	done
 	echo name $name depth $depth pattern $oldversion version $version
 	find -maxdepth $depth -type f -name $name | while read f
-	do	echo $f
+	do	highlight $f
 		sed -i "s/\($pattern\)$oldversion/\1$version/gw /dev/stdout" $f
 	done
 }

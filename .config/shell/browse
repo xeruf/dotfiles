@@ -29,11 +29,14 @@ mkcd() {
 }
 
 cd() {
-  test -d "$DATA" && test "$1" != "-" -a ! -d "$1" -a $# -eq 1 &&
-    dir=$(f --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1) &&
-    test -n "$dir" && cd "$dir" && return
-  builtin cd $1 &&
+  if test -d "$DATA" && test "$1" != "-" -a ! -d "$1" -a $# -eq 1
+  then
+    dir=$(fd --no-ignore --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1)
+    test -n "$dir" && cd "$dir"
+  else
+    builtin cd $1 &&
     command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
+  fi
 }
 
 # ZOXIDE
@@ -50,6 +53,6 @@ d() {
     fi | zfz)"
 }
 di() {
-  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 && local dir=$({ zf "$@"; locz "$@" } | zfz)
+  test $# -eq 1 && test "$1" = "-" -o -d "$1" || local dir=$({ zf "$@"; locz "$@" } | zfz)
   cd "${dir:-1}"
 }

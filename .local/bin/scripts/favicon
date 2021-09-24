@@ -1,4 +1,3 @@
 #!/bin/bash
 # Extract the icon of a given page using duckduckgo
-read -p URL? url
-xdg-open "https://icons.duckduckgo.com/ip2/$url.ico"
+xdg-open "https://icons.duckduckgo.com/ip2/$1.ico"

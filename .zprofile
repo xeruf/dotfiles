@@ -13,6 +13,7 @@ export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 
 export KDEHOME="$XDG_STATE_HOME"/kdehome
 export GOPATH="$XDG_STATE_HOME"/go
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
 
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export RLWRAP_HOME="$XDG_STATE_HOME"/rlwrap
@@ -92,6 +93,7 @@ export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
+
 
 export JOURNAL="$DATA/2-standards/notes/journal"
 
