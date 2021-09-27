@@ -1,7 +1,7 @@
 * Dotfiles
 I mainly use Arch Linux,
 currently with the KDE desktop environment
-with the intention to move to Awesome soon.
+with the intention of moving a tiling WM (Awesome or Sway) soon.
 
 If you are looking to snag some of my handy tools,
 focus on [[.local/bin/scripts]] and [[.config/shell]].
@@ -26,3 +26,12 @@ and configuration for ~less~ and ~fzf~.
 - [[.local/bin/scripts][scripts]] :: lots of useful scripts,
   most have a short documentation header -
   including many essential git scripts
+* Packages
+# Use org-yank-visible
+- essentials :: git zsh bat neovim man-db texinfo
+- basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
+- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances
+- aur :: diffr bat-extras-git tldr++
+- x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip
+- office :: emacs texlive-core texlive-latexextra libreoffice-fresh
+- server :: pleroma-bin postgresql caddy
