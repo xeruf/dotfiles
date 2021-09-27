@@ -7,7 +7,7 @@ listconf() {
     fd --hidden --type file --size -1m --max-depth 1 . ~;
     find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc /var/lib/postgres /var/lib/pleroma/static/instance \
       -maxdepth 4 -follow \( -name Partitions -o -name mdn -o -name .git -o -name .local \) -prune -o \
-      ! -iname "*.xml" -a ! -iname "*.markdown" -a ! -iname "*.md" -a ! -iname "*.org" \
+      ! -iname "*.markdown" -a ! -iname "*.md" -a ! -iname "*.org" \
       -type f -readable -exec grep -lI '' {} + 2>/dev/null; } | dedup
 }
 

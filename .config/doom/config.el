@@ -497,6 +497,8 @@ Version 2019-11-04 2021-02-16"
     (setq auto-revert-interval 2)
   )
 
+(setq pdf-misc-print-programm "/usr/bin/lpr")
+
 (setq custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
 (setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
 

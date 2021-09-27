@@ -12,11 +12,11 @@ fi
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
 if test -d "$DATA"; then
-	da=$(cd $DATA/_* && pwd)
-	d1=$(cd $DATA/1* && pwd)
-	d2=$(cd $DATA/2* && pwd)
-	d3=$(cd $DATA/3* && pwd)
-	d4=$(cd $DATA/4* && pwd)
+	da=$(builtin cd $DATA/_* && pwd)
+	d1=$(builtin cd $DATA/1* && pwd)
+	d2=$(builtin cd $DATA/2* && pwd)
+	d3=$(builtin cd $DATA/3* && pwd)
+	d4=$(builtin cd $DATA/4* && pwd)
 fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps
