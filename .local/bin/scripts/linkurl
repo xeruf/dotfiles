@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "[Desktop Entry]
+Icon=text-html
+Type=Link
+URL=$1">${2:-$1}.desktop

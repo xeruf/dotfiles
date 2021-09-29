@@ -1,0 +1,7 @@
+#!/bin/sh
+IFS=' '
+calc="${*//p/+}"
+calc="${calc//./}"
+calc="${calc//,/.}"
+calc="${calc//x/*}"
+bc -l <<<"scale=10;$calc"
