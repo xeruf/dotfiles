@@ -138,9 +138,15 @@ alias calc='rlwrap -a bc -l'
 alias logoff="loginctl terminate-user $USER"
 blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
 
-loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|$@" | sed 's/ /|/g') | less -F }
+# locate roughly
+loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | less -F }
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
+# locate exactly
+locei() { locate --all --basename "\\$1" "$@" | less -F }
+alias loce='noglob locei'
+# locate all
+alias loca='noglob sudo updatedb --prunenames "" /var/lib/mlocate/all.db && loci --database ""'
 
 alias expr='noglob expr'
 
