@@ -34,10 +34,10 @@ fi
 highlight "d to recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
 	find -name "src" -prune -o \
-		-type d \( -name ".gradle" -o -name "generated" -o -name "dist-newstyle" -o -name "cache" -o -name "node_modules" -name "cmake_build" \) \
+		-type d \( -name ".gradle" -o -name "generated" -o -name "dist-newstyle" -o -name "cache" -o -name "node_modules" -o -name "cmake_build" \) \
 		-print -exec rm -r {} + -prune
 	echo -n "  " && highlight "build directories"
-	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" \) -prune \
+	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" -o -name "www" -o -name "src" \) -prune \
 		-o -name "build" -type d \
 		-print -exec rm -rI {} + -prune
 fi
