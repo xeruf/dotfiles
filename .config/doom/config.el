@@ -344,6 +344,8 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; PACKAGES
 
+(push "~/data" projectile-ignored-projects)
+
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
 (map! :map special-mode-map
@@ -365,7 +367,7 @@ Version 2019-11-04 2021-02-16"
 
   (defun get-mimetype (filepath)
     (string-trim
-     (shell-command-to-string (concat "file -b --mime-type " filepath))))
+     (shell-command-to-string (concat "file -b --mime-type '" filepath "'"))))
 
   ;;(let ((mime "image/x-xcf")) (msg mime))
 
@@ -373,7 +375,7 @@ Version 2019-11-04 2021-02-16"
     (interactive)
     (let* ((file (dired-get-filename nil t))
            (mime (get-mimetype file)))
-      (if (or (s-prefix? "video" mime) (member mime unsupported-mime-types))
+      (if (or (string-prefix-p "audio" mime) (string-prefix-p "video" mime) (member mime unsupported-mime-types))
         (call-process "xdg-open" nil 0 nil file)
         (find-file file))))
 
