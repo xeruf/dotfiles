@@ -58,6 +58,8 @@ section "Software"
 ln -sv "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
 ln -sv "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
 ln -sv "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
+ln -sv /usr/share/applications/stretchly.desktop "$XDG_CONFIG_HOME/autostart/"
+ln -sv python3 /usr/bin/python
 
 highlight "Configure pacman"
 if test -f /etc/pacman.conf; then

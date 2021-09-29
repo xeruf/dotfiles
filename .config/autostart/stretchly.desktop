@@ -1,9 +1,1 @@
-[Desktop Entry]
-Categories=Utility;
-Comment=The break time reminder app
-Exec=/opt/Stretchly/stretchly %U
-Icon=stretchly
-Name=Stretchly
-StartupWMClass=Stretchly
-Terminal=false
-Type=Application
+/usr/share/applications/stretchly.desktop
