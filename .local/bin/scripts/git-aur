@@ -6,7 +6,8 @@ shift
 url="ssh://aur@aur.archlinux.org/${1:-$(basename $PWD)}.git"
 case $command in
   (origin)
-    test "$(git rev-parse --git-dir)" = ".git" && git remote set-url origin "$url";;
+    test "$(git rev-parse --git-dir)" = ".git" && git remote set-url origin "$url"
+    git remote -v;;
   (clone)
     cd "$aurdir"
     git -c init.defaultBranch=master clone "$url"

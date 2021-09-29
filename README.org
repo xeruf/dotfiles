@@ -30,8 +30,26 @@ and configuration for ~less~ and ~fzf~.
 # Use org-yank-visible
 - essentials :: git zsh bat neovim man-db texinfo
 - basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
-- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances
-- aur :: diffr bat-extras-git tldr++
-- x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip
+- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib
+- aur :: diffr bat-extras-git tldr++ rdictcc-git stretchly-xeruf-git
+** Graphical
+- x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle
+- music :: mpd mpc ncmpc vlc phonon-qt5-vlc
+  : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd
+- music production :: lilypond lilypond-docs timidity++ chordpro-git
+- kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular
 - office :: emacs texlive-core texlive-latexextra libreoffice-fresh
-- server :: pleroma-bin postgresql caddy
+** Dev
+#+begin_source sh
+yays intellij-idea-ultimate-edition intellij-idea-ultimate-edition-jre \
+clion clion-jre cmake gdb \
+jdk-openjdk java-openjfx jdk8-openjdk java8-openjfx
+archlinux-java set jdk8-openjdk
+#+end_source
+*** Android
+: yays android-udev android-tools adbfs-rootless-git android-studio
+After running android-studio setup, accept licenses:
+: $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
+** Server
+Setup systemd-resolved and systemd-networkd
+- social :: pleroma-bin postgresql caddy

@@ -2,11 +2,13 @@
 suffix="${2:-bak}"
 orig="${1%%.$suffix}"
 smv () {
-  test -w "$1" && mv -v "$@" || sudo mv -v "$@"
+  eval source=\$$(($#-1))
+  test -w "$source" && mv -v "$@" || sudo mv -v "$@"
 }
 if test -e "$orig.$suffix"
 then
   test -e "$orig" && smv "$orig" /tmp
   smv -n "$orig.$suffix" "$orig"
-else smv -n "$1" "$1.$suffix"
+else
+  smv -n "$1" "$1.$suffix"
 fi
