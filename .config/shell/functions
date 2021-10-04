@@ -189,9 +189,10 @@ alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/
 alias u='topgrade'
 
 alias j='jrnl'
-jn() { jrnl -to today "$@" | bat --style=plain --pager="less +G" }
+jn() { jrnl -to today "$@" | less +G }
 compdef jn=jrnl
 alias jnc='jn -contains'
+alias jne='jrnl --edit'
 
 npm-reinstall() {
 	rm -rf $TMPDIR/react-*
