@@ -42,7 +42,7 @@
 	"monitorDnd": true,
 	"microbreakStartSoundPlaying": false,
 	"breakStartSoundPlaying": false,
-	"themeSource": "system",
+	"themeSource": "dark",
 	"endBreakShortcut": "CmdOrCtrl+X",
 	"breakWindowWidth": 0.85,
 	"breakWindowHeight": 0.85,

@@ -31,7 +31,7 @@ and configuration for ~less~ and ~fzf~.
 - essentials :: git zsh bat neovim man-db texinfo
 - basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
 - common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib
-- aur :: diffr bat-extras-git tldr++ rdictcc-git stretchly-xeruf-git
+- aur :: diffr bat-extras-git tldr++ rdictcc-git stretchly-xeruf-git sc-im
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle
 - music :: mpd mpc ncmpc vlc phonon-qt5-vlc

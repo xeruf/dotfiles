@@ -79,7 +79,7 @@
 
 [alias]
 	fzf = !fzf --preview='git diff HEAD --color=always -- {}' --tiebreak=end,index --multi
-	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' --preview='test {1} != \\? && git diff --color HEAD -- {2..} | $(git config interactive.diffFilter) || diff --color=always -u /dev/null {2..}' | cut -c3-
+	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' --preview='test {1} != \\? && git diff --color -- HEAD {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %' | cut -c3-
 
 	# GET INFO
 	s = !git stl && git stb

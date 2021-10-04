@@ -173,7 +173,7 @@ test -s $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
 
 test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
 
-eval "$(zoxide init zsh)"
+which zoxide >/dev/null && eval "$(zoxide init zsh)"
 
 test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && source $XDG_CONFIG_HOME/broot/launcher/bash/br
 
