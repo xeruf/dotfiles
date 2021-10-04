@@ -103,12 +103,35 @@ Version 2019-11-04 2021-02-16"
 (setq confirm-kill-emacs nil)
 
 (setq initial-major-mode 'org-mode)
+(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
 
 (whitespace-mode 0)
 
 (setq lazy-highlight-cleanup nil)
 
-;; Undo
+;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
+;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+(setq utf-translate-cjk-mode nil)
+
+(set-language-environment 'utf-8)
+(setq locale-coding-system 'utf-8)
+
+;; set the default encoding system
+(prefer-coding-system 'utf-8)
+(setq default-file-name-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+;; backwards compatibility as default-buffer-file-coding-system
+;; is deprecated in 23.2.
+(if (boundp buffer-file-coding-system)
+    (setq buffer-file-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8))
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; UNDO
 (setq evil-want-fine-undo t)
 (setq amalgamating-undo-limit 5)
 
@@ -151,31 +174,18 @@ Version 2019-11-04 2021-02-16"
 (after! ivy
   (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
   )
-
-;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
-;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-(setq utf-translate-cjk-mode nil)
-
-(set-language-environment 'utf-8)
-(setq locale-coding-system 'utf-8)
-
-;; set the default encoding system
-(prefer-coding-system 'utf-8)
-(setq default-file-name-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-;; backwards compatibility as default-buffer-file-coding-system
-;; is deprecated in 23.2.
-(if (boundp buffer-file-coding-system)
-    (setq buffer-file-coding-system 'utf-8)
-  (setq default-buffer-file-coding-system 'utf-8))
-
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-
 ;;;; ORG
 (after! org
+
+  ;; https://stackoverflow.com/a/32353255/6723250
+  (defun org-convert-csv-table (beg end)
+    ; convert csv to org-table considering "12,12"
+    (interactive (list (point) (mark)))
+    (replace-regexp "\\(^\\)\\|\\(\".*?\"\\)\\|," (quote (replace-eval-replacement
+                              replace-quote (cond ((equal "^" (match-string 1)) "|")
+                                                     ((equal "," (match-string 0)) "|")
+                                                     ((match-string 2))) ))  nil  beg end))
+
   (setq org-agenda-files
     (apply 'append
            (mapcar

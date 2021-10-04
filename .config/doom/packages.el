@@ -49,6 +49,8 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(unpin! org-journal)
+
 (package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
 ;(package! evil-better-visual-line) ; not sure if this actually helps
