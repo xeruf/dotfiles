@@ -2,4 +2,4 @@
 echo "[Desktop Entry]
 Icon=text-html
 Type=Link
-URL=$1">${2:-$1}.desktop
+URL=$1" >"$(test -n "$2" && echo $2 || echo $1 | cut -d'/' -f3).desktop"

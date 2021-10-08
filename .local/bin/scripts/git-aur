@@ -21,7 +21,7 @@ case $command in
     git aur push --amend;;
   (push)
     makepkg --printsrcinfo > .SRCINFO
-    git add -f .SRCINFO
+    git add -f .SRCINFO *.install
     git commit -v -a "$@"
     git push;;
 esac

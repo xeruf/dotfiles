@@ -1,0 +1,5 @@
+#!/bin/sh
+# Reconnect to ONKYO since it is buggy
+bluetoothctl disconnect 00:09:B0:1D:DC:98
+sleep 1
+bluetoothctl connect 00:09:B0:1D:DC:98

@@ -61,6 +61,18 @@ ln -sv "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autos
 ln -sv /usr/share/applications/stretchly.desktop "$XDG_CONFIG_HOME/autostart/"
 ln -sv python3 /usr/bin/python
 
+highlight "Cron logging"
+echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
+hasService=$(which service 2>/dev/null)
+test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
+
+highlight "Reload cron"
+test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
+
+highlight "SSH Permissions"
+chmod og= ~/.ssh -R
+
+### Arch
 highlight "Configure pacman"
 if test -f /etc/pacman.conf; then
   sudo sed -i 's/#Color/Color/' /etc/pacman.conf
@@ -75,23 +87,13 @@ if test -f /etc/pacman.conf; then
   sudo systemctl enable reflector.timer
 fi
 
-highlight "Mixxx symlinks"
-mkdir -p ~/.mixxx
-ln -s -t ~/.mixxx ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
-  
+### Applications
 highlight "Block internet at night & on weekdays in the morning to force focus"
 walli 22 --save
 
-highlight "Cron logging"
-echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
-hasService=$(which service 2>/dev/null)
-test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
-
-highlight "Reload cron"
-test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
-
-highlight "SSH Permissions"
-chmod og= ~/.ssh -R
+highlight "Mixxx symlinks"
+mkdir -p ~/.mixxx
+ln -s -t ~/.mixxx ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
 
 highlight "Setup kakoune for plugins"
 plugkak="${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"

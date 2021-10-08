@@ -1,3 +1,3 @@
 #!/bin/sh
 # Grep in files matching the name pattern given as first argument
-find -name "$1" | while read f; do grep --color=always --line-number --ignore-case -H "${@:2}" "$f"; done | less -F
+find -name "$1" | while read f; do grep --color=always --with-filename --line-number --ignore-case "${@:2}" "$f"; done | less -F

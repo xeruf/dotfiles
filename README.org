@@ -27,18 +27,37 @@ and configuration for ~less~ and ~fzf~.
   most have a short documentation header -
   including many essential git scripts
 * Packages
+: pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
 - essentials :: git zsh bat neovim man-db texinfo
 - basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
-- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib
-- aur :: diffr bat-extras-git tldr++ rdictcc-git stretchly-xeruf-git sc-im
+- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib pass
+- aur recommendations :: tldr++ sc-im
+- personal aur utils :: diffr bat-extras-git rdictcc-git
+** Applications
+- productivity :: activitywatch-bin
+- music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc
+  : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpd-mpris
+- bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle
-- music :: mpd mpc ncmpc vlc phonon-qt5-vlc
-  : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd
 - music production :: lilypond lilypond-docs timidity++ chordpro-git
-- kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular
+- kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
 - office :: emacs texlive-core texlive-latexextra libreoffice-fresh
+- health :: stretchly-xeruf-git redshift acpilight
+  : scu enable --now redshift
+** Firefox
+*** Password management
+**** Pass - the unix password manager
+Store all kinds of secrets in plain text
+https://addons.mozilla.org/firefox/addon/passff
+: passff-host
+**** MasterPassword - the stateless password manager
+> Keep different passwords for every site you log into without having to remember anything but a single master password.
+> And without the risk of your getting your password list stolen.
+https://addons.mozilla.org/firefox/addon/masterpassword-firefox
+*** [[https://addons.mozilla.org/en-US/firefox/collections/15727735/integration?collection_sort=-popularity][System Integration]]
+*** [[https://addons.mozilla.org/en-US/firefox/collections/15727735/privacy?collection_sort=-popularity][Privacy]]
 ** Dev
 #+begin_source sh
 yays intellij-idea-ultimate-edition intellij-idea-ultimate-edition-jre \
