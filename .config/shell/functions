@@ -130,13 +130,19 @@ alias jcj='jcl -o json-pretty -u'
 
 # Applications {{{1
 
-# Remote
-alias delta="sc restart openvpn-client@deltaPeak.service"
-alias sshl="lemonade server -allow 127.0.0.1 & ssh -R 2489:127.0.0.1:2489"
+alias u='topgrade'
+alias expr='noglob expr'
+
+alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
+alias lar='last | tac'
 
 alias calc='rlwrap -a bc -l'
 alias logoff="loginctl terminate-user $USER"
 blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
+
+# Remote
+alias delta="sc restart openvpn-client@deltaPeak.service"
+alias sshl="lemonade server -allow 127.0.0.1 & ssh -R 2489:127.0.0.1:2489"
 
 # locate roughly
 loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | less -F }
@@ -147,11 +153,6 @@ locei() { locate --all --basename "\\$1" "$@" | less -F }
 alias loce='noglob locei'
 # locate all
 alias loca='noglob sudo updatedb --prunenames "" /var/lib/mlocate/all.db && loci --database ""'
-
-alias expr='noglob expr'
-
-alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
-alias lar='last | tac'
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
@@ -186,15 +187,8 @@ alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | tail -n +16 |
   fzf --tiebreak=length --bind='alt-bspace:clear-query'"
 alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
 alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
+
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
-
-alias u='topgrade'
-
-alias j='jrnl'
-jn() { jrnl -to today "$@" | less +G }
-compdef jn=jrnl
-alias jnc='jn -contains'
-alias jne='jrnl --edit'
 
 npm-reinstall() {
 	rm -rf $TMPDIR/react-*

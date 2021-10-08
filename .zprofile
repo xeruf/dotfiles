@@ -14,6 +14,7 @@ export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export KDEHOME="$XDG_STATE_HOME"/kdehome
 export GOPATH="$XDG_STATE_HOME"/go
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
+export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export RLWRAP_HOME="$XDG_STATE_HOME"/rlwrap
@@ -32,8 +33,8 @@ export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GRADLE_USER_HOME="$XDG_STATE_HOME"/gradle
 export ANDROID_PREFS_ROOT="$XDG_CONFIG_HOME"/android
 export ANDROID_EMULATOR_HOME="$XDG_STATE_HOME"/android/emulator
-export ANDROID_SDK_ROOT="/opt/android/sdk"
-export PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools"
+export ANDROID_SDK_ROOT="/opt/android-sdk"
+export PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
  # taskwarrior & timewarrior
 export TIMEWARRIORDB="$XDG_DATA_HOME/timewarrior"
 export TASKRC="$XDG_CONFIG_HOME/task/taskrc"

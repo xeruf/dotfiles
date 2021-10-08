@@ -1,6 +1,6 @@
 # Pop up a message, for long running commands
 command -v notify-send >/dev/null &&
-  alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+	alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 xo() {
 	while test $# -gt 0; do
@@ -8,6 +8,15 @@ xo() {
 		shift
 	done
 }
+
+
+if which jrnl >/dev/null; then
+	alias j='jrnl'
+	jn() { jrnl -to today "$@" | less +G }
+	compdef jn=jrnl
+	alias jnc='jn -contains'
+	alias jne='jrnl --edit'
+fi
 
 test "$DISPLAY" || return 0
 
