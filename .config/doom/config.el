@@ -177,6 +177,7 @@ Version 2019-11-04 2021-02-16"
 ;;;; ORG
 (after! org
 
+  (setq org-ascii-text-width 999999)
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
     ; convert csv to org-table considering "12,12"
@@ -247,6 +248,7 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
+        :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         "gR" 'org-mode-restart
         )
 
@@ -359,6 +361,9 @@ Version 2019-11-04 2021-02-16"
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
 (map! :map special-mode-map
+      "<tab>" 'other-window
+      "q"     'kill-this-buffer
+      :map nov-mode-map
       "<tab>" 'other-window
       "q"     'kill-this-buffer
       :map image-mode-map
