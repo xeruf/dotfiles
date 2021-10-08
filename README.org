@@ -22,6 +22,7 @@ and configuration for ~less~ and ~fzf~.
 - [[.config/doom][doom]] :: [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration with personalized snippets
 - ideavim, vifm, nvim :: vi-related tools
 - git, yadm :: version control
+: yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
 ** .local
 - [[.local/bin/scripts][scripts]] :: lots of useful scripts,
   most have a short documentation header -
@@ -44,6 +45,7 @@ and configuration for ~less~ and ~fzf~.
 - music production :: lilypond lilypond-docs timidity++ chordpro-git
 - kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
 - office :: emacs texlive-core texlive-latexextra libreoffice-fresh
+- hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight
   : scu enable --now redshift
 ** Firefox
