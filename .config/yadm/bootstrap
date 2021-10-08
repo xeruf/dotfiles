@@ -88,6 +88,8 @@ if test -f /etc/pacman.conf; then
 fi
 
 ### Applications
+test "$DISPLAY" || exit 0
+
 highlight "Block internet at night & on weekdays in the morning to force focus"
 walli 22 --save
 

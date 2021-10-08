@@ -22,7 +22,6 @@ and configuration for ~less~ and ~fzf~.
 - [[.config/doom][doom]] :: [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration with personalized snippets
 - ideavim, vifm, nvim :: vi-related tools
 - git, yadm :: version control
-: yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
 ** .local
 - [[.local/bin/scripts][scripts]] :: lots of useful scripts,
   most have a short documentation header -
@@ -33,8 +32,12 @@ and configuration for ~less~ and ~fzf~.
 - essentials :: git zsh bat neovim man-db texinfo
 - basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
 - common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib pass
+- ssh :: openssh sshfs lemonade-git
+- dotfiles :: yadm
+  : yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
 - aur recommendations :: tldr++ sc-im
 - personal aur utils :: diffr bat-extras-git rdictcc-git
+- experiments :: kakoune
 ** Applications
 - productivity :: activitywatch-bin
 - music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc
@@ -73,4 +76,5 @@ After running android-studio setup, accept licenses:
 : $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
 ** Server
 Setup systemd-resolved and systemd-networkd
+- ssh :: lemonade openssh
 - social :: pleroma-bin postgresql caddy
