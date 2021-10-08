@@ -109,8 +109,8 @@
 	curbranch = symbolic-ref --short HEAD
 	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
 
-	lg = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
-	lgu = lg HEAD @{push}
+	lgr = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
+	lg = lgr HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
 	my = lo --author [Jj]anek
