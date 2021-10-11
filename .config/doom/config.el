@@ -180,8 +180,32 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; ORG
 (after! org
+  ;; Behavior
+  (set-file-template! 'org-mode :ignore t)
+  (setq org-read-date-prefer-future nil)
 
-  (setq org-ascii-text-width 999999)
+  ;; Visuals
+  ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
+  (setq org-image-actual-width nil)
+  (setq org-ellipsis "↴")
+
+  ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
+  (setq org-startup-folded 'show2levels
+        org-display-remote-inline-images 'cache)
+
+  ;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
+  (setq org-file-apps '((remote . emacs)
+                        ("\\.pdf\\'" . default)
+                        (auto-mode . emacs)
+                        (directory . emacs)
+                        (system . "setsid -w xdg-open %s")
+                        (t . system)))
+
+  ;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
+  (setq org-log-done 'time
+        org-log-into-drawer t
+        org-treat-insert-todo-heading-as-state-change t)
+
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
     ; convert csv to org-table considering "12,12"
@@ -314,6 +338,7 @@ Version 2019-11-04 2021-02-16"
         org-export-with-todo-keywords nil
         org-export-with-toc nil
         org-export-with-section-numbers nil
+        org-ascii-text-width 999999
         )
 
   (add-to-list 'org-latex-classes
@@ -328,35 +353,11 @@ Version 2019-11-04 2021-02-16"
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
 )
-
-;; Behavior
-(set-file-template! 'org-mode :ignore t)
-(setq org-read-date-prefer-future nil)
-
-;; Visuals
-; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
-(setq org-image-actual-width nil)
-(setq org-ellipsis "↴")
-
-;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
-(setq org-startup-folded 'show2levels
-      org-display-remote-inline-images 'cache)
-
-;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
-(setq org-file-apps '((remote . emacs)
-                      ("\\.pdf\\'" . default)
-                      (auto-mode . emacs)
-                      (directory . emacs)
-                      (system . "setsid -w xdg-open %s")
-                      (t . system)))
 ;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
+;; Fix xdg-open after setting process-connection-type
+;(setq process-connection-type nil)
 ;(after! org
 ;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
-
-;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
-(setq org-log-done 'time
-      org-log-into-drawer t
-      org-treat-insert-todo-heading-as-state-change t)
 
 ;;;; PACKAGES
 
