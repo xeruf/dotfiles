@@ -151,7 +151,7 @@ Version 2019-11-04 2021-02-16"
 
 ;; Data dirs
 
-(defvar user-data-dir "~/data" "Location of the main user data")
+(defvar user-data-dir "~/data/" "Location of the main user data")
 
 (load! "./local.el" nil t)
 
@@ -171,9 +171,13 @@ Version 2019-11-04 2021-02-16"
   (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
   )
 
-(after! ivy
-  (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
+(after! projectile
+  (push user-data-dir projectile-ignored-projects)
+  (let ((default-directory user-data-dir))
+    (add-to-list 'projectile-known-projects (expand-file-name "music") t)
+    )
   )
+
 ;;;; ORG
 (after! org
 
@@ -356,10 +360,6 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; PACKAGES
 
-(push "~/data" projectile-ignored-projects)
-
-(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
-
 (map! :map special-mode-map
       "<tab>" 'other-window
       "q"     'kill-this-buffer
@@ -371,18 +371,24 @@ Version 2019-11-04 2021-02-16"
       :n "+"  'image-increase-size
       :n "-"  'image-decrease-size)
 
+(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
+
+(after! ivy
+  (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
+  )
+
 (after! dired
 
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
     '("image/x-xcf")) ; "application/zip"))
-
   (load "subr-x")
-
   (defun get-mimetype (filepath)
     (string-trim
      (shell-command-to-string (concat "file -b --mime-type '" filepath "'"))))
+
+  (setq image-dired-external-viewer "gimp")
 
   ;;(let ((mime "image/x-xcf")) (msg mime))
 
@@ -399,11 +405,12 @@ Version 2019-11-04 2021-02-16"
         :leader
         :desc "Dragon" "d" (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
         :localleader
+        :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s" (lambda () (interactive) (dired-smart-shell-command "s"))
         :desc "Symlink to this" "l" 'dired-do-symlink
-        :desc "Open dir in image-dired" "i"
-                (lambda () (interactive) (image-dired buffer-file-name))
-        :desc "Compress/Extract" "c" 'dired-do-compress
+        :desc "Open image-dired" "i" 'image-dired
+                ;(lambda () (interactive) (image-dired buffer-file-name))
+        :desc "Open image externally" "I" 'image-dired-dired-display-external
         )
   (map! :map wdired-mode-map
         :n "RET" (lambda () (interactive) (progn
@@ -423,18 +430,17 @@ Version 2019-11-04 2021-02-16"
 
 (global-activity-watch-mode)
 
-(use-package! tramp
-  :defer t
-  :config
-    (add-to-list 'tramp-methods
-     '("yadm"
-       (tramp-login-program "yadm")
-       (tramp-login-args (("enter")))
-       (tramp-login-env (("SHELL") ("/bin/sh")))
-       (tramp-remote-shell "/bin/sh")
-       (tramp-remote-shell-args ("-c"))))
-    (map! :leader
-          :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
+(after! tramp
+  (setq tramp-default-method "scpx")
+  (add-to-list 'tramp-methods
+   '("yadm"
+     (tramp-login-program "yadm")
+     (tramp-login-args (("enter")))
+     (tramp-login-env (("SHELL") ("/bin/sh")))
+     (tramp-remote-shell "/bin/sh")
+     (tramp-remote-shell-args ("-c"))))
+  (map! :leader
+        :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
   )
 
 (use-package! evil-replace-with-register ; gr

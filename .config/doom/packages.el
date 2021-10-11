@@ -64,7 +64,8 @@
 (package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
 (package! nov) ; epub reader
-(package! pkgbuild-mode)
+(package! pkgbuild-mode) ; AUR PKGBUILDs
+(package! picpocket) ; image viewer - https://github.com/johanclaesson/picpocket
 
 (package! chordpro-mode
   :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets
