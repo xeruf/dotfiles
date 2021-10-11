@@ -54,5 +54,5 @@ d() {
 }
 di() {
   test $# -eq 1 && test "$1" = "-" -o -d "$1" || local dir=$({ zf "$@"; locz "$@" } | zfz)
-  cd "${dir:-1}"
+  cd "${dir:-$1}"
 }

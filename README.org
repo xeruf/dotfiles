@@ -31,12 +31,12 @@ and configuration for ~less~ and ~fzf~.
 # Use org-yank-visible
 - essentials :: git zsh bat neovim man-db texinfo
 - basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
-- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib pass
+- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib pass youtube-dl
 - ssh :: openssh sshfs lemonade-git
 - dotfiles :: yadm
   : yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
 - aur recommendations :: tldr++ sc-im
-- personal aur utils :: diffr bat-extras-git rdictcc-git
+- personal aur utils :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git
 - experiments :: kakoune
 ** Applications
 - productivity :: activitywatch-bin
@@ -77,4 +77,8 @@ After running android-studio setup, accept licenses:
 ** Server
 Setup systemd-resolved and systemd-networkd
 - ssh :: lemonade openssh
+- webserver :: sudo apt install snapd nginx && snap install certbot
 - social :: pleroma-bin postgresql caddy
+- rust :: cargo install zoxide diffr
+  : curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+*** Funkwhale

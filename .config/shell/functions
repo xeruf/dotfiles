@@ -25,7 +25,7 @@ which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) 
 
 unalias rd 2>/dev/null
 
-# Basic aliases {{{1
+# System helpers {{{1
 
 alias h='help'
 compdef help=man
@@ -131,6 +131,7 @@ alias jcj='jcl -o json-pretty -u'
 # Applications {{{1
 
 alias u='topgrade'
+alias st='synct'
 alias expr='noglob expr'
 
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'

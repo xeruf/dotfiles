@@ -1,4 +1,10 @@
 #!/bin/sh
+# Generate a key if it does not exist
+# Print and copy its public part
+# ARGS
+# - key filename
+# - encryption method (default ed25519)
+# - further args for ssh-keygen
 keys="$HOME/.ssh/keys"
 name="${1:-id_ed25519}"
 mkdir -p "$keys"

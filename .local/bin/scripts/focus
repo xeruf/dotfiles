@@ -1,7 +1,7 @@
 # launch my focus playlist
 playlistPath="$MUSIC/Playlists"
-test -z "$1" && vp "$MUSIC/focus.m3u" ||
-(find -L $MUSIC -iname "focus-$1.m3u" -print0 | grep --null-data . ||
+test -z "$1" && vp "$playlistPath/focus.m3u" ||
+(find -L $playlistPath -iname "focus-$1.m3u" -print0 | grep --null-data . ||
   find -L $playlistPath -iname "$1.m3u*" -print0 | grep --null-data . ||
   find -L $MUSIC -iname "*$1*" -prune -exec find {} -size +2M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \;) |
   xargs -0 vp

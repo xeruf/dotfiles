@@ -4,4 +4,5 @@ set -e
 remote=$(git-repo "$@")
 echo "Cloning $remote"
 git clone $remote ${@:4} --recurse-submodules
-cd "$(test $4 && echo $4 || basename ${remote%.git})"
+cd "$(expr "$1" || basename ${remote%.git})"
+exec "$SHELL"
