@@ -1,0 +1,6 @@
+#!/bin/sh
+# Copy recursively over ssh
+server="$1"
+folder="$2"
+ssh "$server" "mkdir -p '$folder'"
+scp -rC "${@:2}" "$server:$folder"

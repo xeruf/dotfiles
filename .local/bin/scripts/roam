@@ -1,7 +1,4 @@
 #!/bin/sh -e
 # Move roam files into subfolders
 cd $DATA/2-standards/notes/roam
-grep -l --directories=skip "roam_tags: person" * | xargs --no-run-if-empty mv -t people
-grep -l --directories=skip "roam_tags: tech" * | xargs --verbose --no-run-if-empty mv -t tech
-grep -l --directories=skip "roam_tags: project" * | xargs --verbose --no-run-if-empty mv -t projects
-grep -l --directories=skip "roam_tags: health" * | xargs --verbose --no-run-if-empty mv -t health
+find . -mindepth 1 -type d -printf '%f\n' | while read dir; do grep -l --directories=skip "roam_tags: $dir" * | xargs --verbose --no-run-if-empty mv -t "$dir"; done
