@@ -49,6 +49,8 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(package! emms)
+
 (unpin! org-journal)
 
 (package! evil-args) ; motions in args

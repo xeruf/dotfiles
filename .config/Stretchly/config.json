@@ -439,6 +439,10 @@
 		{
 			"data": "Stretch",
 			"enabled": true
+		},
+		{
+			"data": "Journal your day",
+			"enabled": "expr $(date +%H) \/ 2 - $(jrnl -from '20 hours ago' | wc -l)"
 		}
 	],
 	"showBreaksAsRegularWindows": false,

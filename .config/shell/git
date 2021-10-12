@@ -7,8 +7,9 @@ y() {
   test "$#" -eq 0 && yadm s || yadm "$@"
 }
 yc() {
-  echo "config/$1:" >/tmp/yc-msg
-  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$1"
+  folder=${1:-${PWD/$XDG_CONFIG_HOME\/}}
+  echo "config/$folder:" >/tmp/yc-msg
+  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder"
 }
 
 alias sysyadm="sudo yadm -Y /etc/yadm"
