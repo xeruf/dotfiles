@@ -47,7 +47,7 @@ d() {
   # First find out whether there is an obvious match
   # (score at least ten times above runner-up and score above 20)
   # If not select with fzf, using locate to find extra options
-  cd "$(if expr "$(echo "$query" | head -1 | cut -d' ' -f2)" \> 20 \& $(echo "$query" | sed 'N;s|/.*\n|> 10 *|;q' | sed 's| */.*||') >/dev/null 2>&1
+  cd "$(if expr "$(echo "$query" | head -1 | cut -d' ' -f1)" \> 20 \& $(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
       then echo "$query" | head -1
       else echo "$query"; locz "$@"
     fi | zfz)"
