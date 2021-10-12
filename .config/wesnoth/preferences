@@ -1,0 +1,77 @@
+UI_volume=26
+allow_observers=yes
+ally_sighted_interrupts=yes
+animate_map=yes
+animate_water=yes
+auto_save_max=10
+bell_volume=27
+chat_lines=6
+chat_timestamp=no
+color_cursors=yes
+delete_saves=no
+disable_auto_moves=no
+draw_delay=-1
+enable_planning_mode_on_start=yes
+encountered_terrain_list="Ce, Chw, Ct, Ft, Gs^Ft, Gs^Vht, Gs, Gt, Hh, Ht, Ke, Mm, Mt, Re, Rp, Rr, Ss^Vhs, Ss, St, Uft, Uh, Ut, Uu^Uf, Uu^Vu, Uu, Vt, Wst, Ww, Wwf, Xt, Xu, _off^_usr"
+encountered_units="Dwarvish Fighter,Dwarvish Guardsman,Dwarvish Stalwart,Dwarvish Steelclad,Dwarvish Thunderer,Dwarvish Ulfserker,Footpad,Goblin Spearman,Gryphon Rider,Naga Fighter,Orcish Archer,Orcish Assassin,Orcish Crossbowman,Orcish Grunt,Poacher,Thief,Trapper,Troll Rocklobber,Troll Whelp,Wolf Rider"
+floating_labels=yes
+grid=no
+hide_whiteboard=no
+idle_anim=yes
+idle_anim_rate=0
+lobby_whisper_friends_only=no
+login="@xeras@"
+maximized=yes
+mp_countdown=yes
+mp_countdown_action_bonus=25
+mp_countdown_init_time=600
+mp_countdown_reservoir_time=450
+mp_countdown_turn_bonus=120
+mp_era="era_default"
+mp_fog=yes
+mp_level="multiplayer_3p_Morituri"
+mp_level_type=0
+mp_modifications=""
+mp_random_start_time=no
+mp_shroud=no
+mp_turns=100
+mp_use_map_settings=yes
+mp_village_gold=2
+mp_village_support=1
+mp_xp_modifier=70
+music_volume=4
+random_faction_mode="Independent"
+registered_users_only=no
+remember_password=yes
+save_replays=yes
+scroll=50
+scroll_threshold=10
+show_haloes=yes
+show_side_colors=yes
+shuffle_sides=yes
+skip_ai_moves=no
+sound_volume=12
+stop_music_in_background=no
+turbo=no
+turbo_speed=2
+turn_dialog=no
+unit_standing_animations=yes
+xresolution=3840
+yresolution=2160
+[options]
+[/options]
+[completed_campaigns]
+[/completed_campaigns]
+[history]
+	[mp_user_name_history]
+		[line]
+			message="janek"
+		[/line]
+		[line]
+			message="xerus"
+		[/line]
+		[line]
+			message="xeras"
+		[/line]
+	[/mp_user_name_history]
+[/history]
