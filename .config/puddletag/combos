@@ -1,0 +1,69 @@
+{
+  "w&ith:": {
+    "values": [
+      ""
+    ]
+  }, 
+  "&Output": {
+    "values": [
+      "", 
+      "%1", 
+      "%1"
+    ]
+  }, 
+  "&Text": {
+    "values": [
+      "", 
+      "%date%", 
+      "%date%"
+    ]
+  }, 
+  "&Field list (; separated):": {
+    "values": [
+      "", 
+      "comment;__image", 
+      "comment;creation_time;__image", 
+      "comment;software;creation_time;__image", 
+      "comment;__image"
+    ]
+  }, 
+  "filter_text": {
+    "values": [
+      "", 
+      "varien", 
+      "wildfire", 
+      " - ", 
+      "diconnect", 
+      "disconnect", 
+      "the calli", 
+      ""
+    ]
+  }, 
+  "&Pattern": {
+    "values": [
+      "[year]", 
+      "[%year%] %album% - %title% (%artist%)", 
+      "[%year%-%dummy%-%dummy%] %album% - %title% (%artist%)", 
+      "[%date%] %album% - %title% (%artist%)", 
+      "%1-%2", 
+      "%1-%2-%3"
+    ]
+  }, 
+  "&Replace": {
+    "values": [
+      ""
+    ]
+  }, 
+  "&Format string": {
+    "values": [
+      "ICF Berlin Friedrichshain", 
+      "(c) 2019 ICF Berlin", 
+      "deutsch", 
+      "https://www.icf-friedrichshain.de/", 
+      "https://soundcloud.com/icf-berlin-fhain/%year%-fh\n", 
+      "Podcast", 
+      "https://soundcloud.com/icf-berlin-fhain/%year%-fh", 
+      "https://soundcloud.com/icf-berlin-fhain/%date%-fh"
+    ]
+  }
+}

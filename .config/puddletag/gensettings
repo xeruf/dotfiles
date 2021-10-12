@@ -1,0 +1,26 @@
+{
+  "&Load last folder at startup": {
+    "value": true
+  }, 
+  "Program to &play files with:": {
+    "value": "amarok -p"
+  }, 
+  "Show &gridlines": {
+    "value": true
+  }, 
+  "Su&bfolders": {
+    "value": true
+  }, 
+  "&Preserve file modification times (if supported)": {
+    "value": true
+  }, 
+  "Show tooltips in file-view:": {
+    "value": true
+  }, 
+  "Automatically resize columns to contents": {
+    "value": false
+  }, 
+  "Show &row numbers": {
+    "value": true
+  }
+}

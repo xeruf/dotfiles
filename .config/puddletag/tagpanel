@@ -1,0 +1,49 @@
+{
+  "1": {
+    "titles": [
+      "&Title"
+    ], 
+    "tags": [
+      "title"
+    ]
+  }, 
+  "0": {
+    "titles": [
+      "&Artist"
+    ], 
+    "tags": [
+      "artist"
+    ]
+  }, 
+  "3": {
+    "titles": [
+      "T&rack", 
+      "&Year", 
+      "&Genre"
+    ], 
+    "tags": [
+      "track", 
+      "year", 
+      "genre"
+    ]
+  }, 
+  "2": {
+    "titles": [
+      "Al&bum"
+    ], 
+    "tags": [
+      "album"
+    ]
+  }, 
+  "4": {
+    "titles": [
+      "&Comment"
+    ], 
+    "tags": [
+      "comment"
+    ]
+  }, 
+  "panel": {
+    "numrows": "5"
+  }
+}
