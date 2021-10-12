@@ -9,7 +9,8 @@ case $command in
       highlight $pl
       cat $pl | rev | cut -d'/' -f-2 | rev | while read f; do
           test -n "$f" || continue
-          find -path "*${f#../}" -prune | grep --color=never . || find -path "*${f##* - }" -o -path "*${f##*/}" | head -1 | grep --color=never . || echo $f
+          newpath="$(find $MUSIC -path "*${f#*../}" -prune | grep . || find $MUSIC -path "*${f##* - }" -o -path "*${f##*/}" | grep -m 1 .)"
+          test -n "$newpath" && realpath --relative-to $(dirname "$pl") "$newpath" || echo "$f"
         done | tee $pl
     done;;
   (edit) ${EDITOR:-nano} $(find $MUSIC/Playlists -iname "$1\.*" | grep . || find $MUSIC/Playlists -iname "$1*");;
