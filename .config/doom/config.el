@@ -381,7 +381,6 @@ Version 2019-11-04 2021-02-16"
   )
 
 (after! dired
-
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
@@ -426,9 +425,6 @@ Version 2019-11-04 2021-02-16"
         )
 
   )
-
-(use-package! dired-icon
-  :hook dired-mode)
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)

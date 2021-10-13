@@ -61,9 +61,7 @@
 ;(package! evil-better-visual-line) ; not sure if this actually helps
 (package! visual-fill-column) ; Soft line wrapping at character count
 
-(package! dired-icon)
-
-(package! activity-watch-mode)
+(package! activity-watch-mode) ; eagle eyes
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
