@@ -167,6 +167,7 @@ Version 2019-11-04 2021-02-16"
       )
 
 (after! recentf
+  (setq recentf-keep '(or file-remote-p recentf-keep-default-predicate))
   (add-to-list 'recentf-exclude "writing\\/tug")
   (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
   )
@@ -174,7 +175,8 @@ Version 2019-11-04 2021-02-16"
 (after! projectile
   (push user-data-dir projectile-ignored-projects)
   (let ((default-directory user-data-dir))
-    (add-to-list 'projectile-known-projects (expand-file-name "music") t)
+    (add-to-list 'projectile-known-projects (expand-file-name "music/") t)
+    (add-to-list 'projectile-known-projects (expand-file-name "2-standards/notes/") t)
     )
   )
 
@@ -389,7 +391,9 @@ Version 2019-11-04 2021-02-16"
     (string-trim
      (shell-command-to-string (concat "file -b --mime-type '" filepath "'"))))
 
-  (setq image-dired-external-viewer "gimp")
+  (setq image-dired-external-viewer "gimp"
+        image-dired-thumb-size 300
+        image-dired-show-all-from-dir-max-files 300)
 
   ;;(let ((mime "image/x-xcf")) (msg mime))
 
@@ -404,13 +408,15 @@ Version 2019-11-04 2021-02-16"
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
         :leader
-        :desc "Dragon" "d" (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
+        :desc "Dragon marks" "d"
+                (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
-        :desc "Size information" "s" (lambda () (interactive) (dired-smart-shell-command "s"))
+        :desc "Size information" "s"
+                (lambda () (interactive) (dired-smart-shell-command "s"))
         :desc "Symlink to this" "l" 'dired-do-symlink
-        :desc "Open image-dired" "i" 'image-dired
-                ;(lambda () (interactive) (image-dired buffer-file-name))
+        :desc "Open image-dired" "i"
+                (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
         )
   (map! :map wdired-mode-map
@@ -420,6 +426,9 @@ Version 2019-11-04 2021-02-16"
         )
 
   )
+
+(use-package! dired-icon
+  :hook dired-mode)
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)

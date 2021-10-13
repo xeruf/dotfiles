@@ -52,14 +52,18 @@
 (package! emms)
 
 (unpin! org-journal)
+(package! ox-context
+  :recipe (:host github :repo "Jason-S-Ross/ox-context"))
 
+(package! evil-tutor) ; dark vim tutor
 (package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
 ;(package! evil-better-visual-line) ; not sure if this actually helps
 (package! visual-fill-column) ; Soft line wrapping at character count
 
+(package! dired-icon)
+
 (package! activity-watch-mode)
-(package! evil-tutor)
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
