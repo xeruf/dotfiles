@@ -34,7 +34,7 @@ let g:firenvim_config = {
                 \ div[role="textbox"]:not([aria-label="Search"])',
             \ 'takeover': 'always',
         \ },
-        \ '.*mail\.protonmail\.com.*':  { 'priority': 9, 'takeover': 'once', },
+        \ '.*mail\.protonmail\.com.*':  { 'priority': 9, 'takeover': 'empty', },
         \ '.*twitter\.com.*':           { 'priority': 9, 'takeover': 'once', },
         \ '.*openstreetmap\.org.*':     { 'priority': 9, 'takeover': 'once', },
         \ '.*discord\.com.*':           { 'priority': 9, 'takeover': 'once', },

@@ -36,7 +36,8 @@ and configuration for ~less~ and ~fzf~.
 - dotfiles :: yadm
   : yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
 - aur recommendations :: tldr++ sc-im
-- personal aur utils :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git
+- personal aur utils :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks
+- git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - experiments :: kakoune
 ** Applications
 - productivity :: activitywatch-bin
@@ -45,9 +46,10 @@ and configuration for ~less~ and ~fzf~.
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle
-- music production :: lilypond lilypond-docs timidity++ chordpro-git
+- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore
+- video :: vlc kdenlive
 - kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
-- office :: emacs texlive-core texlive-latexextra libreoffice-fresh
+- office :: emacs texlive-core texlive-latexextra libreoffice-fresh context-bin
 - hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight
   : scu enable --now redshift

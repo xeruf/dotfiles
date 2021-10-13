@@ -3,6 +3,8 @@ export MUSIC="$DATA/music"
 export AUDIO="$DATA/audio"
 MUSIC_RAW="$AUDIO/songs/_raw"
 
+alias scbra='scpr zebra "/srv/funkwhale/data/music${PWD/$MUSIC}"'
+
 findsongs() {
 	find -regextype posix-extended -maxdepth 1 -type f -regex "${1:-.*\.(mp3|flac|wav|m4a)}" -printf "%P\n"
 }
