@@ -3,39 +3,25 @@ section() { printf "\n[1m[4m$1[0m\n"; }
 highlight() { printf "[1m[3m$1[0m\n"; }
 
 ## System
-### TODO move to sysyadm
 section "System"
-
-highlight "Enable REISUB and increase watch limit for Intellij & co"
-echo "kernel.sysrq=1" | sudo tee /etc/sysctl.d/60-sysrq.conf
-echo "fs.inotify.max_user_watches=800000" | sudo tee /etc/sysctl.d/60-max-user-watches.conf
-sudo sysctl --system
 
 highlight "Default sudoers configuration"
 echo 'Defaults	editor=/usr/bin/nvim
-Defaults env_keep="EDITOR"' | sudo tee /etc/sudoers.d/editor
-echo -e "Defaults	timestamp_timeout=120\nDefaults	passwd_timeout=30" | sudo tee /etc/sudoers.d/timeout
+Defaults        env_keep="EDITOR"' |
+  sudo tee /etc/sudoers.d/editor
+echo 'Defaults	timestamp_timeout=120
+Defaults	passwd_timeout=30' |
+  sudo tee /etc/sudoers.d/timeout
 highlight "password-free reboot"
-echo "$USER ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /usr/sbin/reboot, /sbin/poweroff, /usr/sbin/shutdown" | sudo tee /etc/sudoers.d/shutdown
-
-highlight "Reduce system startup & shutdown timeout"
-sudo mkdir -p /etc/systemd/system.conf.d /etc/systemd/user.conf.d
-echo "[Manager]
-DefaultTimeoutStartSec=5s
-DefaultTimeoutStopSec=10s" | sudo tee /etc/systemd/system.conf.d/boot.conf /etc/systemd/user.conf.d/boot.conf
+echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown" |
+  sudo tee /etc/sudoers.d/shutdown
 
 highlight "Default to current user in tty1,2,3"
 sudo mkdir -p /etc/systemd/system/getty@tty1.service.d /etc/systemd/system/getty@tty2.service.d /etc/systemd/system/getty@tty3.service.d
 echo "[Service]
 ExecStart=
-ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" | sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
-
-highlight '/etc/locale.conf'
-echo 'LANG=en_IE.UTF-8
-LANGUAGE=en_IE.UTF-8
-LC_ALL=en_IE.UTF-8
-LC_MONETARY=de_DE.UTF-8
-LC_COLLATE=C' | sudo tee /etc/locale.conf
+ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" |
+  sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
 ## Hardware
 section 'Hardware'
@@ -97,6 +83,6 @@ highlight "Mixxx symlinks"
 mkdir -p ~/.mixxx
 ln -s -t ~/.mixxx ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
 
-highlight "Setup kakoune for plugins"
+highlight "Setup kakoune plugin loader"
 plugkak="${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"
-! test -d "$plugkak" && mkdir -p "$(dirname $plugkak)" && git clone https://github.com/robertmeta/plug.kak.git "$plugkak"
+test -d "$plugkak" || { mkdir -p "$(dirname $plugkak)" && git clone https://github.com/robertmeta/plug.kak.git "$plugkak"; }

@@ -12,7 +12,7 @@ yc() {
   yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder"
 }
 
-alias sysyadm="sudo yadm -Y /etc/yadm"
+alias sysyadm="yadm --yadm-dir /etc/yadm --yadm-data /etc/yadm"
 alias sysinit="sysyadm init -b main -w /; sysyadm gitconfig include.path '$XDG_CONFIG_HOME/git/config'"
 sy() {
   unignore="/etc/yadm/unignore"

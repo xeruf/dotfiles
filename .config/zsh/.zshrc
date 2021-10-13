@@ -153,6 +153,7 @@ unsetopt CASE_GLOB
 setopt pipefail
 
 # Enable zmv (see ZSHCONTRIB(1))
+alias szmv='sudo zsh -c autoload zmv && zmv'
 autoload zmv
 alias zmv='noglob zmv'
 alias zmw='noglob zmv -W'

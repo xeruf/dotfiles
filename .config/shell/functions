@@ -249,15 +249,6 @@ killJava() {
 
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 
-# Swap the names of two files
-swap() {
-	test $# -eq 2 || exit 1
-	mv -n $1 $1.tmp
-	mv -n $2 $1
-	mv -n $1.tmp $2
-}
-
-
 alias f="noglob fdd"
 fdd() { $(which fd >/dev/null && echo fd || echo fdfind) --color=always --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
 compdef f=fd
@@ -269,6 +260,14 @@ which perl-rename >/dev/null && alias lowercase="perl-rename '$lowercase_transli
 
 alias move='rsync --recursive --progress --human-readable --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
+
+# Swap the names of two files
+swap() {
+	test $# -eq 2 || exit 1
+	mv -n $1 $1.tmp
+	mv -n $2 $1
+	mv -n $1.tmp $2
+}
 
 # mv with automatic sudo if neccessary
 smv() {
