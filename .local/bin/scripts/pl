@@ -1,15 +1,18 @@
 #!/bin/sh
-# Playlist utilities
+# Playlist management
 # optdepends: highlight python
 # env: MUSIC
 test $# -gt 0 && command=$1 && shift
+test "$1" = '-v' && verbose='true' && shift || verbose='false'
 case $command in
   (update)
     for pl; do
       highlight $pl
       cat $pl | rev | cut -d'/' -f-2 | rev | while read f; do
+          $verbose && printf "\e[31;1mSearching for '$f'\e[0m\n" >&2
           test -n "$f" || continue
           newpath="$(find $MUSIC -path "*${f#*../}" -prune | grep . || find $MUSIC -path "*${f##* - }" -o -path "*${f##*/}" | grep -m 1 .)"
+          $verbose && printf "\e[31;1mFound '$newpath'\e[0m\n" >&2
           test -n "$newpath" && realpath --relative-to $(dirname "$pl") "$newpath" || echo "$f"
         done | tee $pl
     done;;
