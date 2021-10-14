@@ -343,6 +343,9 @@ Version 2019-11-04 2021-02-16"
         org-ascii-text-width 999999
         )
 
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines))
+  (require 'ox-latex)
   (add-to-list 'org-latex-classes
        '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
           ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -351,9 +354,6 @@ Version 2019-11-04 2021-02-16"
           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
           ("\\paragraph{%s}" . "\\paragraph*{%s}")
           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-  (require 'ox-extra)
-  (ox-extras-activate '(ignore-headlines))
 )
 ;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
 ;; Fix xdg-open after setting process-connection-type
@@ -406,8 +406,9 @@ Version 2019-11-04 2021-02-16"
 
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
+        :n "r" 'ranger
         :leader
-        :desc "Dragon marks" "d"
+        :desc "Dragon marked files" "d"
                 (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
@@ -417,11 +418,13 @@ Version 2019-11-04 2021-02-16"
         :desc "Open image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
-        )
-  (map! :map wdired-mode-map
+        :desc "Start ranger" "r" 'ranger
+        :map wdired-mode-map
         :n "RET" (lambda () (interactive) (progn
                                              (wdired-exit)
                                              (dired-find-file-dwim)))
+        :map ranger-mode-map
+        :n "r" 'ranger
         )
 
   )
