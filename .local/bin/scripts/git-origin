@@ -1,9 +1,11 @@
 #!/bin/sh -e
 # set repo as origin and set all branches upstream to a corresponding remote branch, if available
-git remote remove origin 2>/dev/null
-git remote add origin $(git-repo "$@")
+git remote $(case "$(git remote)" in
+  (*origin*) echo set-url;;
+  (*) echo add;;
+esac) origin "$(git-repo "$@")"
 git remote -v && git fetch
 
-git branch | sed 's/ //g' | sed 's/*//' | while read branch
+git branch --format='%(refname:short)' | while read branch
 do test $(git branch -a | grep origin/$branch | wc -l) -gt 0 && git branch -u origin/$branch $branch
 done

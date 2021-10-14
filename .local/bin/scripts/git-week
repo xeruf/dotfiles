@@ -1,4 +1,4 @@
 #!/bin/sh
 # Commits by myself throughout the current week
-# Depends on git-my alias listing commits by myself
+# depends: git-my alias - listing own commits
 git my --after "$(date -d "Mon ${1:-1} weeks ago")" --before "$(date -d "Mon $(expr ${1:-1} - 1) weeks ago")" "${@:2}"

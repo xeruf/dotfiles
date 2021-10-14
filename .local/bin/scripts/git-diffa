@@ -1,0 +1,3 @@
+#!/bin/sh
+# Diff given files against all branches
+git for-each-ref --format='%(refname:short)' | while read branch; do { highlight $branch && git diff --color=always $branch..HEAD "$@"; }; done | less
