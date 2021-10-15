@@ -110,8 +110,8 @@ alias syslog='less +F /var/log/syslog'
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 scs() {
-	systemctl --user status "$1" "*$1*" ||
-		sudo systemctl status "$1" "*$1*"
+	systemctl --user status "*$1*" ||
+		sudo systemctl status "*$1*"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
@@ -144,16 +144,6 @@ blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo
 # Remote
 alias delta="sc restart openvpn-client@deltaPeak.service"
 alias sshl="lemonade server -allow 127.0.0.1 & ssh -R 2489:127.0.0.1:2489"
-
-# locate roughly
-loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | less -F }
-alias loc='noglob loci'
-alias uloc='noglob sudo updatedb && loci'
-# locate exactly
-locei() { locate --all --basename "\\$1" "$@" | less -F }
-alias loce='noglob locei'
-# locate all
-alias loca='noglob sudo updatedb --prunenames "" /var/lib/mlocate/all.db && loci --database ""'
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
@@ -290,6 +280,11 @@ mvln() {
 	fi
 	[ $file -gt 0 -a -d $2 ] && 2="$2/$(basename $1)"
 	ln -vsr "$2" "$1"
+}
+
+# Create directory and move into it
+mkcd() {
+	mkdir -p "$1" && cd "$1"
 }
 
 # Other stuff {{{1

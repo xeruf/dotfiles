@@ -24,10 +24,7 @@ cl() {
   ls --almost-all --group-directories-first --file-type
 }
 
-mkcd() {
-  mkdir -p "$1" && cd "$1"
-}
-
+# cd but search for data dirs and ls in new dir
 cd() {
   if test -d "$DATA" && test "$1" != "-" -a ! -d "$1" -a $# -eq 1
   then
@@ -38,6 +35,16 @@ cd() {
     command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
   fi
 }
+
+# LOCATE
+loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fzf --reverse --height=30% }
+alias loc='noglob loci'
+alias uloc='noglob sudo updatedb && loci'
+# locate exactly
+locei() { locate --all --basename "\\$1" "$@" | fzf --reverse --height=30% }
+alias loce='noglob locei'
+# locate all
+alias loca='noglob sudo updatedb --prunenames "" /var/lib/mlocate/all.db && loci --database ""'
 
 # ZOXIDE
 alias c=z
