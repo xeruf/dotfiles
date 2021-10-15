@@ -74,6 +74,7 @@ alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
 alt-bspace:execute(gio trash {})
 double-click:execute(xdg-open {})
 ctrl-a:select-all
+ctrl-k:kill-line
 alt-a:select-all
 alt-c:yank
 alt-w:toggle-preview-wrap

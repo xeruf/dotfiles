@@ -23,6 +23,9 @@ ExecStart=
 ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" |
   sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
+sysyadm clone git.jfischer.org:xeruf/etc.git
+sudo chown -R janek /etc/yadm
+
 ## Hardware
 section 'Hardware'
 

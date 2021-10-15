@@ -48,6 +48,7 @@ let g:firenvim_config = {
         \ '.*cloud\.atomtoast\.xyz.*':  { 'priority': 9, 'takeover': 'never', },
         \ 'https://bigbluebutton.*':    { 'priority': 9, 'takeover': 'never', },
         \ 'https://dhall-lang.org.*':   { 'priority': 9, 'takeover': 'never', },
+        \ 'https://aur.archlinux.org/acount.*': { 'priority': 9, 'takeover': 'never', },
         \
         \ '.*stackexchange\.com.*':     { 'priority': 9, 'takeover': 'never', },
         \ '.*stackoverflow\.com.*':     { 'priority': 9, 'takeover': 'never', },
