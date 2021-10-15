@@ -96,6 +96,19 @@ Version 2019-11-04 2021-02-16"
       "C-="     'doom/reset-font-size
       "C-+"     'doom/increase-font-size
       "C--"     'doom/decrease-font-size
+      :leader
+      "Se"      '+snippets/edit
+      "Sm"      'smerge-mode
+      :map smerge-mode-map
+      :leader
+      "Ss"      'smerge-next
+      "Sn"      'smerge-next
+      "Sp"      'smerge-prev
+      "Sr"      'smerge-resolve
+      "SR"      'smerge-refine
+      "Su"      'smerge-keep-upper
+      "Si"      'smerge-keep-current
+      "So"      'smerge-keep-lower
       )
 
 ;;;; GLOBAL SETUP
