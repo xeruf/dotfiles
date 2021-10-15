@@ -2,4 +2,4 @@
 # name: Add Org Roam tags
 # key: +t
 # --
-#+roam_tags:
+#+filetags:

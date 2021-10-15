@@ -2,4 +2,4 @@
 # name: Tag roam file as person
 # key: +person
 # --
-#+roam_tags: person
+#+filetags: :person:
