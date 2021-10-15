@@ -31,7 +31,7 @@ and configuration for ~less~ and ~fzf~.
 # Use org-yank-visible
 - essentials :: git zsh bat neovim man-db texinfo
 - basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
-- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib pass youtube-dl
+- common tools :: ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] zsh-doc glances pacman-contrib pass youtube-dl libcaca light
 - ssh :: openssh sshfs lemonade-git
 - dotfiles :: yadm
   : yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
@@ -44,6 +44,7 @@ and configuration for ~less~ and ~fzf~.
 - music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc
   : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpd-mpris
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
+- tagging :: puddletag beets picard ffmpegthumbnailer
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore
