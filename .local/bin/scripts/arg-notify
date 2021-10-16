@@ -1,0 +1,3 @@
+#!/bin/sh
+# To test args passed from some graphical program
+notify-send "$(arg-test "$@")"
