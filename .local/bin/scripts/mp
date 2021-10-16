@@ -1,20 +1,29 @@
-#!/bin/sh -e
+#!/bin/sh
 # Play given files on mpd, enabling playing of external files through symlinking and recursively resolving playlists
 # depends: xargs mpc realpath
 # env: MUSIC
-links="$MUSIC/links"
-test "$1" = "-r" || next=true
+PLAYLISTS="$MUSIC/Playlists"
+LINKS="$MUSIC/links"
+test "$1" = "-q" && quiet=-q && shift
+test "$1" = "-v" && verbose=-v && shift
+test "$1" = "-r" && shift || next=true
 { for arg;
-do path="$(test -e "$MUSIC/$arg" && echo "$MUSIC/$arg" || realpath "$arg")"
+do path="$(test -e "$arg" && realpath "$arg" ||
+    ( test -e "$MUSIC/$arg" && realpath "$MUSIC/$arg") ||
+    ( test -e "$PLAYLISTS/$arg" && realpath "$PLAYLISTS/$arg") )"
+  test -n "$verbose" && echo "Scanning path '$path' from '$arg'" >&2
   test -n "$path" || continue
   if file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$" >/dev/null
-  then pushd "$(dirname "$path")" >/dev/null && cat "$path" | xargs --delim='\n' play -r && popd >/dev/null
+  then pushd "$(dirname "$path")" >/dev/null && cat "$path" | xargs --delim='\n' "$0" $verbose -r && popd >/dev/null
   else
     find "$path" -name "*.flac" -o -name "*.mp3" | while read file
       do case "$path" in
         ($MUSIC/*) echo "${file/$MUSIC\/}";;
-        (*) mkdir -p "$links" && ln -fs "$file" "$links/$(basename "$file")" && echo "links/$(basename "$file")";;
+        (*) mkdir -p "$LINKS" && ln -fs "$file" "$LINKS/$(basename "$file")" && echo "${LINKS#$MUSIC/}/$(basename "$file")";;
       esac done
   fi
-done && mpc update --wait -q; } | xargs --delim='\n' mpc insert
-test "$next" && test "$(mpc status | wc -l)" -gt 1 || mpc play -q && mpc next
+done && mpc -q update --wait; } | xargs --delim='\n' mpc insert
+
+if test "$next"
+then test $(mpc status | wc -l) -gt 1 && mpc $quiet next || mpc $quiet play
+fi
