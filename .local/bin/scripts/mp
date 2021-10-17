@@ -1,6 +1,6 @@
 #!/bin/sh
 # Play given files on mpd, enabling playing of external files through symlinking and recursively resolving playlists
-# depends: xargs mpc realpath
+# depends: xargs realpath mpc
 # env: MUSIC
 MUSIC="${MUSIC:-$(cat ${XDG_CONFIG_HOME:-$HOME/.config}/mpd/mpd.conf | grep music_directory | cut -d'"' -f2 | sed "s|~|$HOME|")}"
 PLAYLISTS="$MUSIC/Playlists"
@@ -31,5 +31,5 @@ else
   { "$0" -r "$@" && mpc -q update --wait; } | #>/tmp/mp 2>&1
     xargs --delim='\n' mpc insert
   mpc ${quiet:-$next} play
-  test -n "$next" && mpc $quiet next
+  test -z "$next" || mpc $quiet next
 fi

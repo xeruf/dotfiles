@@ -1,5 +1,7 @@
+export DATA="$(test -d $HOME/data && echo $HOME/data || echo $HOME/daten)"
+export MUSIC="$DATA/music"
+
 # xdg
-export DATA="$HOME/data"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.local/cache"

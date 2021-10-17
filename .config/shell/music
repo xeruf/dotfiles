@@ -1,5 +1,3 @@
-export DATA="$(test -d $HOME/data && echo $HOME/data || echo $HOME/daten)"
-export MUSIC="$DATA/music"
 export AUDIO="$DATA/audio"
 MUSIC_RAW="$AUDIO/songs/_raw"
 
