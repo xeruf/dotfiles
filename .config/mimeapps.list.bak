@@ -1,0 +1,45 @@
+[Added Associations]
+application/pdf=okularApplication_pdf.desktop;
+application/xhtml+xml=firefox.desktop;
+audio/mp4=vlc.desktop;
+audio/mpeg=mpd.desktop;
+audio/x-mpegurl=mpd.desktop;
+audio/x-opus+ogg=mpd.desktop;
+image/jpeg=org.kde.showfoto.desktop;
+image/png=org.kde.showfoto.desktop;
+image/svg+xml=gimp.desktop;org.kde.showfoto.desktop;
+inode/directory=org.kde.dolphin.desktop;puddletag.desktop;
+text/html=firefox.desktop;
+text/markdown=nvim.desktop;
+text/plain=nvim.desktop;
+text/x-log=nvim.desktop;
+video/mp4=vlc.desktop;
+x-scheme-handler/http=firefox.desktop;
+x-scheme-handler/https=firefox.desktop;
+x-scheme-handler/tg=userapp-Telegram Desktop-0XHJX0.desktop;
+
+[Default Applications]
+application/xhtml+xml=firefox.desktop;
+audio/mpeg=mpd.desktop;
+audio/x-mpegurl=mpd.desktop;
+audio/x-opus+ogg=mpd.desktop;
+image/png=org.kde.showfoto.desktop;
+image/svg+xml=org.kde.showfoto.desktop;
+inode/directory=org.kde.dolphin.desktop;
+text/html=firefox.desktop;
+text/markdown=nvim.desktop;
+text/plain=nvim.desktop;
+text/x-log=nvim.desktop;
+x-scheme-handler/ferdi=ferdi.desktop
+x-scheme-handler/http=firefox.desktop;
+x-scheme-handler/https=firefox.desktop;
+x-scheme-handler/jitsi-meet=Jitsi Meet.desktop
+x-scheme-handler/notion=Notion.desktop
+x-scheme-handler/sgnl=signal.desktop
+x-scheme-handler/slack=slack.desktop
+x-scheme-handler/tg=userapp-Telegram Desktop-0XHJX0.desktop
+x-scheme-handler/x-realm-cloud=realm-studio.desktop
+x-scheme-handler/x-realm-studio=realm-studio.desktop
+x-scheme-handler/signalcaptcha=signal.desktop
+x-scheme-handler/discord-610508934456934412=discord-610508934456934412.desktop
+x-scheme-handler/gdlauncher=GDlauncher.desktop

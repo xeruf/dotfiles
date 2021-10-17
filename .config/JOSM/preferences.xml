@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='18193'>
   <tag key='cache.capabilities1637351842' value='1633952155'/>
-  <tag key='cache.motd.html' value='1633952156'/>
+  <tag key='cache.motd.html' value='1634455414'/>
   <tag key='cache.motd.html.java' value='11.0.12'/>
   <tag key='cache.motd.html.lang' value='En:'/>
   <tag key='cache.motd.html.version' value='18193'/>
   <tag key='changeset.lastHeight' value='0'/>
   <tag key='changesetdialog.lastHeight' value='0'/>
   <tag key='commandstack.lastHeight' value='0'/>
-  <tag key='conflict.lastHeight' value='0'/>
+  <tag key='conflict.lastHeight' value='119'/>
+  <tag key='conflict.visible' value='true'/>
   <tag key='download.osm.notes' value='true'/>
-  <tag key='draw.rawgps.lines' value='-1'/>
   <list key='file-open.history'>
+    <entry value='/home/janek/data/2-standards/osm/BY-bayreuth.osm'/>
+    <entry value='/home/janek/data/2-standards/osm/tracks/rec/2021-10-07_11-21_Thu BT-ER.gpx'/>
     <entry value='/home/janek/data/2-standards/osm/BY-haeusling.osm'/>
+    <entry value='/home/janek/data/2-standards/osm/SN-dd-ch.osm'/>
+    <entry value='/home/janek/data/2-standards/osm/SN-heyda.osm'/>
+    <entry value='/home/janek/data/2-standards/osm/SN-saxony.jos'/>
+    <entry value='/home/janek/data/2-standards/osm/SN-vogtland.osm'/>
+    <entry value='/home/janek/data/2-standards/osm/tracks/rec/2021-07-31_06-40_Sat_Hof-Auerbach.gpx'/>
     <entry value='/home/janek/data/2-standards/osm/BY-forchheim.osm'/>
-    <entry value='/home/janek/data/2-standards/osm/BY-siegritz.osn'/>
     <entry value='/home/janek/data/2-standards/osm/BY-siegritz.osm'/>
+    <entry value='/home/janek/data/2-standards/osm/BY-siegritz.osn'/>
     <entry value='/home/janek/data/2-standards/osm/haeusling.osm'/>
   </list>
   <tag key='filter.lastHeight' value='0'/>
@@ -179,7 +186,7 @@
   <tag key='iodb.modify.toolbar' value='false'/>
   <tag key='josm.version' value='18193'/>
   <tag key='lastDirectory' value='/home/janek/data/2-standards/osm'/>
-  <tag key='layerlist.lastHeight' value='113'/>
+  <tag key='layerlist.lastHeight' value='124'/>
   <tag key='mappaint.renderer-class-name' value='org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer'/>
   <list key='mappaint.style.known-defaults'>
     <entry value='resource://styles/standard/elemstyles.mapcss'/>
@@ -204,7 +211,7 @@
     <entry value='/home/janek/.local/cache/JOSM/images/mirror_https___geoportal.bayern.de_bayernatlas_favicon_favicon-32x32.png'/>
   </list>
   <list key='mirror.https://josm.openstreetmap.de/maps'>
-    <entry value='1633952158010'/>
+    <entry value='1634455415579'/>
     <entry value='/home/janek/.local/cache/JOSM/mirror_https___josm.openstreetmap.de_maps'/>
   </list>
   <list key='mirror.https://josm.openstreetmap.de/proj/BETA2007.gsb'>
@@ -219,7 +226,7 @@
     <entry value='1633952185297'/>
     <entry value='/home/janek/.local/cache/JOSM/mirror_https___josm.openstreetmap.de_tested'/>
   </list>
-  <tag key='notes/note_open.lastHeight' value='163'/>
+  <tag key='notes/note_open.lastHeight' value='167'/>
   <tag key='notes/note_open.visible' value='true'/>
   <tag key='oauth.access-token.key' value='YGtDqRUspIjinRFJwYJhzSDbOWSHeCfJRYsstgtu'/>
   <tag key='oauth.access-token.secret' value='DqACmTu5PcW1k94TrGZIF4XaPqbUy2SMxPTyjcEa'/>
@@ -228,10 +235,10 @@
   <tag key='org.openstreetmap.josm.gui.dialogs.properties.TagEditHelper$EditTagDialog.geometry' value='x=814,y=428,width=801,height=210'/>
   <tag key='org.openstreetmap.josm.gui.download.DownloadDialog.geometry' value='x=460,y=233,width=1000,height=600'/>
   <tag key='org.openstreetmap.josm.gui.help.HelpBrowser.geometry' value='x=0,y=-13,width=960,height=1093'/>
-  <tag key='org.openstreetmap.josm.gui.io.UploadDialog.geometry' value='x=539,y=234,width=800,height=600'/>
+  <tag key='org.openstreetmap.josm.gui.io.UploadDialog.geometry' value='x=386,y=330,width=800,height=600'/>
   <tag key='org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard.geometry' value='x=590,y=314,width=739,height=438'/>
   <tag key='org.openstreetmap.josm.gui.preferences.PreferenceDialog.geometry' value='x=610,y=137,width=1001,height=811'/>
-  <tag key='osm-download.bounds' value='49.5724186;11.0151732;49.5970445;11.0207243'/>
+  <tag key='osm-download.bounds' value='49.8855247;11.5593646;49.9215791;11.5865082'/>
   <tag key='osm-server.upload-strategy' value='singlerequest'/>
   <tag key='pluginmanager.lastupdate' value='1633635790869'/>
   <tag key='pluginmanager.version' value='18193'/>
@@ -252,18 +259,6 @@
   <tag key='preferences.reset.draw.rawgps.lines' value='true'/>
   <tag key='progressdialog.size' value='229'/>
   <list key='properties.recent-tags'>
-    <entry value='service'/>
-    <entry value='alley'/>
-    <entry value='surface'/>
-    <entry value='asphalt'/>
-    <entry value='payment:cash'/>
-    <entry value='only'/>
-    <entry value='vending'/>
-    <entry value='food'/>
-    <entry value='vending'/>
-    <entry value='eggs;meat;cheese;snacks;food'/>
-    <entry value='name'/>
-    <entry value='Leon&apos;s frische Eier'/>
     <entry value='shop'/>
     <entry value='farm'/>
     <entry value='description'/>
@@ -312,13 +307,26 @@
     <entry value='yes'/>
     <entry value='access'/>
     <entry value='no'/>
+    <entry value='width'/>
+    <entry value='1'/>
+    <entry value='amenity'/>
+    <entry value='lounger'/>
+    <entry value='drinking_water'/>
+    <entry value='yes'/>
+    <entry value='highway'/>
+    <entry value='track'/>
+    <entry value='bicycle'/>
+    <entry value='no'/>
+    <entry value='url'/>
+    <entry value='https://www.bogenschiessen-hummeltal.de/training/'/>
   </list>
-  <tag key='propertiesdialog.lastHeight' value='221'/>
+  <tag key='propertiesdialog.lastHeight' value='216'/>
   <tag key='relationlist.lastHeight' value='0'/>
   <tag key='relationlist.visible' value='false'/>
-  <tag key='selectionlist.lastHeight' value='105'/>
-  <tag key='sourcetag.value' value='extrapolation'/>
-  <tag key='toggleDialogs.width' value='712'/>
+  <tag key='selectionlist.lastHeight' value='113'/>
+  <tag key='simplify-way.max-error' value='2.0'/>
+  <tag key='sourcetag.value' value='Yahoo'/>
+  <tag key='toggleDialogs.width' value='716'/>
   <list key='toolbar'>
     <entry value='open'/>
     <entry value='save'/>
@@ -355,17 +363,17 @@
   </list>
   <tag key='turnlanes.png.lastHeight' value='0'/>
   <list key='upload.comment.history'>
-    <entry value='Construction site in forest of Reuth'/>
+    <entry value='Track around SC Hummeltal'/>
     <entry value=''/>
-    <entry value='Paths to Forchheim'/>
   </list>
-  <tag key='upload.comment.last-used' value='1633952841'/>
+  <tag key='upload.comment.last-used' value='1634470139'/>
   <list key='upload.source.history'>
     <entry value='survey'/>
   </list>
   <tag key='userlist.lastHeight' value='0'/>
-  <tag key='validator.lastHeight' value='163'/>
+  <tag key='validator.lastHeight' value='20'/>
+  <tag key='validator.minimized' value='true'/>
   <tag key='validator.visible' value='true'/>
   <tag key='wikidata.lastHeight' value='0'/>
-  <tag key='wikipedia.lastHeight' value='162'/>
+  <tag key='wikipedia.lastHeight' value='168'/>
 </preferences>

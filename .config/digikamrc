@@ -81,10 +81,10 @@ TreeView Font=Noto Sans,11,-1,5,50,0,0,0,0,0
 Update Type=0
 
 [AlbumFolderView Sidebar]
-CurrentIndex=1
-Expansion=0,1,2,23,24,25,49,50,57,313,59,64
+CurrentIndex=344
+Expansion=0,1,2,23,24,344,345,57,59,50
 RestoreChecked=false
-Selection=1
+Selection=344
 SortColumn=0
 SortOrder=0
 
@@ -105,9 +105,9 @@ Sync Baloo to Digikam=false
 Sync Digikam to Baloo=false
 
 [Batch Queue Manager Settings]
-BqmBottomSplitter=AAAA/wAAAAEAAAAC//////////8B/////wEAAAABAA==
-BqmTopSplitter=AAAA/wAAAAEAAAAD////////////////Af////8BAAAAAQA=
-BqmVerticalSplitter=AAAA/wAAAAEAAAAC//////////8B/////wEAAAACAA==
+BqmBottomSplitter=AAAA/wAAAAEAAAACAAAAtQAAAKEB/////wEAAAABAA==
+BqmTopSplitter=AAAA/wAAAAEAAAADAAAAkQAAAK8AAACaAf////8BAAAAAQA=
+BqmVerticalSplitter=AAAA/wAAAAEAAAACAAAAsQAAALEB/////wEAAAACAA==
 eDP-1 XPosition 1920x1080=0
 eDP-1 YPosition 1920x1080=0
 
@@ -133,7 +133,7 @@ EnableCM=true
 GamutCheckMaskColor=126,255,255
 LastMismatchBehavior=2049
 LastMissingProfileBehavior=2050
-LastSpecifiedAssignProfile=
+LastSpecifiedAssignProfile[$e]=/usr/share/digikam/profiles/
 LastSpecifiedInputProfile=
 LastUncalibratedBehavior=2080
 ManagedPreviews=true
@@ -823,7 +823,7 @@ tagPaths=1
 
 [Database Settings]
 Database Connectoptions=
-Database Encrypted Password=AwIdHR0=
+Database Encrypted Password=AwJeXl4=
 Database Hostname=
 Database Name=/home/janek/data/images/
 Database Name Face=/home/janek/data/images/
@@ -1102,7 +1102,7 @@ Selection=
 Sort Order=0
 SortColumn=0
 SortOrder=0
-SplitterState=AAAA/wAAAAEAAAAC//////////8B/////wEAAAACAA==
+SplitterState=AAAA/wAAAAEAAAACAAABzwAAAI0B/////wEAAAACAA==
 
 [GPS Search Sidebar][GPSSearch Map Widget]
 Backend=marble
@@ -1157,6 +1157,7 @@ Use Trash=true
 Version=7.3.0
 eDP-1 Height 1920x1080=1036
 eDP-1 Width 1920x1080=1920
+eDP-1 Window-Maximized 1920x1080=true
 eDP-1 XPosition 1920x1080=0
 eDP-1 YPosition 1920x1080=44
 
@@ -1433,7 +1434,7 @@ Clear On Close=false
 FullScreen Hide SideBars=false
 FullScreen Hide StatusBar=false
 FullScreen Hide ToolBars=false
-Horizontal Splitter State=AAAA/wAAAAEAAAAD////////////////Af////8AAAAAAQE=
+Horizontal Splitter State=AAAA/wAAAAEAAAADAAABoQAAAG0AAAGhAf////8AAAAAAQE=
 Navigate By Pair=false
 Show Thumbbar=true
 eDP-1 XPosition 1920x1080=0
@@ -1446,7 +1447,7 @@ FileProperties Expanded=true
 ItemProperties Expanded=true
 Minimized=true
 PhotographProperties Expanded=true
-RestoreSize=-1
+RestoreSize=33
 VideoProperties Expanded=true
 
 [LightTable Settings][Left Sidebar][Captions Tags Properties Tab]
@@ -1525,7 +1526,7 @@ FileProperties Expanded=true
 ItemProperties Expanded=true
 Minimized=true
 PhotographProperties Expanded=true
-RestoreSize=-1
+RestoreSize=32
 VideoProperties Expanded=true
 
 [LightTable Settings][Right Sidebar][Captions Tags Properties Tab]
@@ -1598,9 +1599,9 @@ Version Properties Tab=versions
 Version Properties View Mode=2
 
 [MainWindow]
-InitialAlbumID=1
+InitialAlbumID=344
 SplitterState=AAAA/wAAAAEAAAADAAABTwAABckAAAAAAf////8AAAAAAQE=
-ThumbbarState=AAAA/wAAAAD9AAAAAQAAAAIAAAXJAAAAxPwBAAAAAfsAAAAmAG0AYQBpAG4AdwBpAG4AZABvAHcAXwB0AGgAdQBtAGIAYgBhAHIAAAAAAAAABckAAABxAQAAAwAABckAAAKzAAAABAAAAAQAAAAIAAAACPwAAAAA
+ThumbbarState=AAAA/wAAAAD9AAAAAQAAAAIAAAXJAAAAxPwBAAAAAfsAAAAmAG0AYQBpAG4AdwBpAG4AZABvAHcAXwB0AGgAdQBtAGIAYgBhAHIAAAAAAAAABckAAABxAQAAAwAABckAAAN4AAAABAAAAAQAAAAIAAAACPwAAAAA
 
 [Metadata Settings]
 Clear Metadata If Rescan=false

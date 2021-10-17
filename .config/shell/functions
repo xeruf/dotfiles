@@ -110,12 +110,13 @@ alias syslog='less +F /var/log/syslog'
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 scs() {
-	systemctl --user status "*$1*" ||
-		sudo systemctl status "*$1*"
+	systemctl --user status "*$1*" "$1" ||
+		sudo systemctl status "*$1*" "$1"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
 
+# Restart matching systemctl service
 scb() {
 	systemctl --user stop -T "$1"
 	sudo systemctl stop -T "$1"

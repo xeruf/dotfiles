@@ -35,9 +35,11 @@ let g:firenvim_config = {
             \ 'takeover': 'always',
         \ },
         \ '.*mail\.protonmail\.com.*':  { 'priority': 9, 'takeover': 'empty', },
+        \ '.*discord\.com.*':           { 'priority': 9, 'takeover': 'once', },
         \ '.*twitter\.com.*':           { 'priority': 9, 'takeover': 'once', },
         \ '.*openstreetmap\.org.*':     { 'priority': 9, 'takeover': 'once', },
-        \ '.*discord\.com.*':           { 'priority': 9, 'takeover': 'once', },
+        \ '.*openstreetmap\.de.*':      { 'priority': 9, 'takeover': 'once', },
+        \ '.*github\.com.*':            { 'priority': 9, 'takeover': 'once', },
         \
         \ '.*wikipedia\.org.*':         { 'priority': 9, 'takeover': 'never', },
         \ '.*wikidata\.org.*':          { 'priority': 9, 'takeover': 'never', },

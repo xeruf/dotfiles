@@ -7,6 +7,7 @@ $1
 :PROPERTIES:
 :Author:      ${2:+}
 :LibErlangen: https://stadtbibliothek-recherche.erlangen.de/Mediensuche/Einfache-Suche?search=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&top=y&facets=v_____Sachb%C3%BCcher%7CJugendsachbuch%7CJugendroman%7CBuch+Romane%7CSachb%C3%BCcher+Weih.%2fOst%7CSachbuch+Computer&facetsc=_____15&pagesize=20
+:LibBayreuth: https://wwwopac.stadt.bayreuth.de/de-de/Mediensuche/Einfache-Suche?search=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&top=y&pagesize=50&facets=v_____Buch+Erw.+Sachlit.%7CBuch+Jug.+erz%C3%A4hlende%7CBuch+Erw.+erz%C3%A4hlende%7CBuch+Erw.+fremdspr.%7CNoten+Erw.%7CBuch+Jugend+Sachlit.&facetsc=_____15
 :Medimops:    https://www.medimops.de/produkte-C0/?fcIsSearch=1&searchparam=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}
 :Ebay:        https://www.ebay.de/sch/i.html?_nkw=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&_sop=15
 :Amazon:      https://smile.amazon.de/s?k=${1:$(replace-regexp-in-string " " "+" yas-text)}+${2:$(replace-regexp-in-string " " "+" yas-text)}&rh=n%3A186606
