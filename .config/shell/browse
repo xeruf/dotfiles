@@ -37,11 +37,12 @@ cd() {
 }
 
 # LOCATE
-loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fzf --reverse --height=30% }
+alias fselect='fzf -0 -1 --reverse --height=30%'
+loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect }
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
 # locate exactly
-locei() { locate --all --basename "\\$1" "$@" | fzf --reverse --height=30% }
+locei() { locate --all --basename "\\$1" "$@" | fselect }
 alias loce='noglob locei'
 # locate all
 alias loca='noglob sudo updatedb --prunenames "" /var/lib/mlocate/all.db && loci --database ""'

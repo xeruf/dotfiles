@@ -18,7 +18,7 @@ then shift
     if file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$" >/dev/null
     then pushd "$(dirname "$path")" >/dev/null && cat "$path" | xargs --delim='\n' "$0" $verbose -r && popd >/dev/null
     else
-      find "$path" -name "*.flac" -o -name "*.mp3" | while read file
+      find "$path" -name "*.flac" -o -name "*.mp3" | sort | while read file
         do case "$path" in
           ($MUSIC/*) echo "${file#$MUSIC/}";;
           (*) mkdir -p "$LINKS" && ln -fs "$file" "$LINKS/$(basename "$file")" && echo "${LINKS#$MUSIC/}/$(basename "$file")";;
