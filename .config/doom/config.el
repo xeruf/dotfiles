@@ -113,14 +113,14 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; GLOBAL SETUP
 
-(setq confirm-kill-emacs nil)
+(setq confirm-kill-emacs nil
+      lazy-highlight-cleanup nil
+      large-file-warning-threshold 40000000)
 
 (setq initial-major-mode 'org-mode)
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
-
 (whitespace-mode 0)
-
-(setq lazy-highlight-cleanup nil)
+(auto-correct-mode)
 
 ;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
@@ -162,7 +162,7 @@ Version 2019-11-04 2021-02-16"
       kept-old-versions 3
       )
 
-;; Data dirs
+;; Directory configuration
 
 (defvar user-data-dir "~/data/" "Location of the main user data")
 

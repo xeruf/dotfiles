@@ -55,6 +55,9 @@
 (package! ox-context
   :recipe (:host github :repo "Jason-S-Ross/ox-context"))
 
+; https://elpa.gnu.org/packages/auto-correct.html
+(package! auto-correct)
+
 (package! evil-tutor) ; dark vim tutor
 (package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
