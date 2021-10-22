@@ -38,3 +38,4 @@ x-scheme-handler/sgnl=signal-desktop.desktop
 x-scheme-handler/signalcaptcha=signal.desktop
 x-scheme-handler/tg=userapp-Telegram Desktop-HJH4V0.desktop
 x-scheme-handler/etcher=balena-etcher-electron.desktop
+x-scheme-handler/jitsi-meet=Jitsi Meet.desktop

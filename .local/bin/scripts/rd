@@ -8,7 +8,7 @@ do
 			then echo -n "Force delete git project $f?"
 				read answer
 				test "$answer" = "y" && $elevate rm -rf "$f"
-			else find "$f" -maxdepth 1 -type d -empty -printf "Removing empty %p\n" -delete
+			else find "$f" -maxdepth 4 -type d -empty -printf "Removing empty %p\n" -delete
 				test -e "$f" && echo -n "$f " >&2 && $elevate rm -rI "$f"
 		fi
 		else $elevate rm -i "$f"

@@ -47,6 +47,8 @@ and configuration for ~less~ and ~fzf~.
   : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpd-mpris
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 - tagging :: puddletag beets picard ffmpegthumbnailer
+- sync :: syncthing
+  : systemctl enable --now syncthing
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore

@@ -46,6 +46,7 @@ let g:firenvim_config = {
         \
         \ '.*docs\.google\.com.*':      { 'priority': 9, 'takeover': 'never', },
         \ '.*contacts\.google\.com.*':  { 'priority': 9, 'takeover': 'never', },
+        \ '.*calendar\.google\.com.*':  { 'priority': 9, 'takeover': 'empty', },
         \ '.*notion\.so.*':             { 'priority': 9, 'takeover': 'never', },
         \ '.*cloud\.atomtoast\.xyz.*':  { 'priority': 9, 'takeover': 'never', },
         \ 'https://bigbluebutton.*':    { 'priority': 9, 'takeover': 'never', },
