@@ -1,7 +1,27 @@
 {
   "w&ith:": {
     "values": [
-      ""
+      "",
+      "AK",
+      "We Are All Astronauts",
+      "We Are All Astronauts feat. Sergio Diaz De Rojas",
+      "Muzzy",
+      "/home/janek/data/music/Mixes/Mashes",
+      "Hillsong United",
+      "Florence Joy",
+      "Sarah Albrecht/Dominik Laim/ICF Worship",
+      "A Billion Robots",
+      "Arion",
+      "Bossfight",
+      "Eminence & Soulero",
+      "DJVI",
+      "/home/janek/data/music/Electronic/_Youtube",
+      "/home/janek/data/music/Electronic/Liquicity/Alchemy",
+      ";",
+      " ",
+      "Mr FijiWiji, Soulero - Nebula.flac",
+      "Mr FijiWiji, Direct, & Aruna",
+      ";"
     ]
   },
   "&Output": {
@@ -48,7 +68,16 @@
       "feint",
       "hi",
       "dnb",
-      ""
+      "weare",
+      "weareelev",
+      "eleva",
+      "rival",
+      "veela",
+      "chillstep",
+      "fijiwiji",
+      "Richards",
+      "I Remember You",
+      "I Remember You"
     ]
   },
   "&Pattern": {
@@ -63,7 +92,29 @@
   },
   "&Replace": {
     "values": [
-      ""
+      "",
+      ".* & .*",
+      ".* \\& .*",
+      "AK",
+      "We Are All Astronauts",
+      "We Are All Astronauts feat. Sergio Diaz De Rojas",
+      "Muzzy",
+      "/home/janek/data/music/Mixes/Mashes",
+      "Hillsong United",
+      "Florence Joy",
+      "Sarah Albrecht/Dominik Laim/ICF Worship",
+      "A Billion Robots",
+      "Arion",
+      "Bossfight",
+      "Eminence & Soulero",
+      "DJVI",
+      "/home/janek/data/music/Electronic/_Youtube",
+      "/home/janek/data/music/Electronic/Liquicity/Alchemy",
+      " ;",
+      "  ",
+      "Mr FijiWiji, Soulero - Nebula.flac",
+      "Mr FijiWiji, Direct, & Aruna",
+      ",;"
     ]
   },
   "&Format string": {
@@ -76,6 +127,31 @@
       "Podcast",
       "https://soundcloud.com/icf-berlin-fhain/%year%-fh",
       "https://soundcloud.com/icf-berlin-fhain/%date%-fh"
+    ]
+  },
+  "&Regular Expression": {
+    "values": [
+      "(.*) & (.*)",
+      "(.*) (&|fe?a?t.) (.*)",
+      "(.*) (&|fe?a?t.?) (.*)",
+      "(.*) (&|fe?a?t.?|x) (.*)",
+      "(.*)( (&|fe?a?t.?|x) |/)(.*)",
+      ".*/ICF",
+      "(.*)( (&|fe?a?t.?|x) |/|, )(.*)",
+      "(.*)( (&|fe?a?t(uring)?.?|x|and) |/|, )(.*)",
+      "(.*)( (&|fe?a?t(uring)?.?|x|and|/) |/|, )(.*)",
+      "(.*)( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, )(.*)",
+      "(.*)( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, )(.*)"
+    ]
+  },
+  "Replace &matches with:": {
+    "values": [
+      "$1; $2",
+      "$1; $3",
+      "$1; $4",
+      "ICF",
+      "$1; $5",
+      "$1; $5"
     ]
   }
 }

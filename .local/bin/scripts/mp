@@ -13,11 +13,12 @@ then shift
     path="$(test -e "$arg" && realpath "$arg" ||
       ( test -e "$MUSIC/$arg" && realpath "$MUSIC/$arg") ||
       ( test -e "$PLAYLISTS/$arg" && realpath "$PLAYLISTS/$arg") )"
-    test -n "$verbose" && echo "Scanning path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC')" >&2
+    test -n "$verbose" && echo "Scanning path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
     test -n "$path" || continue
-    if file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$" >/dev/null
-    then pushd "$(dirname "$path")" >/dev/null && cat "$path" | xargs --delim='\n' "$0" $verbose -r && popd >/dev/null
+    if { file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$"; } >/dev/null
+    then pushd "$(dirname "$path")" >/dev/null && cat "$path" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose && popd >/dev/null
     else
+      test -n "$verbose" && echo "Finding path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
       find "$path" -name "*.flac" -o -name "*.mp3" | sort | while read file
         do case "$path" in
           ($MUSIC/*) echo "${file#$MUSIC/}";;
@@ -28,7 +29,7 @@ then shift
 else
   test "$1" = "-q" && quiet=-q && shift
   test -n "$(mpc playlist)" && next=-q
-  { "$0" -r "$@" && mpc -q update --wait; } | #>/tmp/mp 2>&1
+  { "$0" -r "$@" && mpc -q update --wait; } | #tee /tmp/mp 2>&1
     xargs --delim='\n' mpc insert
   mpc ${quiet:-$next} play
   test -z "$next" || mpc $quiet next

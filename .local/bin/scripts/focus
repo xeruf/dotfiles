@@ -3,7 +3,7 @@
 # depends: mp mpc
 # env: MUSIC
 PLAYLISTS="$MUSIC/Playlists"
-mpc clear
+mpc -q clear
 if test -z "$1"
 then mp -q "$PLAYLISTS/focus.m3u"
 else
