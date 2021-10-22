@@ -1,5 +1,6 @@
 export DATA="$(test -d $HOME/data && echo $HOME/data || echo $HOME/daten)"
 export MUSIC="$DATA/music"
+export JOURNAL="$DATA/2-standards/notes/journal"
 
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -51,7 +52,7 @@ export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
-export IGNOREDIRS="-x dev -x .sync -x .stfolder -x .git -x .gradle -x .idea -x out -x *build -x dist_newstyle -x generated -x cache -x node_modules"
+export IGNOREDIRS="-x dev -x .sync -x .stfolder -x .git -x .gradle -x .idea -x out -x *build -x dist_newstyle -x generated -x cache -x node_modules -x virtualenv"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
@@ -98,9 +99,6 @@ export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
-
-
-export JOURNAL="$DATA/2-standards/notes/journal"
 
 if test -z "${DISPLAY}" && test "$XDG_VTNR" -eq 1 && test -d "$JOURNAL"; then
   echo "What do you want to do?"

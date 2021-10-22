@@ -59,9 +59,8 @@ pathadd() {
 }
 
 # ZSH completion and stuff {{{1
-
 alias rs="reset && exec $SHELL"
-alias hist='print -z $(history | tac | fzf --tiebreak=index --bind="'"del:execute(echo \"'/;{4..}$/d'\" && sed '/;{4..}$/d' -i.bak $HISTFILE)"'" | sed "s|^ \+||" | cut -d" " -f5-)'
+alias hist='print -z $(history | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 edshell() {

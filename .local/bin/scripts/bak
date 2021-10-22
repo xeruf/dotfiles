@@ -3,7 +3,10 @@ suffix="${2:-bak}"
 orig="${1%%.$suffix}"
 smv () {
   eval source=\$$(($#-1))
-  test -w "$source" && mv -v "$@" || sudo mv -v "$@"
+  if test -w "$source"
+  then mv -v "$@"
+  else sudo mv -v "$@"
+  fi
 }
 if test -e "$orig.$suffix"
 then
