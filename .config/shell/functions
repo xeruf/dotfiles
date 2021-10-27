@@ -68,10 +68,13 @@ edshell() {
 		("") file="$CONFIG_SHELL_FUNCTIONS";;
 		(zsh) file="$CONFIG_ZSH/.zshrc";;
 		(prof*) file="$HOME/.zprofile";;
-		(*) file=$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1");;
+		(-f) grepfile="$(grep --recursive "\(^$2()\|alias $2=\)" $CONFIG_SHELLS -n -m 1)"
+			file=$(echo "$grepfile" | cut -d':' -f1)
+			line=$(echo "$grepfile" | cut -d':' -f2);;
+		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
 	checksum="$(md5sum "$file")"
-	$EDITOR "$file"
+	$EDITOR $(test "$line" && echo "+$line") "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 
@@ -174,8 +177,8 @@ alias hx='sudo hexedit --maximize --color'
 # Paginated hexyl
 hex() { hexyl "$@" | "${PAGER:-less}" }
 
-alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | tail -n +16 |
-  fzf --tiebreak=length --bind='alt-bspace:clear-query'"
+
+alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=length --bind='alt-bspace:clear-query'"
 alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
 alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
 

@@ -27,13 +27,20 @@ sy() {
 }
 
 gcn() {
-  if test $# -eq 0 || test -e $1
+  root="$(git rev-parse --show-toplevel)"
+  if test "$root" = "$DATA"
   then
-    fulldir="$(realpath ${1:-$PWD})"
-    dir="${fulldir#$DATA/*/}"
+    if test $# -eq 0 || test -e $1
+    then
+      fulldir="$(realpath ${1:-$PWD})"
+      dir="${fulldir#$root/*/}"
+    else
+      dir="notes/$1"
+      fulldir="$root/2-standards/$dir"
+    fi
   else
-    dir="notes/$1"
-    fulldir="$DATA/2-standards/$dir"
+      fulldir="$(realpath ${1:-$PWD})"
+      dir="${fulldir#$root/}"
   fi
   echo "$dir:" >/tmp/gcn-msg
   git commit -v --template /tmp/gcn-msg ${@:2} -- $fulldir
