@@ -1,3 +1,8 @@
-#!/bin/sh
-# Mount a partition by label automatically
-sudo mount -o rw,X-mount.mkdir -L "$1" "${2:-/mnt/$1}"
+#!/bin/sh -e
+# Mount a partition by label or device identifier automatically
+#test "$1" = "-u" && umount "$mountpoint"; exit $?
+mountpoint="${2:-${XDG_RUNTIME_DIR:-/mnt}/$1}"
+case "$1" in (sd*|loop*) partition="/dev/$1";; (*) partition="-L $1";; esac
+mountpoint "$mountpoint" >/dev/null || sudo mount -v -o users,X-mount.mkdir $partition "$mountpoint" "${@:3}"
+cd $mountpoint
+exec $SHELL

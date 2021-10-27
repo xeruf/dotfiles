@@ -33,6 +33,7 @@ fi
 
 highlight "d to recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
+	rm -rf .npm .yarn
 	find -name "src" -prune -o \
 		-type d \( -name ".gradle" -o -name "generated" -o -name "dist-newstyle" -o -name "cache" -o -name "node_modules" -o -name "cmake_build" \) \
 		-print -exec rm -r {} + -prune
