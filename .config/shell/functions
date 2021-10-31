@@ -62,6 +62,7 @@ pathadd() {
 alias rs="reset && exec $SHELL"
 alias hist='print -z $(history | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
+# Edit shell config files
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 edshell() {
 	case $1 in
@@ -69,15 +70,24 @@ edshell() {
 		(zsh) file="$CONFIG_ZSH/.zshrc";;
 		(prof*) file="$HOME/.zprofile";;
 		(-f) grepfile="$(grep --recursive "\(^$2()\|alias $2=\)" $CONFIG_SHELLS -n -m 1)"
-			file=$(echo "$grepfile" | cut -d':' -f1)
-			line=$(echo "$grepfile" | cut -d':' -f2);;
+			file="$(echo "$grepfile" | cut -d':' -f1)"
+			line="$(echo "$grepfile" | cut -d':' -f2)";;
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
+	test -f "$file" || return 1
 	checksum="$(md5sum "$file")"
 	$EDITOR $(test "$line" && echo "+$line") "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 
+
+# Edit a file in the PATH
+edbin() {
+	file="$(f="$(which $1 2>/dev/null)" && test -f "$f" && echo $f || edshell -f "$1" || echo "$HOME/.local/bin/scripts/$1")"
+	edit "$file"
+}
+
+# Edit zsh completion
 edcomp() {
 	file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
 	$EDITOR "${fpath[-1]}/$file"
@@ -111,12 +121,14 @@ alias syslog='less +F /var/log/syslog'
 
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
+alias scd='sudo systemctl disable --now'
 scs() {
 	systemctl --user status "*$1*" "$1" ||
 		sudo systemctl status "*$1*" "$1"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
+alias scud='systemctl --user disable --now'
 
 # Restart matching systemctl service
 scb() {

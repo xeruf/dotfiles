@@ -45,7 +45,7 @@ alias uloc='noglob sudo updatedb && loci'
 locei() { locate --all --basename "\\$1" "$@" | fselect }
 alias loce='noglob locei'
 # locate all
-alias loca='noglob sudo updatedb --prunenames "" /var/lib/mlocate/all.db && loci --database ""'
+alias loca='noglob sudo updatedb --prunenames "" -o /var/lib/mlocate/all.db && loci --database /var/lib/mlocate/all.db'
 
 # ZOXIDE
 alias c=z
@@ -57,7 +57,7 @@ d() {
   # If not select with fzf, using locate to find extra options
   cd "$(if test -n "$query" && expr "$(echo "$query" | head -1 | cut -d' ' -f1)" \> 20 \& $(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
       then echo "$query" | head -1
-      else echo "$query"; locz "$@"
+      else test -n "$query" && echo "$query"; locz "$@"
     fi | zfz)"
 }
 di() {
