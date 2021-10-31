@@ -9,7 +9,7 @@ then mp -q "$PLAYLISTS/focus.m3u"
 else
   (find -L $PLAYLISTS -iname "focus-$1.m3u" -print0 | grep --null-data . ||
     find -L $PLAYLISTS -iname "$1.m3u*" -print0 | grep --null-data . ||
-    find -L $MUSIC -iname "*$1*" -prune -exec find {} -size +2M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \; ) |
+    find -L $MUSIC $(echo "$@" | sed 's/\w\+/-iname *\0*/g') -prune -exec find {} -size +2M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \; ) |
     xargs -0 mp -q
 fi
 mpc -q shuffle

@@ -11,7 +11,7 @@ case $1 in
   (vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
   (gh|chordpro) $@ --help | $paginate;;
   (caddy) $1 help ${@:2} | $paginate;;
-  (*) man "$@" || { info "$1" -w | grep -v "manpages" && pinfo "$@"; } || ( "$@" --help || "$@" -help ) 2>&1 | $paginate || which "$@";;
+  (*) man "$@" || { info "$1" -w | grep -v "manpages" && pinfo "$@"; } || { "$@" --help || "$@" -help; } 2>&1 | ${PAGER:-less} || which "$@";;
 esac
 docs="/usr/share/doc/$1"
 if test -d "$docs"; then

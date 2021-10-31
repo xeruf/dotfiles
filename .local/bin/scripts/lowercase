@@ -1,0 +1,3 @@
+#!/bin/sh
+# Lowercase given files
+perl-rename 'y/A-Z /a-z-/' "$@"

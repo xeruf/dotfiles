@@ -1,6 +1,6 @@
 #!/bin/sh
 {
 echo "$# Args: $@"
-echo "${@:-default}" | sed 's/\(\w\+\)/\1-w/g'
+echo "${@:-default}" | sed 's/\w\+/\0-w/g'
 #echo "Last arg: ${@:$#}"
 } | tee /tmp/args$(date +%s)
