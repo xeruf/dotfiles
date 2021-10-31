@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Tag roam file as inspiration
+# key: +i
+# --
+#+filetags: :inspiration:

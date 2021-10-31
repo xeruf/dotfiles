@@ -172,6 +172,7 @@ Version 2019-11-04 2021-02-16"
       default-directory org-directory
       org-roam-directory (expand-file-name "roam" org-directory)
       )
+(require 'org-roam-protocol)
 
 (setq org-journal-file-type 'weekly
       org-journal-file-format "%Y%m%d.org"
@@ -179,18 +180,21 @@ Version 2019-11-04 2021-02-16"
       org-journal-carryover-delete-empty-journal 'always
       )
 
-(after! recentf
-  (setq recentf-keep '(or file-remote-p recentf-keep-default-predicate))
-  (add-to-list 'recentf-exclude "writing\\/tug")
-  (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
+(use-package! recentf
+  :config
+    (add-to-list 'recentf-exclude "writing\\/tug")
+    (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
+    (setq recentf-list (append '("/home/janek/data/4-incubator/downloads/") recentf-list))
+    ;(setq recentf-keep '(recentf-keep-default-predicate file-remote-p))
   )
 
-(after! projectile
-  (push user-data-dir projectile-ignored-projects)
-  (let ((default-directory user-data-dir))
-    (add-to-list 'projectile-known-projects (expand-file-name "music/") t)
-    (add-to-list 'projectile-known-projects (expand-file-name "2-standards/notes/") t)
-    )
+(use-package! projectile
+  :config
+    (add-to-list 'projectile-ignored-projects user-data-dir)
+    (let ((default-directory user-data-dir))
+      (add-to-list 'projectile-known-projects (expand-file-name "music/") t)
+      (add-to-list 'projectile-known-projects (expand-file-name "2-standards/notes/") t)
+      )
   )
 
 ;;;; ORG
@@ -278,6 +282,8 @@ Version 2019-11-04 2021-02-16"
         "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
         "\\" 'org-ctrl-c-ctrl-c
+        "nrt" 'org-roam-tag-add
+        "nrt" 'org-roam-tag-remove
         :localleader
         "j" 'org-insert-heading
         "k" 'org-latex-export-to-pdf
@@ -393,6 +399,7 @@ Version 2019-11-04 2021-02-16"
   (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
   )
 
+(ranger-override-dired-mode 0)
 (after! dired
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
@@ -426,7 +433,9 @@ Version 2019-11-04 2021-02-16"
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
-                (lambda () (interactive) (dired-smart-shell-command "s"))
+                (lambda () (interactive) (dired-do-shell-command "s"))
+        :desc "Lowercase files" "L"
+                (lambda () (interactive) (dired-do-shell-command "lowercase"))
         :desc "Symlink to this" "l" 'dired-do-symlink
         :desc "Open image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
@@ -439,7 +448,15 @@ Version 2019-11-04 2021-02-16"
         :map ranger-mode-map
         :n "r" 'ranger
         )
-
+  )
+(after! dired-aux
+  (add-to-list 'dired-compress-file-suffixes '("\\.nupkg\\'" "" "unzip -o -d %o %i"))
+  )
+(use-package! diredfl
+  :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
+  )
+(after! all-the-icons
+  (add-to-list 'all-the-icons-extension-icon-alist '("nupkg" all-the-icons-octicon "file-zip" :v-adjust 0.0 :face all-the-icons-lmaroon))
   )
 
 (after! spell-fu
@@ -447,7 +464,7 @@ Version 2019-11-04 2021-02-16"
   )
 (after! json-mode
   (defconst json-mode-comments-re (rx (group "//" (zero-or-more nonl) line-end)))
-  (push (list json-mode-comments-re 1 font-lock-comment-face) json-font-lock-keywords-1)
+  (push '(json-mode-comments-re 1 font-lock-comment-face) json-font-lock-keywords-1)
   )
 
 (global-activity-watch-mode)

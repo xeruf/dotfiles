@@ -59,16 +59,13 @@
 (package! auto-correct)
 
 (package! evil-tutor) ; dark vim tutor
-(package! evil-args) ; motions in args
 (package! evil-replace-with-register) ; grrrrr
-;(package! evil-better-visual-line) ; not sure if this actually helps
 (package! visual-fill-column) ; Soft line wrapping at character count
 
 (package! activity-watch-mode) ; eagle eyes
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
-(package! plantuml-mode) ; Diagrams
 (package! adoc-mode) ; Asciidoc, a md alternative
 (package! nov) ; epub reader
 (package! pkgbuild-mode) ; AUR PKGBUILDs
@@ -79,7 +76,3 @@
 
 (package! osm-mode
   :recipe (:host github :repo "ruediger/osm-mode"))
-
-;(package! annotate) ; Annotations - replaced by org-noter
-;      :leader "aa" 'annotate-annotate
-;      :leader "as" 'annotate-mode

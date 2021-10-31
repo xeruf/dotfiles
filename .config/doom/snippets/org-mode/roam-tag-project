@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Tag roam file as project
+# key: +pr
+# --
+#+filetags: :project:
