@@ -21,21 +21,23 @@
       " ",
       "Mr FijiWiji, Soulero - Nebula.flac",
       "Mr FijiWiji, Direct, & Aruna",
-      ";"
+      "\\\\",
+      "\\\\\\\\",
+      "DnB"
     ]
   },
   "&Output": {
     "values": [
       "",
       "%1",
-      "%1"
+      ""
     ]
   },
   "&Text": {
     "values": [
       "",
       "%date%",
-      "%date%"
+      ""
     ]
   },
   "&Field list (; separated):": {
@@ -44,7 +46,7 @@
       "comment;__image",
       "comment;creation_time;__image",
       "comment;software;creation_time;__image",
-      "comment;__image"
+      ""
     ]
   },
   "filter_text": {
@@ -77,7 +79,39 @@
       "fijiwiji",
       "Richards",
       "I Remember You",
-      "I Remember You"
+      "pop",
+      "nomy",
+      "ben",
+      "eadmau5",
+      "brem",
+      "covex",
+      "chillout",
+      "take it in",
+      "sexual party",
+      "breathe me in",
+      "Hip-Hop",
+      "halftime",
+      "action",
+      "complextro",
+      "sean",
+      "diamic",
+      "drift",
+      "nocturne",
+      "mashes",
+      "mixes",
+      "minecraft",
+      "laura brehm",
+      "acoustic",
+      "instrumental",
+      "energy",
+      "tristam",
+      "hybrid minds",
+      "League of Legends",
+      "soundtrack",
+      "danyka",
+      "indie",
+      "ether",
+      ""
     ]
   },
   "&Pattern": {
@@ -87,7 +121,8 @@
       "[%year%-%dummy%-%dummy%] %album% - %title% (%artist%)",
       "[%date%] %album% - %title% (%artist%)",
       "%1-%2",
-      "%1-%2-%3"
+      "%1-%2-%3",
+      "[year]"
     ]
   },
   "&Replace": {
@@ -114,7 +149,11 @@
       "  ",
       "Mr FijiWiji, Soulero - Nebula.flac",
       "Mr FijiWiji, Direct, & Aruna",
-      ",;"
+      ",;",
+      " \\\\",
+      ",\\\\",
+      "\\\\ ",
+      "Drum & Bass"
     ]
   },
   "&Format string": {
@@ -126,7 +165,14 @@
       "https://soundcloud.com/icf-berlin-fhain/%year%-fh\n",
       "Podcast",
       "https://soundcloud.com/icf-berlin-fhain/%year%-fh",
-      "https://soundcloud.com/icf-berlin-fhain/%date%-fh"
+      "https://soundcloud.com/icf-berlin-fhain/%date%-fh",
+      "%artist%",
+      "%genre%; Canto",
+      "%genre%; House",
+      "House",
+      "%genre%; Acoustic",
+      "Curtis Schweitzer",
+      "Curtis Schweitzer"
     ]
   },
   "&Regular Expression": {
@@ -141,7 +187,19 @@
       "(.*)( (&|fe?a?t(uring)?.?|x|and) |/|, )(.*)",
       "(.*)( (&|fe?a?t(uring)?.?|x|and|/) |/|, )(.*)",
       "(.*)( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, )(.*)",
-      "(.*)( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, )(.*)"
+      "(.*)( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, |; )(.*)",
+      "",
+      "(.*);(.*)",
+      "(.*); (.*)",
+      "(.+)",
+      "Frac",
+      "( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, |; )",
+      " ?( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, |; ) ?",
+      ",? ?( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, |; ) ?",
+      ",? ?( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, ) ?",
+      ",? ?( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, |\\\\\\\\) ?",
+      "^; ",
+      "^; "
     ]
   },
   "Replace &matches with:": {
@@ -151,7 +209,31 @@
       "$1; $4",
       "ICF",
       "$1; $5",
-      "$1; $5"
+      "$1\\\\$5",
+      "$1\\\\\\\\$5",
+      "V",
+      "$1$5",
+      "$1",
+      "$2;$1",
+      "$2; $1",
+      "sdsf",
+      "sdf",
+      "\\\\",
+      "; ",
+      "",
+      ""
+    ]
+  },
+  "&Separator": {
+    "values": [
+      "",
+      "; ",
+      "; "
+    ]
+  },
+  "&Pattern (can be relative path)": {
+    "values": [
+      "%artist% - %album%"
     ]
   }
 }
