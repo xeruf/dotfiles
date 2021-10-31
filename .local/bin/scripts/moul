@@ -1,8 +1,21 @@
 #!/bin/sh -e
 # Mount a partition by label or device identifier automatically
-#test "$1" = "-u" && umount "$mountpoint"; exit $?
-mountpoint="${2:-${XDG_RUNTIME_DIR:-/mnt}/$1}"
-case "$1" in (sd*|loop*) partition="/dev/$1";; (*) partition="-L $1";; esac
-mountpoint "$mountpoint" >/dev/null || sudo mount -v -o users,X-mount.mkdir $partition "$mountpoint" "${@:3}"
+test "$1" = "--help" && echo "$0 <device> [mountpoint] [options...]" && exit 0
+if test "$1" = "-u"
+then shift
+  mountpoint=$(test -d "$1" && echo "$1" || echo "${XDG_RUNTIME_DIR}/mnt/$1")
+  sudo umount "$mountpoint"
+  code=$?
+  sudo rm -d "$mountpoint"
+  exit $?
+fi
+mountpoint="${2:-${XDG_RUNTIME_DIR}/mnt/$1}"
+
+grep -e "[^\w/]$1[^\w/]" /etc/fstab && mount "$1" && exit 0
+grep -e "[^\w/]$mountpoint[^\w/]" /etc/fstab && mount "$mountpoint" && exit 0
+case "$1" in (sd*|loop*|nvme*) partition="/dev/$1";; (*) partition="-L $1";; esac
+#uid=$(id --user),gid=$(id --group), \
+mountpoint "$mountpoint" >/dev/null 2>&1 || sudo mount -vo \
+  users,X-mount.mkdir $partition "$mountpoint" "${@:3}"
 cd $mountpoint
 exec $SHELL
