@@ -63,6 +63,7 @@ alias rs="reset && exec $SHELL"
 alias hist='print -z $(history | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
 # Edit shell config files
+# Exit code 1 - no change, 2 - file not found
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 edshell() {
 	case $1 in
@@ -74,17 +75,18 @@ edshell() {
 			line="$(echo "$grepfile" | cut -d':' -f2)";;
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
-	test -f "$file" || return 1
+	test -f "$file" || return 2
 	checksum="$(md5sum "$file")"
-	$EDITOR $(test "$line" && echo "+$line") "${file%:*}"
+	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx")" "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 
 
 # Edit a file in the PATH
 edbin() {
-	file="$(f="$(which $1 2>/dev/null)" && test -f "$f" && echo $f || edshell -f "$1" || echo "$HOME/.local/bin/scripts/$1")"
-	edit "$file"
+	f="$(which $1 2>/dev/null)" && test -f "$f" && edit "$f" ||
+		edshell -f "$1"; test $? != 2 ||
+		edit "$HOME/.local/bin/scripts/$1"
 }
 
 # Edit zsh completion
