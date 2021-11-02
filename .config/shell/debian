@@ -33,17 +33,6 @@ uma() {
 	fi
 }
 
-alias aptrepo='sudo add-apt-repository'
-_aptrepo_n="$(test "$OSTYPE" != "cygwin" && add-apt-repository --help | grep -- "-n")"
-aptrepon() {
-	test $_aptrepo_n && aptrepo -y -n "$@" || aptrepo -y "$@"
-}
-aptrepos() {
-	for repo in "$@"
-	do aptrepon $repo
-	done
-	aptupdate
-}
 alias aptinstall='sudo apt-get install'
 aptinstalls() {
 	apt-cache show "$1" | grep --color=never '\(Version\|Description\):'
@@ -53,13 +42,27 @@ aptinstalli() {
 	apt download $1
 	sudo dpkg --ignore-depends=$2 -i $1*.deb
 }
-aptrepoinstall() {
-	aptrepo -yu $1
-	if (( $# > 1 ))
-	then aptinstall "${@:2}"
-	else aptinstall "${1##*/}"
-	fi
-}
+
+if which add-apt-repository >/dev/null; then
+	alias aptrepo='sudo add-apt-repository'
+	_aptrepo_n="$(add-apt-repository --help | grep -- "-n")"
+	aptrepon() {
+		test $_aptrepo_n && aptrepo -y -n "$@" || aptrepo -y "$@"
+	}
+	aptrepos() {
+		for repo in "$@"
+		do aptrepon $repo
+		done
+		aptupdate
+	}
+	aptrepoinstall() {
+		aptrepo -yu $1
+		if (( $# > 1 ))
+		then aptinstall "${@:2}"
+		else aptinstall "${1##*/}"
+		fi
+	}
+fi
 
 # Gets the download url for the latest release of a package provided via GitHub Releases
 # Usage: ghrelease USER REPO [PATTERN]
