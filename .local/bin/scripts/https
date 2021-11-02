@@ -1,0 +1,6 @@
+#!/bin/sh
+# Setup certbot certificate for nginx
+# args:
+# 1) domain
+# 2) email
+sudo certbot -v -n certonly --nginx -m ${2:-$(git config --get user.email)} --agree-tos -d $1

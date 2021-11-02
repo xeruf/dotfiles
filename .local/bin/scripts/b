@@ -2,9 +2,10 @@
 # [b]rowse - custom ls or bat depending on file type
 # Show type & contents of given files or PWD
 # depends: tput stat bat neovim
+# args: files to inspect
 
 set -eo pipefail
-# gets the last arg or current dir
+# get the last arg or current dir
 for last; do true; done
 last=${last:-.}
 

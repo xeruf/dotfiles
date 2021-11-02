@@ -130,7 +130,15 @@ alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
 alias scud='systemctl --user disable --now'
 
-# Restart matching systemctl service
+# Reload or restart matching systemctl service
+scr() {
+	systemctl --user reload "$1" ||
+		sudo systemctl reload "$1" ||
+		systemctl --user restart "$1" ||
+		sudo systemctl restart"$1" ||
+}
+
+# Restart matching systemctl service with chance for input inbetween
 scb() {
 	systemctl --user stop -T "$1"
 	sudo systemctl stop -T "$1"
