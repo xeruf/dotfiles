@@ -170,7 +170,9 @@ Version 2019-11-04 2021-02-16"
 
 (setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
       default-directory org-directory
-      org-roam-directory (expand-file-name "roam" org-directory)
+      org-roam-directory org-directory
+      org-roam-db-update-on-save nil
+      org-roam-extract-new-file-path "%<%Y%m%d>-${slug}.org"
       )
 (require 'org-roam-protocol)
 
@@ -202,6 +204,8 @@ Version 2019-11-04 2021-02-16"
   ;; Behavior
   (set-file-template! 'org-mode :ignore t)
   (setq org-read-date-prefer-future nil)
+  (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
+        org-attach-method 'mv)
 
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
@@ -441,6 +445,7 @@ Version 2019-11-04 2021-02-16"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
         :desc "Start ranger" "r" 'ranger
+        :desc "Org attach subtree" "a" 'org-attach-dired-to-subtree
         :map wdired-mode-map
         :n "RET" (lambda () (interactive) (progn
                                              (wdired-exit)

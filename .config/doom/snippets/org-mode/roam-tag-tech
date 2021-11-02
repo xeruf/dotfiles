@@ -2,4 +2,4 @@
 # name: Tag roam file as tech
 # key: +tech
 # --
-#+filetags: :tech:software:
+#+filetags: :tech:software:list:
