@@ -2,5 +2,6 @@
 {
 echo "$# Args: $@"
 echo "${@:-default}" | sed 's/\w\+/\0-w/g'
-#echo "Last arg: ${@:$#}"
+for last; do true; done
+echo "Last arg: $last"
 } | tee /tmp/args$(date +%s)

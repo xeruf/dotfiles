@@ -1,13 +1,12 @@
 #!/bin/sh
 # open info-page, man-page or command help
-set -o pipefail
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
 case $1 in
   (zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
-    search="${@:$#}"
+    for last; do true; done
     # need to install zsh-doc package for info pages
-    info --vi-keys $(test $search != zsh && echo --index-search=$search) zsh || LESS="$LESS +/^ *${@:$#} *\\[" man zshall;;
+    info --vi-keys $(test $last != zsh && echo --index-search=$last) zsh || LESS="$LESS +/^ *$last *\\[" man zshall;;
   (vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
   (gh|chordpro) $@ --help | $paginate;;
   (caddy) $1 help ${@:2} | $paginate;;
