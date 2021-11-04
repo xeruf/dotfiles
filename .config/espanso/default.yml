@@ -123,14 +123,6 @@ matches:
         params:
           cmd: "pass information/social-security | head -1"
 
-  - trigger: ":ep"
-    replace: "{{output}}"
-    vars:
-      - name: output
-        type: shell
-        params:
-          cmd: "pass information/email/personal"
-
   - trigger: ":sign"
     replace: "{{output}}"
     vars:

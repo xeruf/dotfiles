@@ -78,7 +78,7 @@ edshell() {
 	esac
 	test -f "$file" || return 2
 	checksum="$(md5sum "$file")"
-	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
+	$EDITOR $(test "$line" && echo "+normal!\ ${line}ggzx") "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 

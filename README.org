@@ -29,14 +29,15 @@ and configuration for ~less~ and ~fzf~.
 * Packages
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
-- essentials :: git zsh bat neovim man-db texinfo
-- basic tools :: fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate
-- common tools :: topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib
+- essentials :: git zsh bat neovim man-db
+- basic tools :: texinfo fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate (locate on deb)
+- common tools :: topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib espanso
 - pass :: pass pass-otp pass-extension-tail pass-clip
   -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
 - ssh :: openssh sshfs lemonade-git
 - dotfiles :: yadm
-  : yadm clone --bootstrap git.jfischer.org:xeruf/dotfiles.git
+  : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
+  : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
 - aur recommendations :: tldr++ sc-im
 - git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - personal aur utils (need configuration) :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks stderred-git
@@ -49,12 +50,14 @@ and configuration for ~less~ and ~fzf~.
 - tagging :: puddletag beets picard ffmpegthumbnailer
 - sync :: syncthing
   : systemctl enable --now syncthing
+** Emacs
+- mail :: offlineimap mu
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore
 - video :: vlc kdenlive
 - kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
-- office :: emacs texlive-core texlive-latexextra context-bin  libreoffice-fresh
+- office :: emacs texlive-core texlive-latexextra context-bin libreoffice-fresh
 - hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight light
   : scu enable --now redshift
