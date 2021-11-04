@@ -9,13 +9,17 @@ then shift
   sudo rm -d "$mountpoint"
   exit $?
 fi
-mountpoint="${2:-${XDG_RUNTIME_DIR}/mnt/$1}"
 
-grep -e "[^\w/]$1[^\w/]" /etc/fstab && mount "$1" && exit 0
-grep -e "[^\w/]$mountpoint[^\w/]" /etc/fstab && mount "$mountpoint" && exit 0
-case "$1" in (sd*|loop*|nvme*) partition="/dev/$1";; (*) partition="-L $1";; esac
+grep -e "[^\w=/]$1[^\w/]" /etc/fstab && mount "$@" && exit 0
+case "$1" in
+  (sd*|loop*|nvme*|md*|dm*|vg*) partition="/dev/$1"
+    mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$1}"
+    grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab && shift && mount "$mountpoint" "$@" && exit 0;;
+  (*) partition="-L $1";;
+esac
+shift $(expr 2 \& $# \> 1 \| 1)
 #uid=$(id --user),gid=$(id --group), \
 mountpoint "$mountpoint" >/dev/null 2>&1 || sudo mount -vo \
-  users,X-mount.mkdir $partition "$mountpoint" "${@:3}"
+  users,X-mount.mkdir,noatime $partition $mountpoint "$@"
 cd $mountpoint
 exec $SHELL

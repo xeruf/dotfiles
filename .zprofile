@@ -10,6 +10,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin"
  # adjust programs to use xdg
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
+export MNT="$XDG_RUNTIME_DIR"/mnt
 
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
@@ -20,7 +21,7 @@ export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
-export RLWRAP_HOME="$XDG_STATE_HOME"/rlwrap
+export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
 
 export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
 export CABAL_DIR="$XDG_CACHE_HOME"/cabal
@@ -71,7 +72,7 @@ export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
 export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
 ## fzf defaults
-FZF_BINDINGS=$(echo '
+FZF_BINDINGS=$(echo "
 change:top
 alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
 alt-bspace:execute(gio trash {})
@@ -83,9 +84,9 @@ alt-c:yank
 alt-w:toggle-preview-wrap
 alt-j:preview-half-page-down,alt-k:preview-half-page-up
 shift-down:preview-half-page-down,shift-up:preview-half-page-up
-alt-shift-down:preview-down,alt-shift-up:preview-up
+$([[ $(fzf --version | cut -d '.' -f-2) > 0.24 ]] && echo "alt-shift-down:preview-down,alt-shift-up:preview-up")
 esc:close
-' | xargs -I% echo -n "%," | head -c-1)
+" | xargs -I% echo -n "%," | head -c-1)
 #alt-r:preview(bat {}),
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
@@ -100,7 +101,7 @@ export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
 
-if test -z "${DISPLAY}" && test "$XDG_VTNR" -eq 1 && test -d "$JOURNAL"; then
+if test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 && test -d "$JOURNAL"; then
   echo "What do you want to do?"
   while test $(echo "$intention" | wc -c) -lt 6
   do read intention
