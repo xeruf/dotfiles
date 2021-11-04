@@ -41,7 +41,8 @@ wh() {
 	res=$(which "$@")
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
 	then echo "$res" | bat --style=plain --language=sh &&
-		wh $(expr "$res" : "${@:$#}: aliased to ${@:$#} " >/dev/null && echo "-p") $(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)
+		tool="$(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
+		wh $(test $tool = $1 && echo "-p") $tool
 		# use command which for other shells
 	else test -r "$res" && b --style=header "$res" || echo "$res" | bat --style=plain --language=sh
 	fi
@@ -77,7 +78,7 @@ edshell() {
 	esac
 	test -f "$file" || return 2
 	checksum="$(md5sum "$file")"
-	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx")" "${file%:*}"
+	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 

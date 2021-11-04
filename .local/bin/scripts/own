@@ -1,0 +1,3 @@
+#!/bin/sh
+# Take ownership of the given files recursively
+sudo chown -R --preserve-root $USER "$@"

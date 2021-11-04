@@ -13,14 +13,18 @@ last=${last:-.}
 test -x "$(dirname "$last")" &&
   { test -r "$last" || ! test -e "$last"; } ||
     elevate=sudo
-tput setaf 4 && $elevate file -E "$last" | ( grep -v --color=never 'directory$' || true )
+tput setaf 4 && $elevate file -E "$last" | { grep -v --color=never 'directory$' || true; }
 
 case "$($elevate file --dereference --mime "$last")" in
   (*inode/directory*) tput sgr0 && $(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -XF;;
-  (*binary) if expr "$(file "$last")" : ".*: .*compress" >/dev/null
+  (*binary)
+    if expr "$(file "$last")" : ".*: .*compress" >/dev/null
     then /usr/share/nvim/runtime/macros/less.sh "$@"
-    fi;;
+    fi
+    tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
+    ;;
   (*) $elevate bat --style header "$@" --pager 'less -RXF'
-     tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
-     ;;
+    tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
+    # TODO don't duplicate stat
+    ;;
 esac

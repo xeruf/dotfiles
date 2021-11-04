@@ -1,4 +1,4 @@
 #!/bin/sh -e
 # Move roam files into subfolders
-cd $DATA/2-standards/notes/roam
+cd $DATA/2-standards/notes
 find . -mindepth 1 -type d -printf '%f\n' | while read dir; do grep -l --directories=skip "#+filetags: :$dir" * | xargs --verbose --no-run-if-empty mv -t "$dir"; done

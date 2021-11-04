@@ -19,7 +19,7 @@ then shift
     then pushd "$(dirname "$path")" >/dev/null && cat "$path" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose && popd >/dev/null
     else
       test -n "$verbose" && echo "Finding path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
-      find "$path" -name "*.flac" -o -name "*.mp3" | sort | while read file
+      find "$path" -iname "*.flac" -o -iname "*.mp3" -o -iname "*.ogg" -o -iname "*.opus" | sort | while read file
         do case "$path" in
           ($MUSIC/*) echo "${file#$MUSIC/}";;
           (*) mkdir -p "$LINKS" && ln -fs "$file" "$LINKS/$(basename "$file")" && echo "${LINKS#$MUSIC/}/$(basename "$file")";;

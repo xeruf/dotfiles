@@ -2,13 +2,16 @@
 # Cleans up files according to given parameters
 
 typeset -A _clean_map
-_clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp)
+_clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [c]=/var/cache)
 # Directories to always clean
-_clean_folders=()
+_clean_folders=(~/.ant ~/.autopsy ~/.cargo ~/.electron-gyp ~/.nix-defexpr ~/.npm ~/.parallel ~/.stack ~/.yarn
+  ~/.lesshst)
 
-for f in $_clean_folders
-do test -d $f && rm -rv $f
+
+for f in ${_clean_folders[@]}
+do test -f $f || test -d $f && highlight $f && rm -rf $f
 done
+find $HOME -maxdepth 2 -not -name ".stfolder" -type d -empty -exec rm -vd {} +
 
 highlight "g to clean gradle"
 if [[ $1 =~ "g" ]]; then
