@@ -32,9 +32,6 @@
       hscroll-margin 20
       )
 
-(setq evil-respect-visual-line-mode nil)
-(add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
-
 ;;;; BINDINGS
 
 (defun xah-open-in-external-app (&optional @fname)
@@ -144,11 +141,12 @@ Version 2019-11-04 2021-02-16"
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
+;;; Data Preservation
+
 ;; UNDO
 (setq evil-want-fine-undo t)
 (setq amalgamating-undo-limit 5)
 
-;; Backups & auto-saves
 ;; Doom defaults: /home/janek/.config/emacs/core/core-editor.el::89
 (setq auto-save-default t
       auto-save-interval 40)
@@ -162,25 +160,20 @@ Version 2019-11-04 2021-02-16"
       kept-old-versions 3
       )
 
-;; Directory configuration
+;;;; Directory configuration
 
 (defvar user-data-dir "~/data/" "Location of the main user data")
 
 (load! "./local.el" nil t)
+
+(setq pdf-misc-print-programm "/usr/bin/lpr")
 
 (setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
       default-directory org-directory
       org-roam-directory org-directory
       org-roam-db-update-on-save nil
       org-roam-extract-new-file-path "%<%Y%m%d>-${slug}.org"
-      )
-(require 'org-roam-protocol)
-
-(setq org-journal-file-type 'weekly
-      org-journal-file-format "%Y%m%d.org"
-      org-journal-created-property-timestamp-format "[%Y-%m-%d]"
-      org-journal-carryover-delete-empty-journal 'always
-      )
+      custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
 
 (use-package! recentf
   :config
@@ -200,9 +193,47 @@ Version 2019-11-04 2021-02-16"
   )
 
 ;;;; ORG
-(after! org
+
+(setq org-journal-file-type 'weekly
+      org-journal-file-format "%Y%m%d.org"
+      org-journal-created-property-timestamp-format "[%Y-%m-%d]"
+      org-journal-carryover-delete-empty-journal 'always
+      )
+
+(use-package! org
+  :bind (:map org-mode-map
+         ("C-c ." . org-time-stamp-inactive)
+         ("C-c C-." . org-time-stamp)
+         ("M-C-+" . org-timestamp-up)
+         ("M-C--" . org-timestamp-down)
+        )
+  :config
+  (map! :map org-mode-map
+        :leader
+        "j" 'org-insert-heading
+        "e" 'org-export-dispatch-custom-date
+        "E" 'org-export-repeat
+        "\\" 'org-ctrl-c-ctrl-c
+        "nrt" 'org-roam-tag-add
+        "nrt" 'org-roam-tag-remove
+        :localleader
+        "j" 'org-insert-heading
+        "k" 'org-latex-export-to-pdf
+        "t" 'org-todo-or-insert
+        "e" 'org-export-dispatch-custom-date
+        "E" 'org-export-repeat
+        "n" 'org-add-note
+        "y" 'org-yank-visible
+        "d=" 'org-timestamp-up-week
+        "rt" 'org-change-todo-in-region
+        "ra" 'org-change-tag-in-region
+        "lk" 'counsel-org-link
+        :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
+        :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
+        "gR" 'org-mode-restart
+        )
   ;; Behavior
-  (set-file-template! 'org-mode :ignore t)
+  ; (set-file-template! 'org-mode :ignore t)
   (setq org-read-date-prefer-future nil)
   (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
         org-attach-method 'mv)
@@ -231,7 +262,7 @@ Version 2019-11-04 2021-02-16"
 
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
-    ; convert csv to org-table considering "12,12"
+    ;; convert csv to org-table considering "12,12"
     (interactive (list (point) (mark)))
     (replace-regexp "\\(^\\)\\|\\(\".*?\"\\)\\|," (quote (replace-eval-replacement
                               replace-quote (cond ((equal "^" (match-string 1)) "|")
@@ -280,36 +311,6 @@ Version 2019-11-04 2021-02-16"
     (interactive)
     (if mark-active (org-copy-visible) (org-copy-visible (point) (progn (end-of-line) (point)))))
 
-  (map! :map org-mode-map
-        :leader
-        "j" 'org-insert-heading
-        "e" 'org-export-dispatch-custom-date
-        "E" 'org-export-repeat
-        "\\" 'org-ctrl-c-ctrl-c
-        "nrt" 'org-roam-tag-add
-        "nrt" 'org-roam-tag-remove
-        :localleader
-        "j" 'org-insert-heading
-        "k" 'org-latex-export-to-pdf
-        "t" 'org-todo-or-insert
-        "e" 'org-export-dispatch-custom-date
-        "E" 'org-export-repeat
-        "n" 'org-add-note
-        "y" 'org-yank-visible
-        "d=" 'org-timestamp-up-week
-        "rt" 'org-change-todo-in-region
-        "ra" 'org-change-tag-in-region
-        "lk" 'counsel-org-link
-        :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
-        :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
-        "gR" 'org-mode-restart
-        )
-
-  (define-key org-mode-map (kbd "C-c .") 'org-time-stamp-inactive)
-  (define-key org-mode-map (kbd "C-c C-.") 'org-time-stamp)
-  (define-key org-mode-map (kbd "M-C-+") 'org-timestamp-up)
-  (define-key org-mode-map (kbd "M-C--") 'org-timestamp-down)
-
   ;; Toggle source blocks with C-c t
   (defvar org-blocks-hidden nil)
   (defun org-toggle-blocks ()
@@ -340,6 +341,28 @@ Version 2019-11-04 2021-02-16"
         (ct/org-foldup)))
   (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
 )
+
+(use-package! org-roam
+  :defer 5
+  :config
+    (require 'org-roam-protocol)
+
+    (defvar my/auto-org-roam-db-sync--timer nil)
+    (defvar my/auto-org-roam-db-sync--timer-interval 3)
+    (define-minor-mode my/auto-org-roam-db-sync-mode
+      "Toggle automatic `org-roam-db-sync' when Emacs is idle.
+    Referece: `auto-save-visited-mode'"
+      :group 'org-roam
+      :global t
+      (when my/auto-org-roam-db-sync--timer (cancel-timer my/auto-org-roam-db-sync--timer))
+      (setq my/auto-org-roam-db-sync--timer
+            (when my/auto-org-roam-db-sync-mode
+              (run-with-idle-timer
+               my/auto-org-roam-db-sync--timer-interval :repeat
+               #'org-roam-db-sync))))
+    (my/auto-org-roam-db-sync-mode)
+  )
+
 
 (after! ox
   (setq org-latex-toc-command "\\tableofcontents*\n\n")
@@ -386,6 +409,8 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; PACKAGES
 
+;;; Mappings
+
 (map! :map special-mode-map
       "<tab>" 'other-window
       "q"     'kill-this-buffer
@@ -397,14 +422,15 @@ Version 2019-11-04 2021-02-16"
       :n "+"  'image-increase-size
       :n "-"  'image-decrease-size)
 
-(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
-
 (after! ivy
   (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
   )
 
-(ranger-override-dired-mode 0)
-(after! dired
+;;; Dired
+
+(use-package! dired
+  :init (ranger-override-dired-mode 0)
+  :config
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
@@ -412,7 +438,7 @@ Version 2019-11-04 2021-02-16"
   (load "subr-x")
   (defun get-mimetype (filepath)
     (string-trim
-     (shell-command-to-string (concat "file -b --mime-type '" filepath "'"))))
+     (shell-command-to-string (concat "file -b --mime-type \"" filepath "\""))))
 
   (setq image-dired-external-viewer "gimp"
         image-dired-thumb-size 300
@@ -440,7 +466,8 @@ Version 2019-11-04 2021-02-16"
                 (lambda () (interactive) (dired-do-shell-command "s"))
         :desc "Lowercase files" "L"
                 (lambda () (interactive) (dired-do-shell-command "lowercase"))
-        :desc "Symlink to this" "l" 'dired-do-symlink
+
+  :desc "Symlink to this" "l" 'dired-do-symlink
         :desc "Open image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
@@ -464,28 +491,9 @@ Version 2019-11-04 2021-02-16"
   (add-to-list 'all-the-icons-extension-icon-alist '("nupkg" all-the-icons-octicon "file-zip" :v-adjust 0.0 :face all-the-icons-lmaroon))
   )
 
-(after! spell-fu
-  (remove-hook 'text-mode-hook #'spell-fu-mode)
-  )
-(after! json-mode
-  (defconst json-mode-comments-re (rx (group "//" (zero-or-more nonl) line-end)))
-  (push '(json-mode-comments-re 1 font-lock-comment-face) json-font-lock-keywords-1)
-  )
-
-(global-activity-watch-mode)
-
-(after! tramp
-  (setq tramp-default-method "scpx")
-  (add-to-list 'tramp-methods
-   '("yadm"
-     (tramp-login-program "yadm")
-     (tramp-login-args (("enter")))
-     (tramp-login-env (("SHELL") ("/bin/sh")))
-     (tramp-remote-shell "/bin/sh")
-     (tramp-remote-shell-args ("-c"))))
-  (map! :leader
-        :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
-  )
+;;; evil
+(setq evil-respect-visual-line-mode nil)
+(add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
 
 (use-package! evil-replace-with-register ; gr
   :init
@@ -522,12 +530,7 @@ Version 2019-11-04 2021-02-16"
 ;   :config
 ;   (evil-better-visual-line-on))
 
-(use-package! direnv ; nix-shell stuffs
-  :defer t
-  :config
-    (setq direnv-always-show-summary nil)
-    (direnv-mode)
-  )
+;;; File modes
 
 (use-package! plantuml-mode ; Diagrams
   :defer t
@@ -564,10 +567,59 @@ Version 2019-11-04 2021-02-16"
     (setq auto-revert-interval 2)
   )
 
-(setq pdf-misc-print-programm "/usr/bin/lpr")
+(after! json-mode
+  (defconst json-mode-comments-re (rx (group "//" (zero-or-more nonl) line-end)))
+  (push '(json-mode-comments-re 1 font-lock-comment-face) json-font-lock-keywords-1)
+  )
 
-(setq custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
+;;; Misc package config
+
+(setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
+
+(global-activity-watch-mode)
+
+(after! spell-fu
+  (remove-hook 'text-mode-hook #'spell-fu-mode)
+  )
 (setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
+
+(after! tramp
+  (setq tramp-default-method "scpx")
+  (add-to-list 'tramp-methods
+   '("yadm"
+     (tramp-login-program "yadm")
+     (tramp-login-args (("enter")))
+     (tramp-login-env (("SHELL") ("/bin/sh")))
+     (tramp-remote-shell "/bin/sh")
+     (tramp-remote-shell-args ("-c"))))
+  (map! :leader
+        :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
+  )
+
+(use-package! direnv ; nix-shell stuffs
+  :defer t
+  :config
+    (setq direnv-always-show-summary nil)
+    (direnv-mode)
+  )
+
+;; https://emacs.stackexchange.com/questions/64532/emms-and-mpd-configuration
+(use-package emms
+  :disabled
+  :config
+    (require 'emms-setup)
+    (require 'emms-player-mpd)
+    (emms-all) ; don't change this to values you see on stackoverflow questions if you expect emms to work
+    (setq emms-player-list '(emms-player-mpd))
+    (add-to-list 'emms-info-functions 'emms-info-mpd)
+    (add-to-list 'emms-player-list 'emms-player-mpd)
+    (setq emms-source-file-default-directory (getenv "MUSIC"))
+
+    ;; Socket is not supported
+    (setq emms-player-mpd-server-name "localhost")
+    (setq emms-player-mpd-server-port "6600")
+    (setq emms-player-mpd-music-directory "/data/music")
+  )
 
 ;(with-eval-after-load "ispell"
 ;  (setq ispell-program-name "hunspell")
