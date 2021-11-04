@@ -13,7 +13,7 @@ echo 'Defaults	timestamp_timeout=120
 Defaults	passwd_timeout=30' |
   sudo tee /etc/sudoers.d/timeout
 highlight "password-free reboot"
-echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown" |
+echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown. /usr/bin/umount" |
   sudo tee /etc/sudoers.d/shutdown
 
 highlight "Default to current user in tty1,2,3"
@@ -23,46 +23,47 @@ ExecStart=
 ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" |
   sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
-sysyadm clone git.jfischer.org:xeruf/etc.git
-sudo chown -R janek /etc/yadm
-
-## Hardware
-section 'Hardware'
-
-highlight 'Stop logind from suspending laptop'
-sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
-
-highlight "Fix Chrysalis for keyboardio"
-# https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting
-if test ! -f /etc/udev/rules.d/keyboardio.rules; then
-	echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="230[0-3]", SYMLINK+="model01", TAG+="seat", TAG+="uaccess", RUN+="'"$HOME/.local/bin/update-keyboard-layout\"" | sudo tee /etc/udev/rules.d/keyboardio.rules
-	sudo udevadm control -R
-	sudo udevadm trigger -v /dev/ttyACM0
-	#sudo systemctl disable ModemManager
-fi
+highlight "Sysyadm setup"
+test -d "/etc/yadm" || sy clone
 
 ## Software
 section "Software"
+link() { test -e "$2" || ln -sv "$@"; }
 
-ln -sv "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
-ln -sv "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
-ln -sv "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
-ln -sv /usr/share/applications/stretchly.desktop "$XDG_CONFIG_HOME/autostart/"
-ln -sv python3 /usr/bin/python
+link python3 /usr/bin/python
+link fd /usr/bin/fdfind
+link bat /usr/bin/batcat
+link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
 
-highlight "Cron logging"
+highlight "SSH Permissions"
+chmod og= "$HOME/.ssh" -R
+
+highlight "Cron"
 echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
 hasService=$(which service 2>/dev/null)
 test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
-
-highlight "Reload cron"
 test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
 
-highlight "SSH Permissions"
-chmod og= ~/.ssh -R
+highlight "Zsh"
+export ZSH="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/oh-my-zsh"
+cloneshallow() {
+  url=https://github.com/$1.git
+  dir="${3:-$ZSH/plugins/$1}"
+  mkdir -p "$(dirname $dir)"
+  if test -d "$dir"
+  then git -C "$dir" remote set-url origin $url
+  else git clone --depth=1 $url "$dir"
+  fi
+}
+cloneshallow oh-my-zsh                  robbyrussell       "$ZSH"
+cloneshallow powerlevel10k              romkatv            "$ZSH/themes/powerlevel10k"
+cloneshallow fast-syntax-highlighting   zdharma-continuum
+cloneshallow zsh-autosuggestions        zsh-users
+cloneshallow zsh-vim-mode               softmoth
+case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh);; (*) chsh -s $(which zsh);; esac
 
 ### Arch
-highlight "Configure pacman"
+highlight "Pacman"
 if test -f /etc/pacman.conf; then
   sudo sed -i 's/#Color/Color/' /etc/pacman.conf
   sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
@@ -79,13 +80,17 @@ fi
 ### Applications
 test "$DISPLAY" || exit 0
 
+highlight "Application symlinks"
+link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
+link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
+link "/usr/share/applications/stretchly.desktop" "$XDG_CONFIG_HOME/autostart/"
+mx="$HOME/.mixxx"
+if ! test -d "$mx"
+then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
+fi
+
 highlight "Block internet at night & on weekdays in the morning to force focus"
 walli 22 --save
 
-highlight "Mixxx symlinks"
-mkdir -p ~/.mixxx
-ln -s -t ~/.mixxx ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
-
 highlight "Setup kakoune plugin loader"
-plugkak="${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"
-test -d "$plugkak" || { mkdir -p "$(dirname $plugkak)" && git clone https://github.com/robertmeta/plug.kak.git "$plugkak"; }
+cloneshallow plug.kak robertmeta "${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"

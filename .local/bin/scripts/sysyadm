@@ -1,0 +1,3 @@
+#!/bin/sh
+# Operate on system dotfiles
+yadm --yadm-dir /etc/yadm --yadm-data /etc/yadm "$@"

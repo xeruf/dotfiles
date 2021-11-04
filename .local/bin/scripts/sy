@@ -1,0 +1,13 @@
+#!/bin/sh
+# Conveniently use sysyadm
+unignore="/etc/yadm/unignore"
+test -r "$unignore" && cat "$unignore" | while read f; do eval ls -d $f; done | sysyadm add --intent-to-add --pathspec-from-file=-
+case "$1" in
+  ("") sysyadm s;;
+  (p) sysyadm p;;
+  (l) sysyadm fetch && sy rebase main --onto origin/main;;
+  (clone) sysyadm clone -w / git.jfischer.org:xeruf/etc.git --bootstrap;;
+  (init) sysyadm init -b main -w /;;
+  (*) sudo -E sysyadm "$@";;
+esac
+sudo chown -R $USER /etc/yadm

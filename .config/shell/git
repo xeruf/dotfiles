@@ -3,27 +3,13 @@ alias g="git"
 
 y() {
   unignore="$XDG_CONFIG_HOME/yadm/unignore"
-  test -r "$unignore" && cat "$unignore" | envsubst | yadm add --intent-to-add --pathspec-from-file=-
+  test -r "$unignore" && cat "$unignore" | while read f; do eval ls -d $f; done | yadm add --intent-to-add --pathspec-from-file=-
   test "$#" -eq 0 && yadm s || yadm "$@"
 }
 yc() {
   folder=${1:-${PWD/$XDG_CONFIG_HOME\/}}
   echo "config/$folder:" >/tmp/yc-msg
   yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder"
-}
-
-alias sysyadm="yadm --yadm-dir /etc/yadm --yadm-data /etc/yadm"
-alias sysinit="sysyadm init -b main -w /" #; sysyadm gitconfig include.path '$XDG_CONFIG_HOME/git/config'"
-sy() {
-  unignore="/etc/yadm/unignore"
-  test -r "$unignore" && cat "$unignore" | envsubst | sysyadm add --intent-to-add --pathspec-from-file=-
-  case "$1" in
-    ("") sysyadm s;;
-    (p) sysyadm p;;
-    (l) sysyadm fetch && sy rebase main --onto origin/main;;
-    (*) sudo -E $(alias sysyadm | cut -d\' -f2) "$@";;
-  esac
-  sudo chown -R $USER /etc/yadm
 }
 
 gcn() {
