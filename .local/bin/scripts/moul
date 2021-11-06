@@ -12,7 +12,7 @@ fi
 
 grep -e "[^\w=/]$1[^\w/]" /etc/fstab && mount "$@" && exit 0
 case "$1" in
-  (sd*|loop*|nvme*|md*|dm*|vg*) partition="/dev/$1"
+  (sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$1"
     mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$1}"
     grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab && shift && mount "$mountpoint" "$@" && exit 0;;
   (*) partition="-L $1";;

@@ -165,6 +165,7 @@
 	f = fetch
 	fa = fetch --all
 	fs = !git fetch && git st
+	lr = pull --rebase
 	lu = !git pull upstream ${1:-$(git curbranch)}
 
 	rg = rmgonebranches
