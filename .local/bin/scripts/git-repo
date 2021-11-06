@@ -1,7 +1,10 @@
 #!/bin/sh
-# Translates different repo notations into ssh
+# Translate different repo notations into ssh
+# Usage:
+#  git repo <url>
+#  git repo <host> <repo> [user]
 case "$1" in
-  (http*) echo $1 | sed "s|.*//\([^/]*\)/\(.*\)|git@\1:\2.git|";;
+  (http*) echo "$1" | sed "s|.*//\([^/]*\)/\(.*\)|git@\1:\2.git|" ;;
   (git:*) echo "$1" ;;
   (*) echo "${1:-git.jfischer.org}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
 esac
