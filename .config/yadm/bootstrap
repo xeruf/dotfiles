@@ -30,6 +30,11 @@ test -d "/etc/yadm" || sy clone
 section "Software"
 link() { test -e "$2" || ln -sv "$@"; }
 
+mkdir -p .config/audacity
+find $HOME -maxdepth 1 -type l -exec file {} + |
+  grep '.local/share' | grep broken |
+  sed 's/.* //' | xargs mkdir -p
+
 link python3 /usr/bin/python
 link fd /usr/bin/fdfind
 link bat /usr/bin/batcat
