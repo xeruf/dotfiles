@@ -1,4 +1,11 @@
 #!/bin/sh
 # disk size usage information
-df -B1M -x tmpfs -x devtmpfs -x squashfs | awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1000,$4/1000,$6; printf n}'
-
+IFS="\n"
+cols=$(tput cols)
+lsblk --output name,size,fsuse%,mountpoints,label$(test $cols -gt 110 && echo ',uuid,fstype') --width $cols |
+  while read line
+  do p=$(echo "$line" | sed 's|.* \([[:digit:]]\+\)%.*|\1|;t;c0')
+     printf "$(expr "$line" : " " >/dev/null || echo "\033[$(test -z "$first" && echo "4" || expr "5;31" \& "$p" \> 98 \| "31" \& "$p" \> 97 \| "33" \& "$p" \> 94 \| "35" \& "$p" \> 90)m")%s\n" "$line"
+     first=1
+  done
+# df -B1M -x tmpfs -x devtmpfs -x squashfs | awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1000,$4/1000,$6; printf n}'

@@ -11,6 +11,7 @@ fi
 
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
+xsh="$XDG_STATE_HOME"
 if test -d "$DATA"; then
 	da=$(builtin cd $DATA/_* && pwd)
 	d1=$(builtin cd $DATA/1* && pwd)

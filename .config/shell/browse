@@ -32,13 +32,19 @@ cd() {
     test -n "$dir" && cd "$dir"
   else
     builtin cd $1 &&
-    command ls --file-type --group-directories-first --color=always --format=vertical -w $COLUMNS | head -3
+      command ls --literal --file-type --color=always --format=vertical -U -w $COLUMNS |
+        #pr -4 -l1 -W $COLUMNS -S"  " |
+        head -3
+    code=$? && test $code -eq 141 || return $code
   fi
 }
 
 # LOCATE
 alias fselect='fzf -0 -1 --reverse --height=30%'
-loci() { locate --all --ignore-case --basename --existing "$@" | command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect }
+loci() {
+  locate --all --ignore-case --basename --existing "$@" |
+    command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect
+}
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
 # locate exactly
