@@ -1,1 +1,1 @@
-:set prompt "\ESC[0;34m\STX%s\n\ESC[1;31m\STXh> \ESC[m\STX"
+.config/ghci

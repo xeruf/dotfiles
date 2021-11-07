@@ -1,1 +1,1 @@
-text/csv; sc-im "%s"; edit=sc-im "%s"; compose=sc-im "%s"; description="CSV Document"; nametemplate=%s.csv
+.config/mailcap
