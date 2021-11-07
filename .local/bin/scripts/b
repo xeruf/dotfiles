@@ -18,9 +18,10 @@ tput setaf 4 && $elevate file -E "$last" | { grep -v --color=never 'directory$' 
 case "$($elevate file --dereference --mime "$last")" in
   (*inode/directory*) tput sgr0 && $(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -XF;;
   (*binary)
-    if expr "$(file "$last")" : ".*: .*compress" >/dev/null
-    then /usr/share/nvim/runtime/macros/less.sh "$@"
-    fi
+    case "$(file "$last")" in
+      (*:\ *compress*) /usr/share/nvim/runtime/macros/less.sh "$@";;
+      (*:\ *\ image\ data*) viu --height "$(echo $LINES/2 | bc)" "$@";;
+    esac
     tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
     ;;
   (*) $elevate bat --style header "$@" --pager 'less -RXF'

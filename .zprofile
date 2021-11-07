@@ -9,19 +9,22 @@ export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin"
  # adjust programs to use xdg
-export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 export MNT="$XDG_RUNTIME_DIR"/mnt
+export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
-export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 
+export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export KDEHOME="$XDG_STATE_HOME"/kdehome
+
+export WINEPREFIX="$XDG_DATA_HOME"/wine
+export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
+
+ ## Development tools
 export GOPATH="$XDG_STATE_HOME"/go
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
-
-export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
-export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
 
 export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
 export CABAL_DIR="$XDG_CACHE_HOME"/cabal
@@ -53,7 +56,8 @@ export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
-export IGNOREDIRS="-x dev -x .sync -x .stfolder -x .git -x .gradle -x .idea -x out -x *build -x dist_newstyle -x generated -x cache -x node_modules -x virtualenv"
+export IGNOREDIRS_PURE="-x .sync -x .stfolder -x .gradle -x dist_newstyle -x node_modules -x generated -x .cache -x *Cache -x .local/cache"
+export IGNOREDIRS="-x dev -x *build -x .git -x .idea -x out -x cache -x Partitions $IGNOREDIRS_PURE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config

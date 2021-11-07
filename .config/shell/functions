@@ -78,7 +78,7 @@ edshell() {
 	esac
 	test -f "$file" || return 2
 	checksum="$(md5sum "$file")"
-	$EDITOR $(test "$line" && echo "+normal!\ ${line}ggzx") "${file%:*}"
+	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
 
@@ -307,6 +307,12 @@ mvln() {
 	[ $file -gt 0 -a -d $2 ] && 2="$2/$(basename $1)"
 	ln -vsr "$2" "$1"
 }
+
+# Move into XDG_DATA_HOME or so
+mvx() {
+	mvln "$1" "${2:-$XDG_DATA_HOME}/${1#.}"
+}
+
 
 # Create directory and move into it
 mkcd() {
