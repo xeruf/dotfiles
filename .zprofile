@@ -33,6 +33,7 @@ export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME"/bundle
 export BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
 export BUNDLE_USER_PLUGIN="$XDG_STATE_HOME"/bundle
 
+export LESSHISTFILE="$XDG_STATE_HOME"/lesshst
 export KSCRIPT_CACHE_DIR="$XDG_CACHE_HOME"/kscript
 
  # Java & Android
@@ -56,7 +57,7 @@ export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
-export IGNOREDIRS_PURE="-x .sync -x .stfolder -x .gradle -x dist_newstyle -x node_modules -x generated -x .cache -x *Cache -x .local/cache -x .cpan"
+export IGNOREDIRS_PURE="-x .sync -x .stfolder -x .gradle -x dist_newstyle -x node_modules -x generated -x .cache -x *Cache -x .local/cache -x .local/state -x share/JetBrains -x share/Zeal -x share/syncthing -x .cpan"
 export IGNOREDIRS="-x dev -x *build -x .git -x .idea -x out -x cache -x Partitions $IGNOREDIRS_PURE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"

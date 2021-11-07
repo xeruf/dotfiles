@@ -290,7 +290,7 @@ smv() {
 	test -w "$1" && test -w "$(dirname $2)" && mv "$@" || sudo mv "$@"
 }
 
-# Rename the file, keep it in its directory
+# Rename the file inside its directory
 mvf() {
 	smv "$1" "$(dirname $1)/$2"
 }
@@ -300,7 +300,7 @@ mvln() {
 	file=$(test -f "$1" && echo 1 || echo 0)
 	if test -d $1; then
 		mkdir -p "$2"
-		mv -T $1 $2
+		mv -vT $1 $2
 	else
 		mv -v $1 $2
 	fi
@@ -311,6 +311,7 @@ mvln() {
 # Move into XDG_DATA_HOME or so
 mvx() {
 	mvln "$1" "${2:-$XDG_DATA_HOME}/${1#.}"
+	yadm add "$1" ".config/$1"
 }
 
 
