@@ -78,46 +78,46 @@
 	required = true
 
 [alias]
-	fzf = !fzf --preview='git diff HEAD --color=always -- {}' --tiebreak=end,index --multi
-	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' --preview='test {1} != \\? && git diff --color HEAD -U5 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %' | cut -c3-
-
 	# GET INFO
+	# status
 	s = !git stl && git stb
 	st = stb .
 	stb = status --short --branch
 	sv = --paginate status -v
 	svv = --paginate status -vv
 
+	tree = !git ls-tree --full-tree --name-only -r HEAD | tree -C --fromfile . | ${PAGER:-less}
+
+	# repo
 	r = remote -v
 	b = branch -vv
 	ba = b -a
+
 	main = !cat "$(git rev-parse --git-path refs/remotes/origin/HEAD)" | cut -d'/' -f4
-
-	sw = switch
-	sc = switch -c
-	sd = switch -d
-	sm = !git switch $(git main)
-
-	find = log --patch --all --full-history
-	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
-	hf = log --patch --follow --find-renames=1 --
+	curbranch = symbolic-ref --short HEAD
+	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
 
 	rev = rev-parse --short
 	head = rev-parse --short HEAD
 	root = rev-parse --show-toplevel
 	dir = rev-parse --git-dir
-	curbranch = symbolic-ref --short HEAD
-	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
 
+	# history
 	lgr = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
 	lg = lgr HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
 	my = lo --author [Jj]anek
+
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = !git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
+	find = log --patch --all --full-history
+	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
+	hf = log --patch --follow --find-renames=1 --
+
+	# diffs
 	d = diff
 	dm = !git diff $(git merge-base $(git main) HEAD)
 	dw = diff --color-words
@@ -125,6 +125,14 @@
 	du = diff @{push}
 
 	# MODIFY
+
+	sw = switch
+	sc = switch -c
+	sd = switch -d
+	sm = !git switch $(git main)
+
+	fzf = !fzf --preview='git diff HEAD --color=always -- {}' --tiebreak=end,index --multi
+	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' --preview='test {1} != \\? && git diff --color HEAD -U5 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %' | cut -c3-
 
 	# Local Changes
 	a = add -u
@@ -159,7 +167,7 @@
 	format-head = !git stash && git-clang-format HEAD~ && git commit -a --amend --no-edit && git stash pop
 
 	sun = submodule update --no-fetch
-	# Update from remote
+	# Fetch
 	su = submodule update --init --recursive
 
 	f = fetch
@@ -168,14 +176,15 @@
 	lr = pull --rebase
 	lu = !git pull upstream ${1:-$(git curbranch)}
 
-	rg = rmgonebranches
-	gcr = !git gc && git repack -a -d
-
-	# Change remote
+	# Push
 	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease
 	luu = !git pull upstream ${1:-$(git curbranch)} && git push --no-verify
 	pf = push --force-with-lease
 	cap = !git commit --amend --no-edit && git push --force-with-lease
+
+	# CLEANUP
+	rg = rmgonebranches
+	gcr = !git gc && git repack -a -d
 
 [includeIf "gitdir:yadm/repo.git"]
 	path = "~/.config/yadm/gitconfig"
