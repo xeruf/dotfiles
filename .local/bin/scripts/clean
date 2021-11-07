@@ -4,7 +4,7 @@
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [c]=/var/cache)
 # Directories to always clean
-_clean_folders=(~/.ant ~/.autopsy ~/.cargo ~/.electron-gyp ~/.gradle ~/.konan ~/.nix-defexpr ~/.npm ~/.parallel ~/.stack ~/.yarn
+_clean_folders=(~/.ant ~/.autopsy ~/.cargo ~/.electron-gyp ~/.gradle ~/.konan ~/.nix-defexpr ~/.node-gyp ~/.npm ~/.nv ~/.parallel ~/.stack ~/.yarn
   ~/.lesshst ~/.yarnrc)
 
 

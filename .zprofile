@@ -56,7 +56,7 @@ export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
-export IGNOREDIRS_PURE="-x .sync -x .stfolder -x .gradle -x dist_newstyle -x node_modules -x generated -x .cache -x *Cache -x .local/cache"
+export IGNOREDIRS_PURE="-x .sync -x .stfolder -x .gradle -x dist_newstyle -x node_modules -x generated -x .cache -x *Cache -x .local/cache -x .cpan"
 export IGNOREDIRS="-x dev -x *build -x .git -x .idea -x out -x cache -x Partitions $IGNOREDIRS_PURE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
