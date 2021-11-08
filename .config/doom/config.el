@@ -309,7 +309,7 @@ Version 2019-11-04 2021-02-16"
 
   (defun org-yank-visible ()
     (interactive)
-    (if mark-active (org-copy-visible) (org-copy-visible (point) (progn (end-of-line) (point)))))
+    (if mark-active (call-interactively 'org-copy-visible) (org-copy-visible (point) (progn (end-of-line) (point)))))
 
   ;; Toggle source blocks with C-c t
   (defvar org-blocks-hidden nil)
