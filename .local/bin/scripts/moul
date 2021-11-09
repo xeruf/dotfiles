@@ -2,19 +2,26 @@
 # Mount a partition by label or device identifier automatically
 test "$1" = "--help" && echo "$0 <device> [mountpoint] [options...]" && exit 0
 if test "$1" = "-u"
-then shift
-  mountpoint=$(test -d "$1" && echo "$1" || echo "${XDG_RUNTIME_DIR}/mnt/$1")
+then
+  mountpoint="$2"
   sudo umount "$mountpoint"
   code=$?
   sudo rm -d "$mountpoint"
   exit $?
 fi
 
-grep -e "[^\w=/]$1[^\w/]" /etc/fstab && mount "$@" && exit 0
+if grep -e "LABEL=$1[^\w/]" /etc/fstab
+then mount -L "$@"; exit $?
+fi
+if grep -e "[^\w=/]$1[^\w/]" /etc/fstab
+then mount "$@"; exit $?
+fi
+mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$1}"
+if grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab
+then shift; mount "$mountpoint" "$@"; code=$?; cd $mountpoint; exit $code
+fi
 case "$1" in
-  (sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$1"
-    mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$1}"
-    grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab && shift && mount "$mountpoint" "$@" && exit 0;;
+  (sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$1";;
   (*) partition="-L $1";;
 esac
 shift $(expr 2 \& $# \> 1 \| 1)

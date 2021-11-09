@@ -1,4 +1,0 @@
-#!/bin/sh
-# rsync directory properly
-# suffix both dirs with / to act on contents
-rsync -recursive --specials --times --links --delete --info=progress2,remove,symsafe,flist,del --human-readable "$@"

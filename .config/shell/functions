@@ -275,7 +275,10 @@ compdef f=fd
 lowercase_transliterate="y/A-Z /a-z-/"
 which perl-rename >/dev/null && alias lowercase="perl-rename '$lowercase_transliterate'" || alias lowercase="rename '$lowercase_transliterate'"
 
-alias move='rsync --recursive --progress --human-readable --remove-source-files'
+# rsync directory properly - suffix both dirs with / to act on contents
+alias rc='rsync --recursive --specials --info=progress2,remove,symsafe,flist,del --human-readable'
+alias dsync='rc ---times --links --delete'
+alias move='rc --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
 
 # Swap the names of two files
@@ -322,6 +325,12 @@ mkcd() {
 }
 
 # Other stuff {{{1
+
+umoul() {
+  mountpoint="$(test -d "$1" && realpath "$1" || echo "${XDG_RUNTIME_DIR}/mnt/$1")"
+  case "$PWD" in ("$mountpoint"*) cd "$(dirname $mountpoint)";; esac
+  moul -u "$mountpoint"
+}
 
 resetdocker() {
 	#aptremove docker-ce
