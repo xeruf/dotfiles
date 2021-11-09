@@ -1,5 +1,6 @@
 #!/bin/sh
 # Remove recursively safely
+case "$1" in ([0-9]) depth=$1; shift;; esac
 for f in "$@"
 do
 	test -w "$f" && elevate="" || elevate=sudo

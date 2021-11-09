@@ -86,7 +86,8 @@
 	sv = --paginate status -v
 	svv = --paginate status -vv
 
-	tree = !git ls-tree --full-tree --name-only -r HEAD | tree -C --fromfile . | ${PAGER:-less}
+	tl = !git ls-tree --full-tree --name-only -r HEAD | tree -C --fromfile . | ${PAGER:-less}
+	tree = !git ls-tree --name-only -r HEAD | tree -C --fromfile . | ${PAGER:-less}
 
 	# repo
 	r = remote -v

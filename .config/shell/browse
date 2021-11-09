@@ -40,7 +40,7 @@ cd() {
 }
 
 # LOCATE
-alias fselect='fzf -0 -1 --reverse --height=30%'
+alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || b "$f"; done'
 loci() {
   locate --all --ignore-case --basename --existing "$@" |
     command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect

@@ -4,5 +4,5 @@
 #  with forced [C]olorization and pipe into less
 # If first arg is a digit, it displaces the default depth of 3
 # Any other arguments (usually pathnames) are passed on to the tree command
-case "$1" in [0-9]) depth=$1; shift;; esac
+case "$1" in ([0-9]) depth=$1; shift;; esac
 tree -a --dirsfirst -L ${depth:-3} --du -h -C "$@" | ${PAGER:-less}
