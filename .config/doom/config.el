@@ -171,8 +171,6 @@ Version 2019-11-04 2021-02-16"
 (setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
       default-directory org-directory
       org-roam-directory org-directory
-      org-roam-db-update-on-save nil
-      org-roam-extract-new-file-path "%<%Y%m%d>-${slug}.org"
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
 
 (use-package! recentf
@@ -224,6 +222,7 @@ Version 2019-11-04 2021-02-16"
         "E" 'org-export-repeat
         "n" 'org-add-note
         "y" 'org-yank-visible
+        "Y" 'org-copy-visible
         "d=" 'org-timestamp-up-week
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
@@ -232,11 +231,15 @@ Version 2019-11-04 2021-02-16"
         :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         "gR" 'org-mode-restart
         )
+
   ;; Behavior
   ; (set-file-template! 'org-mode :ignore t)
   (setq org-read-date-prefer-future nil)
   (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
         org-attach-method 'mv)
+
+  (setq org-id-method 'ts
+        org-id-ts-format "%Y%m%dT%H%M%S")
 
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
@@ -347,6 +350,32 @@ Version 2019-11-04 2021-02-16"
   :config
     (require 'org-roam-protocol)
 
+    (setq org-roam-db-update-on-save nil
+          org-roam-extract-new-file-path "%<%Y%m%d>-${slug}.org"
+          +org-roam-open-buffer-on-find-file nil)
+
+    (setq my/org-roam-capture-props ":properties:\n:id: ${slug}\n:created: %<%Y-%m-%dT%H%M%S>\n:modified: <>\n:end:\n")
+    (setq my/org-roam-capture-title "#+title: ${title}\n")
+    (setq my/org-roam-capture-template (concat my/org-roam-capture-props my/org-roam-capture-title))
+    (setq org-roam-capture-templates
+          '(("d" "default" plain "%?" :target
+             (file+head "%<%Y%m%d>-${slug}.org" ":properties:\n:id: ${slug}\n:created: %<%Y-%m-%dT%H%M%S>\n:modified: <>\n:end:\n#+title: ${title}\n")
+            :unnarrowed t))
+          ;'(
+          ;  ("d" "default" plain "%?" :target
+          ;   (file+head "%<%Y%m%d>-${slug}.org"
+          ;              (concat "#+filetags: :\n")
+          ;   :unnarrowed t))
+          ;  ("p" "person" plain "%?" :target
+          ;   (file+head "person/%<%Y%m%d>-${slug}.org"
+          ;              (concat my/org-roam-capture-props "#+filetags: :person:\n" my/org-roam-capture-title)
+          ;   :unnarrowed t))
+          ;  ("t" "tech" plain "%?" :target
+          ;   (file+head "tech/%<%Y%m%d>-${slug}.org"
+          ;              (concat my/org-roam-capture-props "#+filetags: :tech:software:list:\n" my/org-roam-capture-title)
+          ;   :unnarrowed t))
+         )
+
     (defvar my/auto-org-roam-db-sync--timer nil)
     (defvar my/auto-org-roam-db-sync--timer-interval 3)
     (define-minor-mode my/auto-org-roam-db-sync-mode
@@ -359,8 +388,8 @@ Version 2019-11-04 2021-02-16"
             (when my/auto-org-roam-db-sync-mode
               (run-with-idle-timer
                my/auto-org-roam-db-sync--timer-interval :repeat
-               #'org-roam-db-sync))))
-    (my/auto-org-roam-db-sync-mode)
+               (and 'org-roam-db-sync 'org-roam-update-org-id-locations)))))
+    ;(my/auto-org-roam-db-sync-mode)
   )
 
 
@@ -379,7 +408,7 @@ Version 2019-11-04 2021-02-16"
                'org/ensure-latex-clearpage)
 
   ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-  (setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F; mv %f /tmp/latexmk; mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+  (setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
         org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
         org-export-with-tags nil
         org-export-with-tasks 'done
