@@ -4,7 +4,7 @@
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [c]=/var/cache)
 # Directories to always clean
-_clean_folders=(~/.ant ~/.autopsy ~/.bundle ~/.cache ~/.cargo ~/.docker ~/.electron ~/.electron-gyp ~/.gradle ~/.gradle-kotlin-dsl ~/.hex ~/.java ~/.kscript ~/.konan ~/.m2 ~/.mix ~/.nix-defexpr ~/.node-gyp ~/.npm ~/.nv ~/.openjfx ~/.parallel ~/.stack ~/.surf ~/.texlive ~/.yarn luametatex-cache
+_clean_folders=(~/.ant ~/.autopsy ~/.bundle ~/.cache ~/.cargo ~/.cpanm ~/.docker ~/.electron ~/.electron-gyp ~/.gradle ~/.gradle-kotlin-dsl ~/.hex ~/.java ~/.kscript ~/.konan ~/.m2 ~/.mix ~/.nix-defexpr ~/.node-gyp ~/.npm ~/.nv ~/.openjfx ~/.parallel ~/.stack ~/.surf ~/.texlive ~/.yarn luametatex-cache
   ~/.lesshst ~/.rubberband.wisdom.d ~/.yarnrc)
 
 
@@ -41,8 +41,10 @@ if [[ $1 =~ "d" ]]; then
 		-type d \( -name ".gradle" -o -name "generated" -o -name "dist-newstyle" -o -name "cache" -o -name "node_modules" -o -name "cmake_build" \) \
 		-print -exec rm -r {} + -prune
 	echo -n "  " && highlight "build directories"
-	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" -o -name "www" -o -name "src" \) -prune \
-		-o -name "build" -type d \
+	find $DATA/2-standards/dev/aur -mindepth 2 -maxdepth 2 -type d -not -name ".*" \
+		-print -exec sudo rm -rI {} +
+	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
+		-prune -o -name "build" -type d \
 		-print -exec rm -rI {} + -prune
 fi
 
