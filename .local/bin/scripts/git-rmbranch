@@ -1,7 +1,10 @@
 #!/bin/sh
-# Removes the given branch locally and remotely.
-# With no argument it switches to the default branch and deletes the current branch.
+# Remove the given branch locally and remotely.
+# Without argument delete the current branch after switching to the default branch.
 branch=${1:-$(git curbranch)}
-echo "${@:-$branch}" | sed 's/\([^ ]\+\)/\1@{push}/g' | xargs git rev-parse --abbrev-ref --revs-only | sed 's/\// /' | xargs --no-run-if-empty git push -d
-test -n "$1" || git checkout main || git checkout master || git checkout $(cat "$(git rev-parse --git-path refs/remotes/origin/HEAD)" | sed 's|.*/||')
+echo "${@:-$branch}" | sed 's/\([^ ]\+\)/\1@{push}/g' |
+  xargs git rev-parse --abbrev-ref --revs-only | sed 's/\// /' |
+  xargs -L 1 --no-run-if-empty git push -d
+test -n "$1" || git checkout main || git checkout master ||
+  git checkout $(cat "$(git rev-parse --git-path refs/remotes/origin/HEAD)" | sed 's|.*/||')
 git branch -D "${@:-$branch}"
