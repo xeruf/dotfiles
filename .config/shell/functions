@@ -276,8 +276,9 @@ lowercase_transliterate="y/A-Z /a-z-/"
 which perl-rename >/dev/null && alias lowercase="perl-rename '$lowercase_transliterate'" || alias lowercase="rename '$lowercase_transliterate'"
 
 # rsync directory properly - suffix both dirs with / to act on contents
-alias rc='rsync --recursive --specials --info=progress2,remove,symsafe,flist,del --human-readable'
-alias dsync='rc ---times --links --delete'
+alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links'
+alias dsync='rc --delete'
+alias dsynca='rc --specials --times --delete'
 alias move='rc --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
 
@@ -299,7 +300,7 @@ mvf() {
 	smv "$1" "$(dirname $1)/$2"
 }
 
-# Moves from $1 to $2 and replaces the original with a relative symlink
+# Move from $1 to $2 and create a relative symlink
 mvln() {
 	file=$(test -f "$1" && echo 1 || echo 0)
 	if test -d $1; then
@@ -312,7 +313,7 @@ mvln() {
 	ln -vsr "$2" "$1"
 }
 
-# Move into XDG_DATA_HOME or so
+# Move into an xdg dir (default XDG_DATA_HOME) and create a symlink
 mvx() {
 	mvln "$1" "${2:-$XDG_DATA_HOME}/${1#.}"
 	yadm add "$1" ".config/$1"
@@ -327,7 +328,10 @@ mkcd() {
 # Other stuff {{{1
 
 umoul() {
-  mountpoint="$(test -d "$1" && realpath "$1" || echo "${XDG_RUNTIME_DIR}/mnt/$1")"
+  arg="${1:-$PWD}"
+  mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${XDG_RUNTIME_DIR}/mnt/$arg")"
+  mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
+    mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
   case "$PWD" in ("$mountpoint"*) cd "$(dirname $mountpoint)";; esac
   moul -u "$mountpoint"
 }
