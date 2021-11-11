@@ -188,7 +188,7 @@ alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
 alias grp='grep --color=auto --line-number --ignore-case --binary-files=without-match --directories=skip'
-grpr() { grp --color=always --recursive $(echo $IGNOREDIRS | sed 's/-x/--exclude-dir/g') "$@" | less -F }
+grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's/-x/--exclude-dir/g') "$@" | less -F }
 
 # Recover stray swap files from neovim
 alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs -r nvim"
