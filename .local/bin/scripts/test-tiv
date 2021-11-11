@@ -6,6 +6,6 @@ runti() {
     highlight "$*" && "$@"
 }
 cols="$(expr $(tput cols) / $1 / 4 \| 1)"
-runti timg --grid=${cols} -g $(tput cols)x$(expr $1 \* $cols) "${@:2}"
+runti timg --title --grid=${cols} -g $(tput cols)x$(expr $1 \* $cols) "${@:2}"
 runti viu --name -h $1 "${@:2}"
 runti tiv -h $1 -c $cols "${@:2}"

@@ -1,8 +1,4 @@
 #!/bin/sh
 # Listing for quick directory switcher based on zoxide and fzf
-if test -d "$1" -o "$1" = "-"
-then echo "$@"
-else
 set -o noglob
 zoxide query -sl "$@"
-fi
