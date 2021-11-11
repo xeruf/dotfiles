@@ -16,7 +16,7 @@ gcn() {
   root="$(git rev-parse --show-toplevel)"
   if test "$root" = "$DATA"
   then
-    if test $# -eq 0 || test -e $1
+    if test $# -eq 0 || test -e "$1"
     then
       fulldir="$(realpath ${1:-$PWD})"
       dir="${fulldir#$root/*/}"

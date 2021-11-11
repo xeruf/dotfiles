@@ -9,5 +9,6 @@ while test $# -gt 1; do
   while ! test -e "$dir"
   do dir="$(dirname "$dir")"
   done
-  test $flag "$dir"
+  test -L "$dir" ||
+    test $flag "$dir"
 done
