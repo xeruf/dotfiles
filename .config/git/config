@@ -65,8 +65,8 @@
 	file = /home/janek/.config/yadm/.mailmap
 
 [http]
-	lowSpeedLimit = 1000
-	lowSpeedTime = 3
+	lowSpeedLimit = 100
+	lowSpeedTime = 10
 
 [url "ssh://github.com/"]
 	pushInsteadOf = https://github.com/
