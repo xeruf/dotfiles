@@ -1,0 +1,10 @@
+#!/bin/sh
+# Generate a wordcloud for printing
+# https://amueller.github.io/word_cloud/cli.html
+in=$1
+out=${2:-$in-cloud.png}
+scale=$3
+words=${4:-2000$scale}
+shift $(expr 4 \& $# \> 4 \| $#)
+wordcloud_cli --background white --text $in --imagefile $out --width 841$scale --height 594$scale --min_font_size 5$scale --max_font_size 120$scale --max_words $words "$@"
+timg -g 50x100 $out
