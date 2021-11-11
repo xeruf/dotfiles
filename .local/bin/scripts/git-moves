@@ -1,5 +1,8 @@
 #!/bin/sh
 # Stage moved files fitting the already staged ones
 git diff --name-only --cached >/tmp/staged
-git add $(git rev-parse --show-toplevel)
-git status -s | tail +2 | grep -vf /tmp/staged | cut -c4- | sed 's/ -> /\n/' | xargs git restore --staged
+root=$(git rev-parse --show-toplevel)
+git add "$root"
+git status --porcelain --find-renames=.3 |
+  grep -vf /tmp/staged | cut -c4- | sed 's/ -> /\n/' |
+  xargs git -C "$root" restore --staged
