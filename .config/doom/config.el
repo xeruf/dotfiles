@@ -236,9 +236,10 @@ Version 2019-11-04 2021-02-16"
   ; (set-file-template! 'org-mode :ignore t)
   (setq org-read-date-prefer-future nil)
   (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
-        org-attach-method 'mv)
+        org-attach-method 'mv
+        org-attach-preferred-new-method nil)
 
-  (setq org-id-method 'ts
+  (setq org-id-method 'org
         org-id-ts-format "%Y%m%dT%H%M%S")
 
   ;; Visuals

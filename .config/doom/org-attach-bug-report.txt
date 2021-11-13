@@ -1,0 +1,22 @@
+To: emacs-orgmode@gnu.org
+Subject: [BUG] org-attach [9.6 (9.6-??-2e9999783 @ /home/janek/.config/emacs/.local/straight/build-27.2/org/)]
+From: Janek <27jf@pm.me>
+--text follows this line--
+
+When setting org-id-method to 'ts or 'org,
+org-attach seems to use org-attach-id-ts-folder-format
+to create its hierarchy.
+
+However I tend to customize IDs for important files by hand,
+causing any attempt to use org-attach on that file to fail
+if the ID is shorter than six characters:
+
+    org-attach-id-ts-folder-format: Args out of range: "ftt", 0, 6
+
+This method should be adjusted to handle non-ts-ids just as well,
+as org-id-method does not dictate the format of existing ids.
+
+
+Emacs  : GNU Emacs 27.2 (build 1, x86_64-pc-linux-gnu, GTK+ Version 3.24.27, cairo version 1.17.4)
+ of 2021-03-26
+Package: Org mode version 9.6 (9.6-??-2e9999783 @ /home/janek/.config/emacs/.local/straight/build-27.2/org/)
