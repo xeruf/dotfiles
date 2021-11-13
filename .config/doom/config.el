@@ -355,25 +355,18 @@ Version 2019-11-04 2021-02-16"
           +org-roam-open-buffer-on-find-file nil)
 
     (setq my/org-roam-capture-props ":properties:\n:id: ${slug}\n:created: %<%Y-%m-%dT%H%M%S>\n:modified: <>\n:end:\n")
-    (setq my/org-roam-capture-title "#+title: ${title}\n")
-    (setq my/org-roam-capture-template (concat my/org-roam-capture-props my/org-roam-capture-title))
+    (setq my/org-roam-capture-title "\n#+title: ${title}")
     (setq org-roam-capture-templates
-          '(("d" "default" plain "%?" :target
-             (file+head "%<%Y%m%d>-${slug}.org" ":properties:\n:id: ${slug}\n:created: %<%Y-%m-%dT%H%M%S>\n:modified: <>\n:end:\n#+title: ${title}\n")
-            :unnarrowed t))
-          ;'(
-          ;  ("d" "default" plain "%?" :target
-          ;   (file+head "%<%Y%m%d>-${slug}.org"
-          ;              (concat "#+filetags: :\n")
-          ;   :unnarrowed t))
-          ;  ("p" "person" plain "%?" :target
-          ;   (file+head "person/%<%Y%m%d>-${slug}.org"
-          ;              (concat my/org-roam-capture-props "#+filetags: :person:\n" my/org-roam-capture-title)
-          ;   :unnarrowed t))
-          ;  ("t" "tech" plain "%?" :target
-          ;   (file+head "tech/%<%Y%m%d>-${slug}.org"
-          ;              (concat my/org-roam-capture-props "#+filetags: :tech:software:list:\n" my/org-roam-capture-title)
-          ;   :unnarrowed t))
+          `(("d" "default" plain "%?" :target
+             (file+head "%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: :" my/org-roam-capture-title))
+             :unnarrowed t)
+            ("p" "person" plain "%?" :target
+             (file+head "person/%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: :person:" my/org-roam-capture-title))
+             :unnarrowed t)
+            ("t" "tech" plain "%?" :target
+             (file+head "tech/%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: tech:software:list:" my/org-roam-capture-title))
+             :unnarrowed t)
+            )
          )
 
     (defvar my/auto-org-roam-db-sync--timer nil)
