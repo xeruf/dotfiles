@@ -1,0 +1,6 @@
+#!/bin/sh
+# Show a frequance spectrogram using sox and timg
+out=${2:-/tmp/$1-sox.png}
+mkdir -p "$(dirname "$out")"
+sox "$1" -n spectrogram -o "$out"
+timg --title "$out"

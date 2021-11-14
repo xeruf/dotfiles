@@ -44,8 +44,9 @@ and configuration for ~less~ and ~fzf~.
 - experiments :: kakoune
 ** Applications
 - productivity :: activitywatch-bin
-- music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc
+- music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc sox
   : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpd-mpris
+  : sudo npm install -g bpm
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 - tagging :: puddletag beets picard ffmpegthumbnailer
 - sync :: syncthing
