@@ -60,13 +60,13 @@ formatsongs() {
 	_pwd="$PWD"
 	find "$PWD" "$@" -type d | while read d; do builtin cd $d; findsongs | while read song; do
 		new="$(formatsong "$song")"
-		test "$new" != "$song" && mv -v "$song" "$new"
+		test "$new" && test "$new" != "$song" && mv -iv "$song" "$new"
 	done; done
 	builtin cd "$_pwd"
 	IFS=$'\n'
 	for f in $(find "$@" -name "*.wav"); do
 		echo "Converting $f to ${f%.*}.flac"
-		ffmpeg -i "$f" "${f%.*}.flac" -v warning && rm -v $f
+		ffmpeg -i "$f" "${f%.*}.flac" -v warning && mv -v $f /tmp
 	done
 	unset IFS
 }
@@ -77,11 +77,12 @@ formatsong() {
 		s/ \((Original Mix)\|(Original)\|(Full Stream)\|.NCS Release.\)//i;
 		s/ (\(Acoustic\|Live\))/ [\1]/i;
 		s/ \[\(feat.*\)\]/ (\1)/i;
+		s/^\([A-z]\+\) The \([^-]\+\)$/\1, the \2/g;
 		s/ \(\..\{2,4\}\)$/\1/;
 		s/---/ - /;
 		s/^[0-9]\{6\}_//;
-		s/  / /g;
-		s/_\././g;
 		s/_/ /g;
+		s/ \././g;
+		s/  / /g;
 		s/\(\w\)+\(\w\)/\1 \2/g' -
 }

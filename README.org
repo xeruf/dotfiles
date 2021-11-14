@@ -55,7 +55,7 @@ and configuration for ~less~ and ~fzf~.
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore
-- video :: vlc kdenlive
+- video :: vlc obs-studio kdenlive
 - kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
 - office :: emacs texlive-core texlive-latexextra context-bin libreoffice-fresh
 - hacking :: etcher-bin

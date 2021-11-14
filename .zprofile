@@ -49,8 +49,8 @@ export TASKRC="$XDG_CONFIG_HOME/task/taskrc"
 export TASKDATA="$XDG_DATA_HOME/task"
  # zsh dirs
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+export ZSH="$XDG_DATA_HOME/zsh/oh-my-zsh"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
-export ZSH="$XDG_STATE_HOME/zsh/oh-my-zsh"
 export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
 export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
 

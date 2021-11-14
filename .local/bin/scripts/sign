@@ -1,5 +1,5 @@
 #!/bin/sh
-test -r "$1" || (echo "Usage: sign <document.pdf> [hoffset [voffset [scale [alt-signature]]]]" && exit 1)
+test ! -r "$1" && echo "Usage: sign <document.pdf> [hoffset [voffset [scale [alt-signature]]]]" && exit 1
 
 signature=$(pass information/signature$(test -n "$5" && echo "-$5"))
 
@@ -15,6 +15,8 @@ pdfjam "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale 
     --offset "${2:-0}pt ${3:-0}pt" --scale "${4:-1}"
 pdfjam "$1" last "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
 
+timg "$tmp_signed"
+
 # https://apple.stackexchange.com/questions/198854/shell-command-to-count-pages-in-a-pdf-other-than-pdftk
 if test "$(pdftk "$1" dump_data | grep Pages | cut -d' ' -f2)" -gt 1
   then
@@ -22,5 +24,3 @@ if test "$(pdftk "$1" dump_data | grep Pages | cut -d' ' -f2)" -gt 1
     pdfjam "$tmp_reversed" last-2 "$tmp_signed" --outfile "$result"
   else cp "$tmp_signed" "$result"
 fi
-
-xdg-open "$result"
