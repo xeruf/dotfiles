@@ -120,7 +120,12 @@
       "melodic",
       "Progressive House",
       "calibrate",
-      "minecraft"
+      "virtual self",
+      "giants",
+      "fathers",
+      "father",
+      "piano",
+      ""
     ]
   },
   "&Pattern": {
@@ -208,7 +213,7 @@
       ",? ?( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, ) ?",
       ",? ?( (&|fe?a?t(uring)?.?|x|and|/|\\+) |/|, |\\\\\\\\) ?",
       "^; ",
-      "^; "
+      "(.*) & (.*)"
     ]
   },
   "Replace &matches with:": {
@@ -230,7 +235,7 @@
       "\\\\",
       "; ",
       "",
-      ""
+      "$1; $2"
     ]
   },
   "&Separator": {
