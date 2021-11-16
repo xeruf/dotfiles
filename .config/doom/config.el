@@ -506,6 +506,7 @@ Version 2019-11-04 2021-02-16"
   )
 (after! dired-aux
   (add-to-list 'dired-compress-file-suffixes '("\\.nupkg\\'" "" "unzip -o -d %o %i"))
+  (add-to-list 'dired-compress-file-suffixes '("\\.tar\\'" "" "tar xf %i"))
   )
 (use-package! diredfl
   :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
