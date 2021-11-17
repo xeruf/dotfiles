@@ -6,5 +6,11 @@
 case "$1" in
   (http*) echo "$1" | sed "s|.*//\([^/]*\)/\(.*\)|git@\1:\2.git|" ;;
   (git:*) echo "$1" ;;
-  (*) echo "${1:-git.jfischer.org}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
+  (*) host=$1
+    case $1 in
+      (hub) host=git@github.com;;
+      (lab) host=git@gitlab.com;;
+      (*) host=$1;;
+    esac
+    echo "${host:-git.jfischer.org}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
 esac
