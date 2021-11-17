@@ -44,9 +44,8 @@ fi
 
 highlight "d to recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
-	rm -rf .npm .yarn
-	arg-test -name "src" -prune -o \
-		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name "\1"|g') \
+	find -name "src" -prune -o \
+		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm -r {} + -prune
 	echo -n "  " && highlight "build directories"
 	find $DATA/2-standards/dev/aur -mindepth 2 -maxdepth 2 -type d -not -name ".*" \

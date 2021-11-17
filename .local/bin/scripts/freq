@@ -1,6 +1,21 @@
 #!/bin/sh
-# Show a frequance spectrogram using sox and timg
-out=${2:-/tmp/$1-sox.png}
-mkdir -p "$(dirname "$out")"
-sox "$1" -n spectrogram -o "$out"
-timg --title "$out"
+# Show a frequence spectrogram using sox and timg
+# https://sound.stackexchange.com/questions/40226/show-the-differences-between-two-similar-audio-files-using-graphical-method
+case $1 in
+  (-a) shift
+    for arg; do $0 "$arg"; done
+    ;;
+  (-d) shift
+    diff="/tmp/diff-$1-$2.wav"
+    ffmpeg -y -v warning -i "$1" "/tmp/$1.wav"
+    ffmpeg -y -v warning -i "$2" "/tmp/$2.wav"
+    sox -m -v 1 "/tmp/$1.wav" -v -1 "/tmp/$2.wav" "$diff"
+    $0 "$diff"
+    ;;
+  (*)
+    out="${2:-/tmp/freq-$(basename "$1").png}"
+    mkdir -p "$(dirname "$out")"
+    sox "$1" -n spectrogram -o "$out"
+    timg --title "$out"
+    ;;
+esac

@@ -6,7 +6,7 @@ do
 	test -w "$f" && elevate="" || elevate=sudo
 	if test -d "$f"; then
 		if test -e "$f/.git" || test -e "$f/packed-refs"
-			then echo -n "Force delete git project $f?"
+			then echo -n "Force delete git project $f? "
 				read answer
 				test "$answer" = "y" && $elevate rm -rf "$f"
 			else find "$f" -maxdepth 4 -type d -empty -printf "Removing empty %p\n" -delete
