@@ -1,6 +1,6 @@
--ms1G
 -mx5G
--XX:ReservedCodeCacheSize=512m
+-XX:ReservedCodeCacheSize=1G
+-ms1G
 -Xss2m
 -XX:NewSize=128m
 -XX:MaxNewSize=128m
