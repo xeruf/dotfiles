@@ -177,7 +177,7 @@ Version 2019-11-04 2021-02-16"
   :config
     (add-to-list 'recentf-exclude "writing\\/tug")
     (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (setq recentf-list (append '("/home/janek/data/4-incubator/downloads/") recentf-list))
+    (add-to-list 'recentf-list "/home/janek/data/4-incubator/downloads/")
     ;(setq recentf-keep '(recentf-keep-default-predicate file-remote-p))
   )
 
@@ -361,17 +361,18 @@ Version 2019-11-04 2021-02-16"
           `(("d" "default" plain "%?" :target
              (file+head "%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: :" my/org-roam-capture-title))
              :unnarrowed t)
-            ("p" "person" plain "%?" :target
-             (file+head "person/%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: :person:" my/org-roam-capture-title))
-             :unnarrowed t)
-            ("t" "tech" plain "%?" :target
-             (file+head "tech/%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: tech:software:list:" my/org-roam-capture-title))
+            )
+          )
+    (cl-loop for item in '("health" "own" "list" "notes" "project" "person" "tech:software:list" "faith" "inspiration")
+      do (add-to-list 'org-roam-capture-templates
+            `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
+             (file+head ,(concat (car (split-string item ":")) "/%<%Y%m%d>-${slug}.org") ,(concat my/org-roam-capture-props "#+filetags: :" item ":" my/org-roam-capture-title))
              :unnarrowed t)
             )
-         )
+      )
 
     (defvar my/auto-org-roam-db-sync--timer nil)
-    (defvar my/auto-org-roam-db-sync--timer-interval 3)
+    (defvar my/auto-org-roam-db-sync--timer-interval 30)
     (define-minor-mode my/auto-org-roam-db-sync-mode
       "Toggle automatic `org-roam-db-sync' when Emacs is idle.
     Referece: `auto-save-visited-mode'"
@@ -382,8 +383,8 @@ Version 2019-11-04 2021-02-16"
             (when my/auto-org-roam-db-sync-mode
               (run-with-idle-timer
                my/auto-org-roam-db-sync--timer-interval :repeat
-               (and 'org-roam-db-sync 'org-roam-update-org-id-locations)))))
-    ;(my/auto-org-roam-db-sync-mode)
+               (and 'org-roam-db-sync 'org-roam-update-org-id-locations 'org-mode-restart)))))
+    (my/auto-org-roam-db-sync-mode)
   )
 
 
