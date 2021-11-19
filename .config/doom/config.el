@@ -200,6 +200,7 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! org
   :bind (:map org-mode-map
+         ("C-c b" . org-cycle-list-bullet)
          ("C-c ." . org-time-stamp-inactive)
          ("C-c C-." . org-time-stamp)
          ("M-C-+" . org-timestamp-up)
@@ -385,6 +386,7 @@ Version 2019-11-04 2021-02-16"
                my/auto-org-roam-db-sync--timer-interval :repeat
                (and 'org-roam-db-sync 'org-roam-update-org-id-locations 'org-mode-restart)))))
     (my/auto-org-roam-db-sync-mode)
+    ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer) - org-journal
   )
 
 

@@ -273,7 +273,9 @@ compdef f=fd
 #alias f1='find -mindepth 1 -maxdepth 1'
 
 lowercase_transliterate="y/A-Z /a-z-/"
-which perl-rename >/dev/null && alias lowercase="perl-rename '$lowercase_transliterate'" || alias lowercase="rename '$lowercase_transliterate'"
+which perl-rename >/dev/null &&
+  alias lowercase="perl-rename -iv '$lowercase_transliterate'" ||
+  alias lowercase="rename -iv '$lowercase_transliterate'"
 
 # rsync directory properly - suffix both dirs with / to act on contents
 alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links'

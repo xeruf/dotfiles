@@ -7,5 +7,5 @@ esac
 name="/mnt/backup/borg::$(test -n "$name" && echo "$name" || cat /etc/hostname)-${1:-system}-$(date -u +"%y%m%d")"
 echo "Backing up as $name"
 sudo borg create --progress --stats \
-  $(echo $DIRS_IGNORE_SAFE -x 'software-challenge/*/build' -x 'emacs/.local' | sed 's|-x \([^ ]\+\)|-e "*/\1" -e \1|g') \
+  $(echo $DIRS_IGNORE_SAFE -x 'software-challenge/*/build' -x 'emacs/.local' | sed 's|-x \([^ ]\+\)|-e "sh:**/\1"|g') \
   "$name" $(test $# -eq 0 && echo etc home root || test $# -eq 1 && echo $1) "${@:2}"

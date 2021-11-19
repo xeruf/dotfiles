@@ -55,7 +55,7 @@ and configuration for ~less~ and ~fzf~.
 - mail :: offlineimap mu
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
-- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore
+- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
 - video :: vlc obs-studio kdenlive
 - kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
 - office :: emacs texlive-core texlive-latexextra context-bin libreoffice-fresh
@@ -78,9 +78,9 @@ https://addons.mozilla.org/firefox/addon/masterpassword-firefox
 *** Dev
 #+begin_source sh
 yays intellij-idea-ultimate-edition intellij-idea-ultimate-edition-jre \
-clion clion-jre cmake gdb \
 jdk-openjdk java-openjfx jdk8-openjdk java8-openjfx
 archlinux-java set jdk8-openjdk
+yays clion clion-jre cmake gdb python-pre-commit
 #+end_source
 **** Android
 : yays android-udev android-tools adbfs-rootless-git android-studio

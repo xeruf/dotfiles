@@ -72,7 +72,7 @@ formatsongs() {
 	unset IFS
 }
 
-# Normalize filenames from stding
+# Normalize filenames for files given from stdin
 formatin() {
 	while read song; do
 		new="$(formatsong "$song")"
@@ -80,6 +80,7 @@ formatin() {
 	done
 }
 
+# Normalize the given filename
 formatsong() {
 	echo "$1" | sed -e 's/\b\(ft\|Ft\|Feat\|featuring\)\([ .]\)/feat\2/;
 		s/\bfeat /feat. /;

@@ -147,6 +147,7 @@
 	cme = commit -v --edit --message # Commit with message but edit it
 
 	cp = cherry-pick
+	cpc = cherry-pick --continue
 	rb = rebase
 	rbi = rebase --interactive
 	rbc = rebase --continue
