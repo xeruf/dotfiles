@@ -168,7 +168,7 @@ Version 2019-11-04 2021-02-16"
 
 (setq pdf-misc-print-programm "/usr/bin/lpr")
 
-(setq org-directory (expand-file-name "2-standards/notes" user-data-dir)
+(setq org-directory (expand-file-name "2-standards/box" user-data-dir)
       default-directory org-directory
       org-roam-directory org-directory
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
@@ -186,7 +186,7 @@ Version 2019-11-04 2021-02-16"
     (add-to-list 'projectile-ignored-projects user-data-dir)
     (let ((default-directory user-data-dir))
       (add-to-list 'projectile-known-projects (expand-file-name "music/") t)
-      (add-to-list 'projectile-known-projects (expand-file-name "2-standards/notes/") t)
+      (add-to-list 'projectile-known-projects (concat org-directory "/") t)
       )
   )
 
@@ -213,8 +213,6 @@ Version 2019-11-04 2021-02-16"
         "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
         "\\" 'org-ctrl-c-ctrl-c
-        "nrt" 'org-roam-tag-add
-        "nrt" 'org-roam-tag-remove
         :localleader
         "j" 'org-insert-heading
         "k" 'org-latex-export-to-pdf
@@ -228,9 +226,12 @@ Version 2019-11-04 2021-02-16"
         "rt" 'org-change-todo-in-region
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
+        "gR" 'org-mode-restart
         :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
         :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
-        "gR" 'org-mode-restart
+        :desc "Add tag" "mt" 'org-roam-tag-add
+        :desc "Remove tag" "mT" 'org-roam-tag-remove
+        :desc "Extract node to file" "me" 'org-roam-extract-subtree
         )
 
   ;; Behavior
@@ -364,7 +365,7 @@ Version 2019-11-04 2021-02-16"
              :unnarrowed t)
             )
           )
-    (cl-loop for item in '("health" "own" "list" "notes" "project" "person" "tech:software:list" "faith" "inspiration")
+    (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration")
       do (add-to-list 'org-roam-capture-templates
             `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
              (file+head ,(concat (car (split-string item ":")) "/%<%Y%m%d>-${slug}.org") ,(concat my/org-roam-capture-props "#+filetags: :" item ":" my/org-roam-capture-title))
