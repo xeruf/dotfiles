@@ -385,7 +385,13 @@ Version 2019-11-04 2021-02-16"
             (when my/auto-org-roam-db-sync-mode
               (run-with-idle-timer
                my/auto-org-roam-db-sync--timer-interval :repeat
-               (and 'org-roam-db-sync 'org-roam-update-org-id-locations 'org-mode-restart)))))
+               #'my/org-roam-update))))
+
+    (defun my/org-roam-update ()
+      "Update org-roam database and sync ids to org if in org-mode"
+      (interactive)
+      (when (equal major-mode 'org-mode) (org-roam-db-sync) (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations)) (org-mode-restart)))
+
     (my/auto-org-roam-db-sync-mode)
     ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer) - org-journal
   )
