@@ -1,12 +1,13 @@
-export DATA="$(test -d $HOME/data && echo $HOME/data || echo $HOME/daten)"
+export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
 export MUSIC="$DATA/music"
-export JOURNAL="$DATA/2-standards/notes/journal"
 
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_CONFIG_HOME="$HOME/.config"
+export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
+	echo "$DATA/2-standards/box/journal")"
 export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin"
  # adjust programs to use xdg
 export MNT="$XDG_RUNTIME_DIR"/mnt
@@ -107,7 +108,7 @@ export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
 
-if test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 && test -d "$JOURNAL"; then
+if test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 && test -e "$JOURNAL"; then
   echo "What do you want to do?"
   while test $(echo "$intention" | wc -c) -lt 6
   do read intention
