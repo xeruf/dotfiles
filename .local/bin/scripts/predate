@@ -1,0 +1,5 @@
+#!/bin/sh
+# Add the modification date in front of the filename
+for file
+do mv --verbose --interactive "$file" "$(stat --format %y "$file" | cut -d' ' -f1)_$file"
+done
