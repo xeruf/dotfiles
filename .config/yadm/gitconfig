@@ -1,5 +1,5 @@
 [alias]
 	cgit    = !yadm cme "config/git:"   $XDG_CONFIG_HOME/git $CONFIG_SHELLS/git $HOME/.local/bin/scripts/git-*
-	cf      = !yadm cme "bin:"          $CONFIG_SHELLS/functions $HOME/.local/bin/scripts
 	cshell  = !yadm cme "config/shell:" $CONFIG_SHELLS $HOME/.zprofile
+	cf      = !yadm cme "bin:"          $CONFIG_SHELLS/functions $HOME/.local/bin/scripts
 	cbin    = !yadm cme "bin:"          $HOME/.local/bin/scripts

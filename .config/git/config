@@ -82,7 +82,7 @@
 	# status
 	s = !git stl && git stb
 	st = stb .
-	stb = status --short --branch
+	stb = status --short --branch --find-renames=.2
 	sv = --paginate status -v
 	svv = --paginate status -vv
 
@@ -190,6 +190,3 @@
 
 [includeIf "gitdir:yadm/repo.git"]
 	path = "~/.config/yadm/gitconfig"
-
-[includeIf "gitdir:~/data/.git"]
-	path = "config-data"
