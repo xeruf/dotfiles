@@ -151,7 +151,7 @@
 	rb = rebase
 	rbi = rebase --interactive
 	rbc = rebase --continue
-	rbu = rebase @{upstream}
+	rbu = rebase @{upstream} --autostash
 	rbm = !git rebase $(git main)
 
 	sta = stash
