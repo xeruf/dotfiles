@@ -1,36 +1,44 @@
-# A tool for managing multiple git projects quickly. Simply source this in your bashrc or zshrc.
-# This assumes a common directory that contains all projects. Subfolders are detected as well.
-# You can set $projects_dir before or after sourcing this script, or adjust it below.
+# A tool for managing multiple git projects quickly.
+# Simply source this in your bashrc or zshrc.
+# This assumes a common directory that contains all projects.
+# Subfolders are detected as well.
+# You can set $PROJECTS before or after sourcing this script, or adjust it below.
 # The regular command is "p status" to update all projects and show their status.
 
 # Common root for all projects
-projects_dir=${projects_dir:-$DATA/1-projects}
+PROJECTS=${PROJECTS:-$DATA}
 
 # The max depth to search for when listing projects.
-# The actual depth is this value minus one, since it searches for ".git" folders at that depth.
-projects_subfolder_level=3
+# The actual depth is this value minus one,
+# since it searches for ".git" folders at that depth.
+_projects_subfolder_level=5
 
-# Lists all projects under $projects_dir or the current directory if that is a subfolder of $projects_dir and not a git repository.
-# This is done by searching for corresponding ".git" folders and then listing their parent directories via "dirname"
+# Lists all projects under the current directory or $PROJECTS if none are found.
+# Searches for ".git" folders and lists their parent directories.
 listprojects() {
-	if test "$1" = "--all"
-	then find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname
-	else
-		if test "$(echo $PWD | grep $projects_dir/)" && ! git rev-parse --git-dir > /dev/null 2>&1
-		then find $PWD -mindepth 2 -maxdepth $projects_subfolder_level -type d -name ".git" | xargs dirname 2> /dev/null || listprojects --all
-		else find $projects_dir -mindepth 2 -maxdepth $projects_subfolder_level -type d -not -path "*_*" -name ".git" | xargs dirname
-		fi
-	fi
+	find $1 -mindepth 1 -maxdepth $_projects_subfolder_level -type d \
+		-path "${1:-.}/*/.git" -exec dirname {} \; -o \
+		-name "_*" -o -name ".*" -prune ||
+			{ test $# -eq 0 && listprojects $PROJECTS }
 }
 
 # Underline the project names
 highlight() { echo "[4m$1[0m"; }
 
+# Open or select a project
+project() {
+	cd $PROJECTS
+	if [ -d $2 ]
+	then cd "$2" && git origin "$@"
+	else git get "$@"
+	fi
+}
+
 # Lists all projects and evaluates the given command.
 projects() {
 	test "$1" = "--all" && all="$1" && shift
 	case $1 in
-	"build")
+	("build")
 		# Builds all found gradle projects in parallel and then prints the results in batches
 		# WARNING: This is likely to considerably slow down your computer!
 		listprojects $all | while read d; do
@@ -42,7 +50,7 @@ projects() {
 		done
 		wait
 		;;
-	"diffs")
+	("diffs")
 		# Puts the diffs of all projects into a single diffs.txt in the current directory
 		listprojects $all | while read d; do
 			echo $(basename $d)>>diffs.txt
@@ -50,7 +58,7 @@ projects() {
 			printf "\n">>diffs.txt
 		done
 		;;
-	"status")
+	("status")
 		# Sets the current branch upstream to a remote branch of the same name, updates it and shows "git status -s -b"
 		listprojects $all | while read d; do
 			builtin cd $d
@@ -60,8 +68,9 @@ projects() {
 			git status -s -b
 		done
 		;;
-	*)
-		# Just provide a one-line summary of the status of each project and execute the command entered on every project
+	(*)
+		# A one-line summary of the status of each project
+		# and execute the command entered on every project
 		com="$@"
 		listprojects $all | while read d; do
 			builtin cd $d
@@ -79,5 +88,5 @@ projects() {
 			fi
 		done
 	esac
-	builtin cd $projects_dir
+	builtin cd $PROJECTS
 }
