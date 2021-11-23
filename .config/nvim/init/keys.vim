@@ -7,7 +7,7 @@ command! WS write <bar> source $MYVIMRC
 command! FormatJSON %!python -m json.tool
 command! DiffSwap :diffsp % " Diff for swap - superseded by 'chrisbra/Recover.vim'
 
-" @c now takes an indented code block and surrounds it in backticks instead
+" takes an indented code block and surrounds it in backticks instead
 let @c = '/^\ni```Ni```j0/```lllkxNA'
 
 " Sane yanking
@@ -54,5 +54,5 @@ map <leader>lw :setlocal colorcolumn=81 textwidth=80<CR>
 map <leader>ln :setlocal colorcolumn= textwidth=0 wrap<CR>
 
 " Quickly switch indentation settings
-map <leader>t :setlocal shiftwidth=4 tabstop=4 noexpandtab<CR>
-map <leader>T :setlocal shiftwidth=2 expandtab<CR>
+map <leader>t :setlocal shiftwidth=2 expandtab<CR>
+map <leader>T :setlocal shiftwidth=3 tabstop=3 noexpandtab<CR>

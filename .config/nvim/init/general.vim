@@ -2,7 +2,7 @@ set termguicolors
 set mouse=nvh " Disable mouse in insert mode to allow middle-click paste in remote session - https://vi.stackexchange.com/q/23080
 set clipboard+=unnamedplus " Merge with system clipboard
 
-set shiftwidth=2 expandtab " Default simple indentation
+set shiftwidth=0 tabstop=3 noexpandtab " Default simple indentation
 set wildmode=longest,list,full " Auto-completion for cmdline
 set splitright diffopt+=vertical,filler
 
@@ -37,6 +37,7 @@ if !isdirectory(&backupdir)
   execute "!mkdir " . &backupdir
 endif
 let &backupext="_" . strftime("%y%m%dT%H%M")
+set backupskip=
 
 " FILETYPES
 syntax on
@@ -55,8 +56,8 @@ autocmd BufNewFile *.sh,$HOME/.local/bin/* execute 'silent! 1s/.*/#!\/bin\/sh\r'
 "autocmd BufNewFile * if !empty(&filetype) | execute 'silent! 1s/.*/#!\/usr\/bin\/' . &filetype . '\r\r'| :startinsert | endif
 
 set spelllang=en_us,de_de
-autocmd BufEnter *.txt,*jrnl* setlocal ts=4 sw=4 " formatoptions+=b textwidth=78
-autocmd FileType markdown setlocal wrap spell colorcolumn= " Spell checking & no guiding columns in markdown
+autocmd BufEnter *.txt,*jrnl* setlocal tabstop=4 expandtab " formatoptions+=b textwidth=78
+autocmd FileType markdown setlocal wrap spell colorcolumn= tabstop=4 expandtab " Spell checking & no guiding columns in markdown
 
- " Center on insert mode
+ " Center on entering insert mode
 autocmd InsertEnter * norm zz
