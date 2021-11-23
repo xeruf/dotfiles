@@ -420,11 +420,20 @@ Version 2019-11-04 2021-02-16"
         org-export-with-toc nil
         org-export-with-section-numbers nil
         org-ascii-text-width 999999
+        org-export-headline-levels 4
+        org-latex-default-class "article4"
         )
 
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines))
   (require 'ox-latex)
+  (add-to-list 'org-latex-classes
+       '("article4" "\\documentclass[11pt]{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
+          ("\\section{%s}" . "\\section*{%s}")
+          ("\\subsection{%s}" . "\\subsection*{%s}")
+          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+          ("\\paragraph{%s}" . "\\paragraph*{%s}")
+          ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   (add-to-list 'org-latex-classes
        '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
           ("\\chapter{%s}" . "\\chapter*{%s}")
