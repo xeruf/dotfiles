@@ -168,7 +168,7 @@ Version 2019-11-04 2021-02-16"
 
 (setq pdf-misc-print-programm "/usr/bin/lpr")
 
-(setq org-directory (expand-file-name "2-standards/box" user-data-dir)
+(setq org-directory (expand-file-name "2-standards/box/" user-data-dir)
       default-directory org-directory
       org-roam-directory org-directory
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
@@ -177,26 +177,21 @@ Version 2019-11-04 2021-02-16"
   :config
     (add-to-list 'recentf-exclude "writing\\/tug")
     (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (add-to-list 'recentf-list "/home/janek/data/4-incubator/downloads/")
+    (add-to-list 'recentf-list (expand-file-name "4-incubator/downloads/" user-data-dir))
     ;(setq recentf-keep '(recentf-keep-default-predicate file-remote-p))
   )
 
 (use-package! projectile
-  :config
+  :init
+    (add-to-list 'projectile-ignored-projects (expand-file-name user-data-dir))
     (add-to-list 'projectile-ignored-projects user-data-dir)
-    (let ((default-directory user-data-dir))
-      (add-to-list 'projectile-known-projects (expand-file-name "music/") t)
-      (add-to-list 'projectile-known-projects (concat org-directory "/") t)
-      )
+    (projectile-add-known-project (expand-file-name "music/" user-data-dir))
+    (projectile-add-known-project org-directory)
+    (projectile-register-project-type 'org '(".orgids"))
+    (setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
   )
 
 ;;;; ORG
-
-(setq org-journal-file-type 'weekly
-      org-journal-file-format "%Y%m%d.org"
-      org-journal-created-property-timestamp-format "[%Y-%m-%d]"
-      org-journal-carryover-delete-empty-journal 'always
-      )
 
 (use-package! org
   :bind (:map org-mode-map
@@ -348,8 +343,40 @@ Version 2019-11-04 2021-02-16"
   (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
 )
 
+(use-package! org-journal
+  ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
+  :init
+    (setq org-journal-file-type 'weekly
+          org-journal-file-format "%Y%m%d.org"
+          org-journal-created-property-timestamp-format "[%Y-%m-%d]"
+          org-journal-carryover-delete-empty-journal 'always
+          )
+  :config
+    (defvar my/survey-mode-journal--timer nil)
+    (defvar my/survey-mode-journal--timer-interval 300)
+    (define-minor-mode my/survey-mode
+      "Toggle automatic `org-roam-db-sync' when Emacs is idle.
+    Referece: `auto-save-visited-mode'"
+      :group 'org-roam
+      :global t
+      (when my/survey-mode-journal--timer (cancel-timer my/survey-mode-journal--timer))
+      (setq my/survey-mode-journal--timer
+            (when my/survey-mode
+              (run-with-idle-timer
+               my/survey-mode-journal--timer-interval :repeat
+               #'my/journal-survey))))
+
+    (defun my/journal-survey ()
+      "Update org-roam database and sync ids to org if in org-mode"
+      (interactive)
+      (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
+
+    (my/survey-mode)
+    ; TODO journal at start (call-interactively 'org-journal-new-entry)
+  )
+
 (use-package! org-roam
-  :defer 5
+  :defer 6
   :config
     (require 'org-roam-protocol)
 
@@ -393,9 +420,7 @@ Version 2019-11-04 2021-02-16"
       (when (equal major-mode 'org-mode) (org-roam-db-sync) (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations)) (org-mode-restart)))
 
     (my/auto-org-roam-db-sync-mode)
-    ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer) - org-journal
   )
-
 
 (after! ox
   (setq org-latex-toc-command "\\tableofcontents*\n\n")
@@ -522,13 +547,14 @@ Version 2019-11-04 2021-02-16"
         :map ranger-mode-map
         :n "r" 'ranger
         )
+
+  )
+(use-package! diredfl
+  :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
   )
 (after! dired-aux
   (add-to-list 'dired-compress-file-suffixes '("\\.nupkg\\'" "" "unzip -o -d %o %i"))
   (add-to-list 'dired-compress-file-suffixes '("\\.tar\\'" "" "tar xf %i"))
-  )
-(use-package! diredfl
-  :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
   )
 (after! all-the-icons
   (add-to-list 'all-the-icons-extension-icon-alist '("nupkg" all-the-icons-octicon "file-zip" :v-adjust 0.0 :face all-the-icons-lmaroon))
