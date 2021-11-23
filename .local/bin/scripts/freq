@@ -6,10 +6,12 @@ case $1 in
     for arg; do $0 "$arg"; done
     ;;
   (-d) shift
-    diff="/tmp/diff-$1-$2.wav"
-    ffmpeg -y -v warning -i "$1" "/tmp/$1.wav"
-    ffmpeg -y -v warning -i "$2" "/tmp/$2.wav"
-    sox -m -v 1 "/tmp/$1.wav" -v -1 "/tmp/$2.wav" "$diff"
+    one="$(basename "$1")"
+    two="$(basename "$2")"
+    diff="/tmp/diff-$one-$two.wav"
+    ffmpeg -y -v warning -i "$1" "/tmp/$one.wav"
+    ffmpeg -y -v warning -i "$2" "/tmp/$two.wav"
+    sox -m -v 1 "/tmp/$one.wav" -v -1 "/tmp/$two.wav" "$diff"
     $0 "$diff"
     ;;
   (*)

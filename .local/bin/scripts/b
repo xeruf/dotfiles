@@ -9,10 +9,7 @@ set -eo pipefail
 for last; do true; done
 last=${last:-.}
 
-# Elevate permissions if the file is not accessible
-test -x "$(dirname "$last")" &&
-  { test -r "$last" || ! test -e "$last"; } ||
-    elevate=sudo
+checkaccess -r "$last" || elevate=sudo
 tput setaf 4 && $elevate file -E "$last" | { grep -v --color=never 'directory$' || true; }
 
 case "$($elevate file --dereference --mime "$last")" in
