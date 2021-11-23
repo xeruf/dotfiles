@@ -1,0 +1,8 @@
+#!/bin/sh
+# Diff untracked file to a tracked version in another branch (default upstream)
+file="$1"
+test -e "$file" && rooted=false || rooted=true
+root="$($rooted && echo "$(git root)/")$file"
+test ! -e "$root" && echo "No such file: $file" >&2 && exit 1
+upstream="${2:-@{u}}"
+git show "$upstream:$($rooted || echo "./")$file" | dif --label "$1 $(stat "$1" --format '%y')" --label "$upstream" "$root" -

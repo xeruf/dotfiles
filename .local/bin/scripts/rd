@@ -8,9 +8,12 @@ do
 		if test -e "$f/.git" || test -e "$f/packed-refs"
 			then echo -n "Force delete git project $f? "
 				read answer
-				test "$answer" = "y" && $elevate rm -rf "$f"
+				test "$answer" = "y" &&
+					$elevate rm -rf "$f"
 			else find "$f" -maxdepth 4 -empty -printf "Removing empty %p\n" -delete
-				test -e "$f" && echo -n "$f " >&2 && $elevate rm -rI "$f"
+				test -e "$f" &&
+					echo -n "$f ($(ls -A $f | head -3 | paste -s -d' ')) " >&2 &&
+					$elevate rm -rI "$f"
 		fi
 		else $elevate rm -i "$f"
 	fi
