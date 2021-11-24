@@ -29,10 +29,14 @@
   },
   "2": {
     "titles": [
-      "Al&bum"
+      "Al&bum",
+      "T&rack",
+      "Album Art&ist"
     ],
     "tags": [
-      "album"
+      "album",
+      "track",
+      "albumartist"
     ]
   },
   "4": {
