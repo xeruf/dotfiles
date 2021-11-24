@@ -2,18 +2,18 @@
 alias g="git"
 
 y() {
-  unignore="$XDG_CONFIG_HOME/yadm/unignore"
+  local unignore="$XDG_CONFIG_HOME/yadm/unignore"
   test -r "$unignore" && cat "$unignore" | while read f; do eval ls -d $f; done | yadm add --intent-to-add --pathspec-from-file=-
   test "$#" -eq 0 && yadm s || yadm "$@"
 }
 yc() {
-  folder=${1:-${PWD/$XDG_CONFIG_HOME\/}}
+  local folder="${1:-${PWD/$XDG_CONFIG_HOME\/}}"
   echo "config/$folder:" >/tmp/yc-msg
-  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder"
+  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder"*
 }
 
 gcn() {
-  root="$(git rev-parse --show-toplevel)"
+  local root="$(git rev-parse --show-toplevel)"
   if test "$root" = "$DATA"
   then
     if test $# -eq 0 || test -e "$1"
@@ -78,7 +78,7 @@ git-authordate() {
 }
 # executes a git command (usually commit) with the date of a given committish
 git-withdate() {
-  date=$(git-authordate $1)
+  local date=$(git-authordate $1)
   GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" git "${@:2}"
 }
 
@@ -98,8 +98,8 @@ gitsquash() {
   local -a options
   while [ $# -gt 0 ]; do
     case $1 in
-      -i) ignore=true; shift 1;;
-      -f|--force) force=true; shift 1;;
+      -i) local ignore=true; shift 1;;
+      -f|--force) local force=true; shift 1;;
       -*) options+=($1); exit 1;;
       *) break;;
     esac
@@ -108,8 +108,8 @@ gitsquash() {
   ((#!=2)) && echo "Usage: [options] <startcommit> <endcommit>" && return 1
   [[ -n $(git status -s) ]] && [ ! $force ] && echo -e "Tree is dirty, commit or stash your changes first!\nIf you want to execute the command regardless, run again with --force" && return 1
 
-  1=$(git rev-parse $1)
-  2=$(git rev-parse $2)
+  local 1=$(git rev-parse $1)
+  local 2=$(git rev-parse $2)
   [ $(git rev-list $1 --count) -lt $(git rev-list $2 --count) ] && t=$1 && 1=$2 && 2=$t
 
   gitcommits -q $1
@@ -129,17 +129,17 @@ gitsquash() {
 # given a committish, this command saves a list of commits between the HEAD and the given committish into the .git directory
 # when ran without parameters it applies the saved list of commits onto the current HEAD
 gitcommits() {
-  verbosity=1
+  local verbosity=1
   while [[ $# -gt 0 ]]; do
     case $1 in
       -v) verbosity=2; shift 1;;
       -q|--quiet) verbosity=0; shift 1;;
-      --theirs) params=(-X theirs); shift 1;;
+      --theirs) local params=(-X theirs); shift 1;;
       *) break;;
     esac
   done
 
-  stashed="$(git rev-parse --show-toplevel)/.git/stashed-commits"
+  local stashed="$(git rev-parse --show-toplevel)/.git/stashed-commits"
   if [ $1 ]; then
     if [ $verbosity -eq 0 ]
       then git rev-list --reverse HEAD...$1 >$stashed
@@ -151,8 +151,8 @@ gitcommits() {
       [ $aborted ] && rest+=($commit) && continue
       [ $verbosity -gt 0 ] && git --no-pager log --oneline -1 $commit
       git-withdate $commit cherry-pick $commit ${params:0} >/dev/null
-      last=$?
-      [ $last -gt 0 ] && aborted=true && typeset -a rest && continue
+      local last=$?
+      [ $last -gt 0 ] && local aborted=true && typeset -a rest && continue
       [ $verbosity -gt 0 ] && echo -e "\e[1A$(git log --color=always --pretty=format:"%C(yellow)$(git rev-parse --short HEAD^^)%C(bold) -> %Creset%C(yellow)%h%Creset %s" -1)"
       [ $verbosity -gt 1 ] && git status -s
     done
