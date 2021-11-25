@@ -1,0 +1,3 @@
+#!/bin/sh -e
+# Displays the latest files in the given directory or pwd
+find "$1" -maxdepth 4 -type f -printf '%TF %f\n' | sort -r | head
