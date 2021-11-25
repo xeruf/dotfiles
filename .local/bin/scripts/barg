@@ -1,11 +1,13 @@
 #!/bin/sh
 # Backup root filesystem with borg
 case "$1" in
+  (-n) run="arg-test"; shift;;
   (-*) name="${1#-}"; shift;;
   (*) test $# -gt 0 || cd /;;
 esac
-name="/mnt/backup/borg::$(test -n "$name" && echo "$name" || cat /etc/hostname)-${1:-system}-$(date -u +"%y%m%d")"
+name="::$(test -n "$name" && echo "$name" || cat /etc/hostname)_${1:-system}_$(date -u +"%y%m%d")"
 echo "Backing up as $name"
-sudo borg create --progress --stats \
+sudo --preserve-env=BORG_REPO ${run:-borg} create --progress --stats \
   $(echo $DIRS_IGNORE_SAFE -x 'software-challenge/*/build' -x 'emacs/.local' | sed 's|-x \([^ ]\+\)|-e "sh:**/\1"|g') \
   "$name" $(test $# -eq 0 && echo etc home root || test $# -eq 1 && echo $1) "${@:2}"
+sudo chown -R $USER:$USER "$BORG_REPO"

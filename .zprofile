@@ -1,6 +1,9 @@
 export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
 export MUSIC="$DATA/music"
 
+export BORG_REPO="/mnt/backup/borg"
+export BORG_PASSCOMMAND='pass services/borg/backup'
+
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
