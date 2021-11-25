@@ -3,6 +3,6 @@
 IFS='\n'
 for file
 do mv --verbose --interactive "$file" \
-	"$(latest "$file" | head -2 | tail -1 | cut -d' ' -f1)_$(echo "$file" | sed 's/20\([0-9]\{2\}\)-\([0-9]\{2\}\)\(-[0-9]\{2\}\)\?_\?//')"
+	"$(latest "$file" | head -2 | tail -1 | cut -d'+' -f1)_$(echo "$file" | sed 's/20\([0-9]\{2\}\)-\([0-9]\{2\}\)\(-[0-9]\{2\}\)\?_\?//')"
 done
 # stat --format %y "$file" | cut -d' ' -f1
