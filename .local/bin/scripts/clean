@@ -1,5 +1,5 @@
 #!/bin/bash
-# Cleans up files according to given parameters
+# Clean up files according to given parameters
 
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
@@ -7,10 +7,18 @@ _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
 _clean_folders=(~/.ant ~/.autopsy ~/.bundle ~/.cache ~/.cargo ~/.cpanm ~/.docker ~/.electron ~/.electron-gyp ~/.gradle ~/.gradle-kotlin-dsl ~/.hex ~/.java ~/.kscript ~/.konan ~/.m2 ~/.mix ~/.nix-defexpr ~/.node-gyp ~/.npm ~/.nv ~/.openjfx ~/.parallel ~/.stack ~/.surf ~/.texlive ~/.yarn luametatex-cache
   ~/.lesshst ~/.rubberband.wisdom.d ~/.yarnrc)
 
+[[ $1 =~ "." ]] && local=pwd
+[[ $1 =~ "i" ]] && i=-i
+dir="$("$local" 2>/dev/null || echo "$HOME")"
+
+df --output="source,avail" -h "$dir"
+
+highlight "home"
 for f in ${_clean_folders[@]}
-do test -f $f || test -d $f && highlight $f && rm -rf $f
+do "$local" >/dev/null 2>&1 && f="$(echo "$f" | sed "s|$HOME|$($loc)|")"
+	test -f $f || test -d $f && echo $f && rm -rf $i $f
 done
-find $HOME -maxdepth 2 -not -name ".stfolder" -empty -exec rm -vd {} +
+find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -exec rm -vd {} +
 
 highlight "e to recursively remove empty folders and files"
 [[ $1 =~ "e" ]] && find -empty -type d -exec rm -vd {} +
@@ -18,7 +26,7 @@ highlight "e to recursively remove empty folders and files"
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
 	highlight "$k to delete $folder"
-	[[ $1 =~ "$k" ]] && sudo rm -rf "$folder" && echo "Deleted $folder"
+	[[ $1 =~ "$k" ]] && sudo rm $i -rf "$folder" && echo "Deleted $folder"
 done
 
 highlight "m to recursively remove mac-files"
@@ -29,12 +37,13 @@ fi
 
 highlight "g to clean gradle"
 if [[ $1 =~ "g" ]]; then
-	find ${GRADLE_USER_HOME:-$HOME/.gradle} -mindepth 1 -maxdepth 1 -type d -print -exec rm -r {} +
-	find $projects_dir -name .gradle -print -exec rm -r {} +
+	find "${GRADLE_USER_HOME:-$HOME/.gradle}" -mindepth 1 -maxdepth 1 -type d -print -exec rm $i -r {} +
+	find $PROJECTS -name .gradle -print -exec rm $i -r {} +
 fi
 
 highlight "c to clean electron caches"
-[[ $1 =~ "c" ]] && find "$XDG_CONFIG_HOME" -type d -name "*Cache" -exec rm -r {} + -prune
+[[ $1 =~ "c" ]] && find "$dir$(expr "${XDG_CONFIG_HOME/$HOME}" \| "/.config")" \
+		-type d -name "*Cache" -print -exec rm $i -r {} + -prune
 
 if test -f "/var/log/apt/history.log"; then
 	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
@@ -46,7 +55,7 @@ highlight "d to recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
 	find -name "src" -prune -o \
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
-		-print -exec rm -r {} + -prune
+		-print -exec rm $i -r {} + -prune
 	echo -n "  " && highlight "build directories"
 	find $DATA/2-standards/dev/aur -mindepth 2 -maxdepth 2 -type d -not -name ".*" \
 		-print -exec sudo rm -rI {} +
@@ -62,3 +71,4 @@ if [[ $1 =~ "o" ]]; then
 	nix-store --optimize
 fi
 
+df --output="source,avail" -h .
