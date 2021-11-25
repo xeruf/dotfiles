@@ -26,16 +26,11 @@ which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) 
 
 unalias rd 2>/dev/null
 
-# System helpers {{{1
+# System help {{{1
 
 alias h='help'
 compdef help=man
 alias info='info --vi-keys'
-
-alias v=edit
-
-alias println='printf "\n"'
-alias dedup='awk '"'"'!a[$0]++'"'"
 
 # Shows source code for command, resolving nested aliases
 wh() {
@@ -157,16 +152,21 @@ alias jcj='jcl -o json-pretty -u'
 
 # Applications {{{1
 
-alias u='topgrade'
+# Shorthands
+alias v='edit'
+alias u='topgrade --only emacs --yes; topgrade --disable emacs'
 alias st='synct'
 alias expr='noglob expr'
 
-alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
-alias lar='last | tac'
-
-alias calc='rlwrap -a bc -l'
+# Shortcuts
 alias logoff="loginctl terminate-user $USER"
-blues() { bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files") }
+alias calc='rlwrap -a bc -l'
+
+# Process
+alias println='printf "\n"'
+alias dedup='awk '"'"'!a[$0]++'"'"
+alias lar='last | tac'
+alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 
 # Remote
 alias delta="sc restart openvpn-client@deltaPeak.service"
@@ -318,7 +318,7 @@ mvln() {
 # Move into an xdg dir (default XDG_DATA_HOME) and create a symlink
 mvx() {
 	mvln "$1" "${2:-$XDG_DATA_HOME}/${1#.}"
-	yadm add "$1" ".config/$1"
+	yadm add "$1" ".config/$1" 2>/dev/null
 }
 
 

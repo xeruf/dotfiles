@@ -1,6 +1,6 @@
 #!/bin/sh
 # Install pre-commit, ignoring globally set core.hooksPath
-git config --unset core.hooksPath
+git config --unset-all core.hooksPath
 GIT_CONFIG_GLOBAL=/dev/null pre-commit install
 GIT_CONFIG_GLOBAL=/dev/null pre-commit install -t pre-push
 git config --add core.hooksPath .git/hooks

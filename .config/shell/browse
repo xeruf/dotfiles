@@ -7,43 +7,43 @@ cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
 
 # Go up a number of dirs
 up() {
-  if [[ $# < 1 ]] ; then
-    cd ..
-  else
-    CDSTR=""
-    for i in {1..$1} ; do
-      CDSTR="../$CDSTR"
-    done
-    cd $CDSTR
-  fi
+	if [[ $# < 1 ]] ; then
+		cd ..
+	else
+		CDSTR=""
+		for i in {1..$1} ; do
+		CDSTR="../$CDSTR"
+		done
+		cd $CDSTR
+	fi
 }
 
 # Switch directory & ls
 cl() {
-  builtin cd $1
-  ls --almost-all --group-directories-first --file-type
+	builtin cd $1
+	ls --almost-all --group-directories-first --file-type
 }
 
 # cd but search for data dirs and ls in new dir
 cd() {
-  if test -d "$DATA" && test "${1:--}" != "-" -a ! -d "$1" -a $# -eq 1
-  then
-    dir=$(fd --no-ignore --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1)
-    test -n "$dir" && cd "$dir"
-  else
-    builtin cd $1 &&
-      command ls --literal --file-type --color=always --format=vertical -U -w $COLUMNS |
-        #pr -4 -l1 -W $COLUMNS -S"  " |
-        head -3
-    code=$? && test $code -eq 141 || return $code
-  fi
+	if test -d "$DATA" && test "${1:--}" != "-" -a ! -d "$1" -a $# -eq 1
+	then
+		dir=$(fd --no-ignore --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1)
+		test -n "$dir" && cd "$dir"
+	else
+		builtin cd "$1" &&
+		command ls --literal --file-type --color=always --format=vertical -U -w $COLUMNS |
+			#pr -4 -l1 -W $COLUMNS -S"  " |
+			head -3
+		code=$? && test $code -eq 141 || return $code
+	fi
 }
 
 # LOCATE
 alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || b "$f"; done'
 loci() {
-  locate --all --ignore-case --basename --existing "$@" |
-    command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect
+	locate --all --ignore-case --basename --existing "$@" |
+		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect
 }
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
@@ -56,17 +56,19 @@ alias loca='noglob sudo updatedb --prunenames "" -o /var/lib/mlocate/all.db && l
 # ZOXIDE
 alias c=z
 d() {
-  test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return }
-  local query="$(zf "$@")"
-  # First find out whether there is an obvious match
-  # (score at least ten times above runner-up and score above 20)
-  # If not select with fzf, using locate to find extra options
-  cd "$(if test -n "$query" && expr "$(echo "$query" | head -1 | cut -d' ' -f1)" \> 20 \& $(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
-      then echo "$query" | head -1
-      else test -n "$query" && echo "$query"; locz "$@"
-    fi | zfz)"
+	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return }
+	local query="$(zf "$@")"
+	# First find out whether there is an obvious match
+	# (score at least ten times above runner-up and score above 20)
+	# If not select with fzf, using locate to find extra options
+	cd "$(if test -n "$query" &&
+			expr "$(echo "$query" | head -1 | cut -d' ' -f1)" \> 20 \& \
+				$(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
+			then echo "$query" | head -1
+			else test -n "$query" && echo "$query"; locz "$@"
+		fi | zfz)"
 }
 di() {
-  test "$1" = "-" || local dir=$({ zf "$@"; locz "$@" } | zfz)
-  cd "${dir:-$1}"
+	test "$1" = "-" || local dir=$({ zf "$@"; locz "$@" } | zfz)
+	cd "${dir:-$1}"
 }

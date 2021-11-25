@@ -1,0 +1,3 @@
+#!/bin/sh
+# Send given files via bluetooth
+bluedevil-sendfile $(echo "$@" | xargs -n 1 realpath | xargs -n 1 echo -n " --files")
