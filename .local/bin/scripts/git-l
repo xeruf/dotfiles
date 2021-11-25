@@ -1,5 +1,7 @@
 #!/bin/sh
 git rev-parse @{upstream} >/dev/null 2>&1 ||
-  git branch --set-upstream-to=@{push}
-git pull --rebase --autostash "$@" 2>/dev/null ||
-  { printf "\e[31;1mError - aborting rebase!\e[0m\n" >&2 && git rebase --abort; }
+	git branch --set-upstream-to=@{push}
+git pull --rebase --autostash "$@" 2> >(head -3 >&2) ||
+	{ test -e $(git rev-parse --git-path rebase-merge) &&
+		printf "\e[31;1mError - aborting rebase!\e[0m\n" >&2 &&
+		git rebase --abort; }
