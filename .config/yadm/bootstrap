@@ -33,11 +33,11 @@ link() { test -e "$2" || ln -sv "$@"; }
 mkdir -p .config/audacity
 find $HOME -maxdepth 1 -type l -exec file {} + |
   grep '.local/share' | grep broken |
-  sed 's/.* //' | xargs mkdir -p
+  sed 's/.* //' | xargs -r mkdir -p
 
-link python3 /usr/bin/python
-link fd /usr/bin/fdfind
-link bat /usr/bin/batcat
+link python /usr/bin/python3
+link fdfind /usr/bin/fd
+link batcat /usr/bin/bat
 link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
 
 highlight "SSH Permissions"
@@ -50,9 +50,9 @@ test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsy
 test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
 
 highlight "Zsh"
-export ZSH="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/oh-my-zsh"
+test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/state}/zsh/oh-my-zsh"
 cloneshallow() {
-  url=https://github.com/$1.git
+  url=https://github.com/$2/$1.git
   dir="${3:-$ZSH/plugins/$1}"
   mkdir -p "$(dirname $dir)"
   if test -d "$dir"
