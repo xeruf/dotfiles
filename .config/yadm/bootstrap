@@ -28,7 +28,9 @@ test -d "/etc/yadm" || sy clone
 
 ## Software
 section "Software"
-link() { test -e "$2" || ln -sv "$@"; }
+link() {
+	test -e "$2" || $(checkacess -w "$2" || echo sudo) ln -sv "$@"
+}
 
 mkdir -p .config/audacity
 find $HOME -maxdepth 1 -type l -exec file {} + |
