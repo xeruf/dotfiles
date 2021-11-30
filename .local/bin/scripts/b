@@ -1,28 +1,71 @@
 #!/bin/bash
-# [b]rowse - custom ls or bat depending on file type
-# Show type & contents of given files or PWD
-# depends: tput stat bat neovim
+# [b]rowse - overview of given files or current directory
+# depends: tput stat bat checkaccess
+# optdepends: timg, neovim (compressed files), pdftoppm (PDF), mtn (video)
 # args: files to inspect
+#
+# Supports:
+# - listing directories
+# - listing contents of any compressed file with neovim
+# - visual files are displayed with timg
+#   video thumbnails via mtn, pdf pages from pdftoppm
+# - text files are displayed through bat
+# Automatically requests elevation through sudo when needed
 
 set -eo pipefail
-# get the last arg or current dir
 for last; do true; done
 last=${last:-.}
 
-checkaccess -r "$last" || elevate=sudo
-tput setaf 4 && $elevate file -E "$last" | { grep -v --color=never 'directory$' || true; }
+checkperm() {
+	checkaccess -r "$@" || elevate=sudo
+	mime="$(test -n "$shifted" || $elevate file --dereference --mime "$@")"
+}
+checkperm "$last"
 
-case "$($elevate file --dereference --mime "$last")" in
-  (*inode/directory*) tput sgr0 && $(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -RF;;
-  (*binary)
-    case "$(file "$last")" in
-      (*:\ *compress*) /usr/share/nvim/runtime/macros/less.sh "$@";;
-      (*:\ *\ image\ data*) viu --height "$(echo $LINES/2 | bc)" "$@";;
-    esac
-    tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
-    ;;
-  (*) $elevate bat --style header "$@" --pager 'less -RF'
-    tput setaf 3 && $elevate stat --format '%A size %sB, birth: %.10w mod %.10y' "$last"
-    # TODO don't duplicate stat
-    ;;
+fileinfo() {
+	for arg
+	do case "$arg" in (-*) continue;; esac
+		tput setaf 4 && $elevate file -E "$arg"
+		tput setaf 3 && $elevate stat --format '%A size %sB, birth %.10w mod %.10y' "$arg"
+	done
+}
+
+case "$mime" in
+(*\ inode/directory\;*) tput sgr0 &&
+	$(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -RF;;
+(*binary|*-8bit)
+	prefix=/tmp/b
+	mkdir -p "$prefix"
+	for arg; do
+		case "$arg" in (-*) continue;; esac
+		checkperm "$arg"
+		fileinfo "$arg"
+		grid=$(expr $(tput cols) / 20)
+		case "$mime" in
+		(*\ application/pdf\;*)
+			out="$prefix/$(basename "$arg")"
+			test -f "$out-1.png" || pdftoppm -r 70 "$arg" "$out" -l $(expr $grid '*' 2)
+			timg -W --grid=$grid "$out"*
+			;;
+		(*\ video/*)
+			suffix=_thumbs.jpg
+			mtn -i -t -W -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) -O $prefix -o $suffix "$arg" 2>/dev/null
+			timg -W "$prefix/$(basename "${arg%.*}")$suffix"
+			;;
+		(*)
+			case "$(file "$arg")" in
+				(*:\ *compress*) /usr/share/nvim/runtime/macros/less.sh "$arg";;
+				(*:\ *\ image\ data*) timg --center $(test $# -gt 1 &&
+					echo "--title --grid=$(expr $(tput cols) / 30)" ||
+					echo "-g 60x$(expr $(tput lines) / 2)") "$@"
+					exit $?;;
+			esac
+			;;
+		esac
+	done
+	;;
+(*)
+	fileinfo "$@"
+	$elevate bat --style header "$@" --pager 'less -RF'
+	;;
 esac
