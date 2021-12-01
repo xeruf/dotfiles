@@ -30,42 +30,59 @@ fileinfo() {
 	done
 }
 
-case "$mime" in
-(*\ inode/directory\;*) tput sgr0 &&
-	$(test -x "$last" || echo "sudo") ls -l --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "$@" | less -RF;;
-(*binary|*-8bit)
-	prefix=/tmp/b
-	mkdir -p "$prefix"
-	for arg; do
-		case "$arg" in (-*) continue;; esac
-		checkperm "$arg"
-		fileinfo "$arg"
-		grid=$(expr $(tput cols) / 20)
-		case "$mime" in
-		(*\ application/pdf\;*)
-			out="$prefix/$(basename "$arg")"
-			test -f "$out-1.png" || pdftoppm -r 70 "$arg" "$out" -l $(expr $grid '*' 2)
-			timg -W --grid=$grid "$out"*
-			;;
-		(*\ video/*)
-			suffix=_thumbs.jpg
-			mtn -i -t -W -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) -O $prefix -o $suffix "$arg" 2>/dev/null
-			timg -W "$prefix/$(basename "${arg%.*}")$suffix"
-			;;
-		(*)
-			case "$(file "$arg")" in
-				(*:\ *compress*) /usr/share/nvim/runtime/macros/less.sh "$arg";;
-				(*:\ *\ image\ data*) timg --center $(test $# -gt 1 &&
-					echo "--title --grid=$(expr $(tput cols) / 30)" ||
-					echo "-g 60x$(expr $(tput lines) / 2)") "$@"
-					exit $?;;
-			esac
-			;;
+prefix=/tmp/b
+mkdir -p "$prefix"
+declare -a timg bat ls
+for arg; do
+	case "$arg" in (-*) args="$args $arg" continue;; esac
+	checkperm "$arg"
+	grid=$(expr $(tput cols) / 20)
+	case "$mime" in
+	(*\ application/pdf\;*)
+		out="$prefix/$(basename "$arg")"
+		test -f "$out-1.png" || pdftoppm -r 70 "$arg" "$out" -l $(expr $grid '*' 2)
+		timg -W --grid=$grid "$out"*
+		;;
+	(*\ video/*)
+		suffix=_thumbs.jpg
+		mtn -i -t -W -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) -O $prefix -o $suffix "$arg" 2>/dev/null
+		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
+		;;
+	(*\ audio/*)
+		img="$prefix/$arg.png"
+		find "$img" -not -empty 2>/dev/null | grep --quiet . ||
+			audiowaveform --quiet --pixels-per-second 5 --height 40 --width 2000 \
+				--background-color 000000 --waveform-color 99BBFF --axis-label-color 000000 \
+				--input-filename "$arg" --output-format png >"$img" &&
+				timg -g $(tput cols)x2 --upscale "$img"
+		;;
+	(*\ image/*)
+		timg+=("$arg"); continue;;
+	(*\ inode/directory\;*)
+		ls+=("$arg"); continue;;
+	(*)
+		case "$(file "$arg")" in
+			(*:\ *compress*) /usr/share/nvim/runtime/macros/less.sh "$arg";;
+			(*) bat+=("$arg"); continue;;
 		esac
-	done
-	;;
-(*)
-	fileinfo "$@"
-	$elevate bat --style header "$@" --pager 'less -RF'
-	;;
-esac
+		;;
+	esac
+	fileinfo "$arg"
+done
+
+if test "$timg"; then
+	$elevate timg --center -t0.3 $(test $# -gt 1 &&
+		echo "--title --grid=$(expr $(tput cols) / 30)" ||
+		echo "-g 60x$(expr $(tput lines) / 2)") "$@" 2>/dev/null || true
+	fileinfo "${timg[@]}"
+fi
+
+if test "$bat"; then
+	$elevate bat --style header --pager 'less -RF' $args "${bat[@]}"
+	fileinfo "${bat[@]}"
+fi
+
+if test "$ls"; then
+	tput sgr0
+	$(test -x "$arg" || echo "sudo") ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "${ls[@]}" | less -RF
+fi
