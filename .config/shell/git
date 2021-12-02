@@ -9,7 +9,7 @@ y() {
 yc() {
   local folder="${1:-${PWD/$XDG_CONFIG_HOME\/}}"
   echo "config/$folder:" >/tmp/yc-msg
-  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder"*
+  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder*"
 }
 
 gcn() {

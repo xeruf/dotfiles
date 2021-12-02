@@ -1,0 +1,5 @@
+#!/bin/sh
+# Remove the given files from the last commit
+#git diff -p HEAD~ -- "$@" | git apply --reverse --cached
+git reset HEAD~ "$@"
+git commit --amend
