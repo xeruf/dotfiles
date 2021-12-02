@@ -1,0 +1,8 @@
+#!/bin/sh
+# Diff the result of the given commands
+prefix=/tmp/difc-
+highlight "Executing $1"
+eval "$1" | sort >${prefix}1
+highlight "Executing $2"
+eval "$2" | sort >${prefix}2
+dif "${prefix}1" "${prefix}2"

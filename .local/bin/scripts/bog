@@ -1,6 +1,9 @@
 #!/bin/sh -e
 # Simple backup with borg
-test $# -eq 0 && borg list --format "{barchive:40} {time}{NL}" && exit 0
+if test $# -eq 0
+	then borg list --format "{barchive:40} Created {time}{NL}"
+		exit $?
+fi
 test "$1" = "-n" && run=arg-test && shift
 case "$1" in (*_) prefix=$1; shift;; esac
 name="$(echo "$1" |
