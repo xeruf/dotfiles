@@ -3,8 +3,8 @@
 if test "$ZSH_NAME" = "zsh"; then
 alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 alias -g G="| grp"
-alias -g X="| xargs"
-alias -g X1="| xargs -n 1"
+alias -g X="| xargs -d '\n'"
+alias -g X1="| xargs -d '\n' -n 1"
 alias -g XC="| xclip -selection clipboard"
 alias -g L="--color=always | ${PAGER:-less}"
 fi
@@ -18,6 +18,7 @@ if test -d "$DATA"; then
 	d2=$(builtin cd $DATA/2* && pwd)
 	d3=$(builtin cd $DATA/3* && pwd)
 	d4=$(builtin cd $DATA/4* && pwd)
+	dd="$d4/downloads"
 fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps
@@ -72,8 +73,7 @@ edshell() {
 			line="$(echo "$grepfile" | cut -d':' -f2)";;
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
-	test -f "$file" || return 2
-	checksum="$(md5sum "$file")"
+	test -f "$file" || checksum="$(md5sum "$file")"
 	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
 	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
 }
@@ -161,6 +161,7 @@ alias expr='noglob expr'
 # Shortcuts
 alias logoff="loginctl terminate-user $USER"
 alias calc='rlwrap -a bc -l'
+alias dt='python -c "import time;print(time.asctime(time.localtime()))"'
 
 # Process
 alias println='printf "\n"'
@@ -170,7 +171,7 @@ alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 
 # Remote
 alias delta="sc restart openvpn-client@deltaPeak.service"
-alias sshl="lemonade server -allow 127.0.0.1 & ssh -R 2489:127.0.0.1:2489"
+alias sshl="lemonade server -allow 127.0.0.1 & kitty +kitten ssh -R 2489:127.0.0.1:2489"
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
@@ -266,11 +267,14 @@ killJava() {
 
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 
-alias f="noglob fdd"
-fdd() { $(which fd >/dev/null && echo fd || echo fdfind) --color=always --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
-compdef f=fd
-#alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
-#alias f1='find -mindepth 1 -maxdepth 1'
+if which fd >/dev/null
+then alias f="noglob fdd"
+	fdd() { $(which fd >/dev/null && echo fd || echo fdfind) --color=always --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
+	compdef f=fd
+else
+	alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
+	alias f1='find -mindepth 1 -maxdepth 1'
+fi
 
 lowercase_transliterate="y/A-Z /a-z-/"
 which perl-rename >/dev/null &&
@@ -278,9 +282,11 @@ which perl-rename >/dev/null &&
   alias lowercase="rename -iv '$lowercase_transliterate'"
 
 # rsync directory properly - suffix both dirs with / to act on contents
-alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links'
-alias dsync='rc --delete'
-alias dsynca='rc --specials --times --delete'
+alias rcn='rsync -v --recursive --human-readable --links --dry-run'
+alias rc='rcs --links --times'
+alias rcu='rc --existing --size-only'
+alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
+alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
 

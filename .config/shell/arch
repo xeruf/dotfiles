@@ -35,7 +35,7 @@ yas() {
     then echo "Installing $pkg..."
       cmd="yay -S $pkg"
       print -s "$cmd"
-      eval "$cmd"
+      eval "$cmd" || yay -Sy $pkg
       rehash
   fi
 }

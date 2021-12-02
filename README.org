@@ -29,31 +29,30 @@ and configuration for ~less~ and ~fzf~.
 * Packages
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
-- essentials :: git zsh bat neovim man-db
-- basic tools :: texinfo fd ripgrep tree jrnl python-pynvim wget zsh-completions unrar mlocate (locate on deb)
-- common tools :: topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib espanso
-- pass :: pass pass-otp pass-extension-tail pass-clip
-  -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
-- ssh :: openssh sshfs lemonade-git
+- essentials :: git zsh bat neovim man-db curl
+- basic tools :: texinfo tree wget locate
+  fd python-pynvim zsh-completions mlocate unrar
 - dotfiles :: yadm
   : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
   : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
-- aur recommendations :: tldr++ sc-im
-- git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
-- personal aur utils (need configuration) :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks stderred-git
-  : pip install beautifulsoup4
-- experiments :: kakoune
 ** Applications
-- productivity :: activitywatch-bin
+- common tools :: ripgrep topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib espanso
+- git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
+- aur recommendations :: tldr++ sc-im
+- pass :: pass pass-otp pass-extension-tail pass-clip
+  -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
+- ssh :: openssh sshfs lemonade-git
+- productivity :: activitywatch-bin jrnl
 - music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc sox
   : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpd-mpris
   : sudo npm install -g bpm
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
-- tagging :: puddletag beets picard ffmpegthumbnailer
+- music tagging :: puddletag beets picard ffmpegthumbnailer
 - sync :: syncthing
   : systemctl enable --now syncthing
-** Emacs
-- mail :: offlineimap mu
+- personal aur utils (need configuration) :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks stderred-git
+  : pip install beautifulsoup4
+- experiments :: kakoune
 ** Graphical
 - x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
@@ -64,6 +63,8 @@ and configuration for ~less~ and ~fzf~.
 - health :: stretchly-xeruf-git redshift acpilight light
   : scu enable --now redshift
   -> https://www.reddit.com/r/linuxquestions/comments/pm1bxn/setting_brightness_on_amd_ryzen_7_5800h_with
+*** Emacs
+- mail :: offlineimap mu
 *** Firefox Addons
 **** Password management
 ***** Pass - the unix password manager
@@ -89,9 +90,9 @@ After running android-studio setup, accept licenses:
 : $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
 ** Server
 Setup systemd-resolved and systemd-networkd
-- ssh :: lemonade openssh
-- webserver :: sudo apt install snapd nginx && snap install certbot
-- social :: pleroma-bin postgresql caddy
+- tools :: fd-find
 - rust :: cargo install zoxide diffr
   : curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-*** Funkwhale
+- ssh (Ubuntu) :: lemonade openssh
+- webserver :: sudo apt install snapd nginx && snap install certbot
+- social :: pleroma-bin postgresql caddy

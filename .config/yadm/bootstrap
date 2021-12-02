@@ -8,20 +8,20 @@ section "System"
 highlight "Default sudoers configuration"
 echo 'Defaults	editor=/usr/bin/nvim
 Defaults        env_keep="EDITOR"' |
-  sudo tee /etc/sudoers.d/editor
+	sudo tee /etc/sudoers.d/editor
 echo 'Defaults	timestamp_timeout=120
 Defaults	passwd_timeout=30' |
-  sudo tee /etc/sudoers.d/timeout
+	sudo tee /etc/sudoers.d/timeout
 highlight "password-free reboot"
 echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown. /usr/bin/umount" |
-  sudo tee /etc/sudoers.d/shutdown
+	sudo tee /etc/sudoers.d/shutdown
 
 highlight "Default to current user in tty1,2,3"
 sudo mkdir -p /etc/systemd/system/getty@tty1.service.d /etc/systemd/system/getty@tty2.service.d /etc/systemd/system/getty@tty3.service.d
 echo "[Service]
 ExecStart=
 ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" |
-  sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
+	sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
 highlight "Sysyadm setup"
 test -d "/etc/yadm" || sy clone
@@ -34,8 +34,8 @@ link() {
 
 mkdir -p .config/audacity
 find $HOME -maxdepth 1 -type l -exec file {} + |
-  grep '.local/share' | grep broken |
-  sed 's/.* //' | xargs -r mkdir -p
+	grep '.local/share' | grep broken |
+	sed 's/.* //' | xargs -r mkdir -p
 
 link python /usr/bin/python3
 link fdfind /usr/bin/fd
@@ -52,15 +52,16 @@ test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsy
 test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
 
 highlight "Zsh"
+mkdir -p $XDG_STATE_HOME
 test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
 cloneshallow() {
-  url=https://github.com/$2/$1.git
-  dir="${3:-$ZSH/plugins/$1}"
-  mkdir -p "$(dirname $dir)"
-  if test -d "$dir"
-  then git -C "$dir" remote set-url origin $url
-  else git clone --depth=1 $url "$dir"
-  fi
+	url=https://github.com/$2/$1.git
+	dir="${3:-$ZSH/plugins/$1}"
+	mkdir -p "$(dirname $dir)"
+	if test -d "$dir"
+	then git -C "$dir" remote set-url origin $url
+	else git clone --depth=1 $url "$dir"
+	fi
 }
 cloneshallow oh-my-zsh                  robbyrussell       "$ZSH"
 cloneshallow powerlevel10k              romkatv            "$ZSH/themes/powerlevel10k"
@@ -70,18 +71,18 @@ cloneshallow zsh-vim-mode               softmoth
 case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh);; (*) chsh -s $(which zsh);; esac
 
 ### Arch
-highlight "Pacman"
 if test -f /etc/pacman.conf; then
-  sudo sed -i 's/#Color/Color/' /etc/pacman.conf
-  sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
-  highlight "Reflector"
-  echo "--save /etc/pacman.d/mirrorlist
-  --protocol https
-  --country Germany
-  --latest 20
-  --sort rate" | sudo tee /etc/xdg/reflector/reflector.conf
-  sudo systemctl start reflector &
-  sudo systemctl enable reflector.timer
+	highlight "Pacman"
+	sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+	sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
+	highlight "Reflector"
+	echo "--save /etc/pacman.d/mirrorlist
+	--protocol https
+	--country Germany
+	--latest 20
+	--sort rate" | sudo tee /etc/xdg/reflector/reflector.conf
+	sudo systemctl start reflector &
+	sudo systemctl enable reflector.timer
 fi
 
 ### Applications

@@ -95,7 +95,7 @@ alt-c:yank
 alt-w:toggle-preview-wrap
 alt-j:preview-half-page-down,alt-k:preview-half-page-up
 shift-down:preview-half-page-down,shift-up:preview-half-page-up
-$([[ $(fzf --version | cut -d '.' -f-2) > 0.24 ]] && echo "alt-shift-down:preview-down,alt-shift-up:preview-up")
+$([[ "$(fzf --version 2>/dev/null | cut -d '.' -f-2)" > 0.24 ]] && echo "alt-shift-down:preview-down,alt-shift-up:preview-up")
 esc:close
 " | xargs -I% echo -n "%," | head -c-1)
 #alt-r:preview(bat {}),
