@@ -52,7 +52,7 @@ test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsy
 test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
 
 highlight "Zsh"
-test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/state}/zsh/oh-my-zsh"
+test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
 cloneshallow() {
   url=https://github.com/$2/$1.git
   dir="${3:-$ZSH/plugins/$1}"
