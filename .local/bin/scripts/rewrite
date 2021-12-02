@@ -1,0 +1,3 @@
+#!/bin/sh
+# Pipe a command into this and each output line will rewrite the previous one
+sed --unbuffered '2,$s|^|\\e[1A\\e[K|' | xargs -d '\n' -L 1 echo -e

@@ -1,6 +1,7 @@
 #!/bin/sh -e
 # ex - archive extractor
 # usage: ex <file>
+# depends: rewrite(in dotfiles)
 for arg do
 	if test -r "$arg"; then
 		path="$(realpath "$arg")"
