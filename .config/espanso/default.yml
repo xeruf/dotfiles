@@ -91,6 +91,22 @@ matches:
         params:
           cmd: "pass information/address | tail -1"
 
+  - trigger: ":ap"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address | tail -1 | cut -d' ' -f1"
+
+  - trigger: ":ac"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address | tail -1 | cut -d' ' -f2"
+
   - trigger: ":tel"
     replace: "{{output}}"
     vars:
