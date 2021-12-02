@@ -7,13 +7,16 @@ command! WS write <bar> source $MYVIMRC
 command! FormatJSON %!python -m json.tool
 command! DiffSwap :diffsp % " Diff for swap - superseded by 'chrisbra/Recover.vim'
 
-" takes an indented code block and surrounds it in backticks instead
+" Replace an code block indentation by backtick encasement
 let @c = '/^\ni```Ni```j0/```lllkxNA'
+" Replace double-space indentation by tabs
+let @t = ':%s/^\(\(\t\)*\)  /\1\t/g:%s/^\(\(\t\)*\)  /\1\t/g:%s/^\(\(\t\)*\)  /\1\t/g:%s/^\(\(\t\)*\)  /\1\t/g:%s/^\(\(\t\)*\)  /\1\t/g'
 
 " Sane yanking
 map Y y$
 " Disable Ex mode - https://vi.stackexchange.com/q/457
 nnoremap Q @q
+noremap q: <Nop>
 
 " Alias replace all to S
 nnoremap S :%s//gI<Left><Left><Left>
