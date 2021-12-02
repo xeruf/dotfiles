@@ -58,6 +58,7 @@ export ZSH="$XDG_DATA_HOME/zsh/oh-my-zsh"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
 export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
+mkdir -p $XDG_STATE_HOME/zsh
 
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
