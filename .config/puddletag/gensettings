@@ -3,7 +3,7 @@
     "value": true
   },
   "Program to &play files with:": {
-    "value": "mp"
+    "value": "mp -q --seek"
   },
   "Show &gridlines": {
     "value": true
