@@ -1,0 +1,9 @@
+#!/bin/sh
+# Run parted with rlwrap
+case "$1" in
+	([a-z]) part=/dev/sd$1;;
+	("") part= ;;
+	(*) part=$1;;
+esac
+shift
+sudo rlwrap parted $part "$@"
