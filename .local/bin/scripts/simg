@@ -1,0 +1,25 @@
+#!/bin/sh -e
+# Find and display duplicate images
+script="/tmp/imagedupes-$(date +%s)"
+include="/tmp/imagedupes-include"
+# TODO repeat printf
+# identify -format "%m %wx%h %[bit-depth]-bit %[colorspace]\n" Camera/IMG_20210423_170021.jpg Camera/IMG_20210423_173143.jpg | pr -w $COLUMNS -m -t - - - -
+# https://stackoverflow.com/a/13343943
+echo 'VIEW(){
+	aboutimg() { identify -precision 3 -format "%b %m %wx%h %[bit-depth]-bit %[colorspace]" "$@"; }
+	set -e
+	for arg; do
+		test -f "$arg"
+	done
+	spacing=$(expr \( $(tput cols) - 60 \) / 4)
+	printf "%${spacing}s %30s %$(expr "$spacing" "*" 2)s %-30s\n" "" "$(aboutimg "$1")" "" "$(aboutimg "$2")"
+	timg -g $(tput cols)x30 --center --title --grid=$# "$@"
+	echo -n "Remove (number)?"
+	read n
+	test -n "$n" && eval rm -v \"\$$n\"
+}' >"$include"
+case $1 in ([0-9][0-9]) threshold=$1; shift;; esac
+findimagedupes --recurse --threshold=${threshold:-94}% --add --fingerprints "$XDG_CACHE_HOME/findimagedupes-fingerprints" \
+	--script="$script" --include-file="$include" \
+	"$@" $(test $# -eq 0 && echo ".") 2> >(grep -v "not fingerprinting" >&2)
+sh "$script"
