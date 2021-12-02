@@ -13,5 +13,8 @@ xkbstate="$(dirname $(dirname $0))/xkblayout-state"
 test "$($xkbstate print %C)" -gt 1 && $xkbstate set $id
 # Swap semicolon and colon - https://unix.stackexchange.com/questions/615799/swap-semicolon-colon-to-p-unexpected-cause-semicolon-colon-affected-by-cpas-lock
 # test "$id" = "eu" && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon'
-test "$id" = "1" && setxkbmap eu && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon' || setxkbmap de nodeadkeys
+if test "$id" = "1"
+then	setxkbmap eu && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon'
+else	setxkbmap de nodeadkeys caps:swapescape
+fi
 } 2>&1 | tee -a /tmp/scripts.log

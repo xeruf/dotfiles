@@ -11,7 +11,7 @@ _clean_folders=(~/.ant ~/.autopsy ~/.bundle ~/.cache ~/.cargo ~/.cpanm ~/.docker
 [[ $1 =~ "i" ]] && i=-i
 dir="$("$local" 2>/dev/null || echo "$HOME")"
 
-df --output="source,avail" -h "$dir"
+df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"
 
 highlight "home"
 for f in ${_clean_folders[@]}
@@ -71,4 +71,4 @@ if [[ $1 =~ "o" ]]; then
 	nix-store --optimize
 fi
 
-df --output="source,avail" -h .
+df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"
