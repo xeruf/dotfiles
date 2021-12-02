@@ -2,7 +2,7 @@
 #assume_yes = true
 
 # Disable specific steps - same options as the command line flag
-#disable = ["system", "emacs"]
+disable = ["nix"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
@@ -17,7 +17,7 @@ no_retry = true
 #run_in_tmux = true
 
 # List of remote machines with Topgrade installed on them
-#remote_topgrades = ["toothless", "pi", "parnas"]
+remote_topgrades = ["tiger"]
 
 # Arguments to pass SSH when upgrading remote systems
 #ssh_arguments = "-o ConnectTimeout=2"
@@ -38,12 +38,12 @@ no_retry = true
 max_concurrency = 5
 # Additional git repositories to pull
 repos = [
-    "~/data",
-    "~/.local/share"
+#    "~/data",
+#    "~/.local/share"
 ]
 
 # Don't pull the predefined git repos
-pull_predefined = false
+#pull_predefined = false
 
 # Arguments to pass Git when pulling Repositories
 arguments = "--rebase --autostash"
