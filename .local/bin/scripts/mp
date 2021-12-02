@@ -7,30 +7,31 @@ PLAYLISTS="$MUSIC/Playlists"
 LINKS="$MUSIC/links"
 if test "$1" = "-r"
 then shift
-  test "$1" = "-v" && verbose=-v && shift
-  for arg;
-  do
-    path="$(test -e "$arg" && realpath "$arg" ||
-      ( test -e "$MUSIC/$arg" && realpath "$MUSIC/$arg") ||
-      ( test -e "$PLAYLISTS/$arg" && realpath "$PLAYLISTS/$arg") )"
-    test -n "$verbose" && echo "Scanning path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
-    test -n "$path" || continue
-    if { file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$"; } >/dev/null
-    then pushd "$(dirname "$path")" >/dev/null && cat "$path" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose && popd >/dev/null
-    else
-      test -n "$verbose" && echo "Finding path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
-      find "$path" -iname "*.flac" -o -iname "*.mp3" -o -iname "*.ogg" -o -iname "*.opus" | sort | while read file
-        do case "$path" in
-          ($MUSIC/*) echo "${file#$MUSIC/}";;
-          (*) mkdir -p "$LINKS" && ln -fs "$file" "$LINKS/$(basename "$file")" && echo "${LINKS#$MUSIC/}/$(basename "$file")";;
-        esac done
-    fi
-  done
+	test "$1" = "-v" && verbose=-v && shift
+	for arg
+	do path="$(test -e "$arg" && realpath "$arg" ||
+			( test -e "$MUSIC/$arg" && realpath "$MUSIC/$arg") ||
+			( test -e "$PLAYLISTS/$arg" && realpath "$PLAYLISTS/$arg") )"
+		test -n "$verbose" && echo "Scanning path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
+		test -n "$path" || continue
+		if { file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$"; } >/dev/null
+		then pushd "$(dirname "$path")" >/dev/null && cat "$path" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose && popd >/dev/null
+		else
+			test -n "$verbose" && echo "Finding path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
+			find "$path" -iname "*.flac" -o -iname "*.mp3" -o -iname "*.ogg" -o -iname "*.opus" | sort | while read file
+				do case "$path" in
+					($MUSIC/*) echo "${file#$MUSIC/}";;
+					(*) mkdir -p "$LINKS" && ln -fs "$file" "$LINKS/$(basename "$file")" && echo "${LINKS#$MUSIC/}/$(basename "$file")";;
+				esac done
+		fi
+	done
 else
-  test "$1" = "-q" && quiet=-q && shift
-  test -n "$(mpc playlist)" && next=-q
-  { "$0" -r "$@" && mpc -q update --wait; } | #tee /tmp/mp 2>&1
-    xargs --delim='\n' mpc insert
-  mpc ${quiet:-$next} play
-  test -z "$next" || mpc $quiet next
+	test "$1" = "-q" && quiet=-q && shift
+	test -n "$(mpc playlist)" && next=-q
+	test "$1" = "--seek" && seek=-q
+	{ "$0" -r "$@" && mpc -q update --wait; } | #tee /tmp/mp 2>&1
+		xargs --delim='\n' mpc insert
+	mpc ${quiet:-${next:-$seek}} play
+	test -z "$next" || mpc ${quiet:-$seek} next
+	test -z "$seek" || mpc $quiet seek "30%"
 fi
