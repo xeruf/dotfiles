@@ -70,12 +70,15 @@ edshell() {
 		(prof*) file="$HOME/.zprofile";;
 		(-f) grepfile="$(grep --recursive "\(^$2()\|alias $2=\)" $CONFIG_SHELLS -n -m 1)"
 			file="$(echo "$grepfile" | cut -d':' -f1)"
-			line="$(echo "$grepfile" | cut -d':' -f2)";;
+			line="$(echo "$grepfile" | cut -d':' -f2)"
+			test -f "$file" || return 2;;
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
-	test -f "$file" || checksum="$(md5sum "$file")"
+	test -f "$file" && checksum="$(md5sum "$file")"
 	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
-	test "$checksum" != "$(md5sum $file)" && source "$HOME/.zprofile" && exec $SHELL
+	#test -f "$file" || return 1
+	test "$checksum" != "$(md5sum $file)" &&
+		source "$HOME/.zprofile" && exec $SHELL
 }
 
 
