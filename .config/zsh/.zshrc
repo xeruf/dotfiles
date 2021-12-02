@@ -144,11 +144,20 @@ export KEYTIMEOUT=1
 
 # turn on spelling correction
 setopt correct
-# don't save duplicates in command history
-setopt histignoredups
+# command history - https://unix.stackexchange.com/a/273863
+HISTSIZE=100000
+SAVEHIST=$HISTSIZE
+setopt inc_append_history
+setopt share_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+setopt hist_save_no_dups
+setopt hist_reduce_blanks
+unsetopt hist_ignore_space
 
-setopt EXTENDED_GLOB
-unsetopt CASE_GLOB
+setopt extended_glob
+unsetopt case_glob
 
 setopt pipefail
 

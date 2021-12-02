@@ -13,7 +13,7 @@ export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.ya
 	echo "$DATA/2-standards/box/journal")"
 export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin"
  # adjust programs to use xdg
-export MNT="$XDG_RUNTIME_DIR"/mnt
+export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
@@ -21,6 +21,7 @@ export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export KDEHOME="$XDG_STATE_HOME"/kdehome
+export DOOMLOCALDIR="$XDG_STATE_HOME"/emacs
 
 export WINEPREFIX="$XDG_DATA_HOME"/wine
 export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
