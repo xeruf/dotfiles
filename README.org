@@ -30,7 +30,7 @@ and configuration for ~less~ and ~fzf~.
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
 - essentials :: git zsh bat neovim man-db
-- basic tools :: texinfo fd ripgrep tree jrnl python-pynvim wget zsh-completions mlocate (locate on deb)
+- basic tools :: texinfo fd ripgrep tree jrnl python-pynvim wget zsh-completions unrar mlocate (locate on deb)
 - common tools :: topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib espanso
 - pass :: pass pass-otp pass-extension-tail pass-clip
   -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
@@ -41,6 +41,7 @@ and configuration for ~less~ and ~fzf~.
 - aur recommendations :: tldr++ sc-im
 - git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - personal aur utils (need configuration) :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks stderred-git
+  : pip install beautifulsoup4
 - experiments :: kakoune
 ** Applications
 - productivity :: activitywatch-bin

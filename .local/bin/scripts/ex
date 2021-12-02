@@ -3,27 +3,29 @@
 # usage: ex <file>
 for arg do
 	if test -r "$arg"; then
-		arg="$(realpath "$arg")"
-		name="$(basename "${arg%.*}")"
+		path="$(realpath "$arg")"
+		name="$(basename "${path%.*}")"
+		(
 		if test "$(ls -U | wc -l)" -gt 2; then
-			mkdir "$name"
+			mkdir -p "$name"
 			cd "$name"
 		fi
+		echo "Extracting $arg into $PWD"
 		case "$arg" in
-			*.tar.bz2)   tar xjf "$arg"   ;;
-			*.tar.*|*.tar) tar --extract --file "$arg";;
-			*.bz2)       bunzip2 "$arg"   ;;
-			*.rar)       unrar x "$arg"   ;;
-			*.gz)        gunzip "$arg"    ;;
-			*.tbz2)      tar xjf "$arg"   ;;
-			*.tgz)       tar xzf "$arg"   ;;
-			*.zip|*.jar) unzip "$arg"     ;;
-			*.Z)         uncompress "$arg";;
-			*.7z)        7z x "$arg"      ;;
-			*.deb)       ar x "$arg"      ;;
-			*.zst)       unzstd "$arg"    ;;
-			*)           echo "'$arg' cannot be extracted by ex" ;;
+			(*.tar.*|*.tar) tar --extract --file "$path";;
+			(*.tbz2)        tar xjf "$path"   ;;
+			(*.tgz)         tar xzf "$path"   ;;
+			(*.zip|*.jar)   unzip "$path" | rewrite ;;
+			(*.gz)          gunzip "$path"    ;;
+			(*.bz2)         bunzip2 "$path"   ;;
+			(*.rar)         unrar x "$path"   ;;
+			(*.7z|*.z01)    7z x "$path"      ;;
+			(*.deb)         ar x "$path"      ;;
+			(*.zst)         unzstd "$path"    ;;
+			(*.Z)           uncompress "$path";;
+			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
+		)
 	else
 		echo "'$1' is not a readable file"
 	fi
