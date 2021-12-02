@@ -79,13 +79,7 @@ Version 2019-11-04 2021-02-16"
 (global-set-key (kbd "C-*") 'universal-argument)
 (define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
 
-(map! :leader
-      "u"  'evil-prev-buffer
-      "i"  'evil-next-buffer
-      "bq" 'doom/save-and-kill-buffer
-      "d"  'dragon
-      "#"  'xah-open-in-external-app
-      ;; Buffer-local font resizing
+(map! ;; Buffer-local font resizing
       :n
       "M-C-+"   'text-scale-increase
       "M-C--"   'text-scale-decrease
@@ -94,6 +88,12 @@ Version 2019-11-04 2021-02-16"
       "C-+"     'doom/increase-font-size
       "C--"     'doom/decrease-font-size
       :leader
+      "u"       'evil-prev-buffer
+      "i"       'evil-next-buffer
+      "bq"      'doom/save-and-kill-buffer
+      "d"       'dragon
+      "#"       'xah-open-in-external-app
+      "njo"     'org-journal-open-current-journal-file
       "Se"      '+snippets/edit
       "Sm"      'smerge-mode
       :map smerge-mode-map
@@ -152,7 +152,6 @@ Version 2019-11-04 2021-02-16"
       auto-save-interval 40)
 
 (setq make-backup-files t
-      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
       delete-old-versions t
       version-control t
       vc-make-backup-files t
@@ -171,6 +170,7 @@ Version 2019-11-04 2021-02-16"
 (setq org-directory (expand-file-name "2-standards/box/" user-data-dir)
       default-directory org-directory
       org-roam-directory org-directory
+      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
 
 (use-package! recentf
@@ -209,6 +209,7 @@ Version 2019-11-04 2021-02-16"
         "E" 'org-export-repeat
         "\\" 'org-ctrl-c-ctrl-c
         :localleader
+        "C" 'org-clock-in
         "j" 'org-insert-heading
         "k" 'org-latex-export-to-pdf
         "t" 'org-todo-or-insert
@@ -261,6 +262,13 @@ Version 2019-11-04 2021-02-16"
         org-log-into-drawer t
         org-treat-insert-todo-heading-as-state-change t)
 
+  (setq org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't))
+    ;(apply 'append
+    ;       (mapcar
+    ;        (lambda (directory) (directory-files-recursively (expand-file-name directory user-data-dir) org-agenda-file-regexp))
+    ;        '("1-projects" "2-standards")
+    ;        )))
+
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
     ;; convert csv to org-table considering "12,12"
@@ -269,13 +277,6 @@ Version 2019-11-04 2021-02-16"
                               replace-quote (cond ((equal "^" (match-string 1)) "|")
                                                      ((equal "," (match-string 0)) "|")
                                                      ((match-string 2))) ))  nil  beg end))
-
-  (setq org-agenda-files
-    (apply 'append
-           (mapcar
-            (lambda (directory) (directory-files-recursively (expand-file-name directory user-data-dir) org-agenda-file-regexp))
-            '("1-projects" "2-standards")
-            )))
 
   (defun org-todo-or-insert (&optional arg)
     (interactive "P")
