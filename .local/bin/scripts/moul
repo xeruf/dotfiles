@@ -4,11 +4,11 @@ arg=$1
 test "$arg" = "--help" && echo "$0 <device> [mountpoint] [options...]" && exit 0
 if test "$arg" = "-u"
 then
-  mountpoint="$2"
-  sudo umount --verbose "$mountpoint"
-  code=$?
-  sudo rm -df "$mountpoint"
-  exit $code
+	mountpoint="$2"
+	sudo umount --verbose "$mountpoint"
+	code=$?
+	sudo rm -df "$mountpoint"
+	exit $code
 fi
 
 if grep -e "LABEL=$arg[^\w/]" /etc/fstab
@@ -17,13 +17,14 @@ fi
 if grep -e "[^\w=/]$arg[^\w/]" /etc/fstab
 then mount "$@"; exit $?
 fi
-mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$arg}"
+mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$(basename "$arg")}"
 if grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab
 then shift; mount "$mountpoint" "$@"; code=$?; cd $mountpoint; exit $code
 fi
 case "$arg" in
-  (sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$arg";;
-  (*) partition="-L $arg";;
+	(sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$arg";;
+	(/dev/*) partition="$arg";;
+	(*) partition="-L $arg";;
 esac
 shift $(expr 2 \& $# \> 1 \| 1)
 #uid=$(id --user),gid=$(id --group), \

@@ -6,4 +6,4 @@ case "$1" in
 	(*) part=$1;;
 esac
 shift
-sudo rlwrap parted $part "$@"
+fdisk $part "$@"
