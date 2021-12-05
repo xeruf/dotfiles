@@ -36,9 +36,10 @@ and configuration for ~less~ and ~fzf~.
   : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
   : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
 ** Applications
-- common tools :: ripgrep topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib espanso
+- common tools :: ripgrep topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib
 - git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
-- aur recommendations :: tldr++ sc-im
+AUR: yay
+- aur recommendations :: tldr++ sc-im espanso
 - pass :: pass pass-otp pass-extension-tail pass-clip
   -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
 - ssh :: openssh sshfs lemonade-git
@@ -54,7 +55,8 @@ and configuration for ~less~ and ~fzf~.
   : pip install beautifulsoup4
 - experiments :: kakoune
 ** Graphical
-- x :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
+- xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
+- wayland :: sway azote
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
 - video :: vlc obs-studio kdenlive
 - kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
