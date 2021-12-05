@@ -67,10 +67,10 @@ Version 2019-11-04 2021-02-16"
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 
-(defun dragon (&optional file)
+(defun dragon (&optional @file)
   ; Share file in current buffer via dragon
   (interactive)
-  (shell-command (concat "dragon-drag-and-drop -a -x " (or file buffer-file-name)))
+  (shell-command (concat "dragon-drag-and-drop -a -x " (if (not (string-blank-p @file)) @file buffer-file-name)))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320

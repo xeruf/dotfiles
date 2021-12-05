@@ -9,7 +9,7 @@ case $1 in
     info --vi-keys $(test $last != zsh && echo --index-search=$last) zsh || LESS="$LESS +/^ *$last *\\[" man zshall;;
   (vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
   (gh|chordpro) $@ --help | $paginate;;
-  (caddy|stretchly) $1 help ${@:2} | $paginate;;
+  (caddy|stretchly|go) $1 help ${@:2} | $paginate;;
   (*) man "$@" || { info "$1" -w | grep -v "manpages" && pinfo "$@"; } || { "$@" --help || "$@" -help; } 2>&1 | ${PAGER:-less} || which "$@";;
 esac
 docs="/usr/share/doc/$1"
