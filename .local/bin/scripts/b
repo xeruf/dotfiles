@@ -1,7 +1,7 @@
 #!/bin/bash
 # [b]rowse - overview of given files or current directory
-# depends: tput stat bat checkaccess(in dotfiles)
-# optdepends: timg, neovim (compressed files), pdftoppm (PDF), mtn (video)
+# depends: tput stat bat checkaccess(in my dotfiles)
+# optdepends: timg, neovim (compressed files), pdftoppm (PDF), mtn (video), audiowaveform
 # args: files to inspect
 #
 # Supports:
@@ -26,8 +26,9 @@ fileinfo() {
 	tput setaf 6
 	for arg
 	do case "$arg" in (-*) continue;; esac
-		$elevate file -E "$arg" && ffprobe "$arg" 2>&1 | grep Duration | grep -v '00:00:00.04' | sed 's/, start:[^,]\+,/,/'
-		$elevate stat --format '%A size %sB, birth %.10w mod %.10y' "$arg"
+		$elevate file -E "$arg" &&
+			ffprobe "$arg" 2>&1 | grep Duration | grep -v '00:00:00.04' | sed 's/, start:[^,]\+,/,/' ||
+			stat --format '%A %s - birth %.10w mod %.10y' "$arg" | numfmt --field=3 --to=iec-i --padding=6 --suffix=B
 	done
 }
 
@@ -57,12 +58,15 @@ for arg; do
 		case "$(file "$arg")" in
 		(*\ ?udio*)
 			img="$tmpfile.png"
-			find "$img" -not -empty 2>/dev/null | grep --quiet . ||
+			if which audiowaveform 2>/dev/null >&2
+			then find "$img" -not -empty 2>/dev/null | grep --quiet . ||
 				audiowaveform --quiet --pixels-per-second 2 --height 36 --width 2000 --amplitude-scale auto \
 					--background-color 000000 --waveform-color 99BBFF --axis-label-color 000000 \
-					--input-filename "$arg" --output-format png >"$img"
-			timg -g $(tput cols)x2 "$arg" && printf "\\033[2A     "
-			timg -g $(tput cols)x2 --auto-crop --upscale "$img"
+					--input-filename "$arg" --output-format png >"$img" && {
+						timg -g $(tput cols)x2 "$arg" && printf "\\033[2A     "
+						timg -g $(tput cols)x2 --auto-crop --upscale "$img"
+					}
+			fi
 			;;
 		(*:\ *compress*|*tar\ archive)
 			if test $# = 1

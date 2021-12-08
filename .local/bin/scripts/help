@@ -3,28 +3,31 @@
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
 case $1 in
-  (zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
-    for last; do true; done
-    # need to install zsh-doc package for info pages
-    info --vi-keys $(test $last != zsh && echo --index-search=$last) zsh || LESS="$LESS +/^ *$last *\\[" man zshall;;
-  (vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
-  (gh|chordpro) $@ --help | $paginate;;
-  (caddy|stretchly|go) $1 help ${@:2} | $paginate;;
-  (*) man "$@" || { info "$1" -w | grep -v "manpages" && pinfo "$@"; } || { "$@" --help || "$@" -help; } 2>&1 | ${PAGER:-less} || which "$@";;
+	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
+		for last; do true; done
+		# need to install zsh-doc package for info pages
+		info --vi-keys "$(test "$last" != zsh && echo "--index-search=$last")" zsh ||
+			LESS="$LESS +/^ *$last *\\[" man zshall;;
+	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
+	(gh|chordpro) "$@" --help | $paginate;;
+	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
+	(*) man "$@" ||
+		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
+		if which "$1" >/dev/null; then "$@" --help || "$@" -help 2>&1 | $paginate; fi;;
 esac
 docs="/usr/share/doc/$1"
 if test -d "$docs"; then
-  if test -z "$browse"
-  then echo "Find more in $docs"
-  else
-    len() { echo $1 | wc -c; }
-    shortest() {
-      read shortest
-      while read in
-      do test $(len $shortest) -gt $(len $in) && shortest=$in
-      done
-      echo $shortest
-    }
-    firefox "file://$(find $docs -name index.html | shortest | grep . || find $docs -name $1*.html | shortest)"
-  fi
+	if test -z "$browse"
+	then echo "Find more in $docs"
+	else
+		len() { echo $1 | wc -c; }
+		shortest() {
+			read shortest
+			while read in
+			do test $(len $shortest) -gt $(len $in) && shortest=$in
+			done
+			echo $shortest
+		}
+		firefox "file://$(find $docs -name index.html | shortest | grep . || find $docs -name $1*.html | shortest)"
+	fi
 fi
