@@ -28,7 +28,7 @@ fileinfo() {
 	do case "$arg" in (-*) continue;; esac
 		$elevate file -E "$arg" &&
 			ffprobe "$arg" 2>&1 | grep Duration | grep -v '00:00:00.04' | sed 's/, start:[^,]\+,/,/' ||
-			stat --format '%A %s - birth %.10w mod %.10y' "$arg" | numfmt --field=3 --to=iec-i --padding=6 --suffix=B
+			stat --format '%A %s - birth %.10w mod %.10y' "$arg" | numfmt --field=2 --to=iec-i --padding=6 --suffix=B
 	done
 }
 
