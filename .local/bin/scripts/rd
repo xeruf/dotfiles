@@ -10,7 +10,7 @@ do
 				read answer
 				test "$answer" = "y" &&
 					$elevate rm -rf "$f"
-			else find "$f" -maxdepth 4 -empty -printf "Removing empty %p\n" -delete
+			else find "$f" -maxdepth 4 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 				test -e "$f" &&
 					echo -n "$f ($(ls -A $f | head -3 | paste -s -d' ')) " >&2 &&
 					$elevate rm -rI "$f"

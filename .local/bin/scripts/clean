@@ -18,10 +18,10 @@ for f in ${_clean_folders[@]}
 do "$local" >/dev/null 2>&1 && f="$(echo "$f" | sed "s|$HOME|$($loc)|")"
 	test -f $f || test -d $f && echo $f && rm -rf $i $f
 done
-find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -exec rm -vd {} +
+find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 
 highlight "e to recursively remove empty folders and files"
-[[ $1 =~ "e" ]] && find -empty -type d -exec rm -vd {} +
+[[ $1 =~ "e" ]] && find -empty -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
