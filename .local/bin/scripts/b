@@ -47,7 +47,8 @@ for arg; do
 		;;
 	(*\ video/*)
 		suffix=_thumbs.jpg
-		mtn -i -t -W -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) -O $prefix -o $suffix "$arg" 2>/dev/null
+		mtn -i -t -W -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
+			-O $prefix -o $suffix "$arg" 2>/dev/null
 		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)
@@ -68,7 +69,7 @@ for arg; do
 					}
 			fi
 			;;
-		(*:\ *compress*|*tar\ archive)
+		(*:\ *compress*|*\ archive*)
 			if test $# = 1
 			then nvim "$arg"
 			else case "$arg" in (*.part);; (*)
