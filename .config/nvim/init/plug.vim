@@ -27,23 +27,23 @@ Plug 'tpope/vim-repeat'
 Plug 'inkarkat/vim-ingo-library'
 
 " Ex commands
-Plug 'DataWraith/auto_mkdir'          " mkdir parent dirs when saving
-Plug 'AndrewRadev/bufferize.vim'      " Command to buffer
-Plug 'tpope/vim-eunuch'               " OS helpers
-Plug 'doy/vim-diff-changes'           " Commands for diffing - :DiffAgainstFilesystem :DiffAgainstVCS :DiffStop
+Plug 'DataWraith/auto_mkdir'           " mkdir parent dirs when saving
+Plug 'AndrewRadev/bufferize.vim'       " Command to buffer
+Plug 'tpope/vim-eunuch'                " OS helpers
+Plug 'doy/vim-diff-changes'            " Commands for diffing - :DiffAgainstFilesystem :DiffAgainstVCS :DiffStop
 
 " QOL
-Plug 'farmergreg/vim-lastplace'       " Automatically jump to last edit position
-Plug 'chrisbra/Recover.vim'           " Add Recover options for swap files
-Plug 'ntpeters/vim-better-whitespace' " Tools for trailing whitespace & mixed indents
+Plug 'farmergreg/vim-lastplace'        " Automatically jump to last edit position
+Plug 'chrisbra/Recover.vim'            " Add Recover options for swap files
+Plug 'ntpeters/vim-better-whitespace'  " Tools for trailing whitespace & mixed indents
 
 " Aesthetic
-Plug 'vim-airline/vim-airline'        " Status bar on the bottom
-set noshowmode " Don't show current mode because airline already does and it inhibits echo in visual mode
-Plug 'romainl/vim-cool'               " Automatically stop highlighting search results when moving - https://stackoverflow.com/questions/657447/vim-clear-last-search-highlighting
-Plug 'airblade/vim-gitgutter'         " Git info on the left
- " Highlight color literals
-Plug 'norcalli/nvim-colorizer.lua'
+Plug 'vim-airline/vim-airline'         " Status bar on the bottom
+set noshowmode " Don't show current m ode because airline already does and it inhibits echo in visual mode
+Plug 'romainl/vim-cool'                " Automatically stop highlighting search results when moving - https://stackoverflow.com/questions/657447/vim-clear-last-search-highlighting
+Plug 'airblade/vim-gitgutter'          " Git info on the left
+Plug 'norcalli/nvim-colorizer.lua'     " Highlight color literals
+Plug 'luochen1990/indent-detector.vim' " Auto-detect indent
  " Visual indent guides
 Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup = 1
@@ -52,7 +52,7 @@ let g:indent_guides_enable_on_vim_startup = 1
 Plug 'austintraver/vim-jrnl'
 Plug 'weinshec/vim-dictcc'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
-Plug 'mipmip/vim-scimark'             " Edit markdown tables with sc-im
+Plug 'mipmip/vim-scimark'              " Edit markdown tables with sc-im
 
 call plug#end()
 
