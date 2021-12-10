@@ -16,8 +16,8 @@ highlight "password-free reboot"
 echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown. /usr/bin/umount" |
 	sudo tee /etc/sudoers.d/shutdown
 
-highlight "Default to current user in tty1,2,3"
-sudo mkdir -p /etc/systemd/system/getty@tty1.service.d /etc/systemd/system/getty@tty2.service.d /etc/systemd/system/getty@tty3.service.d
+highlight "Set default user in tty1,2,3"
+sudo mkdir -p /etc/systemd/system/getty@tty{1,2,3}.service.d
 echo "[Service]
 ExecStart=
 ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" |
@@ -53,6 +53,8 @@ test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
 
 highlight "Zsh"
 test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
+mkdir -p "$ZSH"
+oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" && test -d "$oldzsh" && mv -vn $oldzsh $ZSH
 cloneshallow() {
 	url=https://github.com/$2/$1.git
 	dir="${3:-$ZSH/plugins/$1}"

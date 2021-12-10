@@ -4,9 +4,8 @@ which pacman >/dev/null || return 0
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R --recursive'
-alias yays='noglob yay -Sy --needed'
+alias yays='noglob yay -Sy --needed --noprovides --noremovemake'
 alias yayr='noglob yay -R --cascade --recursive'
-alias yau='yay -Syu --nobatchinstall'
 
 # Helper function to integrate yay and fzf
 yzf() {
