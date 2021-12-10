@@ -66,6 +66,10 @@ AUR: yay
   : scu enable --now redshift
   -> https://www.reddit.com/r/linuxquestions/comments/pm1bxn/setting_brightness_on_amd_ryzen_7_5800h_with
 *** Emacs
+#+begin_src sh Doom
+git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs
+${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom install
+#+end_src
 - mail :: offlineimap mu
 *** Firefox Addons
 **** Password management
