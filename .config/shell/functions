@@ -157,9 +157,10 @@ alias jcj='jcl -o json-pretty -u'
 
 # Shorthands
 alias v='edit'
-alias u='topgrade --only emacs --yes; topgrade --disable emacs'
+alias u='topgrade --only emacs --yes; topgrade --disable emacs nix'
 alias st='synct'
 alias expr='noglob expr'
+alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
 
 # Shortcuts
 alias logoff="loginctl terminate-user $USER"

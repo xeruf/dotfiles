@@ -165,13 +165,15 @@ Version 2019-11-04 2021-02-16"
 
 (load! "./local.el" nil t)
 
-(setq pdf-misc-print-programm "/usr/bin/lpr")
-
-(setq org-directory (expand-file-name "2-standards/box/" user-data-dir)
-      default-directory org-directory
-      org-roam-directory org-directory
-      backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
+(setq backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
+
+(let ((box (expand-file-name "2-standards/box/" user-data-dir)))
+  (if (file-exists-p box)
+      (setq org-directory box
+            default-directory org-directory
+            org-roam-directory org-directory))
+  )
 
 (use-package! recentf
   :config
@@ -643,6 +645,8 @@ Version 2019-11-04 2021-02-16"
   )
 
 ;;; Misc package config
+
+(setq pdf-misc-print-programm "/usr/bin/lpr")
 
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 

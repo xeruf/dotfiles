@@ -29,49 +29,52 @@ and configuration for ~less~ and ~fzf~.
 * Packages
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
-- essentials :: git zsh bat neovim man-db curl
-- basic tools :: texinfo tree wget locate
+- essentials :: curl git zsh bat neovim man-db
+- basic tools :: tree wget locate texinfo man-pages
   fd python-pynvim zsh-completions mlocate unrar
 - dotfiles :: yadm
   : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
   : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
 ** Applications
-- common tools :: ripgrep topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib
-- git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
-AUR: yay
+- common tools :: ripgrep topgrade ffmpeg imagemagick pandoc [[https://lftp.yar.ru/][lftp]] glances youtube-dl dos2unix zsh-doc pacman-contrib base-devel
+- music :: mpd mpc ncmpc vlc phonon-qt5-vlc mpdris2
+  : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpDris2
+- music management :: puddletag beets picard ffmpegthumbnailer sox
+  : sudo npm install -g bpm
+#+begin_src sh YAY for AUR
+git clone https://aur.archlinux.org/yay.git /tmp/yay
+cd /tmp/yay
+makepkg -si
+#+end_src
 - aur recommendations :: tldr++ sc-im espanso
+- bluetooth :: bluez bluez-utils pulseaudio-bluetooth
+- git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - pass :: pass pass-otp pass-extension-tail pass-clip
   -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
 - ssh :: openssh sshfs lemonade-git
 - productivity :: activitywatch-bin jrnl
-- music :: mpd mpc ncmpc mpd-mpris vlc phonon-qt5-vlc sox
-  : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpd-mpris
-  : sudo npm install -g bpm
-- bluetooth :: bluez bluez-utils pulseaudio-bluetooth
-- music tagging :: puddletag beets picard ffmpegthumbnailer
 - sync :: syncthing
   : systemctl enable --now syncthing
 - personal aur utils (need configuration) :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks stderred-git
   : pip install beautifulsoup4
 - experiments :: kakoune
 ** Graphical
-- xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
-- wayland :: sway azote
-- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
 - video :: vlc obs-studio kdenlive
-- kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
-- office :: emacs texlive-core texlive-latexextra context-bin libreoffice-fresh
+- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
+- office :: libreoffice-fresh emacs texlive-core texlive-latexextra context-bin
+- communication :: zulip-desktop-bin ferdi-bin
 - hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight light
   : scu enable --now redshift
   -> https://www.reddit.com/r/linuxquestions/comments/pm1bxn/setting_brightness_on_amd_ryzen_7_5800h_with
+*** Desktop
+- xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
+- wayland :: sway azote
+- kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
 *** Emacs
-#+begin_src sh Doom
-git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs
-${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom install
-#+end_src
+: git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs && ${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom -y install
 - mail :: offlineimap mu
-*** Firefox Addons
+*** [[id:firefox][Firefox]] Addons
 **** Password management
 ***** Pass - the unix password manager
 Store all kinds of secrets in plain text
