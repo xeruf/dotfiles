@@ -1,18 +1,18 @@
 # Headings
-section() { printf "\n[1m[4m$1[0m\n"; }
+SECTION() { printf "\n[1m[4m$1[0m\n"; }
 highlight() { printf "[1m[3m$1[0m\n"; }
+subhighlight() { printf "[3m$1[0m\n"; }
 
-## System
-section "System"
+SECTION "System"
 
-highlight "Default sudoers configuration"
+highlight "Sudoers defaults"
 echo 'Defaults	editor=/usr/bin/nvim
 Defaults        env_keep="EDITOR"' |
 	sudo tee /etc/sudoers.d/editor
 echo 'Defaults	timestamp_timeout=120
 Defaults	passwd_timeout=30' |
 	sudo tee /etc/sudoers.d/timeout
-highlight "password-free reboot"
+subhighlight "password-free reboot"
 echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown. /usr/bin/umount" |
 	sudo tee /etc/sudoers.d/shutdown
 
@@ -26,8 +26,8 @@ ExecStart=-/usr/bin/agetty --skip-login --login-options $USER %I" |
 highlight "Sysyadm setup"
 test -d "/etc/yadm" || sy clone
 
-## Software
-section "Software"
+SECTION "Software"
+
 link() {
 	test -e "$2" || $(checkaccess -w "$2" || echo sudo) ln -sv "$@"
 }
@@ -53,8 +53,8 @@ test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
 
 highlight "Zsh"
 test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
-mkdir -p "$ZSH"
-oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" && test -d "$oldzsh" && mv -vn $oldzsh $ZSH
+mkdir -p "$(dirname $ZSH)"
+oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" -a -d "$oldzsh" && mv -vn $oldzsh $ZSH
 cloneshallow() {
 	url=https://github.com/$2/$1.git
 	dir="${3:-$ZSH/plugins/$1}"
@@ -71,12 +71,12 @@ cloneshallow zsh-autosuggestions        zsh-users
 cloneshallow zsh-vim-mode               softmoth
 case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh);; (*) chsh -s $(which zsh);; esac
 
-### Arch
+highlight "Arch"
 if test -f /etc/pacman.conf; then
-	highlight "Pacman"
+	subhighlight "Pacman"
 	sudo sed -i 's/#Color/Color/' /etc/pacman.conf
 	sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
-	highlight "Reflector"
+	subhighlight "Reflector"
 	echo "--save /etc/pacman.d/mirrorlist
 	--protocol https
 	--country Germany
@@ -86,10 +86,10 @@ if test -f /etc/pacman.conf; then
 	sudo systemctl enable reflector.timer
 fi
 
-### Applications
 test "$DISPLAY" || exit 0
+highlight "Desktop Applications"
 
-highlight "Application symlinks"
+subhighlight "Application symlinks"
 link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
 link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
 link "/usr/share/applications/stretchly.desktop" "$XDG_CONFIG_HOME/autostart/"
@@ -98,8 +98,8 @@ if ! test -d "$mx"
 then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
 fi
 
-highlight "Block internet at night & on weekdays in the morning to force focus"
+subhighlight "Block internet at night & on weekdays in the morning to force focus"
 walli 22 --save
 
-highlight "Setup kakoune plugin loader"
+subhighlight "Setup kakoune plugin loader"
 cloneshallow plug.kak robertmeta "${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"
