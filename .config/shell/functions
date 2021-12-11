@@ -33,6 +33,12 @@ alias h='help'
 compdef help=man
 alias info='info --vi-keys'
 
+xtrace() {
+	set -x
+	"$@"
+	set +x
+}
+
 # Shows source code for command, resolving nested aliases
 wh() {
 	res=$(which "$@")
@@ -164,7 +170,7 @@ alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
 
 # Shortcuts
 alias logoff="loginctl terminate-user $USER"
-alias calc='rlwrap -a bc -l'
+alias calb='rlwrap -a bc -l'
 alias dt='python -c "import time;print(time.asctime(time.localtime()))"'
 
 # Process
@@ -175,7 +181,11 @@ alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 
 # Remote
 alias delta="sc restart openvpn-client@deltaPeak.service"
-alias sshl="lemonade server -allow 127.0.0.1 & kitty +kitten ssh -R 2489:127.0.0.1:2489"
+sshl() {
+	lemonade server -allow 127.0.0.1 &
+	ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1"
+	kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
+}
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
@@ -205,7 +215,6 @@ unv() { strings $1 | sed 's/5$//' | dedup }
 alias hx='sudo hexedit --maximize --color'
 # Paginated hexyl
 hex() { hexyl "$@" | "${PAGER:-less}" }
-
 
 alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=length --bind='alt-bspace:clear-query'"
 alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
@@ -282,8 +291,8 @@ fi
 
 lowercase_transliterate="y/A-Z /a-z-/"
 which perl-rename >/dev/null &&
-  alias lowercase="perl-rename -iv '$lowercase_transliterate'" ||
-  alias lowercase="rename -iv '$lowercase_transliterate'"
+	alias lowercase="perl-rename -iv '$lowercase_transliterate'" ||
+	alias lowercase="rename -iv '$lowercase_transliterate'"
 
 # rsync directory properly - suffix both dirs with / to act on contents
 alias rcn='rsync -v --recursive --human-readable --links --dry-run'
@@ -340,12 +349,12 @@ mkcd() {
 # Other stuff {{{1
 
 umoul() {
-  arg="${1:-$PWD}"
-  mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${XDG_RUNTIME_DIR}/mnt/$arg")"
-  mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
-    mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
-  case "$PWD" in ("$mountpoint"*) cd "$(dirname $mountpoint)";; esac
-  moul -u "$mountpoint"
+	arg="${1:-$PWD}"
+	mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${XDG_RUNTIME_DIR}/mnt/$arg")"
+	mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
+		mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
+	case "$PWD" in ("$mountpoint"*) cd "$(dirname $mountpoint)";; esac
+	moul -u "$mountpoint"
 }
 
 resetdocker() {

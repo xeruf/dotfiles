@@ -5,13 +5,13 @@ for f in "$@"
 do
 	test -w "$f" && elevate="" || elevate=sudo
 	if test -d "$f"; then
+		find "$f" -maxdepth 4 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 		if test -e "$f/.git" || test -e "$f/packed-refs"
 			then echo -n "Force delete git project $f? "
 				read answer
 				test "$answer" = "y" &&
 					$elevate rm -rf "$f"
-			else find "$f" -maxdepth 4 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
-				test -e "$f" &&
+			else test -e "$f" &&
 					echo -n "$f ($(ls -A $f | head -3 | paste -s -d' ')) " >&2 &&
 					$elevate rm -rI "$f"
 		fi

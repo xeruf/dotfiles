@@ -31,7 +31,7 @@ cd() {
 		dir=$(fd --no-ignore --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1)
 		test -n "$dir" && cd "$dir"
 	else
-		builtin cd "$1" &&
+		builtin cd "$@" &&
 		command ls --literal --file-type --color=always --format=vertical -U -w $COLUMNS |
 			#pr -4 -l1 -W $COLUMNS -S"  " |
 			head -3
