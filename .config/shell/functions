@@ -1,12 +1,15 @@
 # Shell aliases & functions for Zsh, almost all work for Bash too
 # data directory aliases {{{1
-if test "$ZSH_NAME" = "zsh"; then
-alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
-alias -g G="| grp"
-alias -g X="| xargs -d '\n'"
-alias -g X1="| xargs -d '\n' -n 1"
-alias -g XC="| xclip -selection clipboard"
-alias -g L="--color=always | ${PAGER:-less}"
+if test "$ZSH_NAME" = "zsh"
+then
+	alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
+	alias -g G="| grp"
+	alias -g X="| xargs -d '\n'"
+	alias -g X1="| xargs -d '\n' -n 1"
+	alias -g XC="| xclip -selection clipboard"
+	alias -g L="--color=always | ${PAGER:-less}"
+else
+	local compdef() { }
 fi
 
 xdh="$XDG_DATA_HOME"
