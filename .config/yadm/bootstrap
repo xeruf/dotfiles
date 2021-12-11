@@ -29,7 +29,7 @@ test -d "/etc/yadm" || sy clone
 SECTION "Software"
 
 link() {
-	test -e "$2" || $(checkaccess -w "$2" || echo sudo) ln -sv "$@"
+	test -e "$2" -o -h "$2" || $(checkaccess -w "$2" || echo sudo) ln -sv "$@"
 }
 
 mkdir -p .config/audacity

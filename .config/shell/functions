@@ -143,7 +143,7 @@ scr() {
 	systemctl --user reload "$1" ||
 		sudo systemctl reload "$1" ||
 		systemctl --user restart "$1" ||
-		sudo systemctl restart"$1" ||
+		sudo systemctl restart "$1"
 }
 
 # Restart matching systemctl service with chance for input inbetween
