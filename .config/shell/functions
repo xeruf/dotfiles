@@ -1,5 +1,5 @@
 # Shell aliases & functions for Zsh, almost all work for Bash too
-# data directory aliases {{{1
+# zsh helpers {{{1
 if test "$ZSH_NAME" = "zsh"
 then
 	alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
@@ -8,10 +8,24 @@ then
 	alias -g X1="| xargs -d '\n' -n 1"
 	alias -g XC="| xclip -selection clipboard"
 	alias -g L="--color=always | ${PAGER:-less}"
+
+	# Edit zsh completion
+	edcomp() {
+		file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
+		$EDITOR "${fpath[-1]}/$file"
+		unfunction "$file" && compinit
+	}
+	compdef "_files -W ${fpath[-1]}/" edcomp
+	
+	writecompletion() {
+		echo "#compdef $1" > "_$1"
+		$EDITOR "_$1"
+	}
 else
-	local compdef() { }
+	compdef() { true; }
 fi
 
+# data directory aliases {{{1
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
 xsh="$XDG_STATE_HOME"
@@ -96,19 +110,6 @@ edbin() {
 	f="$(which $1 2>/dev/null)" && test -f "$f" && edit "$f" ||
 		edshell -f "$1"; test $? != 2 ||
 		edit "$HOME/.local/bin/scripts/$1"
-}
-
-# Edit zsh completion
-edcomp() {
-	file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
-	$EDITOR "${fpath[-1]}/$file"
-	unfunction "$file" && compinit
-}
-compdef "_files -W ${fpath[-1]}/" edcomp
-
-writecompletion() {
-	echo "#compdef $1" > "_$1"
-	$EDITOR "_$1"
 }
 
 # Task management & time tracking {{{1
