@@ -1,11 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 # Compare select terminal image viewers
 # Args: <height> [images]...
-runti() {
-  which "$1" >/dev/null &&
-    highlight "$*" && "$@"
-}
-cols="$(expr $(tput cols) / $1 / 3 \| 1)"
-runti timg --rotate=exif --title --grid=${cols} -g $(tput cols)x$(expr $1 \* $cols + 4) "${@:2}"
-runti viu --name -h $1 "${@:2}"
-runti tiv -h $1 -c $(expr $cols + 1) "${@:2}"
+set -x
+size=10
+if test $# -eq 0
+	then args=$DATA/images/*.png
+	else echo "$1" | grep -v -e "\." -e "/" && size=$1 && shift
+fi
+cols="$(expr $(tput cols) / $size / 3 \| 1)"
+timg --rotate=exif --title --grid=${cols} -g $(tput cols)x$(expr $size \* $cols + 4) "$@" $args
+viu --name -h $size "$@" $args
+tiv -h $size -c $(expr $cols + 1) "$@" $args
