@@ -41,6 +41,7 @@ link python /usr/bin/python3
 link fdfind /usr/bin/fd
 link batcat /usr/bin/bat
 link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
+link .bash_aliases "$HOME/.bashrc"
 
 highlight "SSH Permissions"
 chmod og= "$HOME/.ssh" -R

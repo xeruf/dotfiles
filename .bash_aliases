@@ -1,5 +1,8 @@
 source ~/.config/shell/functions
 
+_git_prompt=/usr/share/git/completion/git-prompt.sh
+test -f $_git_prompt && source $_git_prompt
+
 # ls aliases
 
 alias ll='ls -alF'
