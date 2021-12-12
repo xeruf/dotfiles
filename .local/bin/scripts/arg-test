@@ -1,6 +1,6 @@
 #!/bin/sh
 {
-echo "$# Args: $@"
+echo "$# Args: ${@:-DEFAULT}"
 #echo "Starred: $*"
 #echo "${@:-default}" | sed 's/\w\+/\0-w/g'
 for last; do true; done
