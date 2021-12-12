@@ -26,6 +26,8 @@ for arg do
 			(*.Z)           uncompress "$path";;
 			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
+		test "$(ls -U | wc -l)" -lt 3 &&
+			mv */* . && find -empty -delete
 		)
 	else
 		echo "'$1' is not a readable file"

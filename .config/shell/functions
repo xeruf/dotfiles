@@ -300,6 +300,7 @@ which perl-rename >/dev/null &&
 
 # rsync directory properly - suffix both dirs with / to act on contents
 alias rcn='rsync -v --recursive --human-readable --links --dry-run'
+rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }
 alias rc='rcs --links --times'
 alias rcu='rc --existing --size-only'
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'

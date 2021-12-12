@@ -20,28 +20,31 @@ do "$local" >/dev/null 2>&1 && f="$(echo "$f" | sed "s|$HOME|$($loc)|")"
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 
-highlight "e to recursively remove empty folders and files"
+highlight "e :: recursively remove empty folders and files"
 [[ $1 =~ "e" ]] && find -empty -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
-	highlight "$k to delete $folder"
+	highlight "$k :: delete $folder"
 	[[ $1 =~ "$k" ]] && sudo rm $i -rf "$folder" && echo "Deleted $folder"
 done
 
-highlight "m to recursively remove mac-files"
+highlight "s :: recursively remove logs"
+[[ $1 =~ "s" ]] && find \( -name "logs" -prune -o -name "crash-reports" -prune -o -iname "*log.txt" -o -name "*.log.*" -o -iname "*.log" \) -print -exec rm -rI {} +
+
+highlight "m :: recursively remove mac-files"
 if [[ $1 =~ "m" ]]; then
 	find -iname '.spotlight*' -exec rm -rI {} +
 	find -name '*.DS_Store' -delete
 fi
 
-highlight "g to clean gradle"
+highlight "g :: clean gradle"
 if [[ $1 =~ "g" ]]; then
 	find "${GRADLE_USER_HOME:-$HOME/.gradle}" -mindepth 1 -maxdepth 1 -type d -print -exec rm $i -r {} +
 	find $PROJECTS -name .gradle -print -exec rm $i -r {} +
 fi
 
-highlight "c to clean electron caches"
+highlight "c :: clean electron caches"
 [[ $1 =~ "c" ]] && find "$dir$(expr "${XDG_CONFIG_HOME/$HOME}" \| "/.config")" \
 		-type d -name "*Cache" -print -exec rm $i -r {} + -prune
 
@@ -51,7 +54,7 @@ if test -f "/var/log/apt/history.log"; then
 	export aptclean_last=$aptclean_cur
 fi
 
-highlight "d to recursively remove development caches"
+highlight "d :: recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
 	find -name "src" -prune -o \
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
@@ -64,7 +67,7 @@ if [[ $1 =~ "d" ]]; then
 		-print -exec rm -rI {} + -prune
 fi
 
-highlight "o to optimize space extensively"
+highlight "o :: optimize space extensively"
 if [[ $1 =~ "o" ]]; then
 	which yay &>/dev/null && yay -Sc --noconfirm
 	nix-collect-garbage -d

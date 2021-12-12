@@ -114,7 +114,7 @@ export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
 
 if test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 && test -e "$JOURNAL"; then
-  echo "What do you want to do?"
+  echo "What do you want to do? Check your planner!"
   while test $(echo "$intention" | wc -c) -lt 6
   do read intention
   done

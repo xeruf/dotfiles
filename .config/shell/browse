@@ -1,7 +1,7 @@
 # Utilities regarding file system navigation
 
 # Useful when the current directory was recreated
-alias rcd="cd $PWD"
+alias recd='cd $PWD'
 # cd into the parent if arg is a file
 cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
 

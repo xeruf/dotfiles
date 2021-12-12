@@ -1,5 +1,8 @@
 #!/bin/sh -e
 # Displays the latest files in the given directory or pwd
 test "$1" = "-a" && all=true && shift
-find "${1:-$PWD}" -maxdepth 4 -type f -printf '%.16T+ %P\n' |
+for f in "${@:-PWD}"
+do test $# -gt 1 && highlight "$f"
+	find "$f" -maxdepth 4 -type f -printf '%.16T+ %P\n' |
 	sort -r | $(test "$all" && echo "less" || echo "head")
+done
