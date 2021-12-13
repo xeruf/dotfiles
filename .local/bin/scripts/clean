@@ -13,10 +13,10 @@ dir="$("$local" 2>/dev/null || echo "$HOME")"
 
 df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"
 
-highlight "home"
+highlight "clean home"
 for f in ${_clean_folders[@]}
 do "$local" >/dev/null 2>&1 && f="$(echo "$f" | sed "s|$HOME|$($loc)|")"
-	test -f $f || test -d $f && echo "Removing empty $f" && rm -rf $i $f
+	test -f $f || test -d $f && echo "Removing superfluous $f" && rm -rf $i $f
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 
@@ -30,28 +30,15 @@ for k in "${!_clean_map[@]}"; do
 done
 
 highlight "s :: recursively remove logs"
-[[ $1 =~ "s" ]] && find \( -name "logs" -prune -o -name "crash-reports" -prune -o -iname "*log.txt" -o -name "*.log.*" -o -iname "*.log" \) -print -exec rm -rI {} +
+[[ $1 =~ "s" ]] && find \( -name ".git" -o -name "src" \) -prune -o \
+	\( \( -name "logs" -o -name "log" -o -name "crash-reports" \) -prune -o \
+		-type f \( -name "*.log.gz" -o -name "*.log.[0-9]" -o -iname "*.log" \) \) \
+	-print -exec rm -rI {} +
 
 highlight "m :: recursively remove mac-files"
 if [[ $1 =~ "m" ]]; then
 	find -iname '.spotlight*' -exec rm -rI {} +
 	find -name '*.DS_Store' -delete
-fi
-
-highlight "g :: clean gradle"
-if [[ $1 =~ "g" ]]; then
-	find "${GRADLE_USER_HOME:-$HOME/.gradle}" -mindepth 1 -maxdepth 1 -type d -print -exec rm $i -r {} +
-	find $PROJECTS -name .gradle -print -exec rm $i -r {} +
-fi
-
-highlight "c :: clean electron caches"
-[[ $1 =~ "c" ]] && find "$dir$(expr "${XDG_CONFIG_HOME/$HOME}" \| "/.config")" \
-		-type d -name "*Cache" -print -exec rm $i -r {} + -prune
-
-if test -f "/var/log/apt/history.log"; then
-	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
-	test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
-	export aptclean_last=$aptclean_cur
 fi
 
 highlight "d :: recursively remove development caches"
@@ -65,6 +52,21 @@ if [[ $1 =~ "d" ]]; then
 	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
 		-prune -o -name "build" -type d \
 		-print -exec rm -rI {} + -prune
+fi
+highlight "g :: clean gradle caches"
+if [[ $1 =~ "g" ]]; then
+	find "${GRADLE_USER_HOME:-$HOME/.gradle}" -mindepth 1 -maxdepth 1 -type d -print -exec rm $i -r {} +
+	find $PROJECTS -name .gradle -print -exec rm $i -r {} +
+fi
+
+highlight "c :: clean electron caches"
+[[ $1 =~ "c" ]] && find "$dir$(expr "${XDG_CONFIG_HOME/$HOME}" \| "/.config")" \
+		-type d -name "*Cache" -print -exec rm $i -r {} + -prune
+
+if test -f "/var/log/apt/history.log"; then
+	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
+	test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
+	export aptclean_last=$aptclean_cur
 fi
 
 highlight "o :: optimize space extensively"
