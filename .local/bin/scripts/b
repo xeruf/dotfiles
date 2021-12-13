@@ -16,9 +16,14 @@ test "$1" = "-v" &&
 	set -eo xtrace &&
 	shift
 
+inspect=false
+test "$1" = "-i" &&
+	inspect=true &&
+	shift
+
 set -o pipefail
 for last; do true; done
-last=${last:-.}
+last="${last:-.}"
 
 checkperm() {
 	checkaccess -r "$@" || elevate=sudo
@@ -34,14 +39,17 @@ fileinfo() {
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
 		$elevate ffprobe "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
-			stat --format '%A %s - birth %.10w mod %.10y' "$arg" | numfmt --field=2 --to=iec-i --padding=6 --suffix=B
+			stat --format "%A %s $(
+					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
+						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"
+				) - birth %.10w mod %.10y" "$arg" | numfmt --field=2 --to=iec-i --padding=6 --suffix=B
 	done
 	tput sgr0
 }
 
 prefix=/tmp/b
 mkdir -p "$prefix"
-declare -a timg timga bat ls
+declare -a timg timga bat batl ls
 for arg; do
 	case "$arg" in (-*) args="$args $arg"; continue;; esac
 	checkperm "$arg"
@@ -78,11 +86,12 @@ for arg; do
 			timga+=("$arg")
 			;;
 		(*:\ *compress*|*\ archive*)
+			list="$tmpfile-list.txt"
 			if test $# = 1
 			then nvim "$arg"
 			else case "$arg" in (*.part);; (*)
-				nvim -es "+2w$tmpfile|5,w>>$tmpfile" "$arg"
-				bat+=("$tmpfile");;
+				nvim -es "+2w$list|5,w>>$list" "$arg"
+				batl+=("$list");;
 			esac; fi
 			;;
 		(*:\ *database*) sqlite3 "$arg" ".tables";;
@@ -94,6 +103,8 @@ for arg; do
 	esac
 	fileinfo "$arg"
 done
+
+if $inspect; then exit $?; fi
 
 if test "$timg"; then
 	$elevate timg -V --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
@@ -109,10 +120,12 @@ if test "$timg"; then
 	fi
 fi
 
-if test "$bat"; then
-	test $# -gt ${#bat[@]} && test -z "$args" &&
-		$elevate head "${bat[@]}" | cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1) ||
-		$elevate bat --style header --pager 'less -RF' $args "${bat[@]}"
+if test "$bat" -o "$batl"; then
+	if test $# -gt ${#bat[@]} -a $# -gt ${#batl[@]} && test -z "$args"
+	then $elevate head "${batl[@]}" "${bat[@]}" | cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)
+	else test "$bat" && $elevate bat --style header,rule --pager 'less -RF' $args "${bat[@]}"
+		test "$batl" && $elevate bat --style rule --pager 'less -RF' $args "${batl[@]}"
+	fi
 	fileinfo "${bat[@]}"
 fi
 

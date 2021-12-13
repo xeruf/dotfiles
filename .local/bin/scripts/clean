@@ -16,7 +16,7 @@ df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"
 highlight "home"
 for f in ${_clean_folders[@]}
 do "$local" >/dev/null 2>&1 && f="$(echo "$f" | sed "s|$HOME|$($loc)|")"
-	test -f $f || test -d $f && echo $f && rm -rf $i $f
+	test -f $f || test -d $f && echo "Removing empty $f" && rm -rf $i $f
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 
