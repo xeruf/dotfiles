@@ -1,7 +1,9 @@
 #!/bin/sh -e
 # ex - archive extractor
-# usage: ex <file>
-# depends: rewrite(in dotfiles)
+# adapted and improved from the commonly circulating version
+# detects whether unpacking into a subfolder is sensible
+# and shows progress indications for some operations
+# optdepends: rewrite(in dotfiles)
 for arg do
 	if test -r "$arg"; then
 		path="$(realpath "$arg")"
