@@ -161,7 +161,7 @@ unsetopt case_glob
 
 setopt pipefail
 
-# Enable zmv (see ZSHCONTRIB(1))
+# Empower zmv (see ZSHCONTRIB(1))
 alias szmv='sudo zsh -c autoload zmv && zmv'
 autoload zmv
 alias zmv='noglob zmv'
@@ -170,22 +170,31 @@ alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
 
-for file in $CONFIG_SHELLS/*; do source $file; done
+for file in $CONFIG_SHELLS/*
+do source $file
+done
 
 # GENERATED SHIT
+
+test -e /usr/share/zsh/manjaro-zsh-config && 
+	source /usr/share/zsh/manjaro-zsh-config
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
-test -s $CONFIG_ZSH/.p10k.zsh && source $CONFIG_ZSH/.p10k.zsh
+test -s $CONFIG_ZSH/.p10k.zsh && 
+	source $CONFIG_ZSH/.p10k.zsh
 
-test -d /usr/share/fzf && source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
+test -d /usr/share/fzf && 
+	source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
 
-which zoxide >/dev/null && eval "$(zoxide init zsh)"
+which zoxide >/dev/null && 
+	eval "$(zoxide init zsh)"
 
-test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && source $XDG_CONFIG_HOME/broot/launcher/bash/br
+test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && 
+	source $XDG_CONFIG_HOME/broot/launcher/bash/br
 
 # Nix
 test -e /home/janek/.nix-profile/etc/profile.d/nix.sh && source /home/janek/.nix-profile/etc/profile.d/nix.sh
