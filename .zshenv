@@ -30,6 +30,7 @@ export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
 export GOPATH="$XDG_STATE_HOME"/go
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export NVM_DIR="$XDG_DATA_HOME"/nvm
 
 export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
 export CABAL_DIR="$XDG_CACHE_HOME"/cabal

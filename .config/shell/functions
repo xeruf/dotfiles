@@ -80,7 +80,7 @@ pathadd() {
 }
 
 # ZSH completion and stuff {{{1
-alias rs="reset && source ~/.zprofile && exec $SHELL"
+alias rs="reset && exec $SHELL"
 alias hist='print -z $(history | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
 # Edit shell config files
@@ -90,7 +90,7 @@ edshell() {
 	case $1 in
 		("") file="$CONFIG_SHELL_FUNCTIONS";;
 		(zsh) file="$CONFIG_ZSH/.zshrc";;
-		(prof*) file="$HOME/.zprofile";;
+		(env) file="$HOME/.zshenv";;
 		(-f) grepfile="$(grep --recursive "\(^$2()\|alias $2=\)" $CONFIG_SHELLS -n -m 1)"
 			file="$(echo "$grepfile" | cut -d':' -f1)"
 			line="$(echo "$grepfile" | cut -d':' -f2)"
@@ -99,11 +99,9 @@ edshell() {
 	esac
 	test -f "$file" && checksum="$(md5sum "$file")"
 	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
-	#test -f "$file" || return 1
-	test "$checksum" != "$(md5sum $file)" &&
-		source "$HOME/.zprofile" && exec $SHELL
+	test -s "$file" || return 1
+	test "$checksum" != "$(md5sum $file)" && rs
 }
-
 
 # Edit a file in the PATH
 edbin() {
@@ -187,8 +185,13 @@ alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias delta="sc restart openvpn-client@deltaPeak.service"
 sshl() {
 	lemonade server -allow 127.0.0.1 &
-	ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1"
-	kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
+	file="/var/tmp/ssh-$1"
+	if test ! -e "$file"; then
+	ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" &&
+	kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@" &&
+	touch "$file"
+	else ssh "$@"
+	fi
 }
 
 # Listen to loopback of mic
@@ -298,6 +301,7 @@ which perl-rename >/dev/null &&
 	alias lowercase="perl-rename -iv '$lowercase_transliterate'" ||
 	alias lowercase="rename -iv '$lowercase_transliterate'"
 
+# TODO replace cp by rsync, automatically use compression for remote transfers
 # rsync directory properly - suffix both dirs with / to act on contents
 alias rcn='rsync -v --recursive --human-readable --links --dry-run'
 rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }

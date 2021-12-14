@@ -144,6 +144,7 @@ export KEYTIMEOUT=1
 
 # turn on spelling correction
 setopt correct
+CORRECT_IGNORE="[_|.]*"
 # command history - https://unix.stackexchange.com/a/273863
 HISTSIZE=100000
 SAVEHIST=$HISTSIZE
@@ -176,28 +177,25 @@ done
 
 # GENERATED SHIT
 
-test -e /usr/share/zsh/manjaro-zsh-config && 
-	source /usr/share/zsh/manjaro-zsh-config
+source_existing() {
+	for arg
+	do test -s "$arg" && source "$arg"
+	done
+}
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+source_existing /usr/share/zsh/manjaro-zsh-config
+source_existing $CONFIG_ZSH/.p10k.zsh # To customize prompt, run `p10k configure` or edit .p10k.zsh.
+source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 
-# To customize prompt, run `p10k configure` or edit .p10k.zsh.
-test -s $CONFIG_ZSH/.p10k.zsh && 
-	source $CONFIG_ZSH/.p10k.zsh
+source_existing "$NVM_DIR/nvm.sh"
+source_existing "$NVM_DIR/bash_completion"
 
-test -d /usr/share/fzf && 
-	source /usr/share/fzf/key-bindings.zsh && source /usr/share/fzf/completion.zsh
+source_existing $XDG_CONFIG_HOME/broot/launcher/bash/br
 
-which zoxide >/dev/null && 
+which zoxide >/dev/null &&
 	eval "$(zoxide init zsh)"
 
-test -f $XDG_CONFIG_HOME/broot/launcher/bash/br && 
-	source $XDG_CONFIG_HOME/broot/launcher/bash/br
-
-# Nix
-test -e /home/janek/.nix-profile/etc/profile.d/nix.sh && source /home/janek/.nix-profile/etc/profile.d/nix.sh
+source_existing /home/janek/.nix-profile/etc/profile.d/nix.sh
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 
 true
