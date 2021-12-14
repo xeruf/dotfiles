@@ -124,8 +124,8 @@ if test "$bat" -o "$batl"; then
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
 	if test $# -gt ${#bat[@]} -a $# -gt ${#batl[@]} && test -z "$args"
 	then $elevate head "${batl[@]}" "${bat[@]}" | cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)
-	else test "$bat" && $elevate bat --style header$rule --pager 'less -RF' $args "${bat[@]}"
-		test "$batl" && $elevate bat --style ${rule#,} --pager 'less -RF' $args "${batl[@]}"
+	else test "$bat" && $elevate bat --style numbers,header$rule --pager 'less -RF' $args "${bat[@]}"
+		test "$batl" && $elevate bat --style plain$rule --pager 'less -RF' $args "${batl[@]}"
 	fi
 	fileinfo "${bat[@]}"
 fi
