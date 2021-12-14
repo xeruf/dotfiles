@@ -29,7 +29,7 @@ test -d "/etc/yadm" || sy clone
 SECTION "Software"
 
 link() {
-	test -e "$2" -o -h "$2" || $(checkaccess -w "$2" || echo sudo) ln -sv "$@"
+	test -e "$2" -o -h "$2" || $($HOME/.local/bin/scripts/checkaccess -w "$2" || echo sudo) ln -sv "$@"
 }
 
 mkdir -p .config/audacity
@@ -40,8 +40,6 @@ find $HOME -maxdepth 1 -type l -exec file {} + |
 link python /usr/bin/python3
 link fdfind /usr/bin/fd
 link batcat /usr/bin/bat
-link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
-link .bash_aliases "$HOME/.bashrc"
 
 highlight "SSH Permissions"
 chmod og= "$HOME/.ssh" -R
@@ -91,6 +89,9 @@ test "$DISPLAY" || exit 0
 highlight "Desktop Applications"
 
 subhighlight "Application symlinks"
+link .bash_aliases "$HOME/.bashrc"
+link "$HOME/.ssh/config" "${XDG_CONFIG_HOME:-$HOME/.config}/ssh"
+
 link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
 link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
 link "/usr/share/applications/stretchly.desktop" "$XDG_CONFIG_HOME/autostart/"
