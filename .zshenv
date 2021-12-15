@@ -85,6 +85,7 @@ export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
 export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
 ## fzf defaults
+[[ "$(fzf --version 2>/dev/null | grep --only-matching '[0-9]\.[^. ]*')" > 0.24 ]] && _fzf_latest=true || _fzf_latest=false
 FZF_BINDINGS=$(echo "
 change:top
 alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
@@ -97,15 +98,14 @@ alt-c:yank
 alt-w:toggle-preview-wrap
 alt-j:preview-half-page-down,alt-k:preview-half-page-up
 shift-down:preview-half-page-down,shift-up:preview-half-page-up
-$([[ "$(fzf --version 2>/dev/null | cut -d '.' -f-2)" > 0.24 ]] && echo "alt-shift-down:preview-down,alt-shift-up:preview-up")
-esc:close
+$($_fzf_latest && echo "alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
 " | xargs -I% echo -n "%," | head -c-1)
 #alt-r:preview(bat {}),
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
 export FZF_DEFAULT_OPTS="--select-1 --ansi --marker=o
 --tiebreak=end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
---preview-window=60%,border-left"
+$($_fzf_latest && echo '--preview-window=60%,border-left')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
