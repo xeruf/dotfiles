@@ -104,13 +104,11 @@ for arg; do
 	fileinfo "$arg"
 done
 
-if $inspect; then exit $?; fi
-
 if test "$timg"; then
-	$elevate timg -V --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
+	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
 		$(test $# -gt 1 && echo "-t0.2 --center --title --grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 20 \| 10 \))x2") \
 		"${timg[@]}" "${timga[@]}" 2>/dev/null
-	if test $# -lt 15; then
+	if $inspect || test $# -lt 15; then
 		tput setaf 6
 		for img in "${timg[@]}"
 		do ident="$(identify -ping -precision 3 -format "%wx%h %b %m %[bit-depth]-bit %[colorspace]" "$img")"
@@ -121,12 +119,12 @@ if test "$timg"; then
 fi
 
 if test "$bat" -o "$batl"; then
-	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
-	if test $# -gt ${#bat[@]} -a $# -gt ${#batl[@]} && test -z "$args"
-	then $elevate head "${batl[@]}" "${bat[@]}" | cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)
-	else test "$bat" && $elevate bat --style $(test $# -gt 1 && echo "numbers,")header$rule --pager 'less -RF' $args "${bat[@]}"
-		test "$batl" && $elevate bat --style plain$rule --pager 'less -RF' $args "${batl[@]}"
-	fi
+	$inspect || if test $# -gt ${#bat[@]} -a $# -gt ${#batl[@]} && test -z "$args"
+		then $elevate head "${batl[@]}" "${bat[@]}" | cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)
+		else test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
+			test "$bat" && $elevate bat --style $(test $# -gt 1 && echo "numbers,")header$rule --pager 'less -RF' $args "${bat[@]}"
+			test "$batl" && $elevate bat --style plain$rule --pager 'less -RF' $args "${batl[@]}"
+		fi
 	fileinfo "${bat[@]}"
 fi
 
