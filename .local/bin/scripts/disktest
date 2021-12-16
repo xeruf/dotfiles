@@ -1,0 +1,11 @@
+#!/bin/sh
+# Test disk performance
+# Adapted from https://www.shellhacks.com/disk-speed-test-read-write-hdd-ssd-perfomance-linux/
+disk="${1:-$(df --output=source . | tail -1)}"
+sudo hdparm -MWAgt "$disk"
+if test $# -eq 0
+then echo "Write test:"
+	sync
+	sudo dd status=progress if=/dev/zero of=tempfile bs=1M count=1K
+	sudo rm tempfile
+fi
