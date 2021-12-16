@@ -242,6 +242,13 @@ Version 2019-11-04 2021-02-16"
   (setq org-id-method 'org
         org-id-ts-format "%Y%m%dT%H%M%S")
 
+  ;; From  https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
+  (require 'time-stamp)
+  (setq time-stamp-start "modified:[       ]+\\\\?")
+  (setq time-stamp-end "$")
+  (setq time-stamp-format "%Y-%m-%dT%H%M%S")
+  (add-hook 'before-save-hook #'time-stamp)
+
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
   (setq org-image-actual-width nil)

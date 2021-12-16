@@ -80,3 +80,9 @@
 
 (package! osm-mode
   :recipe (:host github :repo "ruediger/osm-mode"))
+
+(unpin! plantuml-mode)
+(package! plantuml-mode
+  :recipe (:host github :repo "a1exsh/plantuml-mode"))
+
+(package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
