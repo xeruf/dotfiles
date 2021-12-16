@@ -12,25 +12,19 @@
 # - text files are displayed through bat
 # Automatically requests elevation through sudo when needed
 
+set -o pipefail
 test "$1" = "-v" &&
 	set -eo xtrace &&
 	shift
-
 inspect=false
 test "$1" = "-i" &&
 	inspect=true &&
 	shift
 
-set -o pipefail
-for last; do true; done
-last="${last:-.}"
-
 checkperm() {
 	checkaccess -r "$@" || elevate=sudo
 	mime="$(test -n "$shifted" || $elevate file --dereference --mime "$@")"
 }
-checkperm "$last"
-
 fileinfo() {
 	tput setaf 6
 	for arg
@@ -106,7 +100,8 @@ done
 
 if test "$timg"; then
 	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
-		$(test $# -gt 1 && echo "-t0.2 --center --title --grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 20 \| 10 \))x2") \
+		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 20 \| 10 \)) &&
+			echo "-t0.2 --center --title --grid=$((grid*3 < $# ? $#/3 + 1 : grid < $# ? grid : $#))x2") \
 		"${timg[@]}" "${timga[@]}" 2>/dev/null
 	if $inspect || test $# -lt 15; then
 		tput setaf 6
@@ -128,6 +123,7 @@ if test "$bat" -o "$batl"; then
 	fileinfo "${bat[@]}"
 fi
 
-if test "$ls"; then
-	$elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --group-directories-first --file-type --dereference-command-line --all "${ls[@]}" | less -RF
+if test "$ls" -o $# -eq 0; then
+	checkperm .
+	$elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line --all "${ls[@]:-.}" | less -RF
 fi

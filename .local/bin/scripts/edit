@@ -1,8 +1,8 @@
 #!/bin/sh
 # Edit a file with appropriate rights, creating parent directories if necessary
 test ! -f "$1" && ( mkdir -p $(dirname "$1") || sudo mkdir -p $(dirname "$1") )
-echo "Editing $1..."
+echo "Editing $@..."
 if test -w "$1" || (test ! -f "$1" && test -w $(dirname "$1"))
-then $EDITOR "$1"
-else sudoedit "$1"
+then $EDITOR "$@"
+else sudoedit "$@"
 fi

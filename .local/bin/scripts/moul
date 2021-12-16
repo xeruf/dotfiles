@@ -28,9 +28,9 @@ case "$arg" in
 esac
 shift $(expr 2 \& $# \> 1 \| 1)
 #uid=$(id --user),gid=$(id --group), \
-mountpoint "$mountpoint" >/dev/null 2>&1 ||
-	{ mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"; } ||
+if ! mountpoint "$mountpoint" 2>/dev/null
+then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
 	sudo mount -vo users,X-mount.mkdir,noatime $partition $mountpoint "$@"
-echo "Mounted at $mountpoint"
+fi
 cd $mountpoint
 exec $SHELL

@@ -8,9 +8,10 @@ case "$1" in
   (git:*) echo "$1" ;;
   (*) host=$1
     case $1 in
+      (socha) user=software-challenge; host=git@github.com;;
       (hub) host=git@github.com;;
       (lab) host=git@gitlab.com;;
       (*) host=$1;;
     esac
-    echo "${host:-git.jfischer.org}:${3:-$(git config user.name)}/${2:-$(basename $PWD)}.git" ;;
+    echo "${host:-git.jfischer.org}:${3:-${user:-$(git config user.name)}}/${2:-$(basename $PWD)}.git" ;;
 esac

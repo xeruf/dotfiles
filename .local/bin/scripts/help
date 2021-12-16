@@ -10,10 +10,11 @@ case $1 in
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
 	(gh|chordpro|bat) unbuffer "$@" --help | $paginate;;
+	(plantuml) unbuffer "$@" -help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
 	(*) man "$@" ||
 		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
-		if which "$1" >/dev/null; then "$@" --help || "$@" -help 2>&1 | $paginate; fi;;
+		if which "$1" >/dev/null; then "$@" --help; "$@" -help 2>&1 | $paginate; fi;;
 esac
 docs="/usr/share/doc/$1"
 if test -d "$docs"; then
