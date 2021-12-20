@@ -12,6 +12,7 @@ case $1 in
 	(gh|chordpro|bat) unbuffer "$@" --help | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
+	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;
 	(*) man "$@" ||
 		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
 		if which "$1" >/dev/null; then "$@" --help; "$@" -help 2>&1 | $paginate; fi;;
