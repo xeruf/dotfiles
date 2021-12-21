@@ -96,6 +96,8 @@ Version 2019-11-04 2021-02-16"
       "njo"     'org-journal-open-current-journal-file
       "Se"      '+snippets/edit
       "Sm"      'smerge-mode
+      :map text-mode-map
+      :desc "Markdown to Zulip" "mam" ":%s/^## \\(.*\\)/**\\1**/:%s/^##+ \\(.*\\)/*\\1*/:%s/<\\([^ ]+\\)>/\\1/"
       :map smerge-mode-map
       :leader
       "Ss"      'smerge-next
@@ -204,6 +206,7 @@ Version 2019-11-04 2021-02-16"
          ("M-C--" . org-timestamp-down)
         )
   :config
+
   (map! :map org-mode-map
         :leader
         "j" 'org-insert-heading
