@@ -101,8 +101,8 @@ done
 
 if test "$timg"; then
 	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
-		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 20 \| 10 \)) &&
-			echo "-t0.2 --center --title --grid=$((grid*3 < $# ? $#/3 + 1 : grid < $# ? grid : $#))x2") \
+		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 25 \| 5 \)) &&
+		echo "-t0.2 --center $(test $# -lt 30 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
 		"${timg[@]}" "${timga[@]}" 2>/dev/null
 	if $inspect || test $# -lt 15; then
 		tput setaf 6

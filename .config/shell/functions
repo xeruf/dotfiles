@@ -187,9 +187,8 @@ sshl() {
 	lemonade server -allow 127.0.0.1 &
 	file="/var/tmp/ssh-$1"
 	if test ! -e "$file"; then
-	ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" &&
-	kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@" &&
-	touch "$file"
+		ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
+		TERM=xterm-256color kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
 	else ssh "$@"
 	fi
 }

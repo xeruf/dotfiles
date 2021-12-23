@@ -2,6 +2,7 @@
 # open info-page, man-page or command help
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
+# TODO resolve aliases
 case $1 in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done
@@ -9,7 +10,7 @@ case $1 in
 		info --vi-keys "$(test "$last" != zsh && echo "--index-search=$last")" zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
-	(gh|chordpro|bat|reflector) unbuffer "$@" --help | $paginate;;
+	(gh|chordpro|bat|pdfjam|reflector) unbuffer "$@" --help | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
 	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;

@@ -115,6 +115,14 @@ matches:
         params:
           cmd: "pass information/phone"
 
+  - trigger: ":adt"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "pass information/address-bt"
+
   - trigger: ":add"
     replace: "{{output}}"
     vars:
