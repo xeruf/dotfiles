@@ -79,7 +79,8 @@ if test -f /etc/pacman.conf; then
 	echo "--save /etc/pacman.d/mirrorlist
 	--protocol https
 	--country Germany
-	--latest 20
+	--latest 50
+	--score 10
 	--sort rate" | sudo tee /etc/xdg/reflector/reflector.conf
 	sudo systemctl start reflector &
 	sudo systemctl enable reflector.timer

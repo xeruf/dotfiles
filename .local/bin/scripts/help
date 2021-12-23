@@ -9,7 +9,7 @@ case $1 in
 		info --vi-keys "$(test "$last" != zsh && echo "--index-search=$last")" zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
-	(gh|chordpro|bat) unbuffer "$@" --help | $paginate;;
+	(gh|chordpro|bat|reflector) unbuffer "$@" --help | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
 	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;
