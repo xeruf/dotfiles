@@ -4,6 +4,7 @@ which pacman >/dev/null || return 0
 alias pac='noglob sudo pacman'
 alias pacs='pac -Syu --needed'
 alias pacr='pac -R --recursive'
+alias yau='sudo systemctl start --show-transaction reflector && noglob yay'
 alias yays='noglob yay -Sy --needed --noprovides --noremovemake'
 alias yayr='noglob yay -R --cascade --recursive'
 

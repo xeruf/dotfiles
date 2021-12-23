@@ -148,13 +148,13 @@ scr() {
 		sudo systemctl restart "$1"
 }
 
-# Restart matching systemctl service with chance for input inbetween
+# Restart matching systemctl service with time for adjustments inbetween
 scb() {
-	systemctl --user stop -T "$1"
-	sudo systemctl stop -T "$1"
+	systemctl --user stop --show-transaction "$1"
+	sudo systemctl stop --show-transaction "$1"
 	read
-	systemctl --user start -T "$1"
-	sudo systemctl start -T "$1"
+	systemctl --user start --show-transaction "$1"
+	sudo systemctl start --show-transaction "$1"
 }
 
 alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
