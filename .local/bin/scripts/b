@@ -54,7 +54,8 @@ for arg; do
 		test -f "$tmpfile-1.png" || pdftoppm -r 70 "$arg" "$tmpfile" -l $(expr $grid '*' 2)
 		timg -W --grid=$grid "$tmpfile"*
 		;;
-	(*/x-xcf*) ;;
+	(*/x-xcf*) convert -flatten "$arg" png:"$tmpfile"
+		timg+=("$tmpfile");;
 	(*\ video/*)
 		suffix=_thumbs.jpg
 		mtn -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \

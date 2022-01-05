@@ -3,15 +3,16 @@
 # adapted and improved from the commonly circulating version
 # detects whether unpacking into a subfolder is sensible
 # and shows progress indications for some operations
-# optdepends: rewrite(in dotfiles)
+# optdepends: rewrite(part of my dotfiles)
 for arg do
 	if test -r "$arg"; then
 		path="$(realpath "$arg")"
 		name="$(basename "${path%.*}")"
+		namepart="$name.part"
 		(
 		if test "$(ls -U | wc -l)" -gt 2; then
-			mkdir -p "$name"
-			cd "$name"
+			mkdir -p "$namepart"
+			cd "$namepart"
 		fi
 		echo "Extracting $arg into $PWD"
 		case "$arg" in
@@ -28,8 +29,11 @@ for arg do
 			(*.Z)           uncompress "$path";;
 			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
-		test "$(ls -U | wc -l)" -lt 3 &&
-			mv */* . && find -empty -delete
+		test "$(basename "$PWD")" = "$namepart" &&
+			if test "$(ls -U | wc -l)" -lt 3
+			then mv * .. && cd .. && rm -d "$namepart"
+			else mv "$namepart" "$name"
+			fi
 		)
 	else
 		echo "'$1' is not a readable file"

@@ -3,9 +3,8 @@
 
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
-# Directories to always clean
-_clean_folders=(~/.ant ~/.autopsy ~/.bundle ~/.cache ~/.cargo ~/.cpanm ~/.docker ~/.electron ~/.electron-gyp ~/.gradle ~/.gradle-kotlin-dsl ~/.hex ~/.java ~/.kscript ~/.konan ~/.m2 ~/.mix ~/.nix-defexpr ~/.node-gyp ~/.npm ~/.nv ~/.openjfx ~/.parallel ~/.stack ~/.surf ~/.texlive ~/.yarn luametatex-cache
-  ~/.lesshst ~/.rubberband.wisdom.d ~/.yarnrc)
+_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .electron .electron-gyp .gradle .gradle-kotlin-dsl .hex .java .kscript .konan .m2 .mix .nix-defexpr .node-gyp .node_modules .npm .pnpm-store .nv .openjfx .parallel .stack .surf .texlive .yarn luametatex-cache
+  .lesshst .python_history .rubberband.wisdom.d .yarnrc)
 
 [[ $1 =~ "." ]] && local=pwd
 [[ $1 =~ "i" ]] && i=-i
@@ -13,10 +12,10 @@ dir="$("$local" 2>/dev/null || echo "$HOME")"
 
 df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"
 
-highlight "clean home"
-for f in ${_clean_folders[@]}
-do "$local" >/dev/null 2>&1 && f="$(echo "$f" | sed "s|$HOME|$($loc)|")"
-	test -f $f || test -d $f && echo "Removing superfluous $f" && rm -rf $i $f
+highlight "cleaning home"
+for f in ${_clean_home[@]}
+do path="$dir/$f"
+	test -f "$path" || test -d "$path" && echo "Removing superfluous $path" && rm -rf $i "$path"
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 

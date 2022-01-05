@@ -9,7 +9,7 @@ listconf() {
       -maxdepth 4 -follow \( -name Partitions -o -name mdn -o -name .git -o -name .local -o -name plugged \) -prune -o \
       ! -iname "*.markdown" -a ! -iname "*.md" -a ! -iname "*.org" \
       -type f -readable -exec grep -lI '' {} + 2>/dev/null;
-    find /boot -name "*.c*";
+    find /boot -name "*.c*" 2>/dev/null;
   } | dedup
 }
 

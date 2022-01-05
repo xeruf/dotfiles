@@ -1,5 +1,7 @@
 #!/bin/sh
 # open info-page, man-page or command help
+# depends: unbuffer
+# optdepends: highlight(dotfiles)
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
 # TODO resolve aliases
@@ -9,11 +11,12 @@ case $1 in
 		# need to install zsh-doc package for info pages
 		info --vi-keys "$(test "$last" != zsh && echo "--index-search=$last")" zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
-	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
-	(gh|chordpro|bat|pdfjam|reflector) unbuffer "$@" --help | $paginate;;
-	(plantuml) unbuffer "$@" -help | $paginate;;
+	(gh|chordpro|bat|pdfjam|reflector|topgrade) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
+	(plantuml) unbuffer "$@" -help | $paginate;;
 	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;
+	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
+	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions;;
 	(*) man "$@" ||
 		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
 		if which "$1" >/dev/null; then "$@" --help; "$@" -help 2>&1 | $paginate; fi;;

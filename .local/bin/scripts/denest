@@ -1,0 +1,3 @@
+#!/bin/sh
+# Remove one level of folders
+find -mindepth 1 -maxdepth 1 -exec sh -c 'mv -nv {}/* . && rm -dv {}' \;
