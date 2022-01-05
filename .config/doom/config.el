@@ -97,7 +97,13 @@ Version 2019-11-04 2021-02-16"
       "Se"      '+snippets/edit
       "Sm"      'smerge-mode
       :map text-mode-map
-      :desc "Markdown to Zulip" "mam" ":%s/^## \\(.*\\)/**\\1**/:%s/^##+ \\(.*\\)/*\\1*/:%s/<\\([^ ]+\\)>/\\1/"
+      :desc "Markdown to Zulip" "mam" "ggd2/# 
+:%s/\\n\\n<a id=.*<\\/a>\\n\\n//
+:%s/\\n *\\n /\\n /
+:%s/^## \\(.*\\)/**\\1**/
+:%s/^##+ \\(.*\\)/*\\1*/
+:%s/<\\(http[^ ]+\\)>/\\1/
+:%s/    /  /g"
       :map smerge-mode-map
       :leader
       "Ss"      'smerge-next
@@ -236,7 +242,6 @@ Version 2019-11-04 2021-02-16"
         )
 
   ;; Behavior
-  ; (set-file-template! 'org-mode :ignore t)
   (setq org-read-date-prefer-future nil)
   (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
         org-attach-method 'mv
@@ -680,6 +685,17 @@ Version 2019-11-04 2021-02-16"
         :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
   )
 
+(use-package! magit
+  :defer t
+  :init
+    (setq magit-clone-set-remote.pushDefault 't
+          magit-clone-default-directory (expand-file-name "4-incubator/dev" user-data-dir))
+    (setq magit-clone-name-alist
+      '(("\\`\\(?:github:\\|gh:\\)?\\([^:]+\\)\\'" "github.com" "user.name")
+        ("\\`\\(?:gitlab:\\|gl:\\)\\([^:]+\\)\\'" "gitlab.com" "user.name")
+        ("\\`\\(?:gitea:\\|x:\\)\\([^:]+\\)\\'" "git.jfischer.org" "user.name")))
+  )
+
 (use-package! direnv ; nix-shell stuffs
   :defer t
   :config
@@ -702,7 +718,7 @@ Version 2019-11-04 2021-02-16"
     ;; Socket is not supported
     (setq emms-player-mpd-server-name "localhost")
     (setq emms-player-mpd-server-port "6600")
-    (setq emms-player-mpd-music-directory "/data/music")
+    (setq emms-player-mpd-music-directory (expand-file-name "music" user-data-dir))
   )
 
 ;(with-eval-after-load "ispell"
