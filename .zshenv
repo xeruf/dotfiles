@@ -39,6 +39,7 @@ export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME"/bundle
 export BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
 export BUNDLE_USER_PLUGIN="$XDG_STATE_HOME"/bundle
 
+export PYTHONSTARTUP="$XDG_CONFIG_HOME"/pythonstartup.py
 export LESSHISTFILE="$XDG_STATE_HOME"/lesshst
 export KSCRIPT_CACHE_DIR="$XDG_CACHE_HOME"/kscript
 
@@ -50,16 +51,16 @@ export ANDROID_EMULATOR_HOME="$XDG_STATE_HOME"/android/emulator
 export ANDROID_SDK_ROOT="/opt/android-sdk"
 export PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
  # taskwarrior & timewarrior
-export TIMEWARRIORDB="$XDG_DATA_HOME/timewarrior"
-export TASKRC="$XDG_CONFIG_HOME/task/taskrc"
-export TASKDATA="$XDG_DATA_HOME/task"
+export TIMEWARRIORDB="$XDG_DATA_HOME"/timewarrior
+export TASKRC="$XDG_CONFIG_HOME"/task/taskrc
+export TASKDATA="$XDG_DATA_HOME"/task
  # zsh dirs
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-export ZSH="$XDG_DATA_HOME/zsh/oh-my-zsh"
-export HISTFILE="$XDG_STATE_HOME/zsh/history"
-export CONFIG_ZSH="$XDG_CONFIG_HOME/zsh"
-export CONFIG_SHELLS="$XDG_CONFIG_HOME/shell"
-mkdir -p $XDG_STATE_HOME/zsh
+export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
+export ZSH="$XDG_DATA_HOME"/zsh/oh-my-zsh
+export HISTFILE="$XDG_STATE_HOME"/zsh/history
+export CONFIG_ZSH="$XDG_CONFIG_HOME"/zsh
+export CONFIG_SHELLS="$XDG_CONFIG_HOME"/shell
+mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
