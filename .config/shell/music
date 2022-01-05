@@ -64,12 +64,12 @@ formatsongs() {
 		do builtin cd $d && findsongs | formatin
 		done
 	)
-	IFS=$'\n'
-	for f in $(find "$@" -name "*.wav"); do
-		echo "Converting $f to ${f%.*}.flac"
-		ffmpeg -i "$f" "${f%.*}.flac" -v warning && mv -v $f /tmp
-	done
-	unset IFS
+	# fd --no-ignore-vcs --type f --extension opus --exec opusdec --quiet "{}" "{.}.wav" \; ".*" "$@"
+	find "$@" -type f -name "*.wav" -exec sh -c '
+		f="{}" &&
+		echo "Converting $f to ${f%.*}.flac" &&
+		ffmpeg -i "$f" "${f%.*}.flac" -v warning &&
+		mv -v "$f" /tmp' \;
 }
 
 # Normalize filenames for files given from stdin
@@ -91,7 +91,7 @@ formatsong() {
 		s/ \(\..\{2,4\}\)$/\1/;
 		s/---/ - /;
 		s/^[0-9]\{6\}_//;
-		s/_/ /g;
+		s/\([^/]\)_/\1 /g;
 		s/ \././g;
 		s/  / /g;
 		s/\(\w\)+\(\w\)/\1 \2/g' -

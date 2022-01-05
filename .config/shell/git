@@ -37,23 +37,23 @@ gcn() {
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
 git() {
   case "$1" in
-    reset) test "$2" = "--hard" && return 1;;
-    config) ;;
-    clone) ;;
-    *) case "$PWD" in
-    $HOME|$XDG_CONFIG_HOME|$LAST_YADM)
-      yadm "$@"
-      return
-      ;;
-    $XDG_CONFIG_HOME*|$HOME/.local*)
-      if ! command git rev-parse --show-toplevel &>/dev/null; then
-        export LAST_YADM="$PWD"
+    (reset) test "$2" = "--hard" && return 66;;
+    (config) ;;
+    (clone) ;;
+    (*) case "$PWD" in
+      ($HOME|$XDG_CONFIG_HOME|$LAST_YADM)
         yadm "$@"
-        return
-      fi;;
+        return $?
+        ;;
+      ($XDG_CONFIG_HOME*|$HOME/.local*)
+        if ! command git rev-parse --show-toplevel &>/dev/null; then
+          export LAST_YADM="$PWD"
+          yadm "$@"
+          return $?
+        fi;;
     esac;;
   esac
-  command git "$@";
+  command git "$@"
 }
 
 # BRANCHES

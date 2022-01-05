@@ -57,5 +57,5 @@ map <leader>lw :setlocal colorcolumn=81 textwidth=80<CR>
 map <leader>ln :setlocal colorcolumn= textwidth=0 wrap<CR>
 
 " Quickly switch indentation settings
-map <leader>t :setlocal shiftwidth=2 expandtab<CR>
-map <leader>T :setlocal shiftwidth=3 tabstop=3 noexpandtab<CR>
+map <leader>t :setlocal tabstop=2 expandtab<CR>
+map <leader>T :setlocal tabstop=3 noexpandtab<CR>
