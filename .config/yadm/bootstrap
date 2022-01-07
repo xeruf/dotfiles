@@ -3,6 +3,8 @@ SECTION() { printf "\n[1m[4m$1[0m\n"; }
 highlight() { printf "[1m[3m$1[0m\n"; }
 subhighlight() { printf "[3m$1[0m\n"; }
 
+source "$HOME/.zshenv"
+
 SECTION "System"
 
 highlight "Sudoers defaults"
@@ -91,7 +93,7 @@ highlight "Desktop Applications"
 
 subhighlight "Application symlinks"
 link .bash_aliases "$HOME/.bashrc"
-link "$HOME/.ssh/config" "${XDG_CONFIG_HOME:-$HOME/.config}/ssh"
+link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
 
 link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
 link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
