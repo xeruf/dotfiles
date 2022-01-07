@@ -372,9 +372,9 @@ Version 2019-11-04 2021-02-16"
   :config
     (defvar my/survey-mode-journal--timer nil)
     (defvar my/survey-mode-journal--timer-interval 300)
+
     (define-minor-mode my/survey-mode
-      "Toggle automatic `org-roam-db-sync' when Emacs is idle.
-    Referece: `auto-save-visited-mode'"
+      "New org-journal entry after long idleness"
       :group 'org-roam
       :global t
       (when my/survey-mode-journal--timer (cancel-timer my/survey-mode-journal--timer))
@@ -385,7 +385,7 @@ Version 2019-11-04 2021-02-16"
                #'my/journal-survey))))
 
     (defun my/journal-survey ()
-      "Update org-roam database and sync ids to org if in org-mode"
+      "Open a new journal entry"
       (interactive)
       (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
 
@@ -422,7 +422,7 @@ Version 2019-11-04 2021-02-16"
     (defvar my/auto-org-roam-db-sync--timer-interval 30)
     (define-minor-mode my/auto-org-roam-db-sync-mode
       "Toggle automatic `org-roam-db-sync' when Emacs is idle.
-    Referece: `auto-save-visited-mode'"
+       Reference: `auto-save-visited-mode'"
       :group 'org-roam
       :global t
       (when my/auto-org-roam-db-sync--timer (cancel-timer my/auto-org-roam-db-sync--timer))
