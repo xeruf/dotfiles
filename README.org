@@ -57,7 +57,8 @@ makepkg -si
 - productivity :: activitywatch-bin jrnl
 - sync :: syncthing
   : systemctl enable --now syncthing
-- personal aur utils (need configuration) :: [[https://github.com/mookid/diffr][diffr]] bat-extras-git rdictcc-git neovim-symlinks stderred-git
+- personal aur utils (only useful with dotfiles) :: [[https://github.com/mookid/diffr][diffr]] bat-extras neovim-symlinks stderred-git
+  rdictcc-git
   : pip install beautifulsoup4
 - experiments :: kakoune
 ** Graphical
