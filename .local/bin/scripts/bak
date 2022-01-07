@@ -1,17 +1,25 @@
-#!/bin/sh
+#!/bin/sh -e
+# Rename a file with a backup suffix or revert it
+# Add -a to act on multiple files,
+# otherwise the second arg is used as suffix rather than the default "bak".
+if test "$1" = "-a"; then
+	shift
+	for arg; do "$0" "$arg"; done
+	exit $?
+fi
 suffix="${2:-bak}"
 orig="${1%%.$suffix}"
 smv () {
-  eval source=\$$(($#-1))
-  if test -w "$source"
-  then mv -v "$@"
-  else sudo mv -v "$@"
-  fi
+	eval source=\$$(($#-1))
+	if test -w "$source"
+	then mv -v "$@"
+	else sudo mv -v "$@"
+	fi
 }
 if test -e "$orig.$suffix"
 then
-  test -e "$orig" && smv "$orig" /tmp
-  smv -n "$orig.$suffix" "$orig"
+	test -e "$orig" && smv "$orig" /tmp
+	smv -n "$orig.$suffix" "$orig"
 else
-  smv -n "$1" "$1.$suffix"
+	smv -n "$1" "$1.$suffix"
 fi
