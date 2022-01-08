@@ -1,11 +1,15 @@
+REPLAYGAIN_TRACK_GAIN
 album
+albumartist
 albumsortorder
 arranger
 artist
+artists
 audiodelay
 audiolength
 audiosize
 author
+band
 bpm
 comment
 composer
@@ -27,7 +31,6 @@ isrc
 itunesalbumsortorder
 itunescompilationflag
 itunescomposersortorder
-just nothing to do with this
 language
 lyricist
 mediatype
@@ -47,6 +50,7 @@ radioowner
 radiostationname
 recordingdates
 releasetime
+replaygain_track_gain
 setsubtitle
 taggingtime
 time

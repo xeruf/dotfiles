@@ -9,7 +9,7 @@
     "value": true
   },
   "Su&bfolders": {
-    "value": false
+    "value": true
   },
   "&Preserve file modification times (if supported)": {
     "value": false

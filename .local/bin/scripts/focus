@@ -7,10 +7,12 @@ mpc -q clear
 if test -z "$1"
 then mp -q "$PLAYLISTS/focus.m3u"
 else
-  (find -L $PLAYLISTS -iname "focus-$1.m3u" -print0 | grep --null-data . ||
-    find -L $PLAYLISTS -iname "$1.m3u*" -print0 | grep --null-data . ||
-    find -L $MUSIC $(echo "$@" | sed 's/\w\+/-iname *\0*/g') -prune -exec find {} -size +2M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \; ) |
-    xargs -0 mp -q
+	(find -L $PLAYLISTS -iname "focus-$1.m3u" -print0 | grep --null-data . ||
+		find -L $PLAYLISTS -iname "$1.m3u*" -print0 | grep --null-data . ||
+		find -L $MUSIC $(echo "$@" | sed 's/\w\+/-iname *\0*/g') -prune -exec find {} -size +1M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \; ) |
+		xargs -0 mp -q
 fi
-mpc -q shuffle
-mpc next
+if test $(mpc playlist | wc -l) -gt 1; then
+	mpc -q shuffle
+	mpc next
+fi
