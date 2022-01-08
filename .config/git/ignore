@@ -41,3 +41,5 @@ __pycache__/
 # Logs
 *.log
 *.log.*
+*.bak
+*~
