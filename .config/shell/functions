@@ -165,7 +165,6 @@ alias jcj='jcl -o json-pretty -u'
 
 # Shorthands
 alias v='edit'
-alias u='topgrade --only emacs --yes; topgrade'
 alias st='synct'
 alias expr='noglob expr'
 alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
@@ -180,6 +179,14 @@ alias println='printf "\n"'
 alias dedup='awk '"'"'!a[$0]++'"'"
 alias lar='last | tac'
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
+
+u() {
+	topgrade --only emacs --yes
+	which pacman-mirrors >/dev/null &&
+		sudo pacman-mirrors --geoip &&
+		sudo pacman -Syy
+	topgrade
+}
 
 # Remote
 alias delta="sc restart openvpn-client@deltaPeak.service"
@@ -361,11 +368,21 @@ mkcd() {
 # Other stuff {{{1
 
 umoul() {
-	arg="${1:-$PWD}"
-	mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${XDG_RUNTIME_DIR}/mnt/$arg")"
-	mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
-		mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
-	case "$PWD" in ("$mountpoint"*) cd "$(dirname $mountpoint)";; esac
+	if test "$1"
+	then arg="$1"
+		mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${XDG_RUNTIME_DIR}/mnt/$arg")"
+		mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
+			mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
+	else mountpoint="$PWD"
+		while test "$mountpoint" != "/"; do
+			mountpoint "$mountpoint" >/dev/null && break
+			mountpoint="$(dirname "$mountpoint")"
+		done
+		test "$(dirname "$mountpoint")" = "/" && return 1
+	fi
+	case "$PWD" in
+		("$mountpoint"*) cd "$(dirname $mountpoint)";;
+	esac
 	moul -u "$mountpoint"
 }
 
