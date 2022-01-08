@@ -33,8 +33,8 @@ and configuration for ~less~ and ~fzf~.
 - basic tools :: tree wget texinfo man-pages base-devel fzf topgrade
   fd ripgrep zsh-completions python-pynvim unrar mlocate
 - dotfiles :: yadm
-  : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
-  : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
+  : yadm clone git@git.jfischer.org:xeruf/dotfiles.git
+  : yadm clone https://git.jfischer.org/xeruf/dotfiles.git
 ** Applications
 - utilities :: youtube-dl dos2unix
 - powertools :: hexedit hexyl [[https://lftp.yar.ru/][lftp]] glances zsh-doc pacman-contrib
@@ -48,7 +48,7 @@ git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay
 makepkg -si
 #+end_src
-- aur recommendations :: tldr++ sc-im espanso
+- aur recommendations :: tldr++ sc-im espanso [[https://github.com/mookid/diffr][diffr]]
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 - git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - pass :: pass pass-otp pass-extension-tail pass-clip
@@ -57,7 +57,7 @@ makepkg -si
 - productivity :: activitywatch-bin jrnl
 - sync :: syncthing
   : systemctl enable --now syncthing
-- personal aur utils (only useful with dotfiles) :: [[https://github.com/mookid/diffr][diffr]] bat-extras neovim-symlinks stderred-git
+- personal aur utils (only useful with dotfiles) :: bat-extras neovim-symlinks stderred-git
   rdictcc-git
   : pip install beautifulsoup4
 - experiments :: kakoune
@@ -100,7 +100,7 @@ yays clion clion-jre cmake gdb python-pre-commit
 : yays android-udev android-tools adbfs-rootless-git android-studio
 After running android-studio setup, accept licenses:
 : $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
-** Server
+** Server (Debian)
 Setup systemd-resolved and systemd-networkd
 - tools :: fd-find locate
 - rust :: cargo install zoxide diffr
