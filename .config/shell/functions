@@ -167,6 +167,7 @@ alias jcj='jcl -o json-pretty -u'
 alias v='edit'
 alias st='synct'
 alias expr='noglob expr'
+alias get='noglob ='
 alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
 
 # Shortcuts
@@ -196,7 +197,7 @@ sshl() {
 	if test ! -e "$file"; then
 		ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
 		TERM=xterm-256color kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
-	else ssh "$@"
+	else TERM=xterm-256color ssh "$@"
 	fi
 }
 
