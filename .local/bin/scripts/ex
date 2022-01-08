@@ -19,11 +19,11 @@ for arg do
 			(*.tar.*|*.tar) tar --extract --file "$path";;
 			(*.tbz2)        tar xjf "$path"   ;;
 			(*.tgz)         tar xzf "$path"   ;;
-			(*.zip|*.jar)   unzip "$path" | rewrite ;;
+			#(*.zip|*.jar)   unzip "$path" | rewrite ;;
+			(*.7z|*.z01|*.zip|*.jar)    7z x "$path"      ;;
 			(*.gz)          gunzip "$path"    ;;
 			(*.bz2)         bunzip2 "$path"   ;;
 			(*.rar)         unrar x "$path"   ;;
-			(*.7z|*.z01)    7z x "$path"      ;;
 			(*.deb)         ar x "$path"      ;;
 			(*.zst)         unzstd "$path"    ;;
 			(*.Z)           uncompress "$path";;
@@ -32,7 +32,7 @@ for arg do
 		test "$(basename "$PWD")" = "$namepart" &&
 			if test "$(ls -U | wc -l)" -lt 3
 			then mv * .. && cd .. && rm -d "$namepart"
-			else mv "$namepart" "$name"
+			else cd .. && mv "$namepart" "$name"
 			fi
 		)
 	else

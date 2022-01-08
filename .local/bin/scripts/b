@@ -47,6 +47,10 @@ declare -a timg timga bat batl ls
 for arg; do
 	case "$arg" in (-*) args="$args $arg"; continue;; esac
 	checkperm "$arg"
+	if ! $elevate test -e "$arg"
+	then echo "File not found: '$arg'" 1>&2
+		continue
+	fi
 	grid=$(expr $(tput cols) / 20)
 	tmpfile="$prefix/$(basename "$arg")"
 	case "$mime" in
