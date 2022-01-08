@@ -456,7 +456,7 @@ Version 2019-11-04 2021-02-16"
         org-export-with-todo-keywords nil
         org-export-with-toc nil
         org-export-with-section-numbers nil
-        org-ascii-text-width 999999
+        org-ascii-text-width 999
         org-export-headline-levels 4
         org-latex-default-class "article4"
         )

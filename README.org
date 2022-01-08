@@ -30,7 +30,7 @@ and configuration for ~less~ and ~fzf~.
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
 - essentials :: curl git zsh bat neovim man-db
-- basic tools :: tree wget texinfo man-pages base-devel fzf topgrade
+- basic tools :: tree wget texinfo man-pages base-devel fzf topgrade expect
   fd ripgrep zsh-completions python-pynvim unrar mlocate
 - dotfiles :: yadm
   : yadm clone git@git.jfischer.org:xeruf/dotfiles.git
@@ -48,15 +48,15 @@ git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay
 makepkg -si
 #+end_src
-- aur recommendations :: tldr++ sc-im espanso [[https://github.com/mookid/diffr][diffr]]
+- aur recommendations :: tldr++ sc-im espanso [[https://github.com/mookid/diffr][diffr]] timg audiowaveform
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 - git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - pass :: pass pass-otp pass-extension-tail pass-clip
   -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
 - ssh :: openssh sshfs lemonade-git
-- productivity :: activitywatch-bin jrnl
 - sync :: syncthing
   : systemctl enable --now syncthing
+- productivity :: activitywatch-bin jrnl
 - personal aur utils (only useful with dotfiles) :: bat-extras neovim-symlinks stderred-git
   rdictcc-git
   : pip install beautifulsoup4
