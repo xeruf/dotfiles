@@ -18,6 +18,7 @@ do path="$dir/$f"
 	test -f "$path" || test -d "$path" && echo "Removing superfluous $path" && rm -rf $i "$path"
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
+find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete
 
 highlight "e :: recursively remove empty folders and files"
 [[ $1 =~ "e" ]] && find -empty -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
