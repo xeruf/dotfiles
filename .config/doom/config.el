@@ -180,7 +180,8 @@ Version 2019-11-04 2021-02-16"
   (if (file-exists-p box)
       (setq org-directory box
             default-directory org-directory
-            org-roam-directory org-directory))
+            org-roam-directory org-directory
+            org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't)))
   )
 
 (use-package! recentf
@@ -278,13 +279,6 @@ Version 2019-11-04 2021-02-16"
   (setq org-log-done 'time
         org-log-into-drawer t
         org-treat-insert-todo-heading-as-state-change t)
-
-  (setq org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't))
-    ;(apply 'append
-    ;       (mapcar
-    ;        (lambda (directory) (directory-files-recursively (expand-file-name directory user-data-dir) org-agenda-file-regexp))
-    ;        '("1-projects" "2-standards")
-    ;        )))
 
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
