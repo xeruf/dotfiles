@@ -11,7 +11,7 @@ then
 	exit $code
 fi
 
-if grep -e "LABEL=$arg[^\w/]" /etc/fstab
+if grep -e "^LABEL=$arg[^\w/]" /etc/fstab
 then mount -L "$@"; exit $?
 fi
 if grep -e "[^\w=/]$arg[^\w/]" /etc/fstab

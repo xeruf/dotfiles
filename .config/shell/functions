@@ -359,7 +359,6 @@ mvx() {
 	yadm add "$1" ".config/$1" 2>/dev/null
 }
 
-
 # Create directory and move into it
 mkcd() {
 	mkdir -p "$1" && cd "$1"
@@ -370,9 +369,10 @@ mkcd() {
 umoul() {
 	if test "$1"
 	then arg="$1"
-		mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${XDG_RUNTIME_DIR}/mnt/$arg")"
+		mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${MNT:-${XDG_RUNTIME_DIR}/mnt}/$arg")"
 		mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
 			mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
+		test "$mountpoint" || return 1
 	else mountpoint="$PWD"
 		while test "$mountpoint" != "/"; do
 			mountpoint "$mountpoint" >/dev/null && break
