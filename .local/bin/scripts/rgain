@@ -1,3 +1,3 @@
 #!/bin/sh
 # Recursively add replaygain to the given files or from the current directory
-r128gain -r --preserve-times 1 "${@:-.}"
+r128gain -r --skip-tagged --preserve-times 1 "${@:-.}"
