@@ -178,8 +178,9 @@ Version 2019-11-04 2021-02-16"
 
 (let ((box (expand-file-name "2-standards/box/" user-data-dir)))
   (if (file-exists-p box)
-      (setq org-directory box
-            default-directory org-directory
+      (setq org-directory box))
+  (if (file-exists-p org-directory)
+      (setq default-directory org-directory
             org-roam-directory org-directory
             org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't)))
   )
@@ -197,9 +198,10 @@ Version 2019-11-04 2021-02-16"
     (add-to-list 'projectile-ignored-projects (expand-file-name user-data-dir))
     (add-to-list 'projectile-ignored-projects user-data-dir)
     (projectile-add-known-project (expand-file-name "music/" user-data-dir))
-    (projectile-add-known-project org-directory)
-    (projectile-register-project-type 'org '(".orgids"))
-    (setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
+    (after! org
+      (projectile-add-known-project org-directory)
+      (projectile-register-project-type 'org '(".orgids"))
+      (setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3))))
   )
 
 ;;;; ORG
