@@ -169,7 +169,7 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; Directory configuration
 
-(defvar user-data-dir "~/data/" "Location of the main user data")
+(defvar user-data-dir (if (file-exists-p "~/data/") "~/data" "/home/data") "Location of the main user data")
 
 (load! "./local.el" nil t)
 
@@ -179,7 +179,7 @@ Version 2019-11-04 2021-02-16"
 (let ((box (expand-file-name "2-standards/box/" user-data-dir)))
   (if (file-exists-p box)
       (setq org-directory box))
-  (if (file-exists-p org-directory)
+  (if (and org-directory (file-exists-p org-directory))
       (setq default-directory org-directory
             org-roam-directory org-directory
             org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't)))
