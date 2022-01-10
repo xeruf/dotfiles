@@ -1,6 +1,6 @@
 #!/bin/sh
 # Blocks internet at night using iptables and enables it only upon request
-# Migration to nftables is outstanding
+# TODO Migrate to nftables
 
 # Auto-elevate
 test "$EUID" -eq 0 || exec sudo "$0" "$@"

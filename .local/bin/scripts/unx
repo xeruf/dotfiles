@@ -1,3 +1,3 @@
 #!/bin/sh
-# Remove executable flag from files
+# Recursively remove executable flag from files
 find $@ -type f -exec chmod a-x {} +

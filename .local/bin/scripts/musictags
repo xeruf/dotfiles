@@ -1,0 +1,14 @@
+#!/bin/sh
+# Generate audio tags using different parameters for a given music file
+prefix="$(basename "$1_tags_")"
+for leni in {0..3}; do
+	len=$(echo "3^$leni" | bc)
+	for ovi in {0..3}; do
+		ov=$(echo "3^$ovi" | bc)
+		filename="${prefix}l${leni}o$ovi.csv"
+		echo "Generating $filename"
+		python3 -m musicnn.tagger --topN 7 --length $len --overlap $ov "$1" \
+			--print --save "$filename" 2>/dev/null
+	done
+done
+paste "$prefix"*.csv
