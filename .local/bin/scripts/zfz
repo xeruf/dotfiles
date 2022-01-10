@@ -1,7 +1,0 @@
-#!/bin/sh
-# fzf for zoxide
-# returns the selected path stripped of its score
-fzf -0 -1 -n2.. --tiebreak=index \
-  --preview-window=20% --preview="ls -a --color --human-readable --group-directories-first --file-type {2..}" \
-  --height=80% --reverse |
-    sed 's|.* /|/|'

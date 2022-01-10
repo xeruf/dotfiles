@@ -1,4 +1,0 @@
-#!/bin/sh
-# Listing for quick directory switcher based on zoxide and fzf
-set -o noglob
-zoxide query -sl "$@"
