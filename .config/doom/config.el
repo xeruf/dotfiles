@@ -68,7 +68,7 @@ Version 2019-11-04 2021-02-16"
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 
 (defun dragon (&optional @file)
-  ; Share file in current buffer via dragon
+  "Share file from current buffer via dragon."
   (interactive)
   (shell-command (concat "dragon-drag-and-drop -a -x " (if (not (string-blank-p @file)) @file buffer-file-name)))
   )
@@ -284,7 +284,7 @@ Version 2019-11-04 2021-02-16"
 
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
-    ;; convert csv to org-table considering "12,12"
+    "convert csv to org-table considering '12,12'"
     (interactive (list (point) (mark)))
     (replace-regexp "\\(^\\)\\|\\(\".*?\"\\)\\|," (quote (replace-eval-replacement
                               replace-quote (cond ((equal "^" (match-string 1)) "|")
@@ -314,8 +314,8 @@ Version 2019-11-04 2021-02-16"
       (org-export-dispatch))
     )
 
-  ;; https://emacs.stackexchange.com/questions/38529/make-multiple-lines-todos-at-once-in-org-mode
   (defun org-change-todo-in-region ()
+    "https://emacs.stackexchange.com/questions/38529/make-multiple-lines-todos-at-once-in-org-mode"
     (interactive)
     (let ((scope (if mark-active 'region 'tree))
           (state (org-fast-todo-selection))

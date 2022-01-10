@@ -2,16 +2,15 @@ GITSTATUS_LOG_LEVEL=DEBUG
 # Commands
 if test "$PWD" = "$HOME" && test "$0" !=  "$SHELL"; then
 	neofetch --config $XDG_CONFIG_HOME/neofetch/config-short.conf
-	task next limit:3
 	timew | head -3
 fi 2>/dev/null || return 0
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-#fi
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 DEFAULT_USER=$USER
 

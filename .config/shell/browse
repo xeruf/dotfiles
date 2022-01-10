@@ -79,7 +79,7 @@ d() {
 	# (score at least ten times above runner-up and score above 20)
 	# If not select with fzf, using locate to find extra options
 	cd "$(if test -n "$query" &&
-			expr "$(echo "$query" | head -1 | cut -d' ' -f1)" \> 20 \& \
+			expr "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
 				$(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
 			then echo "$query" | head -1
 			else test -n "$query" && echo "$query"; locate-zox "$@"
