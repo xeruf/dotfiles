@@ -1,10 +1,5 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
-(setq user-full-name "Janek"
-      user-mail-address "27jf@pm.me")
-
 ;;;; VISUALS
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
@@ -171,27 +166,15 @@ Version 2019-11-04 2021-02-16"
 
 (defvar user-data-dir (if (file-exists-p "~/data/") "~/data" "/home/data") "Location of the main user data")
 
+(load! "./user.el" nil t)
 (load! "./local.el" nil t)
 
 (setq backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
 
-(let ((box (expand-file-name "2-standards/box/" user-data-dir)))
-  (if (file-exists-p box)
-      (setq org-directory box))
-  (if (and org-directory (file-exists-p org-directory))
-      (setq default-directory org-directory
-            org-roam-directory org-directory
-            org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't)))
-  )
-
-(use-package! recentf
-  :config
-    (add-to-list 'recentf-exclude "writing\\/tug")
-    (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (add-to-list 'recentf-list (expand-file-name "4-incubator/downloads/" user-data-dir))
-    ;(setq recentf-keep '(recentf-keep-default-predicate file-remote-p))
-  )
+(if (and org-directory (file-exists-p org-directory))
+    (setq default-directory org-directory
+          org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't)))
 
 (use-package! projectile
   :init
@@ -222,6 +205,7 @@ Version 2019-11-04 2021-02-16"
         "e" 'org-export-dispatch-custom-date
         "E" 'org-export-repeat
         "\\" 'org-ctrl-c-ctrl-c
+        :desc "Save and Export" "be" '(lambda () (interactive) (basic-save-buffer) (org-export-repeat))
         :localleader
         "C" 'org-clock-in
         "j" 'org-insert-heading
@@ -237,6 +221,7 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "gR" 'org-mode-restart
+        ";"  'comment-line
         :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
         :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
@@ -623,6 +608,7 @@ Version 2019-11-04 2021-02-16"
 (use-package! plantuml-mode ; Diagrams
   :defer t
   :config
+    ; TODO plantuml file template
     (setq plantuml-executable-path "nostderr"
           plantuml-executable-args '("plantuml" "-headless")
           plantuml-default-exec-mode 'jar

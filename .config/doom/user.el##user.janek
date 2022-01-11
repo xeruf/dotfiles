@@ -1,0 +1,21 @@
+;;; user.el -*- lexical-binding: t; -*-
+
+;; Some functionality uses this to identify you,
+;; e.g. GPG configuration, email clients, file templates and snippets.
+(setq user-full-name "Janek"
+      user-mail-address "27jf@pm.me")
+
+(let ((box (expand-file-name "2-standards/box/" user-data-dir)))
+  (if (file-exists-p box)
+      (setq org-directory box
+            org-roam-directory org-directory
+            ))
+  )
+
+(use-package! recentf
+  :config
+    (add-to-list 'recentf-exclude "writing\\/tug")
+    (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
+    (add-to-list 'recentf-list (expand-file-name "4-incubator/downloads/" user-data-dir))
+    ;(setq recentf-keep '(recentf-keep-default-predicate file-remote-p))
+  )

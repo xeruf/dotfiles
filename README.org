@@ -41,8 +41,6 @@ and configuration for ~less~ and ~fzf~.
 - multitools :: ffmpeg imagemagick pandoc
 - music :: mpd mpc ncmpc vlc phonon-qt5-vlc mpdris2
   : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpDris2
-- music management :: puddletag beets picard ffmpegthumbnailer sox
-  : sudo npm install -g bpm
 #+begin_src sh YAY for AUR
 git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay
@@ -62,9 +60,12 @@ makepkg -si
   : pip install beautifulsoup4
 - experiments :: kakoune
 ** Graphical
+- office :: libreoffice-fresh
+- fonts :: fontpreview noto-fonts noto-fonts-emoji ttf-dejavu adobe-source-code-pro-fonts texlive-myriadpro-git
 - video :: vlc obs-studio kdenlive
+- music management :: puddletag beets picard ffmpegthumbnailer sox
+  : sudo npm install -g bpm
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
-- office :: libreoffice-fresh emacs emacs-pdf-tools-git texlive-core texlive-latexextra context-bin
 - communication :: zulip-desktop-bin ferdi-bin
 - hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight light
@@ -73,10 +74,13 @@ makepkg -si
 *** Desktop
 - xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - wayland :: sway azote
-- kde :: plasma-desktop plasma-nm spectacle breeze systemsettings konsole ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass okular bluedevil
+- kde :: okular spectacle
+- kde desktop :: plasma-desktop plasma-nm breeze systemsettings ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass bluedevil
 *** Emacs
+emacs emacs-pdf-tools-git
+texlive-core texlive-latexextra texlive-mode-doc
+context-bin
 : git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs && ${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom -y install
-: yay -Sy
 - mail :: offlineimap mu
 *** [[id:firefox][Firefox]] Addons
 **** Password management

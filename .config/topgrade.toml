@@ -64,7 +64,7 @@ arguments = "--rebase --autostash"
 
 [linux]
 # Arguments to pass yay when updating packages
-#yay_arguments = "--nodevel"
+yay_arguments = "--nodiffmenu"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"
