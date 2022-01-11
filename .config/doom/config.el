@@ -450,8 +450,11 @@ Version 2019-11-04 2021-02-16"
   (add-to-list 'org-export-filter-headline-functions
                'org/ensure-latex-clearpage)
 
+  (setq org-latex-to-pdf-process
+    '("xelatex -interaction nonstopmode %f"
+     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
   ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-  (setq org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+  (setq ;org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
         org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
         org-export-with-tags nil
         org-export-with-tasks 'done
@@ -537,6 +540,9 @@ Version 2019-11-04 2021-02-16"
 
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
+        :n "l" 'dired-find-file-dwim
+        :n "h" 'dired-up-directory
+        :n "ö" 'evil-ex-search-forward
         :n "r" 'ranger
         :leader
         :desc "Dragon marked files" "d"
@@ -547,8 +553,7 @@ Version 2019-11-04 2021-02-16"
                 (lambda () (interactive) (dired-do-shell-command "s"))
         :desc "Lowercase files" "L"
                 (lambda () (interactive) (dired-do-shell-command "lowercase"))
-
-  :desc "Symlink to this" "l" 'dired-do-symlink
+        :desc "Symlink to this" "l" 'dired-do-symlink
         :desc "Open image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
