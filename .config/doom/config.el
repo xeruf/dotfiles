@@ -418,7 +418,7 @@ Version 2019-11-04 2021-02-16"
       (interactive)
       (when (equal major-mode 'org-mode) (org-roam-db-sync) (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations)) (org-mode-restart)))
 
-    (my/auto-org-roam-db-sync-mode)
+    (if (file-exists-p org-roam-directory) (my/auto-org-roam-db-sync-mode))
   )
 
 (after! ox
@@ -455,7 +455,7 @@ Version 2019-11-04 2021-02-16"
   (ox-extras-activate '(ignore-headlines))
   (require 'ox-latex)
   (add-to-list 'org-latex-classes
-       '("article4" "\\documentclass[11pt]{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
+       '("article4" "\\documentclass{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
           ("\\section{%s}" . "\\section*{%s}")
           ("\\subsection{%s}" . "\\subsection*{%s}")
           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")

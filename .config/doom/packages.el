@@ -64,7 +64,8 @@
 (package! evil-replace-with-register) ; grrrrr
 (package! visual-fill-column) ; Soft line wrapping at character count
 
-(package! activity-watch-mode) ; eagle eyes
+(package! activity-watch-mode
+  :recipe (:host github :repo "xeruf/activity-watch-mode")) ; eagle eyes
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
