@@ -182,11 +182,11 @@ alias lar='last | tac'
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 
 u() {
-	topgrade --only emacs --yes
 	which pacman-mirrors >/dev/null &&
 		sudo pacman-mirrors --geoip &&
 		sudo pacman -Syy
 	topgrade
+	topgrade --only emacs --yes
 }
 
 # Remote
