@@ -91,6 +91,7 @@ Version 2019-11-04 2021-02-16"
       "njo"     'org-journal-open-current-journal-file
       "Se"      '+snippets/edit
       "Sm"      'smerge-mode
+      "m;"  'comment-line
       :map text-mode-map
       :desc "Markdown to Zulip" "mam" "ggd2/# 
 :%s/\\n\\n<a id=.*<\\/a>\\n\\n//
@@ -221,7 +222,6 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "gR" 'org-mode-restart
-        ";"  'comment-line
         :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
         :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
@@ -370,7 +370,7 @@ Version 2019-11-04 2021-02-16"
       (interactive)
       (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
 
-    (my/survey-mode)
+    (if (file-exists-p org-journal-dir) (my/survey-mode))
     ; TODO journal at start (call-interactively 'org-journal-new-entry)
   )
 
@@ -380,21 +380,21 @@ Version 2019-11-04 2021-02-16"
     (require 'org-roam-protocol)
 
     (setq org-roam-db-update-on-save nil
-          org-roam-extract-new-file-path "%<%Y%m%d>-${slug}.org"
+          org-roam-extract-new-file-path "${slug}.org"
           +org-roam-open-buffer-on-find-file nil)
 
     (setq my/org-roam-capture-props ":properties:\n:id: ${slug}\n:created: %<%Y-%m-%dT%H%M%S>\n:modified: <>\n:end:\n")
     (setq my/org-roam-capture-title "\n#+title: ${title}")
     (setq org-roam-capture-templates
           `(("d" "default" plain "%?" :target
-             (file+head "%<%Y%m%d>-${slug}.org" ,(concat my/org-roam-capture-props "#+filetags: :" my/org-roam-capture-title))
+             (file+head ,org-roam-extract-new-file-path ,(concat my/org-roam-capture-props "#+filetags: :" my/org-roam-capture-title))
              :unnarrowed t)
             )
           )
     (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration")
       do (add-to-list 'org-roam-capture-templates
             `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
-             (file+head ,(concat (car (split-string item ":")) "/%<%Y%m%d>-${slug}.org") ,(concat my/org-roam-capture-props "#+filetags: :" item ":" my/org-roam-capture-title))
+             (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat my/org-roam-capture-props "#+filetags: :" item ":" my/org-roam-capture-title))
              :unnarrowed t)
             )
       )
@@ -598,11 +598,6 @@ Version 2019-11-04 2021-02-16"
     (define-key evil-normal-state-map "K" 'evil-jump-out-args)
   )
 
-; (use-package evil-better-visual-line
-;   :ensure t
-;   :config
-;   (evil-better-visual-line-on))
-
 ;;; File modes
 
 (use-package! plantuml-mode ; Diagrams
@@ -652,7 +647,12 @@ Version 2019-11-04 2021-02-16"
 
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
-(global-activity-watch-mode)
+(use-package! activity-watch-mode
+  :config
+    (activity-watch--send-heartbeat (activity-watch--create-heartbeat (current-time))
+      :on-success (lambda (&rest _) (global-activity-watch-mode))
+      :on-error (lambda (&rest _) (message "")))
+  )
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)
