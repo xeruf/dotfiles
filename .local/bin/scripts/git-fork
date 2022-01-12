@@ -9,9 +9,9 @@
 if test -d ".git"
 then repo="$(basename "$PWD")"
 	git remote set-url origin "$(git-repo "${3:-github.com}" "$repo" "$2" "${@:4}")"
-else repo="$1"
-	git-get "${3:-github.com}" "$repo" "$2" "${@:4}"
-	cd $(expr "$5" \| "$1")
+else repo="$1" && shift
+	git-get "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}"
+	cd "$(expr "$4" \| "$repo")"
 fi
-test "$1" && git remote add upstream "$(git-repo "${3:-github.com}" "$repo" "$1")"
+test -n "$1" && git remote add upstream "$(git-repo "${3:-github.com}" "$repo" "$1")"
 git remote -v

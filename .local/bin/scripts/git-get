@@ -1,8 +1,8 @@
 #!/bin/sh
 # Clones from resolving the arguments and switches into the new directory
+# ARGS see git-repo
 set -e
 remote=$(git-repo "$@")
 echo "Cloning $remote"
 git clone $remote ${@:4} --recurse-submodules
 cd "$(test -n "$2" && echo "$2" || basename ${remote%.git})"
-exec "$SHELL"

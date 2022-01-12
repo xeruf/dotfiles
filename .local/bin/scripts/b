@@ -109,7 +109,7 @@ if test "$timg"; then
 		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 25 \| 5 \)) &&
 		echo "-t0.2 --center $(test $# -lt 30 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
 		"${timg[@]}" "${timga[@]}" 2>/dev/null
-	if $inspect || test $# -lt 15; then
+	if $inspect || test $# -lt 10; then
 		tput setaf 6
 		for img in "${timg[@]}"
 		do ident="$(identify -ping -precision 3 -format "%wx%h %b %m %[bit-depth]-bit %[colorspace]" "$img")"
