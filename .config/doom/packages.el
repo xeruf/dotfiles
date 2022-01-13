@@ -49,13 +49,16 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+(setq straight-host-usernames '((github . "xeruf")))
+
 (package! emms)
 
 (unpin! evil-collection)
 (package! ox-context
   :recipe (:host github :repo "Jason-S-Ross/ox-context"))
 (package! websocket)
-(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+(package! org-roam-ui
+  :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 
 ; https://elpa.gnu.org/packages/auto-correct.html
 (package! auto-correct)
@@ -64,8 +67,7 @@
 (package! evil-replace-with-register) ; grrrrr
 (package! visual-fill-column) ; Soft line wrapping at character count
 
-(package! activity-watch-mode
-  :recipe (:host github :repo "xeruf/activity-watch-mode")) ; eagle eyes
+(package! activity-watch-mode :recipe (:fork t)) ; eagle eyes
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
@@ -83,5 +85,10 @@
 (unpin! plantuml-mode)
 (package! plantuml-mode
   :recipe (:host github :repo "a1exsh/plantuml-mode"))
+
+(package! twee-mode
+  :recipe (:host github :repo "magoyette/twee-mode"))
+(package! twee-chapbot-mode
+  :recipe (:host github :repo "magoyette/twee-chapbook-mode"))
 
 (package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive

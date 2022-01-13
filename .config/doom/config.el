@@ -120,6 +120,8 @@ Version 2019-11-04 2021-02-16"
 
 (setq initial-major-mode 'org-mode)
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
+(add-hook 'twee-chapbook-mode-hook 'twee-mode)
 (whitespace-mode 0)
 (auto-correct-mode)
 
@@ -238,12 +240,12 @@ Version 2019-11-04 2021-02-16"
   (setq org-id-method 'org
         org-id-ts-format "%Y%m%dT%H%M%S")
 
-  ;; From  https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
+  ;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
   (require 'time-stamp)
   (setq time-stamp-start "modified:[       ]+\\\\?")
   (setq time-stamp-end "$")
   (setq time-stamp-format "%Y-%m-%dT%H%M%S")
-  (add-hook 'before-save-hook #'time-stamp)
+  (add-hook 'before-save-hook 'time-stamp)
 
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
@@ -382,6 +384,7 @@ Version 2019-11-04 2021-02-16"
     (setq org-roam-db-update-on-save nil
           org-roam-extract-new-file-path "${slug}.org"
           +org-roam-open-buffer-on-find-file nil)
+    (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
     (setq my/org-roam-capture-props ":properties:\n:id: ${slug}\n:created: %<%Y-%m-%dT%H%M%S>\n:modified: <>\n:end:\n")
     (setq my/org-roam-capture-title "\n#+title: ${title}")
@@ -400,7 +403,7 @@ Version 2019-11-04 2021-02-16"
       )
 
     (defvar my/auto-org-roam-db-sync--timer nil)
-    (defvar my/auto-org-roam-db-sync--timer-interval 30)
+    (defvar my/auto-org-roam-db-sync--timer-interval 10)
     (define-minor-mode my/auto-org-roam-db-sync-mode
       "Toggle automatic `org-roam-db-sync' when Emacs is idle.
        Reference: `auto-save-visited-mode'"
@@ -411,10 +414,10 @@ Version 2019-11-04 2021-02-16"
             (when my/auto-org-roam-db-sync-mode
               (run-with-idle-timer
                my/auto-org-roam-db-sync--timer-interval :repeat
-               #'my/org-roam-update))))
+               #'org-roam-db-sync))))
 
     (defun my/org-roam-update ()
-      "Update org-roam database and sync ids to org if in org-mode"
+      "If in org-mode, update org-roam database and sync ids to orgids"
       (interactive)
       (when (equal major-mode 'org-mode) (org-roam-db-sync) (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations)) (org-mode-restart)))
 
@@ -422,7 +425,8 @@ Version 2019-11-04 2021-02-16"
   )
 
 (after! ox
-  (setq org-latex-toc-command "\\tableofcontents*\n\n")
+
+  (setq org-latex-toc-command "\\tableofcontents\n\n")
   ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
   (defun org/get-headline-string-element (headline backend info)
     (let ((prop-point (next-property-change 0 headline)))
@@ -435,12 +439,11 @@ Version 2019-11-04 2021-02-16"
   (add-to-list 'org-export-filter-headline-functions
                'org/ensure-latex-clearpage)
 
-  (setq org-latex-to-pdf-process
-    '("xelatex -interaction nonstopmode %f"
-     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+  ;(setq org-latex-to-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
   ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-  (setq ;org-latex-pdf-process '("latexmk -shell-escape -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+  (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
         org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
+        org-latex-listings 'minted
         org-export-with-tags nil
         org-export-with-tasks 'done
         org-export-with-todo-keywords nil
@@ -449,6 +452,8 @@ Version 2019-11-04 2021-02-16"
         org-ascii-text-width 999
         org-export-headline-levels 4
         org-latex-default-class "article4"
+        org-export-with-sub-superscripts '{}
+        org-use-sub-superscripts '{}
         )
 
   (require 'ox-extra)
