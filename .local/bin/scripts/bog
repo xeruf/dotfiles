@@ -1,16 +1,31 @@
-#!/bin/sh -e
+#!/bin/sh
 # Simple backup with borg
 if test $# -eq 0
-	then borg list --format "{barchive:40} Created {time}{NL}"
-		exit $?
+then borg list --format "{barchive:40} Created {time}{NL}"; exit $?
 fi
-test "$1" = "-n" && run=arg-test && shift
-case "$1" in (*_) prefix=$1; shift;; esac
+while test $# -gt 0; do
+	case "$1" in
+		(mount) moul backup >/dev/null 2>&1
+			cd /mnt/backup
+			mkdir -p backups
+			borg mount borg backups
+			cd backups
+			"$SHELL"
+			cd ..
+			borg umount backups
+			rm -d backups
+			exit 0;;
+		(ls) borg list --short "::$2" | tree --fromfile . | less -F; exit $?;;
+		(-n) run=arg-test; shift;;
+		(*_) prefix=$1; shift;;
+		(*) break;;
+	esac
+done
 name="$(echo "$1" |
 	sed -e 's|/$||' \
 		-e 's|20\([0-9]\{2\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)|\1\2\3|' \
 		-e 's|\([0-9]\{6\}\)[-_]\(.*\)|\2_\1|' \
 		-e 's|\(\w\+Drive\)|cloud_\L\1|i')"
 test $# -gt 1 && shift
-${run:-borg} create --progress --stats "::$prefix$name" "$@"
+${run:-borg} create --exclude-caches --progress --stats "::$prefix$name" "$@"
 
