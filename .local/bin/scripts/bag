@@ -12,7 +12,7 @@ while test $# -gt 0; do
 done
 name="::$(test -n "$name" && echo "$name" || cat /etc/hostname)_${1:-system}_$(date -u +"%y%m%d")"
 echo "Backing up as $name"
-${run:-sudo --preserve-env=BORG_REPO borg} --exclude-caches create $args \
+${run:-sudo --preserve-env=BORG_REPO borg} create --exclude-caches $args \
   $(echo $DIRS_IGNORE_SAFE -x 'software-challenge/**/build' -x state/emacs -x state/go -x .local/lib |
     sed 's|-x \([^ ]\+\)|-e sh:**/\1|g') \
   "$name" $(test $# -eq 0 && echo etc home root || test $# -eq 1 && echo $1) "${@:2}"  2>&1

@@ -77,7 +77,7 @@ makepkg -si
 - kde desktop :: plasma-desktop plasma-nm breeze systemsettings ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass bluedevil
 *** Emacs
 emacs emacs-pdf-tools-git
-texlive-core texlive-latexextra texlive-mode-doc
+texlive-core texlive-latexextra texlive-most-doc
 context-bin
 : git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs && ${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom -y install
 - mail :: offlineimap mu
