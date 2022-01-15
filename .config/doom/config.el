@@ -91,7 +91,8 @@ Version 2019-11-04 2021-02-16"
       "njo"     'org-journal-open-current-journal-file
       "Se"      '+snippets/edit
       "Sm"      'smerge-mode
-      "m;"  'comment-line
+      "m;"      'comment-line
+      :desc "Update & Quit" "qu"      (lambda () (interactive) (my/org-roam-update) (save-buffers-kill-terminal))
       :map text-mode-map
       :desc "Markdown to Zulip" "mam" "ggd2/# 
 :%s/\\n\\n<a id=.*<\\/a>\\n\\n//
