@@ -1,0 +1,7 @@
+#!/bin/sh
+# plantuml from xclip selection clipboard
+file="/tmp/plantuml-xclip-$(date +%s).plantuml"
+echo "@startuml" >$file
+xclip -o >>$file
+echo -e "\n@enduml" >>$file
+plantuml $file

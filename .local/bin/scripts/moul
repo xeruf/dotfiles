@@ -1,5 +1,6 @@
 #!/bin/sh -e
 # Mount a partition by label or device identifier automatically
+# TODO Autocomplete: lsblk --output label --noheadings
 arg=$1
 test "$arg" = "--help" && echo "$0 <device> [mountpoint] [options...]" && exit 0
 if test "$arg" = "-u"
