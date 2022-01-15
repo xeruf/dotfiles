@@ -2,7 +2,7 @@
 # [b]rowse - overview of given files or current directory
 # depends: tput stat bat checkaccess(in my dotfiles)
 # optdepends: timg, neovim (compressed files), pdftoppm (PDF), mtn (video), audiowaveform
-# args: files to inspect
+# args: files to inspect, any arg starting with dash is passed on to bat
 #
 # Supports:
 # - listing directories
@@ -43,7 +43,7 @@ fileinfo() {
 
 prefix=/tmp/b
 mkdir -p "$prefix"
-declare -a timg timga bat batl ls
+declare -a timg timga bat batplain ls
 for arg; do
 	case "$arg" in (-*) args="$args $arg"; continue;; esac
 	checkperm "$arg"
@@ -55,11 +55,21 @@ for arg; do
 	tmpfile="$prefix/$(basename "$arg")"
 	case "$mime" in
 	(*\ application/pdf\;*)
+		echo Converting "$arg"
 		test -f "$tmpfile-1.png" || pdftoppm -r 70 "$arg" "$tmpfile" -l $(expr $grid '*' 2)
 		timg -W --grid=$grid "$tmpfile"*
 		;;
-	(*/x-xcf*) convert -flatten "$arg" png:"$tmpfile"
-		timg+=("$tmpfile");;
+	(*\ application/*document*)
+		# https://ask.libreoffice.org/t/convert-to-command-line-parameter/840/4
+		echo Converting "$arg"
+		soffice --headless --convert-to jpg --outdir "$prefix" "$arg" >/dev/null 2>&1
+		timg+=("${tmpfile%.*}.jpg")
+		continue;;
+	(*/x-xcf*)
+		echo Converting "$arg"
+		convert -flatten "$arg" png:"$tmpfile"
+		timg+=("$tmpfile")
+		continue;;
 	(*\ video/*)
 		suffix=_thumbs.jpg
 		mtn -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
@@ -91,7 +101,7 @@ for arg; do
 			then nvim "$arg"
 			else case "$arg" in (*.part);; (*)
 				nvim -es "+2w$list|5,w>>$list" "$arg"
-				batl+=("$list");;
+				batplain+=("$list");;
 			esac; fi
 			;;
 		(*:\ *database*) sqlite3 "$arg" ".tables";;
@@ -104,11 +114,13 @@ for arg; do
 	fileinfo "$arg"
 done
 
+# timg: images
+# timga: potentially viewable as image
 if test "$timg"; then
 	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
 		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 25 \| 5 \)) &&
 		echo "-t0.2 --center $(test $# -lt 30 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
-		"${timg[@]}" "${timga[@]}" 2>/dev/null
+		"${timg[@]}" "${timga[@]}" 2>/dev/null || true
 	if $inspect || test $# -lt 10; then
 		tput setaf 6
 		for img in "${timg[@]}"
@@ -119,14 +131,33 @@ if test "$timg"; then
 	fi
 fi
 
-if test "$bat" -o "$batl"; then
-	$inspect || if test $# -gt ${#bat[@]} -a $# -gt ${#batl[@]} && test -z "$args"
-		then $elevate head "${batl[@]}" "${bat[@]}" | cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)
-		else test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
-			test "$bat" && $elevate bat --style $(test $# -gt 1 && echo "numbers,")header$rule --pager 'less -RF' $args "${bat[@]}"
-			test "$batl" && $elevate bat --style plain$rule --pager 'less -RF' $args "${batl[@]}"
+# bat: unknown files
+# batplain: files to print without header
+if test "$bat" -o "$batplain" && ! $inspect; then
+	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
+	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$args"
+	then cut="--line-range :7"
+		pager="cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)"
+	else pager="less -RF"
+	fi
+	batcommand="$elevate bat $cut $args --pager"
+	batstyle="--style plain$rule"
+	test "$batplain" && $batcommand $batstyle "${batplain[@]}"
+	test "$bat" && if test "$cut"
+		then case $TERM in (*kitty)
+				declare -a timgtxt
+				for file in "${bat[@]}"; do cp "$file" "$prefix/$file.txt"; timgtxt+=("$prefix/$file.txt"); done
+				timg -V --grid="$(expr 4 \& ${#bat[@]} \> 5 \| ${#bat[@]})" --title="%b" --frames=3 "${timgtxt[@]}"
+				#fileinfo "${bat[@]}"
+				;;
+			(*) for file in "${bat[@]}"; do
+					$batcommand "$pager" $batstyle "$file"
+					fileinfo "$file"
+				done;;
+			esac
+		else $batcommand "$pager" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
+			fileinfo "${bat[@]}"
 		fi
-	fileinfo "${bat[@]}"
 fi
 
 if test "$ls" -o $# -eq 0; then
