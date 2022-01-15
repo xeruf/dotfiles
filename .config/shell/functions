@@ -281,6 +281,11 @@ alias updateUtils="updateDeps build.gradle.kts '"'"com.github.Xerus2000.util", "
 # Kill all shell background processes
 alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
 
+# Kill all processes that match
+killm() {
+	ps ax | grep "$1" | grep -v grep | sed 's/\([^ ]\) .*/\1/' | xargs kill --verbose "${@:2}"
+}
+
 # Kil all Java processes except IDEA
 # Pass "-9" to force-kill and "-q" to not output what has been killed
 killJava() {
