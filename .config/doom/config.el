@@ -94,8 +94,7 @@ Version 2019-11-04 2021-02-16"
       "m;"      'comment-line
       :desc "Update & Quit" "qu"      (lambda () (interactive) (my/org-roam-update) (save-buffers-kill-terminal))
       :map text-mode-map
-      :desc "Markdown to Zulip" "mam" "ggd2/# 
-:%s/\\n\\n<a id=.*<\\/a>\\n\\n//
+      :desc "Markdown to Zulip" "mam" ":%s/\\n\\n<a id=.*<\\/a>\\n\\n//
 :%s/\\n *\\n /\\n /
 :%s/^## \\(.*\\)/**\\1**/
 :%s/^##+ \\(.*\\)/*\\1*/
@@ -251,7 +250,7 @@ Version 2019-11-04 2021-02-16"
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
   (setq org-image-actual-width nil)
-  (setq org-ellipsis "↴")
+  (setq org-ellipsis "◀")
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
