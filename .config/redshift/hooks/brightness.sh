@@ -1,6 +1,7 @@
 #!/bin/sh
 # Set brightness via xbrightness when redshift status changes
 # https://wiki.archlinux.org/title/Redshift#Use_real_screen_brightness
+# TODO adapt to machine (laptop/pc)
 
 # Set brightness values for each status.
 # Range from 1 to 100 is valid

@@ -1,5 +1,7 @@
 command! PU PlugUpdate | PlugUpgrade
 
+" TODO auto-update on start/error
+
 lua require 'colorizer'.setup({ '*'; markdown = { names = false; }; })
 
 let g:strip_whitespace_on_save=1
