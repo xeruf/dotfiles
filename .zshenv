@@ -97,8 +97,8 @@ ctrl-h:kill-line
 alt-a:select-all
 alt-c:yank
 alt-w:toggle-preview-wrap
-alt-j:preview-half-page-down,alt-k:preview-half-page-up
 $($_fzf_latest && echo "shift-down:preview-half-page-down,shift-up:preview-half-page-up
+alt-j:preview-half-page-down,alt-k:preview-half-page-up
 alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
 " | xargs -I% echo -n "%," | head -c-1)
 #alt-r:preview(bat {}),
