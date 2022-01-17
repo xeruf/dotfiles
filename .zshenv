@@ -104,9 +104,9 @@ $($_fzf_latest && echo "alt-shift-down:preview-down,alt-shift-up:preview-up,esc:
 #alt-r:preview(bat {}),
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
-export FZF_DEFAULT_OPTS="--select-1 --ansi --marker=o
+export FZF_DEFAULT_OPTS="--select-1 --ansi
 --tiebreak=end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
-$($_fzf_latest && echo '--preview-window=60%,border-left')"
+$($_fzf_latest && echo '--preview-window=60%,border-left --marker=o')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
