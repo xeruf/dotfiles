@@ -26,7 +26,7 @@ highlight "e :: recursively remove empty folders and files"
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
 	highlight "$k :: delete $folder"
-	[[ $1 =~ "$k" ]] && sudo rm $i -rf "$folder" && echo "Deleted $folder"
+	[[ $1 =~ "$k" ]] && (test "$k" = "l" && sudo find "$folder" -type f -delete || sudo rm $i -rf "$folder") && echo "Deleted $folder"
 done
 
 highlight "s :: recursively remove logs"
@@ -65,7 +65,7 @@ highlight "c :: clean electron caches"
 
 if test -f "/var/log/apt/history.log"; then
 	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
-	test "$aptclean_cur" -gt "$aptclean_last" && aptclean && echo "Cleaned apt"
+	test "$aptclean_cur" -gt "${aptclean_last:--1}" && aptclean && echo "Cleaned apt"
 	export aptclean_last=$aptclean_cur
 fi
 
