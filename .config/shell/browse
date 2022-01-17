@@ -51,7 +51,7 @@ alias uloc='noglob sudo updatedb && loci'
 locei() { locate --all --basename "\\$1" "$@" | fselect }
 alias loce='noglob locei'
 # locate all
-alias loca='noglob sudo updatedb --prunenames "" --prunefs "" --prunepaths "/var/cache" -o /var/lib/mlocate/all.db && loci --database /var/lib/mlocate/all.db'
+alias loca='noglob sudo updatedb --prunenames "" --prunefs "" --prunepaths "/var/cache" -o /var/cache/locate-all.db && loci --database /var/cache/locate-all.db'
 
 # ZOXIDE {{{1
 alias c=z

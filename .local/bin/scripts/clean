@@ -30,7 +30,7 @@ for k in "${!_clean_map[@]}"; do
 done
 
 highlight "s :: recursively remove logs"
-[[ $1 =~ "s" ]] && find \( -name ".git" -o -name "src" \) -prune -o \
+[[ $1 =~ "s" ]] && find \( -name ".git" -o -name "src" -o -name "pkg" \) -prune -o \
 	\( \( -name "logs" -o -name "log" -o -name "crash-reports" \) -prune -o \
 		-type f \( -name "*.log.gz" -o -name "*.log.[0-9]" -o -iname "*.log" \) \) \
 	-print -exec rm -rI {} +
