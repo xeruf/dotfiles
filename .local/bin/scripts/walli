@@ -1,10 +1,9 @@
-#!/bin/sh
+#!/bin/sh -e
 # Blocks internet at night using iptables and enables it only upon request
 # TODO Migrate to nftables
 
 # Auto-elevate
-test "$EUID" -eq 0 || exec sudo "$0" "$@"
-set -e
+test ${EUID:-0} -eq 0 || exec sudo "$0" "$@"
 
 # https://askubuntu.com/a/124512 and https://blog.sleeplessbeastie.eu/2018/06/21/how-to-create-iptables-firewall-using-custom-chains/
 iptables --new-chain chain-times 2>/dev/null || iptables --flush chain-times
