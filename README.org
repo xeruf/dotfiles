@@ -61,7 +61,7 @@ makepkg -si
 ** Graphical
 - office :: libreoffice-fresh
 - fonts :: fontpreview noto-fonts noto-fonts-emoji ttf-dejavu adobe-source-code-pro-fonts texlive-myriadpro-git
-- video :: vlc obs-studio kdenlive
+- video :: [[https://github.com/phw/peek][peek]] vlc obs-studio kdenlive
 - music management :: puddletag beets picard ffmpegthumbnailer sox
   : sudo npm install -g bpm
 - music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
