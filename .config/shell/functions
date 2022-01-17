@@ -142,10 +142,10 @@ alias scud='systemctl --user disable --now'
 
 # Reload or restart matching systemctl service
 scr() {
-	systemctl --user reload "$1" ||
-		sudo systemctl reload "$1" ||
-		systemctl --user restart "$1" ||
-		sudo systemctl restart "$1"
+	echo -n "User: "
+	systemctl --user reload-or-restart "$1" ||
+		{ echo -n "System: " && sudo systemctl reload-or-restart "$1"; } &&
+		echo "Successful reload"
 }
 
 # Restart matching systemctl service with time for adjustments inbetween
