@@ -50,7 +50,7 @@ Plug 'mhinz/vim-signify'               " VCS info on the left
 
 " Integrations
 "Plug 'airblade/vim-gitgutter'          " Git info on the left and hunk bindings
-Plug 'mtvee/vim-fossil'
+Plug 'xeruf/vim-fossil'
 Plug 'austintraver/vim-jrnl'
 Plug 'weinshec/vim-dictcc'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
