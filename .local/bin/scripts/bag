@@ -1,5 +1,6 @@
 #!/bin/sh
 # Backup root filesystem with borg
+root="/"
 args="--progress --stats"
 while test $# -gt 0; do
   case "$1" in
@@ -7,9 +8,10 @@ while test $# -gt 0; do
     (--dry-run) args="--dry-run --list"; name=test-$(date +%s); shift;;
     (--root) shift; root="$1"; name="$(basename "$(realpath "$root")")"; echo $root $name; shift;;
     (-*) name="${1#-}"; shift;;
-    (*) test $# -gt 0 || cd "$root"; break;;
+    (*) break;;
   esac
 done
+test $# -gt 0 || cd "$root"
 name="::$(test -n "$name" && echo "$name" || cat /etc/hostname)_${1:-system}_$(date -u +"%y%m%d")"
 echo "Backing up as $name"
 ${run:-sudo --preserve-env=BORG_REPO borg} create --exclude-caches $args \

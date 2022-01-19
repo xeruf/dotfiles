@@ -6,6 +6,7 @@ sudo hdparm -MWAgt "$disk"
 if test $# -eq 0
 then echo "Write test:"
 	sync
+	#sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=1K && sudo dd status=progress if=/var/tmp/tempfile of=tempfile bs=1M count=1K
 	sudo dd status=progress if=/dev/zero of=tempfile bs=1M count=1K
 	sudo rm tempfile
 fi

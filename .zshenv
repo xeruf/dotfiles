@@ -71,7 +71,7 @@ export DIRS_IGNORE="-x *build -x .git -x .idea -x out -x cache -x Partitions $DI
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
-#export TEXMF=/usr/share/context
+export TEXMF=/usr/share/context
 export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 ## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
