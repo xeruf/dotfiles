@@ -41,14 +41,16 @@ Plug 'ntpeters/vim-better-whitespace'  " Tools for trailing whitespace & mixed i
 Plug 'vim-airline/vim-airline'         " Status bar on the bottom
 set noshowmode " Don't show current m ode because airline already does and it inhibits echo in visual mode
 Plug 'romainl/vim-cool'                " Automatically stop highlighting search results when moving - https://stackoverflow.com/questions/657447/vim-clear-last-search-highlighting
-Plug 'airblade/vim-gitgutter'          " Git info on the left
 Plug 'norcalli/nvim-colorizer.lua'     " Highlight color literals
 Plug 'luochen1990/indent-detector.vim' " Auto-detect indent
  " Visual indent guides
 Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup = 1
+Plug 'mhinz/vim-signify'               " VCS info on the left
 
 " Integrations
+"Plug 'airblade/vim-gitgutter'          " Git info on the left and hunk bindings
+Plug 'mtvee/vim-fossil'
 Plug 'austintraver/vim-jrnl'
 Plug 'weinshec/vim-dictcc'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
