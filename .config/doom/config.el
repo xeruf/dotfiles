@@ -205,17 +205,12 @@ Version 2019-11-04 2021-02-16"
   (map! :map org-mode-map
         :leader
         "j" 'org-insert-heading
-        "e" 'org-export-dispatch-custom-date
-        "E" 'org-export-repeat
         "\\" 'org-ctrl-c-ctrl-c
-        :desc "Save and Export" "be" '(lambda () (interactive) (basic-save-buffer) (org-export-repeat))
         :localleader
         "C" 'org-clock-in
         "j" 'org-insert-heading
         "k" 'org-latex-export-to-pdf
         "t" 'org-todo-or-insert
-        "e" 'org-export-dispatch-custom-date
-        "E" 'org-export-repeat
         "n" 'org-add-note
         "y" 'org-yank-visible
         "Y" 'org-copy-visible
@@ -241,11 +236,11 @@ Version 2019-11-04 2021-02-16"
         org-id-ts-format "%Y%m%dT%H%M%S")
 
   ;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
-  (require 'time-stamp)
-  (setq time-stamp-start "modified:[       ]+\\\\?")
-  (setq time-stamp-end "$")
-  (setq time-stamp-format "%Y-%m-%dT%H%M%S")
-  (add-hook 'before-save-hook 'time-stamp)
+  (use-package! time-stamp
+    :init (setq time-stamp-start "modified:[       ]+\\\\?"
+                time-stamp-end "$"
+                time-stamp-format "%Y-%m-%dT%H%M%S")
+    :hook before-save)
 
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
@@ -285,20 +280,6 @@ Version 2019-11-04 2021-02-16"
   (defun org-timestamp-up-week ()
     (interactive)
     (let ((current-prefix-arg '(7))) (call-interactively 'org-timestamp-up-day))
-    )
-
-  (defun org-export-repeat ()
-    (interactive)
-    (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
-    )
-
-  ;; TODO name file according to subtree headline
-  (defun org-export-dispatch-custom-date ()
-    (interactive)
-    (let ((org-time-stamp-custom-formats
-           '("<%d.%m.%Y>" . "<%d.%m.%Y>"))
-          (org-display-custom-times 't))
-      (org-export-dispatch))
     )
 
   (defun org-change-todo-in-region ()
@@ -376,8 +357,10 @@ Version 2019-11-04 2021-02-16"
     ; TODO journal at start (call-interactively 'org-journal-new-entry)
   )
 
+;; FIXME can I combine defer and after?
 (use-package! org-roam
-  :defer 6
+  ;:after org-mode
+  :defer 3
   :config
     (require 'org-roam-protocol)
 
@@ -416,65 +399,102 @@ Version 2019-11-04 2021-02-16"
                my/auto-org-roam-db-sync--timer-interval :repeat
                #'org-roam-db-sync))))
 
+    ;; TODO kill opened buffers
     (defun my/org-roam-update ()
-      "If in org-mode, update org-roam database and sync ids to orgids"
+      "Update org-roam database and sync ids to orgids."
       (interactive)
-      (when (equal major-mode 'org-mode) (org-roam-db-sync) (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations)) (org-mode-restart)))
+      (org-roam-db-sync)
+      (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations))
+      (when (equal major-mode 'org-mode) (org-mode-restart)))
 
     (if (file-exists-p org-roam-directory) (my/auto-org-roam-db-sync-mode))
   )
 
-(after! ox
+(use-package! ox
+  :config
+    (map! :map org-mode-map
+          :leader
+          "e" 'org-export-dispatch-custom-date
+          "E" 'org-export-repeat
+          :desc "Save and Export" "be" '(lambda () (interactive) (basic-save-buffer) (org-export-repeat))
+          :localleader
+          "e" 'org-export-dispatch-custom-date
+          "E" 'org-export-repeat
+          )
 
-  (setq org-latex-toc-command "\\tableofcontents\n\n")
-  ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
-  (defun org/get-headline-string-element (headline backend info)
-    (let ((prop-point (next-property-change 0 headline)))
-      (if prop-point (plist-get (text-properties-at prop-point headline) :parent))))
-  (defun org/ensure-latex-clearpage (headline backend info)
-    (when (org-export-derived-backend-p backend 'latex)
-      (let ((elmnt (org/get-headline-string-element headline backend info)))
-        (when (member "newpage" (org-element-property :tags elmnt))
-          (concat "\\clearpage\n" headline)))))
-  (add-to-list 'org-export-filter-headline-functions
-               'org/ensure-latex-clearpage)
+    (defun org-export-repeat ()
+      (interactive)
+      (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
+      )
 
-  ;(setq org-latex-to-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
-  ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-  (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
-        org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
-        org-latex-listings 'minted
-        org-export-with-tags nil
-        org-export-with-tasks 'done
-        org-export-with-todo-keywords nil
-        org-export-with-toc nil
-        org-export-with-section-numbers nil
-        org-ascii-text-width 999
-        org-export-headline-levels 4
-        org-latex-default-class "article4"
-        org-export-with-sub-superscripts '{}
-        org-use-sub-superscripts '{}
-        )
+    ;; TODO name file according to subtree headline
+    (defun org-export-dispatch-custom-date ()
+      (interactive)
+      (let ((org-time-stamp-custom-formats
+             '("<%d.%m.%Y>" . "<%d.%m.%Y>"))
+            (org-display-custom-times 't))
+        (org-export-dispatch))
+      )
 
-  (require 'ox-extra)
-  (ox-extras-activate '(ignore-headlines))
-  (require 'ox-latex)
-  (add-to-list 'org-latex-classes
-       '("article4" "\\documentclass{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
-          ("\\section{%s}" . "\\section*{%s}")
-          ("\\subsection{%s}" . "\\subsection*{%s}")
-          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-          ("\\paragraph{%s}" . "\\paragraph*{%s}")
-          ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-  (add-to-list 'org-latex-classes
-       '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
-          ("\\chapter{%s}" . "\\chapter*{%s}")
-          ("\\section{%s}" . "\\section*{%s}")
-          ("\\subsection{%s}" . "\\subsection*{%s}")
-          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-          ("\\paragraph{%s}" . "\\paragraph*{%s}")
-          ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-)
+    ;(setq org-latex-to-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
+    ;; Exporting - https://orgmode.org/manual/Export-Settings.html
+    (setq org-export-with-tags nil
+          org-export-with-tasks 'done
+          org-export-with-todo-keywords nil
+          org-export-with-toc nil
+          org-export-with-section-numbers nil
+          org-ascii-text-width 999
+          org-export-headline-levels 4
+          org-export-with-sub-superscripts '{}
+          org-use-sub-superscripts '{}
+          )
+
+    ;(require 'ox-context)
+  )
+
+
+(use-package! ox-extra
+  :after ox
+  :config (ox-extras-activate '(ignore-headlines)) ;; use tag :ignore: to export content without headline
+  )
+(use-package! ox-latex
+  :after ox
+  :disabled
+  :config
+    ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
+    (defun org/get-headline-string-element (headline backend info)
+      (let ((prop-point (next-property-change 0 headline)))
+        (if prop-point (plist-get (text-properties-at prop-point headline) :parent))))
+    (defun org/ensure-latex-clearpage (headline backend info)
+      (when (org-export-derived-backend-p backend 'latex)
+        (let ((elmnt (org/get-headline-string-element headline backend info)))
+          (when (member "newpage" (org-element-property :tags elmnt))
+            (concat "\\clearpage\n" headline)))))
+    (add-to-list 'org-export-filter-headline-functions
+                 'org/ensure-latex-clearpage)
+
+    ;;(setq org-latex-toc-command "\\tableofcontents*\n\n")
+    (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+          org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
+          org-latex-listings 'minted
+          org-latex-default-class "article4")
+    (add-to-list 'org-latex-classes
+         '("article4" "\\documentclass{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+            ("\\paragraph{%s}" . "\\paragraph*{%s}")
+            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+    (add-to-list 'org-latex-classes
+         '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
+            ("\\chapter{%s}" . "\\chapter*{%s}")
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+            ("\\paragraph{%s}" . "\\paragraph*{%s}")
+            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+    )
+
 ;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
 ;; Fix xdg-open after setting process-connection-type
 ;(setq process-connection-type nil)
@@ -491,10 +511,15 @@ Version 2019-11-04 2021-02-16"
       :map nov-mode-map
       "<tab>" 'other-window
       "q"     'kill-this-buffer
+      :n "q"  'kill-this-buffer
       :map image-mode-map
       "<tab>" 'other-window
+      :n "q"  'kill-this-buffer
       :n "+"  'image-increase-size
-      :n "-"  'image-decrease-size)
+      :n "-"  'image-decrease-size
+      :map thumbs-mode-map
+      :n "q"  'thumbs-kill-buffer
+      )
 
 (after! ivy
   (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
@@ -503,7 +528,6 @@ Version 2019-11-04 2021-02-16"
 ;;; Dired
 
 (use-package! dired
-  :init (ranger-override-dired-mode 0)
   :config
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
   ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
@@ -513,10 +537,6 @@ Version 2019-11-04 2021-02-16"
   (defun get-mimetype (filepath)
     (string-trim
      (shell-command-to-string (concat "file -b --mime-type \"" filepath "\""))))
-
-  (setq image-dired-external-viewer "gimp"
-        image-dired-thumb-size 300
-        image-dired-show-all-from-dir-max-files 300)
 
   ;;(let ((mime "image/x-xcf")) (msg mime))
 
@@ -557,6 +577,19 @@ Version 2019-11-04 2021-02-16"
         :n "r" 'ranger
         )
 
+  )
+(use-package! dired-ranger
+  :disabled
+  :init (ranger-override-dired-mode 0)
+  )
+(use-package! image-dired
+  :config
+    (setq image-dired-external-viewer "gimp"
+          image-dired-thumb-size 300
+          image-dired-show-all-from-dir-max-files 300)
+    (add-to-list 'image-dired-cmd-create-thumbnail-options "-auto-orient")
+    (add-to-list 'image-dired-cmd-create-temp-image-options "-auto-orient")
+    (add-to-list 'image-dired-cmd-create-standard-thumbnail-options "-auto-orient")
   )
 (use-package! diredfl
   :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
@@ -696,7 +729,7 @@ Version 2019-11-04 2021-02-16"
   )
 
 ;; https://emacs.stackexchange.com/questions/64532/emms-and-mpd-configuration
-(use-package emms
+(use-package! emms
   :disabled
   :config
     (require 'emms-setup)

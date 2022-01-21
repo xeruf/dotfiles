@@ -42,6 +42,8 @@
 
 (package! emms)
 
+(package! dired+)
+
 (unpin! evil-collection)
 (package! ox-context
   :recipe (:host github :repo "Jason-S-Ross/ox-context"))
