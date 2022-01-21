@@ -1,4 +1,5 @@
-command! PU PlugUpdate | PlugUpgrade
+command! PU PlugClean | PlugUpdate | PlugUpgrade
+" TODO Automatically do this in topgrade
 
 " TODO auto-update on start/error
 
