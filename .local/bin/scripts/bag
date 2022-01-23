@@ -1,5 +1,5 @@
 #!/bin/sh
-# Backup root filesystem with borg
+# Backup linux system and user files with borg
 root="/"
 args="--progress --stats"
 while test $# -gt 0; do
