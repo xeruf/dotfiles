@@ -553,7 +553,6 @@ Version 2019-11-04 2021-02-16"
         :n "l" 'dired-find-file-dwim
         :n "h" 'dired-up-directory
         :n "ö" 'evil-ex-search-forward
-        :n "r" 'ranger
         :leader
         :desc "Dragon marked files" "d"
                 (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
@@ -567,21 +566,23 @@ Version 2019-11-04 2021-02-16"
         :desc "Open image-dired" "i"
                 (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
-        :desc "Start ranger" "r" 'ranger
         :desc "Org attach subtree" "a" 'org-attach-dired-to-subtree
         :map wdired-mode-map
-        :n "RET" (lambda () (interactive) (progn
-                                             (wdired-exit)
-                                             (dired-find-file-dwim)))
-        :map ranger-mode-map
-        :n "r" 'ranger
+        :n "RET" (lambda () (interactive) (wdired-exit) (dired-find-file-dwim))
         )
-
   )
 (use-package! dired-ranger
   :disabled
-  :init (ranger-override-dired-mode 0)
-  )
+  :config
+    (ranger-override-dired-mode 0)
+    (map! :map dired-mode-map
+          :n "r" 'ranger
+          :localleader
+          :desc "Start ranger" "r" 'ranger
+          :map ranger-mode-map
+          "i"    'dired-toggle-read-only
+          :n "r" 'ranger)
+    )
 (use-package! image-dired
   :config
     (setq image-dired-external-viewer "gimp"
@@ -607,6 +608,7 @@ Version 2019-11-04 2021-02-16"
 (add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
 
 (use-package! evil-replace-with-register ; gr
+  :ensure t
   :init
     (setq evil-replace-with-register-key (kbd "gr"))
     (evil-replace-with-register-install)
