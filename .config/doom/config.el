@@ -65,7 +65,7 @@ Version 2019-11-04 2021-02-16"
 (defun dragon (&optional @file)
   "Share file from current buffer via dragon."
   (interactive)
-  (shell-command (concat "dragon-drag-and-drop -a -x " (if (not (string-blank-p @file)) @file buffer-file-name)))
+  (shell-command (concat "dragon-drag-and-drop -a -x " (or @file buffer-file-name)))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -453,6 +453,7 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! ox-context
   :after ox)
+
 (use-package! ox-extra
   :after ox
   :config (ox-extras-activate '(ignore-headlines)) ;; use tag :ignore: to export content without headline

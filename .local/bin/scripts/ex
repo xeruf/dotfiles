@@ -30,7 +30,7 @@ for arg do
 			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
 		test "$(basename "$PWD")" = "$namepart" &&
-			if test "$(ls -U | wc -l)" -lt 3
+			if test $# -lt 2 && "$(ls -U | wc -l)" -lt 3
 			then mv * .. && cd .. && rm -d "$namepart"
 			else cd .. && mv "$namepart" "$name"
 			fi
