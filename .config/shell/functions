@@ -157,8 +157,11 @@ scb() {
 	sudo systemctl start --show-transaction "$1"
 }
 
-alias jcl='sudo SYSTEMD_LESS=FRKi journalctl --boot --no-hostname -e'
-alias jc='jcl -u'
+alias jch='sudo SYSTEMD_LESS=FRKi journalctl --no-hostname'
+alias jcl='jch --boot --lines 20'
+alias jce='jch --pager-end'
+alias jce='jch --follow'
+alias jc='jcl --unit'
 alias jcj='jcl -o json-pretty -u'
 
 # Applications {{{1
@@ -190,7 +193,7 @@ u() {
 }
 
 # Remote
-alias delta="sc restart openvpn-client@deltaPeak.service"
+alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
 sshl() {
 	lemonade server -allow 127.0.0.1 &
 	file="/var/tmp/ssh-$1"
@@ -353,10 +356,10 @@ mvln() {
 		mkdir -p "$2"
 		mv -vT $1 $2
 	else
-		mv -v $1 $2
+		m $1 $2
 	fi
 	[ $file -gt 0 -a -d $2 ] && 2="$2/$(basename $1)"
-	ln -vsr "$2" "$1"
+	echo -n "Linking: " && ln -vsr "$2" "$1"
 }
 
 # Move into an xdg dir (default XDG_DATA_HOME) and create a symlink
