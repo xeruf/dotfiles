@@ -19,8 +19,11 @@ for arg do
 			(*.tar.*|*.tar) tar --extract --file "$path";;
 			(*.tbz2)        tar xjf "$path"   ;;
 			(*.tgz)         tar xzf "$path"   ;;
-			#(*.zip|*.jar)   unzip "$path" | rewrite ;;
-			(*.7z|*.z01|*.zip|*.jar)    7z x "$path"      ;;
+			(*.7z|*.z01|*.zip|*.jar)
+				if which 7z >/dev/null
+				then 7z x "$path"
+				else unzip "$path" | rewrite
+				fi;;
 			(*.gz)          gunzip "$path"    ;;
 			(*.bz2)         bunzip2 "$path"   ;;
 			(*.rar)         unrar x "$path"   ;;
@@ -30,7 +33,7 @@ for arg do
 			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
 		test "$(basename "$PWD")" = "$namepart" &&
-			if test $# -lt 2 && "$(ls -U | wc -l)" -lt 3
+			if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
 			then mv * .. && cd .. && rm -d "$namepart"
 			else cd .. && mv "$namepart" "$name"
 			fi
