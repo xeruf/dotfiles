@@ -158,11 +158,11 @@ scb() {
 }
 
 alias jch='sudo SYSTEMD_LESS=FRKi journalctl --no-hostname'
-alias jcl='jch --boot --lines 20'
-alias jce='jch --pager-end'
-alias jce='jch --follow'
-alias jc='jcl --unit'
-alias jcj='jcl -o json-pretty -u'
+alias jcl='jch --boot --lines 15' # list - quick overview
+alias jce='jch --pager-end' # end - all logs
+alias jcf='jch --follow' # follow - monitor logs
+alias jc='jcl --unit' # list unit - quick overview
+alias jcj='jce -o json-pretty --unit' # JSON View
 
 # Applications {{{1
 
