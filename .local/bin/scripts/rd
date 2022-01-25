@@ -3,7 +3,7 @@
 case "$1" in ([0-9]) depth=$1; shift;; esac
 for f in "${@-.}"
 do
-	test -w "$f" && elevate="" || elevate=sudo
+	test -w "$(dirname "$f")" && elevate="" || elevate=sudo
 	if test -d "$f"
 	then
 		if test -e "$f/.git" || test -e "$f/packed-refs"

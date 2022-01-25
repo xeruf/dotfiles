@@ -453,7 +453,6 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! ox-context
   :after ox)
-
 (use-package! ox-extra
   :after ox
   :config (ox-extras-activate '(ignore-headlines)) ;; use tag :ignore: to export content without headline
