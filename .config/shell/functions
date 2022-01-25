@@ -133,8 +133,8 @@ alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 alias scd='sudo systemctl disable --now'
 scs() {
-	systemctl --user status "*$1*" "$1" ||
-		sudo systemctl status "*$1*" "$1"
+	systemctl --user status "*$1*" ||
+		sudo systemctl status "*$1*"
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
