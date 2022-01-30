@@ -45,8 +45,12 @@
 (package! dired+)
 
 (unpin! evil-collection)
+
 (package! ox-context
   :recipe (:host github :repo "Jason-S-Ross/ox-context"))
+(package! ox-bb
+  :recipe (:host github :repo "mmitch/ox-bb"))
+
 (package! websocket)
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
