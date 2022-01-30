@@ -9,19 +9,26 @@ if test "$1" = "-r"
 then shift
 	test "$1" = "-v" && verbose=-v && shift
 	for arg
-	do path="$(test -e "$arg" && realpath "$arg" ||
-			( test -e "$MUSIC/$arg" && realpath "$MUSIC/$arg") ||
-			( test -e "$PLAYLISTS/$arg" && realpath "$PLAYLISTS/$arg") )"
-		test -n "$verbose" && echo "Scanning path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
+	do path="$({ find "$(dirname "$arg")" -maxdepth 1 -name "$(basename "$arg")*" -exec realpath {} + ||
+		find "$MUSIC/$(dirname "$arg")" "$MUSIC/Playlists/$(dirname "$arg")" -maxdepth 1 \
+			-name "$(basename "$arg")*" -exec realpath {} +; } 2>/dev/null)"
+		test -n "$verbose" && echo "Scanning path '$path' $(
+			test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
+		test $(printf "$path" | wc -l) -gt 0 && printf "$path" | xargs --delim='\n' "$0" -r $verbose && continue
 		test -n "$path" || continue
 		if { file "$path" | grep -i ' playlist' || expr "$path" : ".*\.m3u8\?$"; } >/dev/null
-		then pushd "$(dirname "$path")" >/dev/null && cat "$path" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose && popd >/dev/null
+		then pushd "$(dirname "$path")" >/dev/null &&
+			cat "$path" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose &&
+			popd >/dev/null
 		else
-			test -n "$verbose" && echo "Finding path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
+			test -n "$verbose" &&
+				echo "Running find in path '$path' $(test "$arg" != "$path" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
 			find "$path" -iname "*.flac" -o -iname "*.mp3" -o -iname "*.ogg" -o -iname "*.opus" | sort | while read file
 				do case "$path" in
 					($MUSIC/*) echo "${file#$MUSIC/}";;
-					(*) mkdir -p "$LINKS" && ln -fs "$file" "$LINKS/$(basename "$file")" && echo "${LINKS#$MUSIC/}/$(basename "$file")";;
+					(*) mkdir -p "$LINKS" &&
+						ln -fs "$file" "$LINKS/$(basename "$file")" &&
+						echo "${LINKS#$MUSIC/}/$(basename "$file")";;
 				esac done
 		fi
 	done
