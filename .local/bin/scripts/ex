@@ -6,7 +6,7 @@
 # optdepends: rewrite(part of my dotfiles)
 for arg do
 	if test -r "$arg"; then
-		path="$(realpath "$arg")"
+		fullpath="$(realpath "$arg")"
 		name="$(basename "${path%.*}")"
 		namepart="$name.part"
 		(
@@ -16,20 +16,20 @@ for arg do
 		fi
 		echo "Extracting $arg into $PWD"
 		case "$arg" in
-			(*.tar.*|*.tar) tar --extract --file "$path";;
-			(*.tbz2)        tar xjf "$path"   ;;
-			(*.tgz)         tar xzf "$path"   ;;
+			(*.tar.*|*.tar) tar --extract --file "$fullpath";;
+			(*.tbz2)        tar xjf "$fullpath"   ;;
+			(*.tgz)         tar xzf "$fullpath"   ;;
 			(*.7z|*.z01|*.zip|*.jar)
 				if which 7z >/dev/null
-				then 7z x "$path"
-				else unzip "$path" | rewrite
+				then 7z x "$fullpath"
+				else unzip "$fullpath" | rewrite
 				fi;;
-			(*.gz)          gunzip "$path"    ;;
-			(*.bz2)         bunzip2 "$path"   ;;
-			(*.rar)         unrar x "$path"   ;;
-			(*.deb)         ar x "$path"      ;;
-			(*.zst)         unzstd "$path"    ;;
-			(*.Z)           uncompress "$path";;
+			(*.gz)          gunzip "$fullpath"    ;;
+			(*.bz2)         bunzip2 "$fullpath"   ;;
+			(*.rar)         unrar x "$fullpath"   ;;
+			(*.deb)         ar x "$fullpath"      ;;
+			(*.zst)         unzstd "$fullpath"    ;;
+			(*.Z)           uncompress "$fullpath";;
 			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
 		test "$(basename "$PWD")" = "$namepart" &&

@@ -14,8 +14,8 @@ df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"
 
 highlight "cleaning home"
 for f in ${_clean_home[@]}
-do path="$dir/$f"
-	test -f "$path" || test -d "$path" && echo "Removing superfluous $path" && rm -rf $i "$path"
+do file="$dir/$f"
+	test -f "$file" || test -d "$file" && echo "Removing superfluous $file" && rm -rf $i "$file"
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete
@@ -37,7 +37,8 @@ highlight "s :: recursively remove logs"
 
 highlight "m :: recursively remove mac-files"
 if [[ $1 =~ "m" ]]; then
-	find -iname '.spotlight*' -exec rm -rI {} +
+	find -name '__MACOSX' -print -exec rm -r {} +
+	find -iname '.spotlight*' -print -exec rm -rI {} +
 	find -name '*.DS_Store' -delete
 fi
 
