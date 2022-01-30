@@ -13,4 +13,4 @@ cat "$keys/$name.pub"
 if test "$OSTYPE" = "cygwin"
 then cat "$keys/$name.pub">/dev/clipboard
 else xclip -sel clip 2>/dev/null <"$keys/$name.pub"
-fi && echo "SSH Public key copied to clipboard" || return 0
+fi && echo "SSH Public key copied to clipboard" || true

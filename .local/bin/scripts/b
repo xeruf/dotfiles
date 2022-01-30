@@ -158,7 +158,7 @@ if test "$bat" -o "$batplain" && ! $inspect; then
 				done;;
 			esac
 		else $batcommand "$pager" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
-			fileinfo "${bat[@]}"
+			test $# -lt $(expr $(tput lines) / 3) && fileinfo "${bat[@]}"
 		fi
 fi
 

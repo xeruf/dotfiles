@@ -180,9 +180,11 @@ alias dt='python -c "import time;print(time.asctime(time.localtime()))"'
 
 # Process
 alias println='printf "\n"'
+alias myip="curl ifconfig.me && println && curl icanhazip.com"
 alias dedup='awk '"'"'!a[$0]++'"'"
 alias lar='last | tac'
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
+alias hedgedoc="cd '$d4/dev/_forks/hedgedoc' && tmux new-session -d 'yarn run dev' && tmux split-window -h 'nodemon --watch app.js --watch lib --watch locales app.js' && tmux ls && firefox localhost:3000"
 
 u() {
 	which pacman-mirrors >/dev/null &&
