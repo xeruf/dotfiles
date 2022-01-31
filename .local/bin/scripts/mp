@@ -9,25 +9,26 @@ if test "$1" = "-r"
 then shift
 	test "$1" = "-v" && verbose=-v && shift
 	for arg
-	do filepath="$({ find "$(dirname "$arg")" -maxdepth 1 -name "$(basename "$arg")*" -exec realpath {} + ||
-		find "$MUSIC/$(dirname "$arg")" "$MUSIC/Playlists/$(dirname "$arg")" -maxdepth 1 \
-			-name "$(basename "$arg")*" -exec realpath {} +; } 2>/dev/null)"
+	do filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$(basename -- "$arg")*" -exec realpath {} + ||
+		arg-test find "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
+			-name "$(basename -- "$arg")*" -exec realpath {} +; } 2>/dev/null)"
 		test -n "$verbose" && echo "Scanning path '$filepath' $(
 			test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
 		test $(printf "$filepath" | wc -l) -gt 0 && printf "$filepath" | xargs --delim='\n' "$0" -r $verbose && continue
 		test -n "$filepath" || continue
-		if { file "$filepath" | grep -i ' playlist' || expr "$filepath" : ".*\.m3u8\?$"; } >/dev/null
+		if { file -- "$filepath" | grep -i ' playlist' || expr "$filepath" : ".*\.m3u8\?$"; } >/dev/null
 		then pushd "$(dirname "$filepath")" >/dev/null &&
 			cat "$filepath" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose &&
 			popd >/dev/null
 		else
 			test -n "$verbose" &&
-				echo "Running find in path '$filepath' $(test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
+				echo "Running find in path '$filepath' $(test "$arg" != "$filepath" && echo "from '$arg' ")" >&2
 			find "$filepath" -iname "*.flac" -o -iname "*.mp3" -o -iname "*.ogg" -o -iname "*.opus" |
 				sort | while read file
-				do case "$filepath" in
+				do case "$file" in
 					($MUSIC/*) echo "${file#$MUSIC/}";;
-					(*) mkdir -p "$LINKS" &&
+					(*) test -n "$verbose" && echo "Linking $file into $LINKS" >&2
+						mkdir -p "$LINKS" &&
 						ln -fs "$file" "$LINKS/$(basename "$file")" &&
 						echo "${LINKS#$MUSIC/}/$(basename "$file")";;
 				esac done
@@ -36,7 +37,7 @@ then shift
 else
 	test "$1" = "-q" && quiet=-q && shift
 	test -n "$(mpc playlist)" -a "$(mpc status | wc -l)" -gt 1 && next=-q
-	test "$1" = "--seek" && seek=-q
+	test "$1" = "--seek" && seek=-q && shift
 	( "$0" -r "$@" && mpc -q update --wait ) | #tee /tmp/mp 2>&1
 		xargs --delim='\n' mpc insert
 	mpc ${quiet:-${next:-$seek}} play

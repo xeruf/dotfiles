@@ -7,7 +7,7 @@
 for arg do
 	if test -r "$arg"; then
 		fullpath="$(realpath "$arg")"
-		name="$(basename "${path%.*}")"
+		name="$(basename "${fullpath%.*}")"
 		namepart="$name.part"
 		(
 		if test "$(ls -U | wc -l)" -gt 2; then
