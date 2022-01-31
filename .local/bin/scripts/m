@@ -5,5 +5,12 @@
 for last; do true; done
 checkaccess -w "$@" || elevate=sudo
 ! $elevate test -e "$1" && echo "$1 does not exist" && exit 1
+
+dir="$(dirname "$1")"
+test $(lsattr -d "$dir" | cut -c6) = a && setappend=true
+test -z "$setappend" || sudo chattr -V -a "$dir"
+
 $elevate mkdir -p $(case "$last" in (*/) echo "$last";; (*) dirname "$last";; esac)
 $elevate mv --verbose --interactive "$@"
+
+test -z "$setappend" || sudo chattr -V +a "$dir"

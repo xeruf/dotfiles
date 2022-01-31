@@ -1,0 +1,4 @@
+#!/bin/sh
+# Set personal data directories to append-only
+sudo chattr -V +a . *
+sudo chattr -V -a 4-incubator _archive applications
