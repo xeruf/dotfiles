@@ -32,7 +32,7 @@ fileinfo() {
 		$elevate file -E "$arg"
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
-		$elevate ffprobe "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
+		$elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
 			stat --format "%A %s $(
 					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
 						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"

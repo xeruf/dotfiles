@@ -13,7 +13,9 @@ then
 fi
 
 if grep -e "^LABEL=$arg[^\w/]" /etc/fstab
-then mount -L "$@"; exit $?
+then # have to mount twice as the first one might be creating the directory
+	mount -L "$@" 2>/dev/null || mount -L "$@"
+	exit $?
 fi
 if grep -e "[^\w=/]$arg[^\w/]" /etc/fstab
 then mount "$@"; exit $?

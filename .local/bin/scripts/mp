@@ -35,7 +35,7 @@ then shift
 	done
 else
 	test "$1" = "-q" && quiet=-q && shift
-	test -n "$(mpc playlist)" && next=-q
+	test -n "$(mpc playlist)" -a "$(mpc status | wc -l)" -gt 1 && next=-q
 	test "$1" = "--seek" && seek=-q
 	( "$0" -r "$@" && mpc -q update --wait ) | #tee /tmp/mp 2>&1
 		xargs --delim='\n' mpc insert
