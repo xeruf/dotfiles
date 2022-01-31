@@ -1,6 +1,10 @@
 #!/bin/sh
-# Extract song metadata with ffprobe
-while read f; do
+# View song metadata using ffprobe
+# Accepts filenames from args or stdin (one file per line)
+if test "$#" -eq 0
+then cat
+else printf '%s\n' "$@"
+fi | while read f; do
   highlight "$f"
-  ffprobe "$f" 2>&1 | grep -A90 'Metadata:'
+  find "$f" -type f -exec ffprobe -hide_banner {} 2>&1 \; #| grep -A90 'Metadata:'
 done | less

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Find and remove sizeable files
+find -size +5M -print -exec rm -I {} +
