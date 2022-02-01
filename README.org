@@ -52,8 +52,8 @@ makepkg -si
 - pass :: pass pass-otp pass-extension-tail pass-clip
   -> interesting: pass-steam, pass-autotype, pass-file, pass-qr, pass-ssh, pass-rotate
 - ssh :: openssh sshfs lemonade-git
-- sync :: syncthing
-  : sudo systemctl enable --now syncthing
+- sync :: syncthing syncthingtray
+  : sudo systemctl enable --now syncthing@$USER
 - productivity :: activitywatch-bin jrnl
 - personal aur utils (only useful with dotfiles) :: bat-extras neovim-symlinks stderred-git
 - needs extra setup :: rdictcc-git
@@ -72,7 +72,7 @@ makepkg -si
   -> https://www.reddit.com/r/linuxquestions/comments/pm1bxn/setting_brightness_on_amd_ryzen_7_5800h_with
 *** Desktop
 - xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
-- wayland :: sway azote
+- wayland :: sway azote dex
 - kde :: okular spectacle
 - kde desktop :: plasma-desktop plasma-nm breeze systemsettings ktorrent dolphin kdeplasma-addons kinfocenter partitionmanager kdeconnect kwallet-pam kwalletmanager ksshaskpass bluedevil
 *** Emacs

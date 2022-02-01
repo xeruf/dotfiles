@@ -84,7 +84,7 @@ formatin() {
 formatsong() {
 	echo "$1" | sed -e 's/\b\(ft\|Ft\|Feat\|featuring\)\([ .]\)/feat\2/;
 		s/\bfeat /feat. /;
-		s/ \((Original Mix)\|(Original)\|(Full Stream)\|.NCS Release.\)//i;
+		s/ [[(]\(Free Download\|Original Mix\|Original\|Full Stream\|NCS Release\)[])]//i;
 		s/ (\(Acoustic\|Live\))/ [\1]/i;
 		s/ \[\(feat.*\)\]/ (\1)/i;
 		s/^\([A-z]\+\) The \([^-]\+\)$/\1, the \2/g;
