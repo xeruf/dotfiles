@@ -1,5 +1,7 @@
+
 album
 albumartist
+albumartist2
 albumsortorder
 arranger
 artist
@@ -15,7 +17,10 @@ composer
 conductor
 copyright
 date
+description
 discnumber
+disctotal
+encoded by
 encodedby
 encodingsettings
 encodingtime
@@ -44,6 +49,7 @@ performer
 performersortorder
 popularimeter
 producednotice
+producer
 publisher
 radioowner
 radiostationname
@@ -56,6 +62,7 @@ time
 title
 titlesortorder
 track
+tracktotal
 ufid
 version
 www
