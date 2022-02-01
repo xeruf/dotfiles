@@ -240,7 +240,7 @@ Version 2019-11-04 2021-02-16"
   (use-package! time-stamp
     :init (setq time-stamp-start "modified:[       ]+\\\\?"
                 time-stamp-end "$"
-                time-stamp-format "[%Y-%m-%d %b %H:%M]")
+                time-stamp-format "[%Y-%m-%d]")
     :hook before-save)
 
   ;; Visuals
@@ -370,8 +370,7 @@ Version 2019-11-04 2021-02-16"
           +org-roam-open-buffer-on-find-file nil)
     (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
-    ; TODO time-stamp-format
-    (setq my/org-roam-capture-props ":properties:\n:id: ${slug}\n:created: %[%Y-%m-%d %b %H:%M]\n:modified: <>\n:end:\n")
+    (setq my/org-roam-capture-props (concat ":properties:\n:id: ${slug}\n:created: %" time-stamp-format "\n:modified: <>\n:end:\n"))
     (setq my/org-roam-capture-title "\n#+title: ${title}")
     (setq org-roam-capture-templates
           `(("d" "default" plain "%?" :target
@@ -454,6 +453,8 @@ Version 2019-11-04 2021-02-16"
   )
 
 (use-package! ox-context
+  :after ox)
+(use-package! ox-bb
   :after ox)
 (use-package! ox-extra
   :after ox
