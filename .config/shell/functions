@@ -159,7 +159,7 @@ scb() {
 	sudo systemctl start --show-transaction "$1"
 }
 
-alias jch='sudo SYSTEMD_LESS=FRKi journalctl --no-hostname'
+alias jch='sudo SYSTEMD_LESS=FRKiM journalctl --no-hostname'
 alias jcl='jch --boot --lines 15' # list - quick overview
 alias jce='jch --pager-end' # end - all logs
 alias jcf='jch --follow' # follow - monitor logs
