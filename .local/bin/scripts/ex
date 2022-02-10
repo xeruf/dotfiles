@@ -34,7 +34,8 @@ for arg do
 		esac
 		test "$(basename "$PWD")" = "$namepart" &&
 			if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
-			then mv * .. && cd .. && rm -d "$namepart"
+			then test "$(ls)" && mv * ..
+				cd .. && rm -d "$namepart"
 			else cd .. && mv "$namepart" "$name"
 			fi
 		)
