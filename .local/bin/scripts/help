@@ -4,7 +4,8 @@
 # optdepends: highlight(dotfiles)
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
-# TODO resolve aliases
+# TODO resolve aliases in 'h' alias
+# TODO call 'wh' on scripts instead
 case $1 in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done
@@ -16,12 +17,14 @@ case $1 in
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
 	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;
-	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions;;
+	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions | paste -s -d' ';;
 	(swaymsg) test $# -gt 1 && man sway "${@:2}" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
 	(*) man "$@" ||
 		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
-		if which "$1" >/dev/null; then "$@" --help; "$@" -help; "$@" -h 2>&1 | $paginate; fi;;
+		if which "$1" >/dev/null
+		then "$@" --help || echo $? == 1 && "$@" -help || echo $? == 1 && "$@" -h 2>&1 | $paginate
+		fi;;
 esac
 docs="/usr/share/doc/$1"
 if test -d "$docs"; then

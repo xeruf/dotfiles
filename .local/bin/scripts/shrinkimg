@@ -1,17 +1,19 @@
-#!/bin/sh
+#!/bin/sh -e
 # Lossy image compression using ImageMagick
-# Tries to eliminate artifacts
+# Eliminates artifacts and metadata
 while true
 	do case $1 in
+		(-h|--help|"") echo "Usage: $0 [-q quality (default 85)] [-o outfile] [xRES] <images...>" && exit 2;;
 		(-o) out="$2"; shift 2;;
 		(-q) quality="$2"; shift 2;;
+		(x*) resolution="$1"; resize="-resize $resolution"; shift;;
 		(*) break;;
 	esac
 done
-out="${out:-$1-shrinked.jpg}"
-test $# -eq 0 && echo "Usage: $0 [-q quality (default 85)] [-o outfile] <images...>" && exit 1
-magick "$@" -auto-orient -strip -interlace Plane -define jpeg:dct-method=float -sampling-factor 4:2:0 -gaussian-blur 0.05 \
-	-quality "${quality:-85}" "$out"
+out="${out:-$1${resolution:--shrinked}.jpg}"
+magick "$@" -auto-orient -strip \
+	-interlace Plane -define jpeg:dct-method=float -sampling-factor 4:2:0 -gaussian-blur 0.05 \
+	-quality "${quality:-85}" $resize "$out"
 printf "Shrinked $1(%s) to $out(%s) - reduced to %s%%\n" \
 	$(stat --format %s "$1" "$out" | numfmt --to=iec-i --suffix=B) \
 	$(stat --format %s "$out" "$1" | sed 'N;s|\n|*100/|' | bc)

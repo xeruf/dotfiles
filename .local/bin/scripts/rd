@@ -12,7 +12,7 @@ do
 			test "$answer" = "y" &&
 				$elevate rm -rf "$f"
 		else
-			$elevate find "$f" -maxdepth 4 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
+			$elevate find "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 4) -type d -o -type f -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 			test $# -eq 0 && exit $?
 			if test -e "$f"; then
 				echo -n "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&

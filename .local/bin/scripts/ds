@@ -9,7 +9,7 @@ if test "$1" = "f"
     lsblk --output name,size,fsavail,fsuse%,mountpoint$outcols,label,fstype$(test "${cols:-0}" -gt 120 && echo ',uuid') $width $cols |
       while read line
       do p=$(echo "$line" | sed 's|.* \([[:digit:]]\+\)%.*|\1|;t;c0')
-         printf "$(expr "$line" : " " >/dev/null || echo "\033[$(test -z "$first" && echo "4" || expr "5;31" \& "$p" \> 98 \| "31" \& "$p" \> 97 \| "33" \& "$p" \> 94 \| "35" \& "$p" \> 90)m")%s\n" "$line"
+         printf "$(expr "$line" : " " >/dev/null || echo "\033[$(test -z "$first" && echo "4" || expr "5;31" \& "$p" \> 98 \| "31" \& "$p" \> 97 \| "33" \& "$p" \> 94 \| "35" \& "$p" \> 90)m")%s\033[39m\n" "$line"
          first=1
       done
 fi
