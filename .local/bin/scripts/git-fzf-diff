@@ -1,0 +1,3 @@
+#!/bin/sh
+# fzf tweaked for previewing diffs for git tracked files
+fzf --tiebreak=end,index --multi --preview-window=wrap --preview='git diff HEAD --color=always -- {}' "$@"

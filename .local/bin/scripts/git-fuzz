@@ -1,0 +1,23 @@
+#!/bin/sh -e
+# Create a commit or stage files via fzf selection
+
+fzfpipe() {
+	# Take nul-separated input from git-status short/porcelain
+	# and return a newline-separated list of selected files
+	cut -z -c2- |
+		git fzf-diff --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' \
+			--preview="test {1} != \? && git diff --color HEAD -U5 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
+		cut -c3-
+}
+
+cd "$(git rev-parse --show-toplevel)"
+case "$1" in
+	(add) shift
+		git status -z --porcelain --no-renames --untracked-files=all |
+			grep -zv '^\\w ' | fzfpipe |
+			git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=- "$@";;
+	(*)	git status -z --porcelain --no-renames |
+			sed -z 's/^\\(\\w\\) / \\1/' | fzfpipe >/tmp/git-fuzz
+			git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file=/tmp/git-fuzz
+			git commit -v --only --pathspec-from-file=/tmp/git-fuzz "$@";;
+esac

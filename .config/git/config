@@ -20,13 +20,17 @@
 [submodule]
 	fetchJobs = 0
 
+# Create & Sync
 [pull]
 	ff = only
 [checkout]
 	defaultRemote = origin
 [init]
 	defaultBranch = main
+[push]
+	default = current # Automatically push to branch with matching name
 
+# Editor
 [diff]
 	tool = nvim
 	submodule = log
@@ -39,18 +43,16 @@
 [difftool "nvim"]
 	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 
-# Automatically push to branch with matching name
-[push]
-	default = current
 [status]
 	showStash = true
-# Disable pagination for branch commmand by default
 [pager]
-	branch = false
+	branch = false # Disable pagination for branch list
 [grep]
 	lineNumber = true
 [log]
 	date=local
+[commit]
+	verbose
 
 [color "status"]
 	added = green
@@ -132,15 +134,10 @@
 	sd = switch -d
 	sm = !git switch $(git main)
 
-	fzf = !fzf --tiebreak=end,index --multi --preview-window=wrap --preview='git diff HEAD --color=always -- {}'
-	fzs = !cut -z -c2- | git fzf --read0 -d' ' --nth=2.. --bind='alt-enter:execute(nvim {2..})' --preview='test {1} != \\? && git diff --color HEAD -U5 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %' | cut -c3-
-
 	# Local Changes
 	a = add -u
 	aa = add -u .
 	ap = add -p
-	af = !git status --porcelain --no-renames --untracked-files=all -z | grep -v '^\\w ' -z | git fzs | git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=-
-	sf = "!git status --porcelain --no-renames -z | sed -z 's/^\\(\\w\\) / \\1/' | git fzs >/tmp/git-sf && git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file=/tmp/git-sf; git commit --only -v --pathspec-from-file=/tmp/git-sf"
 
 	c = commit -v
 	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
