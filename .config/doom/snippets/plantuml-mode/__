@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Plantuml basic template
+# --
+@startuml
+hide empty description
+$0
+@enduml

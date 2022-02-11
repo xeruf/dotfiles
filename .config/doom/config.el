@@ -23,7 +23,7 @@
       doom-variable-pitch-font (font-spec :family "sans" :size 24))
 
 (setq display-line-numbers-type 'relative
-      scroll-margin 7
+      scroll-margin 6
       hscroll-margin 20
       )
 
@@ -90,6 +90,7 @@ Version 2019-11-04 2021-02-16"
       "#"       'xah-open-in-external-app
       "njo"     'org-journal-open-current-journal-file
       "Se"      '+snippets/edit
+      "SN"      '+snippets/new
       "Sm"      'smerge-mode
       "m;"      'comment-line
       :desc "Update & Quit" "qu"      (lambda () (interactive) (my/org-roam-update) (save-buffers-kill-terminal))
@@ -99,11 +100,15 @@ Version 2019-11-04 2021-02-16"
 :%s/^## \\(.*\\)/**\\1**/
 :%s/^##+ \\(.*\\)/*\\1*/
 :%s/<\\(http[^ ]+\\)>/\\1/
-:%s/    /  /g"
-      :map smerge-mode-map
+:%s/    /  /g")
+
+; TODO use smerge-basic-map
+(map! :map smerge-mode-map
       :leader
       "Ss"      'smerge-next
+      "Sj"      'smerge-next
       "Sn"      'smerge-next
+      "Sk"      'smerge-prev
       "Sp"      'smerge-prev
       "Sr"      'smerge-resolve
       "SR"      'smerge-refine
@@ -191,6 +196,13 @@ Version 2019-11-04 2021-02-16"
       )
   )
 
+;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
+(setq time-stamp-format "[%Y-%m-%d]")
+(use-package! time-stamp
+  :init (setq time-stamp-start "modified:[       ]+\\\\?"
+              time-stamp-end "$")
+  :hook before-save)
+
 ;;;; ORG
 
 (use-package! org
@@ -227,21 +239,24 @@ Version 2019-11-04 2021-02-16"
         :desc "Extract node to file" "me" 'org-roam-extract-subtree
         )
 
+  ; TODO customize org-log-note-headings
+
   ;; Behavior
   (setq org-read-date-prefer-future nil)
+  (defun my/org-attach-id-folder-format (id)
+    "Translate any ID into a folder-path."
+    (format "%s/%s"
+            (substring id 0 2)
+            (if (> (seq-length id) 2) (substring id 2) id))
+    )
   (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
         org-attach-method 'mv
-        org-attach-preferred-new-method nil)
+        org-attach-preferred-new-method nil
+        org-attach-id-to-path-function-list '(my/org-attach-id-folder-format)
+        )
 
   (setq org-id-method 'org
         org-id-ts-format "%Y%m%dT%H%M%S")
-
-  ;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
-  (use-package! time-stamp
-    :init (setq time-stamp-start "modified:[       ]+\\\\?"
-                time-stamp-end "$"
-                time-stamp-format "[%Y-%m-%d]")
-    :hook before-save)
 
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
@@ -370,7 +385,7 @@ Version 2019-11-04 2021-02-16"
           +org-roam-open-buffer-on-find-file nil)
     (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
-    (setq my/org-roam-capture-props (concat ":properties:\n:id: ${slug}\n:created: %" time-stamp-format "\n:modified: <>\n:end:\n"))
+    (setq my/org-roam-capture-props (concat ":properties:\n:id: ${slug}\n:created: %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
     (setq my/org-roam-capture-title "\n#+title: ${title}")
     (setq org-roam-capture-templates
           `(("d" "default" plain "%?" :target
@@ -607,15 +622,19 @@ Version 2019-11-04 2021-02-16"
   )
 
 ;;; evil
-(setq evil-respect-visual-line-mode nil)
 (add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
+(use-package! evil
+  :ensure t
+  :init (setq evil-respect-visual-line-mode nil)
+  :config (evil-set-register ?i "yiwjgriw")
+  )
 
 (use-package! evil-replace-with-register ; gr
   :ensure t
   :init
     (setq evil-replace-with-register-key (kbd "gr"))
-    (evil-replace-with-register-install)
   :config
+    (evil-replace-with-register-install)
     (defun eval-paragraph ()
       (interactive)
       (er/mark-paragraph)
@@ -646,7 +665,7 @@ Version 2019-11-04 2021-02-16"
 (use-package! plantuml-mode ; Diagrams
   :defer t
   :config
-    ; TODO plantuml file template
+    (set-file-template! 'plantuml-mode :mode 'plantuml-mode)
     (setq plantuml-executable-path "nostderr"
           plantuml-executable-args '("plantuml" "-headless")
           plantuml-default-exec-mode 'jar
@@ -668,11 +687,13 @@ Version 2019-11-04 2021-02-16"
 (use-package! chordpro-mode
   :mode "\\.cho"
   :config
+    ;; TODO template
     (define-key chordpro-mode-map (kbd "C-c C-c") 'chordpro-insert-chord)
   )
 (use-package! lilypond-mode
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config
+    ;; TODO template
     (setq LilyPond-pdf-command "xdg-open")
     (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
     (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
