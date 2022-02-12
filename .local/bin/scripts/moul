@@ -1,25 +1,30 @@
 #!/bin/sh -e
 # Mount a partition by label or device identifier automatically
-# TODO Autocomplete: lsblk --output label --noheadings
-arg=$1
-test "$arg" = "--help" && echo "$0 <device> [mountpoint] [options...]" && exit 0
-if test "$arg" = "-u"
-then
-	mountpoint="$2"
-	sudo umount --verbose "$mountpoint"
-	code=$?
-	sudo rm -df "$mountpoint"
-	exit $code
-fi
+_help="$0 <device> [mountpoint] [options...]"
+case $1 in
+	("") ds && echo "$_help" && exit 2;;
+	("--help") echo "$_help" && exit 0;;
+	("-u") shift
+		for last; do true; done
+		sudo umount --verbose "$@"
+		code=$?
+		sudo rm -df "$last"
+		exit $code;;
+esac
 
-if grep -e "^LABEL=$arg[^\w/]" /etc/fstab
+arg=$1
+# FSTAB: BY LABEL
+if grep --word-regexp "LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory
 	mount -L "$@" 2>/dev/null || mount -L "$@"
 	exit $?
 fi
-if grep -e "[^\w=/]$arg[^\w/]" /etc/fstab
+# FSTAB: BY MOUNTPOINT/NAME
+if grep --word-regexp "$arg" /etc/fstab
 then mount "$@"; exit $?
 fi
+
+# MANUALLY
 mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$(basename "$arg")}"
 if grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab
 then shift; mount "$mountpoint" "$@"; code=$?; cd $mountpoint; exit $code

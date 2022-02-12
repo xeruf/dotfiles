@@ -1,0 +1,3 @@
+#compdef moul
+compadd -V unsorted $(lsblk --list --noheadings --output name)
+# TODO lsblk --list --noheadings --output name,label,fstype | grep ".\+ [^ ]\+" | sed "s/ [^ ]*$//"
