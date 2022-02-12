@@ -21,6 +21,16 @@ noremap q: <Nop>
 " Alias replace all to S
 nnoremap S :%s//gI<Left><Left><Left>
 
+" TODO first only open current one
+function FoldCycle()
+    if &foldlevel
+        :normal zm
+    else
+        :normal zR
+    endif
+endfunction
+nnoremap <S-TAB> :call FoldCycle()<CR>
+
 " Jump around without shift
 nnoremap gl $
 nnoremap gh 0
