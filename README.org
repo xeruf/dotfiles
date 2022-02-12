@@ -30,11 +30,12 @@ and configuration for ~less~ and ~fzf~.
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 # Use org-yank-visible
 - essentials :: curl git zsh bat neovim man-db
-- basic tools :: tree wget texinfo man-pages base-devel fzf topgrade expect zoxide
-  fd ripgrep zsh-completions python-pynvim unrar mlocate
+- basic tools :: tree wget texinfo fzf expect zoxide mlocate
+- arch basics :: fd ripgrep zsh-completions python-pynvim unrar man-pages base-devel  topgrade
 - dotfiles :: yadm
-  : yadm clone git@git.jfischer.org:xeruf/dotfiles.git
-  : yadm clone https://git.jfischer.org/xeruf/dotfiles.git
+  : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
+  : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
+  Run ~bootstrap~ after starting ZSH
 ** Applications
 - utilities :: youtube-dl dos2unix
 - powertools :: hexedit hexyl [[https://lftp.yar.ru/][lftp]] glances zsh-doc pacman-contrib
@@ -59,7 +60,7 @@ makepkg -si
 - needs extra setup :: rdictcc-git
 - experiments :: kakoune
 ** Graphical
-- office :: libreoffice-fresh
+- office :: libreoffice-fresh zathura zathura-pdf-poppler zathura-djvu zathura-ps
 - fonts :: fontpreview noto-fonts noto-fonts-emoji ttf-dejavu adobe-source-code-pro-fonts texlive-myriadpro-git
 - video :: [[https://github.com/phw/peek][peek]] vlc obs-studio kdenlive
 - music management :: puddletag beets picard ffmpegthumbnailer sox
@@ -104,11 +105,3 @@ yays clion clion-jre cmake gdb python-pre-commit
 : yays android-udev android-tools adbfs-rootless-git android-studio
 After running android-studio setup, accept licenses:
 : $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
-** Server (Debian)
-Setup systemd-resolved and systemd-networkd
-- tools :: fd-find locate
-- rust :: cargo install zoxide diffr
-  : curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-- ssh (Ubuntu) :: lemonade openssh
-- webserver :: sudo apt install snapd nginx && snap install certbot
-- social :: pleroma-bin postgresql caddy

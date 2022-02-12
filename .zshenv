@@ -18,13 +18,14 @@ export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
+export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
+export LESSHISTFILE="$XDG_STATE_HOME"/lesshst
 
+ ## Graphical
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export KDEHOME="$XDG_STATE_HOME"/kdehome
 export DOOMLOCALDIR="$XDG_STATE_HOME"/emacs
-
 export WINEPREFIX="$XDG_DATA_HOME"/wine
-export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
 
  ## Development tools
 export GOPATH="$XDG_STATE_HOME"/go
@@ -40,7 +41,6 @@ export BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
 export BUNDLE_USER_PLUGIN="$XDG_STATE_HOME"/bundle
 
 export PYTHONSTARTUP="$XDG_CONFIG_HOME"/pythonstartup.py
-export LESSHISTFILE="$XDG_STATE_HOME"/lesshst
 export KSCRIPT_CACHE_DIR="$XDG_CACHE_HOME"/kscript
 
  # Java & Android
@@ -65,6 +65,7 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 # environment
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
+ # TODO put into config file and use --exclude-from
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__"
 export DIRS_IGNORE_SAFE="-x .sync -x .stfolder -x .cache -x *Cache -x .pyenv -x .local/cache -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh $DIRS_GENERATED"
 export DIRS_IGNORE="-x *build -x .git -x .idea -x out -x cache -x Partitions $DIRS_IGNORE_SAFE"
@@ -93,10 +94,11 @@ alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
 alt-bspace:execute(gio trash {})
 double-click:execute(xdg-open {})
 ctrl-a:select-all
-ctrl-h:kill-line
+ctrl-l:kill-line
 alt-a:select-all
 alt-c:yank
 alt-w:toggle-preview-wrap
+ctrl-alt-h:backward-kill-word
 $($_fzf_latest && echo "shift-down:preview-half-page-down,shift-up:preview-half-page-up
 alt-j:preview-half-page-down,alt-k:preview-half-page-up
 alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
