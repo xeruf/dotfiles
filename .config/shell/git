@@ -7,9 +7,9 @@ y() {
   test "$#" -eq 0 && yadm s || yadm "$@"
 }
 yc() {
-  local folder="$(test -e "${1:-$PWD}" && realpath --relative-to="$XDG_CONFIG_HOME" "${1:-$PWD}" || echo "$1")"
-  echo "config/$folder:" >/tmp/yc-msg
-  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$XDG_CONFIG_HOME/$folder*"
+  local folder="$(test -e "${1:-$PWD}" && realpath "${1:-$PWD}" || echo "$XDG_CONFIG_HOME/$1")"
+  echo "${folder#$HOME\/.}:" >/tmp/yc-msg
+  yadm commit -v --template /tmp/yc-msg ${@:2} -- "$folder*"
 }
 
 gcn() {

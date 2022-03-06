@@ -173,7 +173,7 @@
 	fa = fetch --all
 	fs = !git fetch && git st
 	lr = pull --rebase
-	lu = !git pull upstream ${1:-$(git curbranch)}
+	lu = !git pull --rebase upstream ${1:-$(git curbranch)}
 
 	# Push
 	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease

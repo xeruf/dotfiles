@@ -23,10 +23,11 @@ if beginswith $'\n#' "$original"; then
 	# Find common path prefix of changed files
 	path=$(while read file
 		do test -z "$count" && common="$file" && count=$(expr length "$file") ||
-			while expr substr "$file" $count 1 != substr "$common" $count 1 >/dev/null; do let count--; done
+			while expr substr "$file" 1 $count != substr "$common" 1 $count >/dev/null; do let count--; done
 		done <<<"$(git -P diff --cached --name-only -r)" &&
-			expr substr "${common%.}" 1 "$count")
+			expr substr "$common" 1 "$count")
 	case "$path" in ([0-9]*) path="${path#*/}";; esac
+	path="${path#.}"
 	{
       echo "${path%/}:"
 		echo "$original"

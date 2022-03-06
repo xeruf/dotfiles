@@ -1,5 +1,5 @@
 #!/bin/bash
 set -o pipefail
 upCount=$(git rev-list --count HEAD...@{push} 2>/dev/null)
-count=$(expr ${upCount:-0} + 3 \& ${upCount:-0} \> 3 \| 6)
-git --no-pager lo -$count --color=always --graph HEAD @{upstream} | head -9 || git --no-pager lo -7
+count=$(expr ${upCount:-0} + 3 \& ${upCount:-0} \> 3 \& ${upCount:-0} \< 6 \| 6)
+git --no-pager lo -$count --color=always --graph HEAD @{upstream} || git --no-pager lo -7
