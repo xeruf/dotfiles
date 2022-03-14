@@ -44,7 +44,7 @@ let mapleader=" "
 nmap <leader>" ysiW"
 
 " Alias write and quit to leader
-nnoremap <leader>q :wq<CR>
+nnoremap <leader>q :wqa<CR>
 nnoremap <leader>w :w<CR>
 
 " Easy split navigation

@@ -50,9 +50,10 @@ Plug 'mhinz/vim-signify'               " VCS info on the left
 
 " Integrations
 "Plug 'airblade/vim-gitgutter'          " Git info on the left and hunk bindings
+Plug 'tpope/vim-fugitive'               " Difftool usage
 Plug 'xeruf/vim-fossil'
 Plug 'austintraver/vim-jrnl'
-Plug 'weinshec/vim-dictcc'
+Plug 'weinshec/vim-dictcc' " TODO do not hang without internet
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'mipmip/vim-scimark'              " Edit markdown tables with sc-im
 
