@@ -26,7 +26,7 @@ case "$sel" in
   (/etc/fstab) sudoedit "$sel" && sudo findmnt --verify;;
   (/etc/default/grub) sudoedit "$sel" && sudo grub-mkconfig -o /boot/grub/grub.cfg;;
   (/etc/locale.gen) sudoedit "$sel" && sudo locale-gen;;
-  (/etc/nginx/*) sudoedit "$sel" && nginx -t && nginx -s reload;;
+  (/etc/nginx/*) sudoedit "$sel" && sudo nginx -t && sudo nginx -s reload;;
   (/etc/caddy/*) sudoedit "$sel" && caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload-or-restart caddy;;
   (/etc/ssh/*) sudoedit "$sel" && sudo systemctl reload-or-restart sshd;;
   (*) $(test -w "$sel" || echo sudo) "$EDITOR" "$sel";;
