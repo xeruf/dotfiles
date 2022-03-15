@@ -17,6 +17,7 @@ test "$1" = "-v" &&
 	set -eo xtrace &&
 	shift
 inspect=false
+# Show file info without preview
 test "$1" = "-i" &&
 	inspect=true &&
 	shift
@@ -33,10 +34,10 @@ fileinfo() {
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
 		$elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
-			stat --format "%A %s $(
+			stat --format "%U:%G %A %s $(
 					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
 						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"
-				) - birth %.10w mod %.10y" "$arg" | numfmt --field=2 --to=iec-i --padding=6 --suffix=B
+				) - birth %.10w mod %.10y" "$arg" | numfmt --field=3 --to=iec-i --padding=6 --suffix=B
 	done
 	tput sgr0
 }
@@ -137,7 +138,7 @@ fi
 
 # bat: unknown files
 # batplain: files to print without header
-if test "$bat" -o "$batplain" && ! $inspect; then
+if test "$bat" -o "$batplain"; then
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
 	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$args"
 	then cut="--line-range :7"
@@ -147,7 +148,7 @@ if test "$bat" -o "$batplain" && ! $inspect; then
 	batcommand="$elevate bat $cut $args --pager"
 	batstyle="--style plain$rule"
 	test "$batplain" && $batcommand $batstyle "${batplain[@]}"
-	test "$bat" && if test "$cut"
+	test "$bat" && if test "$cut" && ! $inspect
 		then case $TERM in (*kitty)
 				declare -a timgtxt
 				for file in "${bat[@]}"; do cp "$file" "$prefix/$file.txt"; timgtxt+=("$prefix/$file.txt"); done
@@ -159,7 +160,7 @@ if test "$bat" -o "$batplain" && ! $inspect; then
 					fileinfo "$file"
 				done;;
 			esac
-		else $batcommand "$pager" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
+		else $inspect || $batcommand "$pager" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
 			test $# -lt $(expr $(tput lines) / 3) && fileinfo "${bat[@]}"
 		fi
 fi
