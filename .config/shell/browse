@@ -2,8 +2,14 @@
 
 # Useful when the current directory was recreated
 alias recd='cd $PWD'
-# cd into the parent if arg is a file
-cdd() { cd "$@" 2>/dev/null || cd "$(dirname "$1")" "${@:2}" }
+# [c]hange [d]irectory [e]xisting - cd into the first existing directory
+cde() {
+	local _dir="$1"
+	while ! test -d "$_dir"
+	do _dir="$(dirname "$_dir")"
+	done
+	cd "$_dir" "${@:2}"
+}
 
 # Go up a number of dirs
 up() {
@@ -24,7 +30,7 @@ cl() {
 	ls --almost-all --group-directories-first --file-type
 }
 
-# cd but search for data dirs and ls in new dir
+# cd but search for data dirs and run ls after switching to target dir
 cd() {
 	if test -d "$DATA" && test "${1:--}" != "-" -a ! -d "$1" -a $# -eq 1
 	then

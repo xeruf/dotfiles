@@ -91,7 +91,8 @@ edshell() {
 		("") file="$CONFIG_SHELL_FUNCTIONS";;
 		(zsh) file="$CONFIG_ZSH/.zshrc";;
 		(env) file="$HOME/.zshenv";;
-		(-f) grepfile="$(grep --recursive "\(^$2()\|alias $2=\)" $CONFIG_SHELLS -n -m 1)"
+		(-f) term=$2
+			grepfile="$(grep --recursive "^	*\($term()\|alias[^=]* $term=\)" $CONFIG_SHELLS -n -m 1)"
 			file="$(echo "$grepfile" | cut -d':' -f1)"
 			line="$(echo "$grepfile" | cut -d':' -f2)"
 			test -f "$file" || return 2;;
@@ -133,10 +134,13 @@ alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now'
 alias scd='sudo systemctl disable --now'
 scs() {
+	(
+	export SYSTEMD_COLORS=true
 	systemctl --user status "$1" 2>/dev/null ||
 		systemctl --user status "*$1*"
-	sudo systemctl status "$1" 2>/dev/null ||
-		sudo systemctl status "*$1*"
+	sudo -E systemctl status "$1" 2>/dev/null ||
+		sudo -E systemctl status "*$1*"
+	) | less -F
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
@@ -186,7 +190,7 @@ alias myip="curl ifconfig.me && println && curl icanhazip.com"
 alias dedup='awk '"'"'!a[$0]++'"'"
 alias lar='last | tac'
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
-alias hedgedoc="tmux kill-session -t hedgedoc; builtin cd '$d4/dev/_forks/hedgedoc' && tmux new-session -s hedgedoc -d 'yarn run dev' && tmux split-window -h 'nodemon --watch app.js --watch lib --watch locales --watch config.json app.js' && tmux ls"
+alias hedgedoc="tmux kill-session -t hedgedoc; builtin cd '$d4/dev/_forks/hedgedoc' && tmux new-session -s hedgedoc -d 'yarn run dev' \; split-window -h 'nodemon --watch app.js --watch lib --watch locales --watch config.json app.js' \; ls"
 
 alias rm='rm -I'
 del() {
@@ -200,15 +204,20 @@ u() {
 	which pacman-mirrors >/dev/null &&
 		sudo pacman-mirrors --geoip &&
 		sudo pacman -Syy
-	topgrade
+	topgrade &&
 	topgrade --only emacs --yes
+	# TODO autodetect failure in emacs and rebuild completely
 }
 
-# Remote
+# Networking
+alias dns="drill any @8.8.8.8 -Q"
 alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
 sshl() {
 	lemonade server -allow 127.0.0.1 &
-	file="/var/tmp/ssh-$1"
+	local authcache
+	authcache="/var/tmp/ssh-keys"
+	mkdir -p "$authcache"
+	file="$authcache/$1"
 	if test ! -e "$file"; then
 		if ! ssh -G "$1" | grep --silent "^user root$" && touch "$file"; then
 		ssh-copy-id -i "$(ssh -G "$1" | grep --max-count 1 "^identityfile " | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
@@ -218,6 +227,8 @@ sshl() {
 	fi
 	TERM=xterm-256color pass ssh "$@"
 }
+
+alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
@@ -239,7 +250,7 @@ alias grpc='grep --color=auto --line-number --binary-files=without-match --direc
 # Grep recursively and paginate
 grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's/-x/--exclude-dir/g') "$@" | less -F; }
 # Grep in shell config files
-grsh() { grpr --no-ignore-case "$@" $HOME/.{ba,z}sh* $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH }
+grsh() { grpr --no-ignore-case "$@" $HOME/.{ba,z}sh* $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH; }
 
 # Recover stray swap files from neovim
 alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs --no-run-if-empty nvim"
@@ -255,8 +266,6 @@ hex() { hexyl "$@" | "${PAGER:-less}"; }
 alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=length --bind='alt-bspace:clear-query'"
 alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
 alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
-
-alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 npm-reinstall() {
 	rm -rf $TMPDIR/react-*
@@ -301,7 +310,8 @@ alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
 
 # Kill all processes that match
 killm() {
-	ps ax | grep "$1" | grep -v grep | sed 's/\([^ ]\) .*/\1/' | xargs kill --verbose "${@:2}"
+	ps ax | grep "$1" | grep -v grep | sed 's/\([^ ]\) .*/\1/' |
+		xargs --no-run-if-empty kill --verbose "${@:2}"
 }
 
 # Kil all Java processes except IDEA
@@ -322,9 +332,10 @@ killJava() {
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 
 if which fd >/dev/null
-then alias f="noglob fdd"
-	fdd() { $(which fd >/dev/null && echo fd || echo fdfind) --color=always --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
+then alias f="noglob fn --color=always "
+	fn() { $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
 	compdef f=fd
+	compdef fn=fd
 else
 	alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 	alias f1='find -mindepth 1 -maxdepth 1'
@@ -391,9 +402,10 @@ mkcd() {
 # Other stuff {{{1
 
 umoul() {
-	if test "$1"
-	then arg="$1"
-		mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${MNT:-${XDG_RUNTIME_DIR}/mnt}/$arg")"
+	local arg
+	for arg; do true; done
+	if test "$arg"
+	then mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${MNT:-${XDG_RUNTIME_DIR}/mnt}/$arg")"
 		mountpoint "$mountpoint" 2>/dev/null || test -b "$mountpoint" ||
 			mountpoint="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
 		test "$mountpoint" || return 1
@@ -407,7 +419,8 @@ umoul() {
 	case "$PWD" in
 		("$mountpoint"*) cd "$(dirname $mountpoint)";;
 	esac
-	moul -u "$mountpoint"
+	# pass on all args except last
+	moul -u "${@:1:$#-1}" "$mountpoint"
 }
 
 resetdocker() {
