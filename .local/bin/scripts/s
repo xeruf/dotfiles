@@ -1,6 +1,7 @@
 #!/bin/sh
 # shows size statistics for subfolders
 # max depth is equal to the first argument if it is a number or 1
-case "$1" in [0-9]) depth=$1; shift;; esac
-(du --max-depth "${depth:-1}" -xhat 50M "$@" | sort -h | grep -v "^0") ||
+case "$1" in (+*) size=${1#+}; depth=2; shift;; esac
+case "$1" in ([0-9]) depth=$1; shift;; esac
+(du --max-depth "${depth:-1}" -xhat ${size:-50}M "$@" | sort -h | grep -v "^0") ||
   (du --max-depth "${depth:-1}" -xha "$@" | sort -h | tail)

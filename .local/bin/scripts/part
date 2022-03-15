@@ -2,8 +2,9 @@
 # Run parted with rlwrap
 case "$1" in
 	([a-z]) part=/dev/sd$1;;
-	("") part= ;;
-	(*) part=$1;;
+	("") part= ;; # TODO unmount and run on current
+	(/*) part=$1;;
+	(*) part=/dev/$1;;
 esac
 shift
 fdisk $part "$@"

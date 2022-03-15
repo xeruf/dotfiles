@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # Remove recursively safely
 case "$1" in ([0-9]) depth=$1; shift;; esac
-for f in "${@-.}"
+for f in "${@:-$PWD}"
 do
 	test -w "$(dirname "$f")" && elevate="" || elevate=sudo
 	if test -d "$f"
@@ -12,7 +12,7 @@ do
 			test "$answer" = "y" &&
 				$elevate rm -rf "$f"
 		else
-			$elevate find "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 4) -type d -o -type f -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
+			$elevate find "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 3) -not -name .stfolder \( -type d -o -type f \) -a -empty -printf 'Removing empty %p\n' -delete
 			test $# -eq 0 && exit $?
 			if test -e "$f"; then
 				echo -n "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&

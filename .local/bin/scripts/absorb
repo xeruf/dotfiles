@@ -1,0 +1,5 @@
+#!/bin/sh -e
+# Put file content into clipboard and delete it
+test -f "$1" || exit 1
+cat "$1" | xclip -selection clipboard
+mv -v "$1" "/tmp/$(basename "$1")"

@@ -32,7 +32,7 @@ done
 highlight "s :: recursively remove logs"
 [[ $1 =~ "s" ]] && find \( -name ".git" -o -name "src" -o -name "pkg" \) -prune -o \
 	\( \( -name "logs" -o -name "log" -o -name "crash-reports" -o -name ".auctex-auto" \) -prune -o \
-		-type f \( -name "*.log.gz" -o -name "*.log.[0-9]" -o -iname "*.log" -o -name "*.tuc" \) \) \
+		-type f \( -name "*.log.gz" -o -name "*.log.[0-9]" -o -iname "*.log" -o -name "*.tuc" -o -name "*.tua" \) \) \
 	-print -exec rm -rI {} +
 
 highlight "m :: recursively remove mac-files"
@@ -48,8 +48,6 @@ if [[ $1 =~ "d" ]]; then
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm $i -r {} + -prune
 	echo -n "  " && highlight "build directories"
-	find $DATA/2-standards/dev/aur -mindepth 2 -maxdepth 2 -type d -not -name ".*" \
-		-print -exec sudo rm -rI {} +
 	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
 		-prune -o -name "build" -type d \
 		-print -exec rm -rI {} + -prune
