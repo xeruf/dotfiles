@@ -13,5 +13,5 @@ case "$1" in
       (lab) host=git@gitlab.com;;
       (*) host=$1;;
     esac
-    echo "${host:-git.jfischer.org}:${3:-${user:-$(git config user.name)}}/${2:-$(basename $PWD)}.git" ;;
+    echo "${host:-gitea@git.jfischer.org}:${3:-${user:-$(git config user.name)}}/${2:-$(basename $PWD)}.git" ;;
 esac

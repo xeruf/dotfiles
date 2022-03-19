@@ -7,10 +7,11 @@ PLAYLISTS="$MUSIC/Playlists"
 LINKS="$MUSIC/links"
 if test "$1" = "-r"
 then shift
-	test "$1" = "-v" && verbose=-v && shift
+	test "$1" = "-v" && verbose=-v && set -x && shift
+	# TODO this is sooo slow...
 	for arg
 	do filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$(basename -- "$arg")*" -exec realpath {} + ||
-		arg-test find "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
+		find "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
 			-name "$(basename -- "$arg")*" -exec realpath {} +; } 2>/dev/null)"
 		test -n "$verbose" && echo "Scanning path '$filepath' $(
 			test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2

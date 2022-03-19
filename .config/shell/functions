@@ -210,10 +210,13 @@ sshl() {
 	lemonade server -allow 127.0.0.1 &
 	file="/var/tmp/ssh-$1"
 	if test ! -e "$file"; then
-		ssh-copy-id -i "$(ssh -G "$1" | grep "^identityfile " | head -1 | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
+		if ! ssh -G "$1" | grep --silent "^user root$" && touch "$file"; then
+		ssh-copy-id -i "$(ssh -G "$1" | grep --max-count 1 "^identityfile " | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
 		TERM=xterm-256color kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
-	else TERM=xterm-256color ssh "$@"
+		return $?
+		fi
 	fi
+	TERM=xterm-256color pass ssh "$@"
 }
 
 # Listen to loopback of mic

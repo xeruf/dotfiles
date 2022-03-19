@@ -122,6 +122,7 @@ done
 # timg: images
 # timga: potentially viewable as image
 if test "$timg"; then
+	# Don't show info on all images for gifs
 	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
 		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 25 \| 5 \)) &&
 		echo "-t0.2 --center $(test $# -lt 30 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
