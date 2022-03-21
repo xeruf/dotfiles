@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/sh -e
 test ! -r "$1" && echo "Usage: sign <document.pdf> [hoffset [voffset [scale [alt-signature]]]]" && exit 1
 
-signature=$(pass information/signature$(test -n "$5" && echo "-$5"))
+signature=$(pass info/signature$(test -n "$5" && echo "-$5"))
 
 # TODO make filenames unique and don't rerun unneccessarily
 tmp_base=/tmp/sign
