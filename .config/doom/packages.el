@@ -44,6 +44,8 @@
 
 (package! dired+)
 
+(package! elpher)
+
 (unpin! evil-collection)
 
 (package! ox-context

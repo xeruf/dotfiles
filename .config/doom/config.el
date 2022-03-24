@@ -182,7 +182,7 @@ Version 2019-11-04 2021-02-16"
 
 (if (and org-directory (file-exists-p org-directory))
     (setq default-directory org-directory
-          org-agenda-files (directory-files-recursively org-directory "\\`[^.]*\\'" 't)))
+          org-agenda-files (append (directory-files-recursively (expand-file-name "project/") "\\`[^.]*\\'" 't) (list (expand-file-name "inbox/")))))
 
 (use-package! projectile
   :init
@@ -263,6 +263,14 @@ Version 2019-11-04 2021-02-16"
   (setq org-image-actual-width nil)
   (setq org-ellipsis "◀")
 
+  ;; https://unicode-table.com/en/blocks/miscellaneous-symbols-and-arrows https://www.w3schools.com/colors/colors_names.asp
+  ; (custom-reevaluate-setting 'org-fancy-priorities-list) (add-to-list 'org-fancy-priorities-list "☠" t)
+  (setq org-priority-default 67
+        org-priority-lowest 68
+        org-priority-start-cycle-with-default nil
+        org-fancy-priorities-list '("❗" "✯" "❖" "⬢" "■")
+        org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
+
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
         org-display-remote-inline-images 'cache)
@@ -339,6 +347,38 @@ Version 2019-11-04 2021-02-16"
         ; try to fold up elsewhere
         (ct/org-foldup)))
   (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
+
+
+  ;; https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html
+  (defun air-org-skip-subtree-if-habit ()
+    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+      (if (string= (org-entry-get nil "STYLE") "habit")
+          subtree-end
+        nil)))
+  (defun air-org-skip-subtree-if-priority (priority)
+    "Skip an agenda subtree if it has a priority of PRIORITY.
+
+  PRIORITY may be one of the characters ?A, ?B, or ?C."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (pri-value (* 1000 (- org-lowest-priority priority)))
+          (pri-current (org-get-priority (thing-at-point 'line t))))
+      (if (= pri-value pri-current)
+          subtree-end
+        nil)))
+  (setq org-agenda-custom-commands
+        '(("d" "Daily agenda and all TODOs"
+           ((tags "PRIORITY=\"A\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (agenda "" ((org-agenda-ndays 1)))
+            (alltodo ""
+                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                     (air-org-skip-subtree-if-priority ?A)
+                                                     (org-agenda-skip-if nil '(scheduled deadline))))
+                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
+           ((org-agenda-compact-blocks t)))))
+
 )
 
 (use-package! org-journal
@@ -385,7 +425,7 @@ Version 2019-11-04 2021-02-16"
           +org-roam-open-buffer-on-find-file nil)
     (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
-    (setq my/org-roam-capture-props (concat ":properties:\n:id: ${slug}\n:created: %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
+    (setq my/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
     (setq my/org-roam-capture-title "\n#+title: ${title}")
     (setq org-roam-capture-templates
           `(("d" "default" plain "%?" :target
@@ -541,6 +581,8 @@ Version 2019-11-04 2021-02-16"
 
 (after! ivy
   (ivy-define-key ivy-minibuffer-map (kbd "<S-return>") 'ivy-immediate-done)
+  (ivy-define-key ivy-minibuffer-map (kbd "C-h") 'ivy-backward-kill-word)
+  (ivy-define-key ivy-minibuffer-map (kbd "C-l") 'ivy-partial-or-done)
   )
 
 ;;; Dired
