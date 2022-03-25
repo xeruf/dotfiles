@@ -2,10 +2,10 @@
 # Update an Easy2Boot USB Stick after adding ISOs
 # Call with Linux ISOs to be copied as args
 # Need to be around E2B mountpoint if it is not the default
-dir="$(find -maxdepth 2 -name E2B -type d | grep . || echo "${MNT:-${XDG_RUNTIME_DIR}/mnt}/E2B")"
-test $# -eq 0 || mv -vi "$@" "$dir/_ISO/LINUX"
+dir="$(find . "${MNT:-${XDG_RUNTIME_DIR}/mnt}" -maxdepth 3 -name _ISO -type d | grep .)"
+test $# -eq 0 || mv -vi "$@" "$dir/LINUX"
 find "$dir" -name "*32-*.iso" -exec mv -vi {} {}def32 \;
 find "$dir" -name "*.iso" -exec mv -vi {} {}def64 \;
-drive=$(mount | grep "$dir" | cut -d' ' -f1)
+drive=$(mount | grep "$(basename "$dir")" | cut -d' ' -f1)
 sudo umount $drive
 sudo udefrag $drive

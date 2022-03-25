@@ -46,9 +46,14 @@ unalias rd 2>/dev/null
 
 # System help {{{1
 
-alias h='help'
 compdef help=man
 alias info='info --vi-keys'
+
+h() {
+  help "$@"
+  # TODO resolve aliases in 'h' alias
+  # TODO call 'wh' on scripts instead
+}
 
 xtrace() {
 	set -x
@@ -131,7 +136,7 @@ alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewar
 alias syslog='less +F /var/log/syslog'
 
 alias sc='sudo systemctl'
-alias sce='sudo systemctl enable --now'
+alias sce='sudo systemctl enable --now' # TODO or show log
 alias scd='sudo systemctl disable --now'
 scs() {
 	(

@@ -4,8 +4,6 @@
 # optdepends: highlight(dotfiles)
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
-# TODO resolve aliases in 'h' alias
-# TODO call 'wh' on scripts instead
 case $1 in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done

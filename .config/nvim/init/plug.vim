@@ -18,6 +18,7 @@ Plug 'tpope/vim-surround'               " edit surroundings - cs, ds, ys
 Plug 'bkad/CamelCaseMotion'             " move through camel case words
  " commands
 Plug 'inkarkat/vim-ReplaceWithRegister' " gr to replace with register
+Plug 'Konfekt/vim-sentence-chopper'     " gw for sembr
 Plug 'tpope/vim-commentary'             " gc to comment out (gcap for paragraph)
 Plug 'junegunn/vim-easy-align'          " gaip*= - align in paragraph all equal signs
 xmap ga <Plug>(EasyAlign)

@@ -1,5 +1,9 @@
 #!/bin/sh
 # set given repository as upstream or add as a new remote
+# ARGS:
+# - user/org
+# - repo
+# - remote name
 if test "$3"
 then
   name="$3"

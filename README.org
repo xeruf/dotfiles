@@ -40,6 +40,7 @@ and configuration for ~less~ and ~fzf~.
 - utilities :: youtube-dl dos2unix
 - powertools :: hexedit hexyl [[https://lftp.yar.ru/][lftp]] glances zsh-doc pacman-contrib
 - multitools :: ffmpeg imagemagick pandoc
+- documents :: pdftk java-commons-lang
 - music :: mpd mpc ncmpc vlc phonon-qt5-vlc mpdris2
   : mkdir -p ~/.local/state/mpd && systemctl --user enable --now mpd mpDris2
 #+begin_src sh YAY for AUR
@@ -71,6 +72,7 @@ makepkg -si
 - health :: stretchly-xeruf-git redshift acpilight light
   : scu enable --now redshift
   -> https://www.reddit.com/r/linuxquestions/comments/pm1bxn/setting_brightness_on_amd_ryzen_7_5800h_with
+- games :: opendungeons 0ad mindustry-bin minetest sauerbraten teeworlds
 *** Desktop
 - xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - wayland :: sway azote dex
