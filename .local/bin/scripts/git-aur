@@ -25,5 +25,9 @@ case $command in
     git add -f .SRCINFO *.install 2>/dev/null || true
     git commit -v -a "$@"
     git push;;
+  (clean)
+	  find "$aurdir" -mindepth 2 -maxdepth 2 \( -name "*.tar.gz" -o -type d -not -name ".*" \) \
+		  -print -exec sudo rm -rI {} +;;
+  (*) echo "Unknown command!"; exit 3;;
 esac
 

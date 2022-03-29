@@ -34,7 +34,7 @@ fileinfo() {
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
 		$elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
-			stat --format "%U:%G %A %s $(
+			$elevate stat --format "%U:%G %A %s $(
 					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
 						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"
 				) - birth %.10w mod %.10y" "$arg" | numfmt --field=3 --to=iec-i --padding=6 --suffix=B
@@ -52,7 +52,8 @@ for arg; do
 	then echo "File not found: '$arg'" 1>&2
 		continue
 	fi
-	grid=$(expr $(tput cols) / 20)
+	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
+	# TODO reduce grid when many PDFs
 	tmpfile="$prefix/$(basename "$arg")"
 	case "$mime" in
 	(*\ application/pdf\;*)
@@ -109,7 +110,7 @@ for arg; do
 				batplain+=("$list");;
 			esac; fi
 			;;
-		(*:\ *database*) sqlite3 "$arg" ".tables";;
+		(*:\ *database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
 		(*) bat+=("$arg")
 			timga+=("$arg")
 			continue;;
@@ -124,8 +125,8 @@ done
 if test "$timg"; then
 	# Don't show info on all images for gifs
 	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
-		$(test $# -gt 1 && grid=$(expr $(tput cols) / \( 30 - $# \& $# \< 25 \| 5 \)) &&
-		echo "-t0.2 --center $(test $# -lt 30 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
+		$(test $# -gt 1 &&
+		echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
 		"${timg[@]}" "${timga[@]}" 2>/dev/null || true
 	if $inspect || test $# -lt 10; then
 		tput setaf 6
@@ -148,7 +149,7 @@ if test "$bat" -o "$batplain"; then
 	fi
 	batcommand="$elevate bat $cut $args --pager"
 	batstyle="--style plain$rule"
-	test "$batplain" && $batcommand $batstyle "${batplain[@]}"
+	test "$batplain" && $batcommand "$pager" $batstyle "${batplain[@]}"
 	test "$bat" && if test "$cut" && ! $inspect
 		then case $TERM in (*kitty)
 				declare -a timgtxt

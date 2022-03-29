@@ -1,2 +1,8 @@
 #!/bin/sh
-strace --follow-forks -e trace=file "$@" 2>&1 >/dev/null | grep openat | cut -d'"' -f2  | grep -v ".so" | grep -v "/dev/" | less
+while true; do
+case $1 in
+	(-e) filter="\|ENOENT"; shift;;
+	(*) break;;
+esac
+done
+strace --follow-forks -e trace=file "$@" 2>&1 | grep -v "\(newfstatat$filter\)" | cut -d'"' -f2 | grep -v "\(.so\|/dev/\)" | less
