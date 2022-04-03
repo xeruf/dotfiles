@@ -16,6 +16,7 @@ export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/em
 export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
+export LYNX_CFG_PATH="$XDG_CONFIG_HOME"/lynx.cfg
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
