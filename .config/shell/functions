@@ -250,10 +250,12 @@ alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
-alias grp='grpc --ignore-case'
+# Default grep with some niceties
 alias grpc='grep --color=auto --line-number --binary-files=without-match --directories=skip'
+# Default grep with some niceties and ignoring case
+alias grp='grpc --ignore-case'
 # Grep recursively and paginate
-grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's/-x/--exclude-dir/g') "$@" | less -F; }
+grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's/-x/--exclude-dir/g') "$@" | less -FX; }
 # Grep in shell config files
 grsh() { grpr --no-ignore-case "$@" $HOME/.{ba,z}sh* $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH; }
 

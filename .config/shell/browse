@@ -46,10 +46,11 @@ cd() {
 }
 
 # LOCATE {{{1
-alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || b "$f"; done'
+alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || { highlight "$f" && b "$f" }; done'
 loci() {
 	locate --all --ignore-case --basename --existing "$@" |
-		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') | fselect
+		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') |
+		fselect
 }
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
