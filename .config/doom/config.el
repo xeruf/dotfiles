@@ -384,9 +384,9 @@ Version 2019-11-04 2021-02-16"
 (use-package! org-journal
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
   :init
-    (setq org-journal-file-type 'weekly
+    (setq org-journal-file-type 'monthly
           org-journal-file-format "%Y%m%d.org"
-          org-journal-created-property-timestamp-format "[%Y-%m-%d]"
+          org-journal-created-property-timestamp-format time-stamp-format
           org-journal-carryover-delete-empty-journal 'always
           )
   :config
