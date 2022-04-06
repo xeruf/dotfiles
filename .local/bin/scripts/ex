@@ -32,12 +32,14 @@ for arg do
 			(*.Z)           uncompress "$fullpath";;
 			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
-		test "$(basename "$PWD")" = "$namepart" &&
-			if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
+		# If we created a temporary subfolder, check if it can be eliminated
+		if test "$(basename "$PWD")" = "$namepart"
+		then if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
 			then test "$(ls)" && mv * ..
 				cd .. && rm -d "$namepart"
 			else cd .. && mv "$namepart" "$name"
 			fi
+		fi
 		)
 	else
 		echo "'$1' is not a readable file"
