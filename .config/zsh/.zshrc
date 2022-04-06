@@ -1,7 +1,7 @@
 GITSTATUS_LOG_LEVEL=DEBUG
 # Commands
 if test "$PWD" = "$HOME" && test "$0" !=  "$SHELL"; then
-	neofetch --config $XDG_CONFIG_HOME/neofetch/config-short.conf
+	neofetch --config $XDG_CONFIG_HOME/neofetch/config-$(test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 && echo short || echo server).conf
 	timew | head -3
 fi 2>/dev/null || return 0
 
