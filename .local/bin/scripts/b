@@ -64,8 +64,8 @@ for arg; do
 	(*\ application/*document*)
 		# https://ask.libreoffice.org/t/convert-to-command-line-parameter/840/4
 		echo Converting "$arg"
-		soffice --headless --convert-to jpg --outdir "$prefix" "$arg" >/dev/null 2>&1
-		timg+=("${tmpfile%.*}.jpg")
+		soffice --headless --convert-to png --outdir "$prefix" "$arg" >/dev/null
+		timg+=("${tmpfile%.*}.png")
 		continue;;
 	(*/x-xcf*)
 		echo Converting "$arg"
@@ -169,5 +169,8 @@ fi
 
 if test "$ls" -o $# -eq 0; then
 	checkperm .
-	$elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line --all "${ls[@]:-.}" | less -RF
+	# Alternative: find -exec ls -dl {} +
+	{ timeout .1s $elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all "${ls[@]:-.}" ||
+		$elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none "${ls[@]:-.}"
+	} | less -RF
 fi

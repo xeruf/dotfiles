@@ -38,8 +38,14 @@ cd() {
 		test -n "$dir" && cd "$dir"
 	else
 		builtin cd "$@" &&
-		command ls --literal --file-type --color=always --format=vertical -U -w $COLUMNS |
-			#pr -4 -l1 -W $COLUMNS -S"  " |
+		# we have to use two ls commands here, since:
+		# - a single ls command hangs on multi-column formats when combined with color
+		# - column malaligns output with ANSI escape sequences (view with LESS="" less)
+		#   column --fillrows --output-width $(expr $COLUMNS + 20)
+		#   pr -4 -l1 -W $COLUMNS -S"  "
+		command ls --sort=none --quote-name |
+			head -12 |
+			xargs ls --sort=time --format=vertical --directory --literal --file-type --color=always --width $COLUMNS |
 			head -3
 		code=$? && test $code -eq 141 || return $code
 	fi
