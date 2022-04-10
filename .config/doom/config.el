@@ -180,10 +180,6 @@ Version 2019-11-04 2021-02-16"
 (setq backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
 
-(if (and org-directory (file-exists-p org-directory))
-    (setq default-directory org-directory
-          org-agenda-files (append (directory-files-recursively (expand-file-name "project/") "\\`[^.]*\\'" 't) (list (expand-file-name "inbox/")))))
-
 (use-package! projectile
   :init
     (add-to-list 'projectile-ignored-projects (expand-file-name user-data-dir))

@@ -12,6 +12,13 @@
             ))
   )
 
+(if (and org-directory (file-exists-p org-directory))
+    (setq default-directory org-directory
+          org-agenda-files (append
+                             (directory-files-recursively (expand-file-name "project/") "\\`[^.]*\\'" 't)
+                             (list (expand-file-name "inbox/"))
+                            )))
+
 (use-package! recentf
   :config
     (add-to-list 'recentf-exclude "writing\\/tug")
