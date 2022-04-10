@@ -8,9 +8,9 @@ case $1 in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done
 		# need to install zsh-doc package for info pages
-		info --vi-keys "$(test "$last" != zsh && echo "--index-search=$last")" zsh ||
+		info --vi-keys $(test "$last" != zsh && echo "--index-search=$last") zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
-	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain) unbuffer "$@" --help | $paginate;;
+	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;

@@ -31,13 +31,13 @@ and configuration for ~less~ and ~fzf~.
 # Use org-yank-visible
 - essentials :: curl git zsh bat neovim man-db
 - basic tools :: tree wget texinfo fzf expect zoxide mlocate
-- arch basics :: fd ripgrep zsh-completions python-pynvim unrar man-pages base-devel  topgrade
+- arch basics :: fd ripgrep zsh-completions python-pynvim unrar man-pages base-devel topgrade
 - dotfiles :: yadm
   : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
   : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
   Run ~bootstrap~ after starting ZSH
 ** Applications
-- utilities :: youtube-dl dos2unix
+- utilities :: youtube-dl dos2unix rlwrap
 - powertools :: hexedit hexyl [[https://lftp.yar.ru/][lftp]] glances zsh-doc pacman-contrib
 - multitools :: ffmpeg imagemagick pandoc
 - documents :: pdftk java-commons-lang
@@ -48,7 +48,7 @@ git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay
 makepkg -si
 #+end_src
-- aur recommendations :: [[https://github.com/mookid/diffr][diffr]] tldr++ sc-im espanso timg audiowaveform python-dictcc
+- aur recommendations :: [[https://github.com/mookid/diffr][diffr]] tldr++ sc-im espanso-bin timg audiowaveform python-dictcc
 - bluetooth :: bluez bluez-utils pulseaudio-bluetooth
 - git tools :: git-bug git-lfs git-crypt git-remote-gcrypt github-cli
 - pass :: pass pass-otp pass-extension-tail pass-clip
