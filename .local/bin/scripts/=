@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Shortcut for mathematical calculations
 # Assumes german numbers as in 1.000,5
 calc="$(echo "$@" | sed -e 's/p/+/g' -e 's/\.//g' -e 's/,/./g' -e 's/x/*/g' -e 's/m/-/g')"

@@ -10,14 +10,15 @@ do
 		then echo -n "Force delete git project $f? "
 			read answer
 			test "$answer" = "y" &&
-				$elevate rm -rf "$f"
-		else
-			$elevate find "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 3) -not -name .stfolder \( -type d -o -type f \) -a -empty -printf 'Removing empty %p\n' -delete
-			test $# -eq 0 && exit $?
-			if test -e "$f"; then
-				echo -n "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&
-				$elevate rm -rI "$f"
-			fi
+				$elevate rm -rf "$f" &&
+				exit
+		fi
+
+		$elevate find "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 3) -not -name .stfolder \( -type d -o -type f \) -a -empty -printf 'Removing empty %p\n' -delete
+		test $# -eq 0 && exit $?
+		if test -e "$f"; then
+			echo -n "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&
+			$elevate rm -rI "$f"
 		fi
 	else $elevate rm -i "$f"
 	fi
