@@ -8,6 +8,13 @@ findsongs() {
 		-regex "${1:-.*\.(mp3|flac|wav|m4a)}" -printf "%P\n"
 }
 
+addtopl() {
+	pl=$1
+	shift
+	playlists=$MUSIC/Playlists
+	realpath --relative-to $playlists "$@" | tee -a $playlists/$pl*
+}
+
 addmix() {
 	mv -v "$1.cue" "$AUDIO/recordings/cues"
 	addsong "$1.flac" Mixes

@@ -45,7 +45,14 @@ link fdfind /usr/bin/fd
 link batcat /usr/bin/bat
 
 highlight "SSH Permissions"
-chmod og= "$HOME/.ssh" -R
+chmod og= $HOME/.ssh -R
+chmod a+r $HOME/.ssh/keys/*.pub
+_ovpn="$XDG_DATA_HOME/openvpn"
+test -d "$_ovpn" &&
+	sudo rm -vdf /etc/openvpn/client &&
+	sudo ln -vsf "$_ovpn" /etc/openvpn/client &&
+	sudo chmod -vR ugo-rwx,ug+rX,u+w "$_ovpn" &&
+	sudo chown -vR janek:openvpn "$_ovpn"
 
 highlight "Cron"
 echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
@@ -105,7 +112,8 @@ then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/*
 fi
 
 subhighlight "Block internet at night & on weekdays in the morning to force focus"
-walli 22 --save
+#walli 22 --save
+# TODO netkeeper
 
 subhighlight "Setup kakoune plugin loader"
 cloneshallow plug.kak robertmeta "${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"

@@ -213,11 +213,11 @@ Version 2019-11-04 2021-02-16"
 
   (map! :map org-mode-map
         :leader
-        "j" 'org-insert-heading
         "\\" 'org-ctrl-c-ctrl-c
         :localleader
         "C" 'org-clock-in
-        "j" 'org-insert-heading
+        "v" 'org-insert-heading
+        "jj" 'org-insert-heading
         "k" 'org-latex-export-to-pdf
         "t" 'org-todo-or-insert
         "n" 'org-add-note

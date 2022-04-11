@@ -12,6 +12,7 @@ case $1 in
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
+	(rails) { rails -H && rails --help; } | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
 	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;
@@ -21,7 +22,7 @@ case $1 in
 	(*) man "$@" ||
 		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
 		if which "$1" >/dev/null
-		then "$@" --help || echo $? == 1 && "$@" -help || echo $? == 1 && "$@" -h 2>&1 | $paginate
+		then "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; } 2>&1 | $paginate
 		fi;;
 esac
 docs="/usr/share/doc/$1"

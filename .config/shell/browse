@@ -52,6 +52,7 @@ cd() {
 }
 
 # LOCATE {{{1
+# TODO no double heading with bat
 alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || { highlight "$f" && b "$f" }; done'
 loci() {
 	locate --all --ignore-case --basename --existing "$@" |
