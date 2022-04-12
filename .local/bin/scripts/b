@@ -123,7 +123,7 @@ done
 # timg: images
 # timga: potentially viewable as image
 if test "$timg"; then
-	# Don't show info on all images for gifs
+	# TODO Don't show info on all images for gifs
 	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
 		$(test $# -gt 1 &&
 		echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
@@ -169,8 +169,11 @@ fi
 
 if test "$ls" -o $# -eq 0; then
 	checkperm .
+	if type exa >/dev/null
+	then exa --long --group --classify --group-directories-first --all --all "${ls[@]:-.}"
 	# Alternative: find -exec ls -dl {} +
-	{ timeout .1s $elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all "${ls[@]:-.}" ||
-		$elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none "${ls[@]:-.}"
-	} | less -RF
+	else { timeout .1s $elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all "${ls[@]:-.}" ||
+			$elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none "${ls[@]:-.}"
+		} | less -RF
+	fi
 fi
