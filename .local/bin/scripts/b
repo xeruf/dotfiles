@@ -46,7 +46,7 @@ prefix=/tmp/b
 mkdir -p "$prefix"
 declare -a timg timga bat batplain ls
 for arg; do
-	case "$arg" in (-*) args="$args $arg"; continue;; esac
+	case "$arg" in (-*) flags="$flags $arg"; continue;; esac
 	checkperm "$arg"
 	if ! $elevate test -e "$arg"
 	then echo "File not found: '$arg'" 1>&2
@@ -138,16 +138,16 @@ if test "$timg"; then
 	fi
 fi
 
+pager="${PAGER:-'less -RF'}"
 # bat: unknown files
 # batplain: files to print without header
 if test "$bat" -o "$batplain"; then
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
-	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$args"
+	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$flags"
 	then cut="--line-range :7"
 		pager="cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)"
-	else pager="less -RF"
 	fi
-	batcommand="$elevate bat $cut $args --pager"
+	batcommand="$elevate bat $cut $flags --pager"
 	batstyle="--style plain$rule"
 	test "$batplain" && $batcommand "$pager" $batstyle "${batplain[@]}"
 	test "$bat" && if test "$cut" && ! $inspect
@@ -167,13 +167,15 @@ if test "$bat" -o "$batplain"; then
 		fi
 fi
 
-if test "$ls" -o $# -eq 0; then
+if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	checkperm .
-	if type exa >/dev/null
-	then exa --long --group --classify --group-directories-first --all --all "${ls[@]:-.}"
 	# Alternative: find -exec ls -dl {} +
-	else { timeout .1s $elevate ls -l $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all "${ls[@]:-.}" ||
-			$elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none "${ls[@]:-.}"
-		} | less -RF
-	fi
+	{
+		timeout .1s sh -c "
+			if which exa 2>/dev/null >&2
+			then exa --color=always --long --group --classify --group-directories-first --all --all $flags '${ls[@]:-.}'
+			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags '${ls[@]:-.}'
+			fi
+		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags "${ls[@]:-.}"
+	} | $pager
 fi
