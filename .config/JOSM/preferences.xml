@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='18303'>
+<preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='18360'>
   <tag key='cache.capabilities1637351842' value='1642183859'/>
   <tag key='cache.motd.html' value='1642183859'/>
   <tag key='cache.motd.html.java' value='11.0.13'/>
@@ -189,7 +189,7 @@
   <maps key='imagery.offsetbookmarks'>
   </maps>
   <tag key='iodb.modify.toolbar' value='false'/>
-  <tag key='josm.version' value='18303'/>
+  <tag key='josm.version' value='18360'/>
   <tag key='lastDirectory' value='/home/janek/data/2-standards/osm'/>
   <tag key='layerlist.lastHeight' value='138'/>
   <tag key='mappaint.renderer-class-name' value='org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer'/>
@@ -254,8 +254,8 @@
   <tag key='osm-server.upload-strategy' value='singlerequest'/>
   <tag key='plugin.continuos_download.max_area' value='0.004'/>
   <tag key='plugin.continuos_download.max_areas' value='2'/>
-  <tag key='pluginmanager.lastupdate' value='1642183857488'/>
-  <tag key='pluginmanager.version' value='18303'/>
+  <tag key='pluginmanager.lastupdate' value='1644644884706'/>
+  <tag key='pluginmanager.version' value='18360'/>
   <tag key='pluginmanager.version-based-update.policy' value='always'/>
   <list key='plugins'>
     <entry value='auto_tools'/>

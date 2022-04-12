@@ -1,5 +1,8 @@
 #!/bin/sh -e
 # Create a commit or stage files via fzf selection
+# If the first arg is "add", files are staged rather than committed.
+# All remaining args are passed to git-commit
+# TODO fix broken prep-commit-msg hook when there is no unifying path
 
 fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain

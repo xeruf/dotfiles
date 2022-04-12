@@ -11,6 +11,7 @@ audio/flac=mpc.desktop;
 audio/mp4=mpc.desktop;
 audio/mpeg=mpc.desktop;
 audio/x-wav=mpc.desktop;
+audio/aac=mpc.desktop;
 image/jpeg=org.kde.showfoto.desktop;
 image/png=org.kde.showfoto.desktop;
 inode/directory=org.kde.dolphin.desktop;vifm.desktop;

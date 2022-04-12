@@ -111,9 +111,11 @@ edshell() {
 
 # Edit a file in the PATH
 edbin() {
-	f="$(which $1 2>/dev/null)" && test -f "$f" && edit "$f" ||
-		edshell -f "$1"; test $? != 2 ||
-		edit "$HOME/.local/bin/scripts/$1"
+	if f="$(which $1 2>/dev/null)" && test -f "$f"
+	then edit "$f"
+	else edshell -f "$1"
+		test $? != 2 || edit "$HOME/.local/bin/scripts/$1"
+	fi
 }
 
 # Task management & time tracking {{{1
