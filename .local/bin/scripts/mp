@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 # [M]edia [P]lay
 # Play given files on mpd, playing external files through symlinking and recursively resolving playlists
 # depends: xargs realpath mpc

@@ -19,10 +19,10 @@ case $1 in
 	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions | paste -s -d' ';;
 	(swaymsg) test $# -gt 1 && man sway "${@:2}" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
-	(*) man "$@" ||
-		{ info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
+	(*) { info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
+		man "$@" ||
 		if which "$1" >/dev/null
-		then "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; } 2>&1 | $paginate
+		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
 		fi;;
 esac
 docs="/usr/share/doc/$1"
