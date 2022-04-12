@@ -4,30 +4,32 @@ test $# -eq 0 && cd "$aurdir" && exec $SHELL
 command=$1
 shift
 url="ssh://aur@aur.archlinux.org/${1:-$(basename $PWD)}.git"
-case $command in
-  (origin)
-    test "$(git rev-parse --git-dir)" = ".git" && git remote set-url origin "$url"
-    git remote -v;;
-  (clone)
-    cd "$aurdir"
-    git -c init.defaultBranch=master clone "$url"
-    cd "$1"
-    test -f PKGBUILD || sed "s/PKG/${1%%-git}/" ../PKGBUILD > PKGBUILD
-    test -f .gitignore || echo '*' > .gitignore
-    exec $SHELL;;
-  (create)
-    git add -f .gitignore PKGBUILD
-    git commit -m "Create package" "$@"
-    git aur push --amend;;
-  (push)
-    updpkgsums
-    makepkg --printsrcinfo > .SRCINFO
-    git add -f .SRCINFO *.install 2>/dev/null || true
-    git commit -v -a "$@"
-    git push;;
-  (clean)
-	  find "$aurdir" -mindepth 2 -maxdepth 2 \( -name "*.tar.gz" -o -type d -not -name ".*" \) \
-		  -print -exec sudo rm -rI {} +;;
-  (*) echo "Unknown command!"; exit 3;;
+case "$command" in
+	(origin)
+		test "$(git rev-parse --git-dir)" = ".git" && git remote set-url origin "$url"
+		git remote -v;;
+	(clone)
+		cd "$aurdir"
+		git -c init.defaultBranch=master clone "$url"
+		cd "$1"
+		test -f PKGBUILD || sed "s/PKG/${1%%-git}/" ../PKGBUILD > PKGBUILD
+		test -f .gitignore || echo '*' > .gitignore
+		exec $SHELL;;
+	(create)
+		git add -f .gitignore PKGBUILD
+		git commit -m "Create package" "$@"
+		git aur push --amend;;
+	(commit)
+		makepkg --printsrcinfo > .SRCINFO
+		git add -f .SRCINFO
+		git commit -v "$@"
+	(push)
+		updpkgsums
+		git add -f *.install 2>/dev/null || true
+		git aur commit -a "$@"
+		git push;;
+	(clean)
+		find "$aurdir" -mindepth 2 -maxdepth 2 \( -iname "*.pkg.tar.*" -o -type d -not -name ".*" \) \
+			-print -exec sudo rm -rI {} +;;
+	(*) echo "Unknown command!"; exit 3;;
 esac
-

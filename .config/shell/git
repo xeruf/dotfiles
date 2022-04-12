@@ -139,7 +139,7 @@ gitcommits() {
     esac
   done
 
-  local stashed="$(git rev-parse --show-toplevel)/.git/stashed-commits"
+  local stashed="$(git rev-parse --git-path stashed-commits)"
   if [ $1 ]; then
     if [ $verbosity -eq 0 ]
       then git rev-list --reverse HEAD...$1 >$stashed
