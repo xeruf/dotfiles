@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: osa_user
+# key: ou
+# condition: t
+# --
+osa_user_(${1:$(downcase yas-text)}, "$1", "${2:FTT}", "$3")

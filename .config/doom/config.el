@@ -65,7 +65,7 @@ Version 2019-11-04 2021-02-16"
 (defun dragon (&optional @file)
   "Share file from current buffer via dragon."
   (interactive)
-  (shell-command (concat "dragon-drag-and-drop -a -x " (or @file buffer-file-name)))
+  (shell-command (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -86,19 +86,17 @@ Version 2019-11-04 2021-02-16"
       "u"       'evil-prev-buffer
       "i"       'evil-next-buffer
       "bq"      'doom/save-and-kill-buffer
-      "d"       'dragon
       "#"       'xah-open-in-external-app
       "njo"     'org-journal-open-current-journal-file
       "Se"      '+snippets/edit
       "SN"      '+snippets/new
       "Sm"      'smerge-mode
       "m;"      'comment-line
-      :desc "Update & Quit" "qu"      (lambda () (interactive) (my/org-roam-update) (save-buffers-kill-terminal))
+      :desc "Dragon current buffer" "d" (lambda () (interactive) (dragon))
+      :desc "Update & Quit"        "qu" (lambda () (interactive) (my/org-roam-update) (save-buffers-kill-terminal))
       :map text-mode-map
       :desc "Markdown to Zulip" "mam" ":%s/\\n\\n<a id=.*<\\/a>\\n\\n//
 :%s/\\n *\\n /\\n /
-:%s/^## \\(.*\\)/**\\1**/
-:%s/^##+ \\(.*\\)/*\\1*/
 :%s/<\\(http[^ ]+\\)>/\\1/
 :%s/    /  /g")
 
@@ -192,8 +190,9 @@ Version 2019-11-04 2021-02-16"
       )
   )
 
+(setq time-stamp-bare "%Y-%m-%d"
+      time-stamp-format (concat "[" time-stamp-bare "]"))
 ;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
-(setq time-stamp-format "[%Y-%m-%d]")
 (use-package! time-stamp
   :init (setq time-stamp-start "modified:[       ]+\\\\?"
               time-stamp-end "$")
@@ -238,7 +237,8 @@ Version 2019-11-04 2021-02-16"
   ; TODO customize org-log-note-headings
 
   ;; Behavior
-  (setq org-read-date-prefer-future nil)
+  (setq org-read-date-prefer-future nil
+        org-extend-today-until 5)
   (defun my/org-attach-id-folder-format (id)
     "Translate any ID into a folder-path."
     (format "%s/%s"
@@ -381,9 +381,11 @@ Version 2019-11-04 2021-02-16"
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
   :init
     (setq org-journal-file-type 'monthly
-          org-journal-file-format "%Y%m%d.org"
+          org-journal-file-format "%Y%m.org"
           org-journal-created-property-timestamp-format time-stamp-format
           org-journal-carryover-delete-empty-journal 'always
+          org-journal-date-format (concat "[" time-stamp-bare " %3a]")
+          org-journal-time-format "%02H "
           )
   :config
     (defvar my/survey-mode-journal--timer nil)
@@ -513,7 +515,6 @@ Version 2019-11-04 2021-02-16"
   )
 (use-package! ox-latex
   :after ox
-  :disabled
   :config
     ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
     (defun org/get-headline-string-element (headline backend info)
