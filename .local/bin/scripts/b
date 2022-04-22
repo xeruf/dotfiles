@@ -87,6 +87,7 @@ for arg; do
 	(*)
 		case "$(file "$arg")" in
 		(*\ ?udio*)
+			# TODO preconvert aac - |*\ ADTS\ *
 			img="$tmpfile.png"
 			case $TERM in (*-kitty) kitty=true; audioheight=2;; (*) audioheight=5;; esac
 			if which audiowaveform 2>/dev/null >&2

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
+# https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences/33206814
 
 print("\\033[XXm")
 
@@ -22,4 +22,3 @@ print("\\033[4m  Underline on")
 print("\\033[24m Underline off")
 print("\\033[1m  Bold on")
 print("\\033[21m Bold off")
-
