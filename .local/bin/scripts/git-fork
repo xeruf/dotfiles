@@ -1,11 +1,14 @@
-#!/bin/sh -e
+#!/bin/bash -e
 # Clones a fork and sets a corresponding upstream
 # ARGS
 # - repo name (omit if setting upstream in existing repo)
 # - upstream user
-# - local user
+# - own user
 # - url
 # - target directory name (and further arguments to clone)
+# In an existing repo, first arg is omitted
+test $# -eq 0 && echo "Usage: $0 [repo] [upstream owner] [own user] [url]" && exit 2
+# TODO check from subdir
 if test -d ".git"
 then repo="$(basename "$PWD")"
 	git remote set-url origin "$(git-repo "${3:-github.com}" "$repo" "$2" "${@:4}")"
