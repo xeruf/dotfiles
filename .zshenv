@@ -2,7 +2,7 @@ export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
 export MUSIC="$DATA/music"
 
 export BORG_REPO="/mnt/backup/borg"
-export BORG_PASSCOMMAND='pass services/borg/backup'
+export BORG_PASSCOMMAND='pass service/devices/borg/backup'
 
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -68,8 +68,8 @@ which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__"
-export DIRS_IGNORE_SAFE="-x .sync -x .stfolder -x .cache -x *Cache -x .pyenv -x .local/cache -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh $DIRS_GENERATED"
-export DIRS_IGNORE="-x *build -x .git -x .idea -x out -x cache -x Partitions $DIRS_IGNORE_SAFE"
+export DIRS_IGNORE_SAFE="-x .sync -x .stfolder -x .cache -x .cpan -x *Cache -x .pyenv -x .local/cache -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows $DIRS_GENERATED"
+export DIRS_IGNORE="-x *build -x .git -x .idea -x out -x *cache -x Partitions $DIRS_IGNORE_SAFE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
