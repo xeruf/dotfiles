@@ -388,6 +388,16 @@ Version 2019-11-04 2021-02-16"
           org-journal-time-format "%02H "
           )
   :config
+    ;; https://emacs.stackexchange.com/questions/17897/create-an-org-journal-template-for-daily-journal-entry/32655#32655
+    (defun pc/new-buffer-p ()
+      (not (file-exists-p (buffer-file-name))))
+    (defun pc/insert-journal-template ()
+      (when (pc/new-buffer-p)
+        (save-excursion
+          (goto-char (point-min))
+          (insert "#+startup: overview noinlineimages\n#+options: \\n:t\n"))))
+    (add-hook 'org-journal-after-entry-create-hook #'pc/insert-journal-template)
+
     (defvar my/survey-mode-journal--timer nil)
     (defvar my/survey-mode-journal--timer-interval 300)
 
@@ -711,6 +721,7 @@ Version 2019-11-04 2021-02-16"
           plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
           org-plantuml-jar-path plantuml-jar-path
           plantuml-java-args '("-Djava.awt.headless=true" "-jar")
+          plantuml-indent-level 4
           )
     (after! org
       (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))

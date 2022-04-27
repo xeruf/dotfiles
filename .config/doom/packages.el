@@ -81,7 +81,7 @@
 
 (unpin! plantuml-mode)
 (package! plantuml-mode
-  :recipe (:host github :repo "a1exsh/plantuml-mode"))
+  :recipe (:host github :repo "xeruf/plantuml-mode"))
 
 (package! twee-mode
   :recipe (:host github :repo "magoyette/twee-mode"))
