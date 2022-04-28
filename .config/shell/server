@@ -1,0 +1,41 @@
+export STACKSPIN="$HOME/stackspin"
+_stackspin_cluster_cache=/var/tmp/stackspin-cluster
+
+# Stackspin CLI Wrapper
+# Initialize once with "stack select example.org",
+# then it loads the last selected one on startup.
+# Presumes a mapping like the following in your ssh config:
+# Host example.org
+#    Hostname [IP]
+stack() {
+	case "$1" in
+	(select) shift
+		export _cluster_name="$1"
+		export _cluster_ip="$(ssh -G "$_cluster_name" | grep --max-count 1 "^hostname " | cut -d " " -f2-)"
+		export CLUSTER_DIR="$STACKSPIN/clusters/$_cluster_name"
+		export KUBECONFIG="$CLUSTER_DIR/kube_config_cluster.yml"
+		echo Selected "$_cluster_name" with IP "$_cluster_ip"
+		echo "$_cluster_name" >"$_stackspin_cluster_cache"
+		;;
+	(sso) shift
+		builtin cd "$STACKSPIN"
+		kubectl exec -n stackspin $(kubectl get pods -A | grep single-sign-on-login | awk '{print $2}') -- flask "$@";;
+	(user)
+		if test "$2" = "init"
+		then mail="$3"
+			shift 3
+			stack user create "$mail"
+			stack user update "$mail" name "$*"
+			echo "Initialized user '$*' with email '$mail'"
+		else kubectl exec -n stackspin $(kubectl get pods -A | grep single-sign-on-login | awk '{print $2}') -- flask "$@"
+		fi;;
+	(*) builtin cd "$STACKSPIN"
+		if test $# -gt 1 -a "$1" = install
+		then shift && "./install/install-$1.sh" || ./install/install-app.sh "$@"
+		else python3 -m stackspin "$_cluster_name" "$@"
+		fi;;
+	esac
+}
+cat "$_stackspin_cluster_cache" 2>/dev/null |
+	while read cluster; do stack select "$cluster"; done
+cd "$HOME/stackspout"
