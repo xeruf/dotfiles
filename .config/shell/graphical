@@ -12,7 +12,7 @@ xo() {
 
 if which jrnl >/dev/null; then
 	alias j='jrnl'
-	jn() { jrnl -to today "$@" | less +G }
+	jn() { jrnl -to today "$@" | less +G; }
 	compdef jn=jrnl
 	alias jnc='jn -contains'
 	alias jne='jrnl --edit'

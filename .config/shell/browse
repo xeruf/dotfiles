@@ -53,7 +53,7 @@ cd() {
 
 # LOCATE {{{1
 # TODO no double heading with bat
-alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || { highlight "$f" && print -s "b $f" && b "$f" }; done'
+alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || { highlight "$f" && print -s "b $f" && b "$f"; }; done';
 loci() {
 	locate --all --ignore-case --basename --existing "$@" |
 		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') |
@@ -87,7 +87,7 @@ locate-zox() {
 }
 # Switch directory heuristically using zoxide and locate
 d() {
-	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return }
+	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return; }
 	local query="$(zoxide-list "$@")"
 	# First find out whether there is an obvious match
 	# (score at least ten times above runner-up and score above 20)

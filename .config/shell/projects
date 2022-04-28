@@ -19,7 +19,7 @@ listprojects() {
 	find $1 -mindepth 1 -maxdepth $_projects_subfolder_level -type d \
 		-path "${1:-.}/*/.git" -exec dirname {} \; -o \
 		-name "_*" -o -name ".*" -prune ||
-			{ test $# -eq 0 && listprojects $PROJECTS }
+			{ test $# -eq 0 && listprojects $PROJECTS; }
 }
 
 # Underline the project names
@@ -75,7 +75,8 @@ projects() {
 		listprojects $all | while read d; do
 			builtin cd $d
 			if [[ $com != gradle* ]] || (( $(f1 -name "*gradle*" | wc -l) > 0 )); then
-				local st=()
+				#local st=()
+				declare -a st
 				local ahead=$(command git rev-list "${branch_name}"@{upstream}..HEAD 2>/dev/null | wc -l)
 				test $ahead -gt 0 && st+=("ahead $ahead")
 				local behind=$(command git rev-list HEAD.."${branch_name}"@{upstream} 2>/dev/null | wc -l)
@@ -90,3 +91,4 @@ projects() {
 	esac
 	builtin cd $PROJECTS
 }
+
