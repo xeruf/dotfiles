@@ -1,0 +1,36 @@
+#!/bin/sh -e
+# The git [c]ommit st[ash]
+# Given a committish, this command saves a list of commits between the HEAD and the given committish into the .git directory.
+# Without parameters it applies the saved list of commits onto the current HEAD.
+# NOTE: You should prefer rebase -i to this brewery.
+local verbosity=1
+while test $# -gt 0; do
+  case $1 in
+    (-v) verbosity=2; shift 1;;
+    (-q|--quiet) verbosity=0; shift 1;;
+    (--theirs) local params=(-X theirs); shift 1;;
+    (*) break;;
+  esac
+done
+
+local stashed="$(git rev-parse --git-path stashed-commits)"
+if [ $1 ]; then
+  if [ $verbosity -eq 0 ]
+    then git rev-list --reverse "HEAD...$1" >$stashed
+    else git rev-list --reverse "HEAD...$1" | tee $stashed
+  fi
+else
+  local aborted
+  for commit in $(cat $stashed); do
+    [ $aborted ] && rest+=($commit) && continue
+    [ $verbosity -gt 0 ] && git --no-pager log --oneline -1 $commit
+    git-withdate $commit cherry-pick $commit ${params:0} >/dev/null
+    local last=$?
+    [ $last -gt 0 ] && local aborted=true && typeset -a rest && continue
+    [ $verbosity -gt 0 ] && echo -e "\e[1A$(git log --color=always --pretty=format:"%C(yellow)$(git rev-parse --short 'HEAD^^')%C(bold) -> %Creset%C(yellow)%h%Creset %s" -1)"
+    [ $verbosity -gt 1 ] && git status -s
+  done
+  echo $rest >$stashed
+  [ $aborted ] && echo "A problem was encountered. Fix it and run '$0' again to apply the remaining ${#rest} commits."
+fi
+

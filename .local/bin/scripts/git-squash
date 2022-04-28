@@ -1,0 +1,33 @@
+#!/bin/sh -e
+# Takes two committishs and squashes them with all commits inbetween into a single commit.
+# This will rewrite the full history from then on, but should not create any conflicts.
+# NOTE: You should prefer rebase -i to this brewery.
+local -a options
+while [ $# -gt 0 ]; do
+  case $1 in
+    -i) local ignore=true; shift 1;;
+    -f|--force) local force=true; shift 1;;
+    -*) options+=($1); exit 1;;
+    *) break;;
+  esac
+done
+
+test $# != 2 && echo "Usage: [options] <startcommit> <endcommit>" && return 1
+[[ -n $(git status -s) ]] && [ ! $force ] && echo -e "Tree is dirty, commit or stash your changes first!\nIf you want to execute the command regardless, run again with --force" && return 1
+
+local 1=$(git rev-parse $1)
+local 2=$(git rev-parse $2)
+[ $(git rev-list $1 --count) -lt $(git rev-list $2 --count) ] && t=$1 && 1=$2 && 2=$t
+
+git-cash -q $1
+git reset --hard $1
+if [ $(git rev-list $2 --count) = 1 ]; then
+  git update-ref -d HEAD
+  git add .
+  git-withdate $1 commit -c $1
+else
+  git reset -q $2
+  git add .
+  git commit --amend
+fi
+git-cash

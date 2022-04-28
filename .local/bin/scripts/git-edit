@@ -1,0 +1,11 @@
+#!/bin/sh -e
+# Takes all changes in the current working tree and amends them to the given commit.
+# NOTE: You should prefer rebase -i to this brewery.
+# The only potential advantage is the preservation of commit time,
+# but that is a questionable ambition...
+git stash push
+git-cash -q "$1"
+git reset --keep "$1"
+git stash pop
+git-withdate "$1" commit --all --amend "${@:2}"
+git-cash
