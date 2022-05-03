@@ -4,7 +4,7 @@ if test "$ZSH_NAME" = "zsh"
 then
 	alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
 	alias -g G="| grp"
-	alias -g X="| xargs -d '\n'"
+	alias -g X="| xargs -d '\n' -L 1"
 	alias -g X1="| xargs -d '\n' -n 1"
 	alias -g XC="| xclip -selection clipboard"
 	alias -g L="--color=always | ${PAGER:-less}"

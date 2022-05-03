@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 # Use grep and sed to replace $1 with $2 recursively and print what is done
 grep --null --recursive --files-with-matches \
   --binary-files=without-match "--exclude-dir={$DIRS_IGNORE}" "$1" "${@:3}" |
