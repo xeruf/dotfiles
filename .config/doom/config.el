@@ -245,7 +245,7 @@ Version 2019-11-04 2021-02-16"
             (substring id 0 2)
             (if (> (seq-length id) 2) (substring id 2) id))
     )
-  (setq org-attach-id-dir (expand-file-name "3-resources/attach" user-data-dir)
+  (setq org-attach-id-dir (expand-file-name "attach" (xdg-user-dir "DOCUMENTS"))
         org-attach-method 'mv
         org-attach-preferred-new-method nil
         org-attach-id-to-path-function-list '(my/org-attach-id-folder-format)
@@ -790,7 +790,7 @@ Version 2019-11-04 2021-02-16"
   :defer t
   :init
     (setq magit-clone-set-remote.pushDefault 't
-          magit-clone-default-directory (expand-file-name "4-incubator/dev" user-data-dir))
+          magit-clone-default-directory (expand-file-name "1-projects" user-data-dir))
     (setq magit-clone-name-alist
       '(("\\`\\(?:github:\\|gh:\\)?\\([^:]+\\)\\'" "github.com" "user.name")
         ("\\`\\(?:gitlab:\\|gl:\\)\\([^:]+\\)\\'" "gitlab.com" "user.name")

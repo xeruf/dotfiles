@@ -5,7 +5,7 @@
 (setq user-full-name "Janek"
       user-mail-address "27jf@pm.me")
 
-(let ((box (expand-file-name "2-standards/box/" user-data-dir)))
+(let ((box (expand-file-name "2-box/" user-data-dir)))
   (if (file-exists-p box)
       (setq org-directory box
             org-roam-directory org-directory
@@ -23,6 +23,6 @@
   :config
     (add-to-list 'recentf-exclude "writing\\/tug")
     (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (add-to-list 'recentf-list (expand-file-name "4-incubator/downloads/" user-data-dir))
+    (add-to-list 'recentf-list (expand-file-name "5-incubator/downloads/" user-data-dir))
     (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
   )
