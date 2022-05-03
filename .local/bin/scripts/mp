@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # [M]edia [P]lay
 # Play given files on mpd, playing external files through symlinking and recursively resolving playlists
 # depends: xargs realpath mpc
@@ -11,9 +11,10 @@ then shift
 	test "$1" = "-v" && verbose=-v && set -x && shift
 	# TODO this is sooo slow...
 	for arg
-	do filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$(basename -- "$arg")*" -exec realpath {} + ||
-		find "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
-			-name "$(basename -- "$arg")*" -exec realpath {} +; } 2>/dev/null)"
+	do
+		filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$(basename -- "$arg")*" -exec realpath {} + ||
+			find "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
+				-name "$(basename -- "$arg")*" -exec realpath {} +; } 2>/dev/null)"
 		test -n "$verbose" && echo "Scanning path '$filepath' $(
 			test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
 		test $(printf "$filepath" | wc -l) -gt 0 && printf "$filepath" | xargs --delim='\n' "$0" -r $verbose && continue

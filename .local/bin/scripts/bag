@@ -18,4 +18,4 @@ ${run:-sudo --preserve-env=BORG_REPO BORG_PASSPHRASE="$($BORG_PASSCOMMAND)" borg
   $(echo $DIRS_IGNORE_SAFE -x 'software-challenge/**/build' -x state/emacs -x state/go -x .local/lib -x .cpan -x *cache |
     sed 's|-x \([^ ]\+\)|-e sh:**/\1|g') \
   "$name" $(test $# -eq 0 && echo etc home root || test $# -eq 1 && echo $1) "${@:2}"  2>&1
-sudo chown -R $USER:$USER "$BORG_REPO"
+test -n "$run" || sudo chown -R $USER:$USER "$BORG_REPO"
