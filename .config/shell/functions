@@ -104,7 +104,7 @@ edshell() {
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
 	test -f "$file" && checksum="$(md5sum "$file")"
-	$EDITOR "$(test "$line" && echo "+normal! ${line}ggzx" || echo "--")" "${file%:*}"
+	$EDITOR "$(test "$line" && case "$EDITOR" in (nvim) echo "+normal! ${line}ggzx";; (*vi*) echo "+$line";; esac || echo "--")" "${file%:*}"
 	test -s "$file" || return 1
 	test "$checksum" != "$(md5sum $file)" && rs
 }
@@ -220,12 +220,13 @@ u() {
 alias dns="drill any @8.8.8.8 -Q"
 alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
 sshl() {
+	test "$1" = "-a" && shift && local all=true
 	lemonade server -allow 127.0.0.1 &
-	local authcache
-	authcache="/var/tmp/ssh-keys"
+	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
 	file="$authcache/$1"
 	if test ! -e "$file"; then
+		test "$all" && pass scp ~/.bash_aliases "$@:"
 		if ! ssh -G "$1" | grep --silent "^user root$" && touch "$file"; then
 		ssh-copy-id -i "$(ssh -G "$1" | grep --max-count 1 "^identityfile " | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
 		TERM=xterm-256color kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
