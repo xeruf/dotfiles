@@ -19,7 +19,9 @@ stack() {
 		;;
 	(sso) shift
 		builtin cd "$STACKSPIN"
-		kubectl exec -n stackspin $(kubectl get pods -A | grep single-sign-on-login | awk '{print $2}') -- flask "$@";;
+		 -- flask "$@";;
+		kubectl exec -n stackspin-apps nc-nextcloud-56bc649d78-q7snw -it -- su www-data -s /bin/bash -c "php occ fi
+les:scan --all"
 	(user)
 		if test "$2" = "init"
 		then mail="$3"
@@ -27,8 +29,11 @@ stack() {
 			stack user create "$mail"
 			stack user update "$mail" name "$*"
 			echo "Initialized user '$*' with email '$mail'"
-		else kubectl exec -n stackspin $(kubectl get pods -A | grep single-sign-on-login | awk '{print $2}') -- flask "$@"
+		else "$0" pod single-sign-on -- flask "$@"
 		fi;;
+	(pod) shift
+		kubectl exec -n stackspin \
+			$(kubectl get pods -A | grep "$1-" | awk '{print $2}');;
 	(*) builtin cd "$STACKSPIN"
 		if test $# -gt 1 -a "$1" = install
 		then shift && "./install/install-$1.sh" || ./install/install-app.sh "$@"

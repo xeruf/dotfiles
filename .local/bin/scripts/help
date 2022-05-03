@@ -10,7 +10,7 @@ case $1 in
 		# need to install zsh-doc package for info pages
 		info --vi-keys $(test "$last" != zsh && echo "--index-search=$last") zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
-	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z) unbuffer "$@" --help | $paginate;;
+	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
 	(rails) { rails -H && rails --help; } | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;

@@ -1,7 +1,6 @@
-#!/bin/sh
+#!/bin/sh -e
 # Clones from resolving the arguments and switches into the new directory
 # ARGS see git-repo
-set -e
 remote=$(git-repo "$@")
 echo "Cloning $remote"
 git clone $remote ${@:4} --recurse-submodules

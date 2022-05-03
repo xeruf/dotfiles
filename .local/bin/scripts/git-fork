@@ -4,7 +4,7 @@
 # - repo name (omit if setting upstream in existing repo)
 # - upstream user
 # - own user
-# - url
+# - host
 # - target directory name (and further arguments to clone)
 # In an existing repo, first arg is omitted
 test $# -eq 0 && echo "Usage: $0 [repo] [upstream owner] [own user] [url]" && exit 2
