@@ -388,6 +388,7 @@ Version 2019-11-04 2021-02-16"
           org-journal-time-format "%02H "
           )
   :config
+
     ;; https://emacs.stackexchange.com/questions/17897/create-an-org-journal-template-for-daily-journal-entry/32655#32655
     (defun pc/new-buffer-p ()
       (not (file-exists-p (buffer-file-name))))
@@ -395,7 +396,7 @@ Version 2019-11-04 2021-02-16"
       (when (pc/new-buffer-p)
         (save-excursion
           (goto-char (point-min))
-          (insert "#+startup: overview noinlineimages\n#+options: \\n:t\n"))))
+          (insert (concat ":properties:\n:id:       " (file-name-base buffer-file-name) "\n:end:\n#+startup: overview noinlineimages\n#+options: \\n:t\n")))))
     (add-hook 'org-journal-after-entry-create-hook #'pc/insert-journal-template)
 
     (defvar my/survey-mode-journal--timer nil)
