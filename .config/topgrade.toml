@@ -64,7 +64,7 @@ arguments = "--rebase --autostash"
 
 [linux]
 # Arguments to pass yay when updating packages
-yay_arguments = "--nodiffmenu"
+yay_arguments = "--nodiffmenu --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"

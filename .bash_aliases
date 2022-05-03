@@ -6,6 +6,9 @@ if test -f /etc/bash_completion && ! shopt -oq posix
 then . /etc/bash_completion
 fi
 
+alias scr="sudo systemctl reload-or-restart"
+difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
+
 # ls aliases
 
 export LS_OPTIONS='--human-readable --si --group-directories-first --file-type --dereference-command-line'
@@ -14,9 +17,7 @@ alias ls='ls --color=auto'
 alias ll='ls $LS_OPTIONS -l --all'
 alias l='ls $LS_OPTIONS --color=always --almost-all'
 which bat >/dev/null || alias bat="$(which batcat >/dev/null && echo batcat || echo less -FX)"
-b() {
-	test -d "${1:-.}" && l "$@" || bat "$@"
-}
+b() { test -d "${1:-.}" && l "$@" || bat "$@"; }
 alias v="$(which nvim >/dev/null && echo nvim || echo ${EDITOR:-vi})"
 
 # Grep aliases

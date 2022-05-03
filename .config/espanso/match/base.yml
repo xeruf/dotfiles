@@ -138,6 +138,21 @@ matches:
         type: shell
         params:
           cmd: pass info/signature
+  - trigger: ":sigo"
+    replace: |-
+      #+ATTR_ORG: :width 200
+      #+ATTR_LATEX: :width 4cm :center nil
+      [[file:{{signature}}]] \\
+      {{name}}
+    vars:
+      - name: signature
+        type: match
+        params:
+          trigger: ":sign"
+      - name: name
+        type: match
+        params:
+          trigger: ":a0"
   - trigger: ":iban"
     replace: "{{output}}"
     vars:
