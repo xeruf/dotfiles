@@ -189,7 +189,7 @@ map U unselect
 # Movement
 map gtr cd ~/.local/share/Trash/files
 
-map gd cd $DATA/4-incubator/downloads
+#map gd cd $DATA/4-incubator/downloads
 map gc cd ~/.config
 map gl cd ~/.local
 map gE cd /etc

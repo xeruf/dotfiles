@@ -1,5 +1,5 @@
 export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
-export MUSIC="$DATA/music"
+export MUSIC="$DATA/4-media/music"
 
 export BORG_REPO="/mnt/backup/borg"
 export BORG_PASSCOMMAND='pass service/devices/borg/backup'
@@ -10,7 +10,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
-	echo "$DATA/2-standards/box/journal")"
+	echo "$DATA/2-box/journal")"
 export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin"
  # adjust programs to use xdg
 export MNT=/run/media/$USER

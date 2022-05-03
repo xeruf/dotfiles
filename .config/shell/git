@@ -19,10 +19,10 @@ gcn() {
     if test $# -eq 0 || test -e "$1"
     then
       fulldir="$(realpath ${1:-$PWD})"
-      dir="${fulldir#$root/*/}"
+      dir="${fulldir#$root/?-}"
     else
       dir="box/$1"
-      fulldir="$root/2-standards/$dir"
+      fulldir="$root/2-$dir"
     fi
   else
       fulldir="$(realpath ${1:-$PWD})"
