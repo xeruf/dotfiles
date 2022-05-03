@@ -86,7 +86,7 @@ pathadd() {
 
 # ZSH completion and stuff {{{1
 alias rs="reset && source $HOME/.zshenv && exec $SHELL"
-alias hist='print -z $(history | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
+alias hist='print -z $(history | grep -v "killm " | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
 # Edit shell config files
 # Exit code 1 - no change, 2 - file not found
