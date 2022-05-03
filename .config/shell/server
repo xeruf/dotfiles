@@ -9,19 +9,19 @@ _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 #    Hostname [IP]
 stack() {
 	case "$1" in
+	# stackspin administration
 	(select) shift
 		export _cluster_name="$1"
 		export _cluster_ip="$(ssh -G "$_cluster_name" | grep --max-count 1 "^hostname " | cut -d " " -f2-)"
 		export CLUSTER_DIR="$STACKSPIN/clusters/$_cluster_name"
 		export KUBECONFIG="$CLUSTER_DIR/kube_config_cluster.yml"
+		export GITLAB_CI="true"
 		echo Selected "$_cluster_name" with IP "$_cluster_ip"
 		echo "$_cluster_name" >"$_stackspin_cluster_cache"
 		;;
 	(sso) shift
 		builtin cd "$STACKSPIN"
-		 -- flask "$@";;
-		kubectl exec -n stackspin-apps nc-nextcloud-56bc649d78-q7snw -it -- su www-data -s /bin/bash -c "php occ fi
-les:scan --all"
+		"$0" exec single-sign-on-login -- flask "$@";;
 	(user)
 		if test "$2" = "init"
 		then mail="$3"
@@ -29,11 +29,15 @@ les:scan --all"
 			stack user create "$mail"
 			stack user update "$mail" name "$*"
 			echo "Initialized user '$*' with email '$mail'"
-		else "$0" pod single-sign-on -- flask "$@"
+		else "$0" exec single-sign-on-login -- flask "$@"
 		fi;;
+	# app clis via kubectl
+	(occ) "$0" exec nc-nextcloud -it -- su www-data -s /bin/bash -c "php $*";;
+	(exec) shift
+		kubectl exec -n $("$0" pod "$1") "${@:2}";;
 	(pod) shift
-		kubectl exec -n stackspin \
-			$(kubectl get pods -A | grep "$1-" | awk '{print $2}');;
+		kubectl get pods --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "${@:2}" | grep --color=never "$1";;
+	# stackspin bare
 	(*) builtin cd "$STACKSPIN"
 		if test $# -gt 1 -a "$1" = install
 		then shift && "./install/install-$1.sh" || ./install/install-app.sh "$@"
@@ -43,4 +47,5 @@ les:scan --all"
 }
 cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
+
 cd "$HOME/stackspout"
