@@ -24,3 +24,12 @@ matches:
         type: shell
         params:
           cmd: "curl 'https://api.ipify.org'"
+  # Data
+  - trigger: ":bic"
+    replace: "BYLADEM1001"
+  - trigger: ":dkb"
+    replace: "Deutsche Kreditbank"
+  # Phrases
+  - trigger: ":ek"
+    replace: "passt :) schauen sie auch gerne noch die anderen Sachen an, wir sortieren grad einiges aus ;)"
+

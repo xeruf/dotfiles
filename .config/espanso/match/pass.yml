@@ -1,5 +1,6 @@
 # Sensitive data through pass
 matches:
+  # {{{1 EMAILS
   - trigger: ":ep"
     replace: "{{output}}"
     vars:
@@ -28,6 +29,8 @@ matches:
         type: shell
         params:
           cmd: pass info/email/aur
+  # {{{1 ADDRESS
+  # Postal name
   - trigger: ":a0"
     replace: "{{output}}"
     vars:
@@ -35,6 +38,7 @@ matches:
         type: shell
         params:
           cmd: pass info/address | head -1
+  # Street Address
   - trigger: ":a1"
     replace: "{{output}}"
     vars:
@@ -42,6 +46,7 @@ matches:
         type: shell
         params:
           cmd: pass info/address | head -2 | tail -1
+  # Street
   - trigger: ":as"
     replace: "{{output}}"
     vars:
@@ -49,6 +54,7 @@ matches:
         type: shell
         params:
           cmd: "pass info/address | head -2 | tail -1 | cut -d' ' -f1"
+  # PLZ + City
   - trigger: ":a2"
     replace: "{{output}}"
     vars:
@@ -56,6 +62,7 @@ matches:
         type: shell
         params:
           cmd: pass info/address | tail -1
+  # PLZ
   - trigger: ":ap"
     replace: "{{output}}"
     vars:
@@ -63,6 +70,7 @@ matches:
         type: shell
         params:
           cmd: "pass info/address | tail -1 | cut -d' ' -f1"
+  # City
   - trigger: ":ac"
     replace: "{{output}}"
     vars:
@@ -91,6 +99,7 @@ matches:
         type: shell
         params:
           cmd: pass info/address
+  # {{{1 NUMBERS
   - trigger: ":tax"
     replace: "{{output}}"
     vars:
@@ -119,6 +128,7 @@ matches:
         type: shell
         params:
           cmd: pass info/banking/dkb | head -1
+  # {{{1 EXTRAS
   - trigger: ":sigo"
     replace: |-
       #+ATTR_ORG: :width 200
