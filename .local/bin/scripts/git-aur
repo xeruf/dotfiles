@@ -22,7 +22,7 @@ case "$command" in
 	(commit)
 		makepkg --printsrcinfo > .SRCINFO
 		git add -f .SRCINFO
-		git commit -v "$@"
+		git commit -v "$@";;
 	(push)
 		updpkgsums
 		git add -f *.install 2>/dev/null || true

@@ -10,7 +10,7 @@ fzfpipe() {
 	# and return a newline-separated list of selected files
 	cut -z -c2- |
 		git fzf-diff --read0 -d' ' --nth=2.. --bind="alt-enter:execute($EDITOR '$(git rev-parse --show-toplevel)/{2..}')" \
-			--preview="test {1} != \? && git diff --color HEAD -U5 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
+			--preview="test {1} != \? && git diff --color HEAD --unified=4 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
 		cut -c3-
 }
 

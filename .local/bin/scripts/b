@@ -85,7 +85,7 @@ for arg; do
 		test -L "$arg" || continue
 		;;
 	(*)
-		case "$(file "$arg")" in
+		case "$(file --dereference "$arg")" in
 		(*\ ?udio*)
 			# TODO preconvert aac - |*\ ADTS\ *
 			img="$tmpfile.png"
@@ -112,6 +112,7 @@ for arg; do
 			esac; fi
 			;;
 		(*:\ *database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
+		(*:\ data) ;;
 		(*) bat+=("$arg")
 			timga+=("$arg")
 			continue;;
@@ -172,11 +173,12 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	checkperm .
 	# Alternative: find -exec ls -dl {} +
 	{
+		# TODO don't use * for ls array as spaces go awry
 		timeout .1s sh -c "
 			if which exa 2>/dev/null >&2
-			then exa --color=always --long --group --classify --group-directories-first --all --all $flags '${ls[@]:-.}'
-			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags '${ls[@]:-.}'
+			then exa --color=always --long --group --classify --group-directories-first --all --all $flags ${ls[*]:-.}
+			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags ${ls[*]:-.}
 			fi
 		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags "${ls[@]:-.}"
-	} | $pager
+	} | $pager --quit-if-one-screen
 fi

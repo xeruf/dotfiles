@@ -13,7 +13,7 @@ sig=$tmp_base/signature_offset.pdf
 result="${1%.pdf}_${5:-signed}.pdf"
 
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
-    --offset "${2:-0}pt ${3:-0}pt" --scale "${4:-1}"
+    --offset "${2:--160}pt ${3:--310}pt" --scale "${4:-1}"
 pdfjam $quiet "$1" last "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
 
 timg "$tmp_signed"
