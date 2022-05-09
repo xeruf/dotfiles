@@ -52,9 +52,9 @@ for arg; do
 	then echo "File not found: '$arg'" 1>&2
 		continue
 	fi
-	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
-	# TODO reduce grid when many PDFs
+	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \)) # TODO reduce grid when many PDFs
 	tmpfile="$prefix/$(basename "$arg")"
+	mkdir -p "$prefix"
 	case "$mime" in
 	(*\ application/pdf\;*)
 		echo Converting "$arg"
@@ -75,7 +75,7 @@ for arg; do
 	(*\ video/*)
 		suffix=_thumbs.jpg
 		mtn -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
-			-O $prefix -o $suffix "$arg" 2>/dev/null
+			-O "$prefix" -o "$suffix" "$arg" 2>/dev/null
 		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)
@@ -147,24 +147,28 @@ if test "$bat" -o "$batplain"; then
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
 	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$flags"
 	then cut="--line-range :7"
-		pager="cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)"
+		batpager="cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)"
 	fi
 	batcommand="$elevate bat $cut $flags --pager"
 	batstyle="--style plain$rule"
-	test "$batplain" && $batcommand "$pager" $batstyle "${batplain[@]}"
+	test "$batplain" && $batcommand "${batpager:-$pager}" $batstyle "${batplain[@]}"
 	test "$bat" && if test "$cut" && ! $inspect
 		then case $TERM in (*kitty)
 				declare -a timgtxt
-				for file in "${bat[@]}"; do cp "$file" "$prefix/$file.txt"; timgtxt+=("$prefix/$file.txt"); done
+				for file in "${bat[@]}"
+				do txt="$prefix/$(basename "$file").txt"
+					cp "$file" "$txt"
+					timgtxt+=("$txt")
+				done
 				timg -V --grid="$(expr 4 \& ${#bat[@]} \> 5 \| ${#bat[@]})" --title="%b" --frames=3 "${timgtxt[@]}"
 				#fileinfo "${bat[@]}"
 				;;
 			(*) for file in "${bat[@]}"; do
-					$batcommand "$pager" $batstyle "$file"
+					$batcommand "${batpager:-$pager}" $batstyle "$file"
 					fileinfo "$file"
 				done;;
 			esac
-		else $inspect || $batcommand "$pager" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
+		else $inspect || $batcommand "${batpager:-$pager}" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
 			test $# -lt $(expr $(tput lines) / 3) && fileinfo "${bat[@]}"
 		fi
 fi
@@ -174,7 +178,7 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	# Alternative: find -exec ls -dl {} +
 	{
 		# TODO don't use * for ls array as spaces go awry
-		timeout .1s sh -c "
+		timeout .6s sh -c "
 			if which exa 2>/dev/null >&2
 			then exa --color=always --long --group --classify --group-directories-first --all --all $flags ${ls[*]:-.}
 			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags ${ls[*]:-.}
