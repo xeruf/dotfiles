@@ -11,7 +11,7 @@ case $1 in
 		info --vi-keys $(test "$last" != zsh && echo "--index-search=$last") zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl) unbuffer "$@" --help | $paginate;;
-	(caddy|stretchly|go) "$1" help "${@:2}" | $paginate;;
+	(caddy|stretchly|go|fossil) "$1" help "${@:2}" | $paginate;;
 	(rails) { rails -H && rails --help; } | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;

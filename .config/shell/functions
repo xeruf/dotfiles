@@ -8,6 +8,7 @@ then
 	alias -g X1="| xargs -d '\n' -n 1"
 	alias -g XC="| xclip -selection clipboard"
 	alias -g L="--color=always | ${PAGER:-less}"
+	alias -g T=" | tree --color --fromfile . | less -F"
 
 	# Edit zsh completion
 	edcomp() {
@@ -218,7 +219,10 @@ u() {
 }
 
 # Networking
-alias dns="drill any @8.8.8.8 -Q"
+dns() {
+	drill A @8.8.8.8 -Q "$@"
+	drill AAAA @8.8.8.8 -Q "$@"
+}
 alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
 sshl() {
 	test "$1" = "-a" && shift && local all=true
@@ -251,6 +255,8 @@ p() { pass "$@" || pass edit "$@"; }
 alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
 alias mdo="pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org-auto_identifiers --wrap preserve"
 alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
+
+alias f="fossil"
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
@@ -343,13 +349,15 @@ killJava() {
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 
 if which fd >/dev/null
-then alias f="noglob fn --color=always "
-	fn() { $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
-	compdef f=fd
+then fn() { $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; } # [F]ind [n]o ignore
+	alias ff="noglob fn --color=always " # [F]ind [F]ile
+	compdef ff=fd
 	compdef fn=fd
 else
-	alias f='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
+	alias ff='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 	alias f1='find -mindepth 1 -maxdepth 1'
+	compdef ff=find
+	compdef f1=find
 fi
 
 lowercase_transliterate="y/A-Z /a-z-/"
