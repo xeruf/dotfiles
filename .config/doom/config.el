@@ -430,8 +430,8 @@ Version 2019-11-04 2021-02-16"
     (require 'org-roam-protocol)
 
     (setq org-roam-db-update-on-save nil
-          org-roam-extract-new-file-path "${slug}.org")
-          ;+org-roam-open-buffer-on-find-file nil)
+          org-roam-extract-new-file-path "${slug}.org"
+          +org-roam-auto-backlinks-buffer t)
     (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
     (setq my/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))

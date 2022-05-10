@@ -8,7 +8,7 @@ then
 	alias -g X1="| xargs -d '\n' -n 1"
 	alias -g XC="| xclip -selection clipboard"
 	alias -g L="--color=always | ${PAGER:-less}"
-	alias -g T=" | tree --color --fromfile . | less -F"
+	alias -g T=" | tree -C --fromfile . | less -F"
 
 	# Edit zsh completion
 	edcomp() {
@@ -213,9 +213,13 @@ u() {
 	which pacman-mirrors >/dev/null &&
 		sudo pacman-mirrors --geoip &&
 		sudo pacman -Syy
-	topgrade &&
-	topgrade --only emacs --yes
-	# TODO autodetect failure in emacs and rebuild completely
+	if which topgrade >/dev/null
+	then
+	  topgrade &&
+	  topgrade --only emacs --yes
+	  # TODO autodetect failure in emacs and rebuild completely
+	else yadm l && sudo apt update && sudo apt upgrade
+	fi
 }
 
 # Networking
