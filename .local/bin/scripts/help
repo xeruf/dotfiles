@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # open info-page, man-page or command help
 # depends: unbuffer
 # optdepends: highlight(dotfiles)

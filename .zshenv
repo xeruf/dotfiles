@@ -11,7 +11,6 @@ export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
-export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin"
  # adjust programs to use xdg
 export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
@@ -50,7 +49,6 @@ export GRADLE_USER_HOME="$XDG_STATE_HOME"/gradle
 export ANDROID_PREFS_ROOT="$XDG_CONFIG_HOME"/android
 export ANDROID_EMULATOR_HOME="$XDG_STATE_HOME"/android/emulator
 export ANDROID_SDK_ROOT="/opt/android-sdk"
-export PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
  # taskwarrior & timewarrior
 export TIMEWARRIORDB="$XDG_DATA_HOME"/timewarrior
 export TASKRC="$XDG_CONFIG_HOME"/task/taskrc
@@ -64,6 +62,7 @@ export CONFIG_SHELLS="$XDG_CONFIG_HOME"/shell
 mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
+export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
 which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
