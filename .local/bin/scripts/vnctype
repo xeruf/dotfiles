@@ -1,0 +1,6 @@
+#!/bin/sh -e
+# Type in NoVNC with german layout
+xdotool search --onlyvisible --classname Navigator windowactivate
+#setxkbmap de
+xdotool type --clearmodifiers "$@"
+#update-keyboard-layout >/dev/null
