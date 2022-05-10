@@ -15,7 +15,8 @@ stack() {
 		export _cluster_ip="$(ssh -G "$_cluster_name" | grep --max-count 1 "^hostname " | cut -d " " -f2-)"
 		export CLUSTER_DIR="$STACKSPIN/clusters/$_cluster_name"
 		export KUBECONFIG="$CLUSTER_DIR/kube_config_cluster.yml"
-		export GITLAB_CI="true"
+		# Uncomment the line below to always use the main stackspin repo, even when running in a fork.
+		#export GITLAB_CI="true"
 		echo Selected "$_cluster_name" with IP "$_cluster_ip"
 		echo "$_cluster_name" >"$_stackspin_cluster_cache"
 		;;
@@ -47,5 +48,3 @@ stack() {
 }
 cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
-
-cd "$HOME/stackspout"
