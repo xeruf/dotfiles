@@ -1,5 +1,5 @@
 #!/bin/sh -e
-aurdir="$DATA/2-standards/dev/aur"
+aurdir="$DATA/1-projects/aur"
 test $# -eq 0 && cd "$aurdir" && exec $SHELL
 command=$1
 shift

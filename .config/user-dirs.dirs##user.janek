@@ -7,7 +7,7 @@
 #
 XDG_DESKTOP_DIR="$HOME/.local/desktop"
 XDG_TEMPLATES_DIR="$HOME/.local/templates"
-XDG_DOWNLOAD_DIR="$HOME/data/5-incubator/downloads"
+XDG_DOWNLOAD_DIR="$HOME/data/5-incubator"
 XDG_MUSIC_DIR="$HOME/data/4-media/music"
 XDG_PICTURES_DIR="$HOME/data/4-media/images"
 XDG_VIDEOS_DIR="$HOME/data/4-media/videos"
