@@ -49,7 +49,10 @@ for arg; do
 	case "$arg" in (-*) flags="$flags $arg"; continue;; esac
 	checkperm "$arg"
 	if ! $elevate test -e "$arg"
-	then echo "File not found: '$arg'" 1>&2
+	then if test -h "$arg"
+		then fileinfo "$arg"
+		else echo "File not found: '$arg'" 1>&2
+		fi
 		continue
 	fi
 	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \)) # TODO reduce grid when many PDFs

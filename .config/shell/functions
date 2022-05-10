@@ -35,7 +35,8 @@ if test -d "$DATA"; then
 	d2=$(builtin cd $DATA/2* && pwd)
 	d3=$(builtin cd $DATA/3* && pwd)
 	d4=$(builtin cd $DATA/4* && pwd)
-	dd="$d4/downloads"
+	d5=$(builtin cd $DATA/5* && pwd)
+	dd="$d5/downloads"
 fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps

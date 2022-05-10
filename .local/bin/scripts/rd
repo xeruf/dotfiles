@@ -11,7 +11,7 @@ do
 			read answer
 			test "$answer" = "y" &&
 				$elevate rm -rf "$f" &&
-				exit
+				continue
 		fi
 
 		$elevate find "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 4) -type d -empty -name .stfolder -exec rm -div {} \;
