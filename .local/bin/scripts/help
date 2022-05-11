@@ -1,37 +1,39 @@
-#!/bin/bash
+#!/bin/sh
 # open info-page, man-page or command help
 # depends: unbuffer
 # optdepends: highlight(dotfiles)
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
-case $1 in
+cmd="$1"
+case "$cmd" in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done
 		# need to install zsh-doc package for info pages
 		info --vi-keys $(test "$last" != zsh && echo "--index-search=$last") zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr) unbuffer "$@" --help | $paginate;;
-	(caddy|stretchly|go|fossil) test $1 = "fossil" -a $# -eq 1 && fossil ui "$(locate -l 1 fossil*.fossil)" && break;
-		"$1" help "${@:2}" | $paginate;;
+	(caddy|stretchly|go|fossil) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && { fossil ui "$repo" & exit; }
+		shift
+		"$cmd" help "$@" | $paginate;;
 	(rails) { rails -H && rails --help; } | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
-	(vlc) unbuffer vlc --full-help "${@:2}" | $paginate;;
-	(kdeconnect*) kdeconnect-cli --help-all "${@:2}" | $paginate;;
+	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
+	(kdeconnect*) shift && kdeconnect-cli --help-all "$@" | $paginate;;
 	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions | paste -s -d' ';;
-	(swaymsg) test $# -gt 1 && man sway "${@:2}" || man swaymsg;;
+	(swaymsg) test $# -gt 1 && shift && man sway "$@" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
-	(*) { info "$1" -w | grep -v "manpages" && pinfo "$@"; } ||
+	(*) { info "$cmd" -w | grep -v "manpages" && pinfo "$@"; } ||
 		man "$@" ||
-		if which "$1" >/dev/null
+		if which "$cmd" >/dev/null
 		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
 		fi;;
 esac
-docs="/usr/share/doc/$1"
+docs="/usr/share/doc/$cmd"
 if test -d "$docs"; then
 	if test -z "$browse"
 	then echo "Find more in $docs"
 	else
-		len() { echo $1 | wc -c; }
+		len() { echo "$1" | wc -c; }
 		shortest() {
 			read shortest
 			while read in
