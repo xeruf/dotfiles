@@ -379,6 +379,7 @@ alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-r
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
+alias rdiffe='rdiff --existing --size-only'
 
 # Swap the names of two files
 swap() {
