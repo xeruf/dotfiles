@@ -2,27 +2,27 @@
 # Original file: packages/basic-emojis/package.yml
 
 matches:
-  - trigger: ":lol"
+  - trigger: ";lol"
     replace: 😂
-  - trigger: ":llol"
+  - trigger: ";llol"
     replace: 😂😂😂😂
-  - trigger: ":sad"
+  - trigger: ";sad"
     replace: ☹
-  - trigger: ":ssad"
+  - trigger: ";ssad"
     replace: ☹☹☹☹
-  - trigger: ":sml"
+  - trigger: ";sml"
     replace: 😊
-  - trigger: ":strong"
+  - trigger: ";strong"
     replace: 💪
-  - trigger: ":stlol"
+  - trigger: ";stlol"
     replace: 💪😂
-  - trigger: ":ok"
+  - trigger: ";ok"
     replace: 👍
-  - trigger: ":ook"
+  - trigger: ";ook"
     replace: 👍👍👍👍
-  - trigger: ":happy"
+  - trigger: ";happy"
     replace: 😄
-  - trigger: ":cry"
+  - trigger: ";cry"
     replace: 😭
-  - trigger: ":wow"
+  - trigger: ";wow"
     replace: 😮

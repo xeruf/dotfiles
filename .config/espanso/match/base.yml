@@ -1,15 +1,15 @@
 matches:
-  - trigger: ":see"
+  - trigger: ";see"
     replace: "🙈"
-  - trigger: ":grue"
+  - trigger: ";grue"
     replace: |-
       Grüße,
       Janek
-  - trigger: ":gree"
+  - trigger: ";gree"
     replace: |-
       Best,
       Janek
-  - trigger: ":date"
+  - trigger: ";date"
     replace: "{{mydate}}"
     vars:
       - name: mydate
@@ -17,7 +17,7 @@ matches:
         params:
           format: "%Y-%m-%d"
   # Shell commands
-  - trigger: ":ip"
+  - trigger: ";ip"
     replace: "{{output}}"
     vars:
       - name: output
@@ -25,11 +25,11 @@ matches:
         params:
           cmd: "curl 'https://api.ipify.org'"
   # Data
-  - trigger: ":bic"
+  - trigger: ";bic"
     replace: "BYLADEM1001"
-  - trigger: ":dkb"
+  - trigger: ";dkb"
     replace: "Deutsche Kreditbank"
   # Phrases
-  - trigger: ":ek"
+  - trigger: ";ek"
     replace: "passt :) schauen sie auch gerne noch die anderen Sachen an, wir sortieren grad einiges aus ;)"
 

@@ -1,28 +1,28 @@
 # Sensitive data through pass
 matches:
   # {{{1 EMAILS
-  - trigger: ":ep"
+  - trigger: ";ep"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/email/personal
-  - trigger: ":ec"
+  - trigger: ";ec"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/email/church
-  - trigger: ":eu"
+  - trigger: ";eu"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/email/uni
-  - trigger: ":eaur"
+  - trigger: ";eaur"
     replace: "{{output}}"
     vars:
       - name: output
@@ -31,7 +31,7 @@ matches:
           cmd: pass info/email/aur
   # {{{1 ADDRESS
   # Postal name
-  - trigger: ":a0"
+  - trigger: ";a0"
     replace: "{{output}}"
     vars:
       - name: output
@@ -39,7 +39,7 @@ matches:
         params:
           cmd: pass info/address | head -1
   # Street Address
-  - trigger: ":a1"
+  - trigger: ";a1"
     replace: "{{output}}"
     vars:
       - name: output
@@ -47,7 +47,7 @@ matches:
         params:
           cmd: pass info/address | head -2 | tail -1
   # Street
-  - trigger: ":as"
+  - trigger: ";as"
     replace: "{{output}}"
     vars:
       - name: output
@@ -55,7 +55,7 @@ matches:
         params:
           cmd: "pass info/address | head -2 | tail -1 | cut -d' ' -f1"
   # PLZ + City
-  - trigger: ":a2"
+  - trigger: ";a2"
     replace: "{{output}}"
     vars:
       - name: output
@@ -63,7 +63,7 @@ matches:
         params:
           cmd: pass info/address | tail -1
   # PLZ
-  - trigger: ":ap"
+  - trigger: ";ap"
     replace: "{{output}}"
     vars:
       - name: output
@@ -71,28 +71,28 @@ matches:
         params:
           cmd: "pass info/address | tail -1 | cut -d' ' -f1"
   # City
-  - trigger: ":ac"
+  - trigger: ";ac"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: "pass info/address | tail -1 | cut -d' ' -f2"
-  - trigger: ":tel"
+  - trigger: ";tel"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/phone
-  - trigger: ":adt"
+  - trigger: ";adt"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/address-bt
-  - trigger: ":add"
+  - trigger: ";add"
     replace: "{{output}}"
     vars:
       - name: output
@@ -100,28 +100,28 @@ matches:
         params:
           cmd: pass info/address
   # {{{1 NUMBERS
-  - trigger: ":tax"
+  - trigger: ";tax"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/tax-id | head -1
-  - trigger: ":ss"
+  - trigger: ";ss"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/social-security | head -1
-  - trigger: ":sign"
+  - trigger: ";sign"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
           cmd: pass info/signature
-  - trigger: ":iban"
+  - trigger: ";iban"
     replace: "{{output}}"
     vars:
       - name: output
@@ -129,7 +129,7 @@ matches:
         params:
           cmd: pass info/banking/dkb | head -1
   # {{{1 EXTRAS
-  - trigger: ":sigo"
+  - trigger: ";sigo"
     replace: |-
       #+ATTR_ORG: :width 200
       #+ATTR_LATEX: :width 4cm :center nil
@@ -139,8 +139,8 @@ matches:
       - name: signature
         type: match
         params:
-          trigger: ":sign"
+          trigger: ";sign"
       - name: name
         type: match
         params:
-          trigger: ":a0"
+          trigger: ";a0"
