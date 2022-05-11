@@ -12,6 +12,6 @@ test -z "$setappend" || sudo chattr -V -a "$dir"
 
 $elevate mkdir -p $(case "$last" in (*/) echo "$last";; (*) dirname "$last";; esac)
 $elevate mv --verbose --interactive "$@"
-# Diff when interactive
+# TODO Diff when interactive
 
 test -z "$setappend" || sudo chattr -V +a "$dir"
