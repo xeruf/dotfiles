@@ -1,10 +1,11 @@
 #!/bin/sh
 # View song metadata using ffprobe
 # Accepts filenames from args or stdin (one file per line)
+# TODO only print header when interactive
 if test "$#" -eq 0
 then cat
 else printf '%s\n' "$@"
 fi | while read f; do
   highlight "$f"
-  find "$f" -type f -exec ffprobe -hide_banner {} 2>&1 \; #| grep -A90 'Metadata:'
+  find "$f" -type f -exec ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty {} \;
 done | less
