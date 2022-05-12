@@ -22,6 +22,7 @@ discnumber
 disctotal
 encoded by
 encodedby
+encoder
 encodingsettings
 encodingtime
 filename
@@ -56,6 +57,7 @@ radiostationname
 recordingdates
 releasetime
 replaygain_track_gain
+replaygain_track_peak
 setsubtitle
 taggingtime
 time

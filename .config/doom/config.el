@@ -751,6 +751,7 @@ Version 2019-11-04 2021-02-16"
     (setq auto-revert-interval 2)
   )
 
+(setq js-indent-level 2)
 (after! json-mode
   (defconst json-mode-comments-re (rx (group "//" (zero-or-more nonl) line-end)))
   (push '(json-mode-comments-re 1 font-lock-comment-face) json-font-lock-keywords-1)
