@@ -44,6 +44,7 @@ fi
 
 highlight "d :: recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
+	find -maxdepth 1 \( -name "*.aux" -o -name "*.log" -o -name "*.toc" -o -name "*.out" \) -print -delete
 	find -name "src" -prune -o \
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm $i -r {} + -prune

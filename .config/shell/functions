@@ -156,6 +156,7 @@ alias scue='systemctl --user enable --now'
 alias scud='systemctl --user disable --now'
 
 # Reload or restart matching systemctl service
+unalias scr 2>/dev/null
 scr() {
 	echo -n "User: "
 	systemctl --user reload-or-restart "$1" ||
@@ -263,6 +264,9 @@ alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
 alias f="fossil"
 alias fs="fossil status"
 alias fc="fossil commit -v"
+fdf() {
+	fossil diff "$@" | diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less -F
+}
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
