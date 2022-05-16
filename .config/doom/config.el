@@ -210,6 +210,8 @@ Version 2019-11-04 2021-02-16"
         )
   :config
 
+  ; the value does not matter, see https://emacs.stackexchange.com/questions/71774/pass-default-value-to-org-set-property/71777#71777
+  (add-to-list 'org-global-properties-fixed '("ID_ALL" . "id"))
   (map! :map org-mode-map
         :leader
         "\\" 'org-ctrl-c-ctrl-c
@@ -227,7 +229,7 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "gR" 'org-mode-restart
-        :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID" (org-read-property-value "id" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" (org-get-heading))))))
+        :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID" (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" (org-get-heading))))))
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
