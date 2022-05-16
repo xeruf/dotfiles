@@ -93,7 +93,7 @@ Version 2019-11-04 2021-02-16"
       "Sm"      'smerge-mode
       "m;"      'comment-line
       :desc "Dragon current buffer" "d" (lambda () (interactive) (dragon))
-      :desc "Update & Quit"        "qu" (lambda () (interactive) (my/org-roam-update) (save-buffers-kill-terminal))
+      :desc "Update & Quit"        "qu" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map text-mode-map
       :desc "Markdown to Zulip" "mam" ":%s/\\n\\n<a id=.*<\\/a>\\n\\n//
 :%s/\\n *\\n /\\n /
@@ -227,8 +227,8 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "gR" 'org-mode-restart
-        :desc "Set ID property" "lI" '(lambda () (interactive) (org-set-property "ID" nil))
-        :desc "Set Roam Aliases" "la" '(lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
+        :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID" (org-read-property-value "id" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" (org-get-heading))))))
+        :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
         :desc "Extract node to file" "me" 'org-roam-extract-subtree
@@ -239,7 +239,7 @@ Version 2019-11-04 2021-02-16"
   ;; Behavior
   (setq org-read-date-prefer-future nil
         org-extend-today-until 5)
-  (defun my/org-attach-id-folder-format (id)
+  (defun xf/org-attach-id-folder-format (id)
     "Translate any ID into a folder-path."
     (format "%s/%s"
             (substring id 0 2)
@@ -248,7 +248,7 @@ Version 2019-11-04 2021-02-16"
   (setq org-attach-id-dir (expand-file-name "attach" (xdg-user-dir "DOCUMENTS"))
         org-attach-method 'mv
         org-attach-preferred-new-method nil
-        org-attach-id-to-path-function-list '(my/org-attach-id-folder-format)
+        org-attach-id-to-path-function-list '(xf/org-attach-id-folder-format)
         )
 
   (setq org-id-method 'org
@@ -399,26 +399,26 @@ Version 2019-11-04 2021-02-16"
           (insert (concat ":properties:\n:id:       " (file-name-base buffer-file-name) "\n:end:\n#+startup: overview noinlineimages\n#+options: \\n:t\n")))))
     (add-hook 'org-journal-after-entry-create-hook #'pc/insert-journal-template)
 
-    (defvar my/survey-mode-journal--timer nil)
-    (defvar my/survey-mode-journal--timer-interval 300)
+    (defvar xf/survey-mode-journal--timer nil)
+    (defvar xf/survey-mode-journal--timer-interval 300)
 
-    (define-minor-mode my/survey-mode
+    (define-minor-mode xf/survey-mode
       "New org-journal entry after long idleness"
       :group 'org-roam
       :global t
-      (when my/survey-mode-journal--timer (cancel-timer my/survey-mode-journal--timer))
-      (setq my/survey-mode-journal--timer
-            (when my/survey-mode
+      (when xf/survey-mode-journal--timer (cancel-timer xf/survey-mode-journal--timer))
+      (setq xf/survey-mode-journal--timer
+            (when xf/survey-mode
               (run-with-idle-timer
-               my/survey-mode-journal--timer-interval :repeat
-               #'my/journal-survey))))
+               xf/survey-mode-journal--timer-interval :repeat
+               #'xf/journal-survey))))
 
-    (defun my/journal-survey ()
+    (defun xf/journal-survey ()
       "Open a new journal entry"
       (interactive)
       (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
 
-    (if (file-exists-p org-journal-dir) (my/survey-mode))
+    (if (file-exists-p org-journal-dir) (xf/survey-mode))
     ; TODO journal at start (call-interactively 'org-journal-new-entry)
   )
 
@@ -429,50 +429,54 @@ Version 2019-11-04 2021-02-16"
   :config
     (require 'org-roam-protocol)
 
+    (defun xf/dashify-slug (slug)
+      (s-replace "_" "-" slug))
+    (advice-add 'org-roam-node-slug :filter-return #'xf/dashify-slug)
+
     (setq org-roam-db-update-on-save nil
           org-roam-extract-new-file-path "${slug}.org"
           +org-roam-auto-backlinks-buffer t)
     (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
-    (setq my/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
-    (setq my/org-roam-capture-title "\n#+title: ${title}")
+    (setq xf/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
+    (setq xf/org-roam-capture-title "\n#+title: ${title}")
     (setq org-roam-capture-templates
           `(("d" "default" plain "%?" :target
-             (file+head ,org-roam-extract-new-file-path ,(concat my/org-roam-capture-props "#+filetags: :" my/org-roam-capture-title))
+             (file+head ,org-roam-extract-new-file-path ,(concat xf/org-roam-capture-props "#+filetags: :" xf/org-roam-capture-title))
              :unnarrowed t)
             )
           )
     (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration")
       do (add-to-list 'org-roam-capture-templates
             `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
-             (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat my/org-roam-capture-props "#+filetags: :" item ":" my/org-roam-capture-title))
+             (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat xf/org-roam-capture-props "#+filetags: :" item ":" xf/org-roam-capture-title))
              :unnarrowed t)
             )
       )
 
-    (defvar my/auto-org-roam-db-sync--timer nil)
-    (defvar my/auto-org-roam-db-sync--timer-interval 10)
-    (define-minor-mode my/auto-org-roam-db-sync-mode
+    (defvar xf/auto-org-roam-db-sync--timer nil)
+    (defvar xf/auto-org-roam-db-sync--timer-interval 10)
+    (define-minor-mode xf/auto-org-roam-db-sync-mode
       "Toggle automatic `org-roam-db-sync' when Emacs is idle.
        Reference: `auto-save-visited-mode'"
       :group 'org-roam
       :global t
-      (when my/auto-org-roam-db-sync--timer (cancel-timer my/auto-org-roam-db-sync--timer))
-      (setq my/auto-org-roam-db-sync--timer
-            (when my/auto-org-roam-db-sync-mode
+      (when xf/auto-org-roam-db-sync--timer (cancel-timer xf/auto-org-roam-db-sync--timer))
+      (setq xf/auto-org-roam-db-sync--timer
+            (when xf/auto-org-roam-db-sync-mode
               (run-with-idle-timer
-               my/auto-org-roam-db-sync--timer-interval :repeat
+               xf/auto-org-roam-db-sync--timer-interval :repeat
                #'org-roam-db-sync))))
 
     ;; TODO kill opened buffers
-    (defun my/org-roam-update ()
+    (defun xf/org-roam-update ()
       "Update org-roam database and sync ids to orgids."
       (interactive)
       (org-roam-db-sync)
       (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations))
       (when (equal major-mode 'org-mode) (org-mode-restart)))
 
-    (if (file-exists-p org-roam-directory) (my/auto-org-roam-db-sync-mode))
+    (if (file-exists-p org-roam-directory) (xf/auto-org-roam-db-sync-mode))
   )
 
 (use-package! ox
@@ -481,7 +485,7 @@ Version 2019-11-04 2021-02-16"
           :leader
           "e" 'org-export-dispatch-custom-date
           "E" 'org-export-repeat
-          :desc "Save and Export" "be" '(lambda () (interactive) (basic-save-buffer) (org-export-repeat))
+          :desc "Save and Export" "be" (lambda () (interactive) (basic-save-buffer) (org-export-repeat))
           :localleader
           "e" 'org-export-dispatch-custom-date
           "E" 'org-export-repeat
@@ -501,7 +505,7 @@ Version 2019-11-04 2021-02-16"
         (org-export-dispatch))
       )
 
-    ;(setq org-latex-to-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
+    (setq org-latex-to-pdf-process '("xelatex -interaction -shell-escape nonstopmode %f" "xelatex -interaction nonstopmode -shell-escape %f"))
     ;; Exporting - https://orgmode.org/manual/Export-Settings.html
     (setq org-export-with-tags nil
           org-export-with-tasks 'done
@@ -621,10 +625,9 @@ Version 2019-11-04 2021-02-16"
         :n "l" 'dired-find-file-dwim
         :n "h" 'dired-up-directory
         :n "ö" 'evil-ex-search-forward
-        :leader
+        :localleader
         :desc "Dragon marked files" "d"
                 (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
-        :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
                 (lambda () (interactive) (dired-do-shell-command "s"))
