@@ -62,8 +62,8 @@ for arg; do
 	case "$mime" in
 	(*\ application/pdf\;*)
 		echo Converting "$arg"
-		test -f "$tmpfile-1.ppm" || pdftoppm -r 70 "$arg" "$tmpfile" -l $(expr $grid \& \( $grid \> 4 \| $# \> 1 \) \| $grid '*' 2)
-		timg -W --grid=$grid $tmpfile-{01..$grid}.ppm
+		test -f "$tmpfile-1.ppm" || pdftoppm -forcenum -r 70 "$arg" "$tmpfile" -l $(expr $grid \& \( $grid \> 4 \| $# \> 1 \) \| $grid '*' 2)
+		timg -W --grid=$grid "$tmpfile"*.ppm
 		;;
 	(*\ application/*document*)
 		# https://ask.libreoffice.org/t/convert-to-command-line-parameter/840/4
@@ -151,7 +151,7 @@ if test "$bat" -o "$batplain"; then
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
 	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$flags"
 	then cut="--line-range :7"
-		batpager="cut -c-$(echo "$(tput cols)*1.9" | bc | cut -d. -f1)"
+		batpager="cut -c-$(echo $(tput cols) \* 19 / 10 | cut -d. -f1)"
 	fi
 	batcommand="$elevate bat $cut $flags --pager"
 	batstyle="--style plain$rule"
