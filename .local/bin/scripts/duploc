@@ -1,9 +1,10 @@
 #!/bin/sh
 # Delete files under current or given path which exist elsewhere as listed in the locate database
-# Matches first by name, then by checksum
-# TODO
-find "$@" -size +50M | while read filepath
-  do f="$(basename "$filepath" | synct-unarchive)"
+# Matches first by name, then by checksum (currently inefficiently via md5)
+find "$@" -size +50M -type f | while read filepath
+  do target="$(basename "$filepath" | synct-unarchive)"
   highlight "$filepath"
-  locate -b "$f"
+  locate -b "$target" | while read existing
+    do test "$(realpath "$target")" != "$(realpath "$existing")" -a -f "$existing" -a "$(md5sum "$existing" | cut -d\  -f1)" = "$(md5sum "$filepath" | cut -d\  -f1)" && echo "Found duplicate at $existing" && rm -vi "$filepath" && break
+    done
   done

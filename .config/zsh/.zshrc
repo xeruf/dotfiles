@@ -145,6 +145,7 @@ export KEYTIMEOUT=1
 setopt correct
 CORRECT_IGNORE="[_|.]*"
 # command history - https://unix.stackexchange.com/a/273863
+# TODO always much shorter
 HISTSIZE=100000
 SAVEHIST=$HISTSIZE
 setopt inc_append_history
