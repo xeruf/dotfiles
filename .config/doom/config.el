@@ -208,6 +208,20 @@ Version 2019-11-04 2021-02-16"
          ("M-C-+" . org-timestamp-up)
          ("M-C--" . org-timestamp-down)
         )
+  :init
+
+  ;; Behavior
+  (setq org-read-date-prefer-future nil
+        org-extend-today-until 5)
+
+  (setq org-id-method 'org
+        org-id-ts-format "%Y%m%dT%H%M%S")
+
+  ;; Visuals
+  ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
+  (setq org-image-actual-width nil)
+  (setq org-ellipsis "◀")
+
   :config
 
   ; the value does not matter, see https://emacs.stackexchange.com/questions/71774/pass-default-value-to-org-set-property/71777#71777
@@ -229,18 +243,38 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "gR" 'org-mode-restart
-        :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID" (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" (org-get-heading))))))
+        :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID"
+                (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" (org-get-heading t t t t))))))
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
         :desc "Extract node to file" "me" 'org-roam-extract-subtree
         )
 
+  ;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
+  (setq org-file-apps '((remote . emacs)
+                        ("\\.pdf\\'" . default)
+                        (auto-mode . emacs)
+                        (directory . emacs)
+                        (system . "setsid -w xdg-open %s")
+                        (t . system)))
+
+  (setq org-priority-default 67
+        org-priority-lowest 68
+        org-priority-start-cycle-with-default nil)
+  (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
+
+  ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
+  (setq org-startup-folded 'show2levels
+        org-display-remote-inline-images 'cache)
+
   ; TODO customize org-log-note-headings
 
-  ;; Behavior
-  (setq org-read-date-prefer-future nil
-        org-extend-today-until 5)
+  ;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
+  (setq org-log-done 'time
+        org-log-into-drawer t
+        org-treat-insert-todo-heading-as-state-change t)
+
   (defun xf/org-attach-id-folder-format (id)
     "Translate any ID into a folder-path."
     (format "%s/%s"
@@ -252,40 +286,6 @@ Version 2019-11-04 2021-02-16"
         org-attach-preferred-new-method nil
         org-attach-id-to-path-function-list '(xf/org-attach-id-folder-format)
         )
-
-  (setq org-id-method 'org
-        org-id-ts-format "%Y%m%dT%H%M%S")
-
-  ;; Visuals
-  ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
-  (setq org-image-actual-width nil)
-  (setq org-ellipsis "◀")
-
-  ;; https://unicode-table.com/en/blocks/miscellaneous-symbols-and-arrows https://www.w3schools.com/colors/colors_names.asp
-  ; (custom-reevaluate-setting 'org-fancy-priorities-list) (add-to-list 'org-fancy-priorities-list "☠" t)
-  (setq org-priority-default 67
-        org-priority-lowest 68
-        org-priority-start-cycle-with-default nil
-        org-fancy-priorities-list '("❗" "✯" "❖" "⬢" "■")
-        org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
-
-  ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
-  (setq org-startup-folded 'show2levels
-        org-display-remote-inline-images 'cache)
-
-  ;; Fix xdg-open & pdfs - https://depp.brause.cc/dotemacs/#orgd97f08c
-  (setq org-file-apps '((remote . emacs)
-                        ("\\.pdf\\'" . default)
-                        (auto-mode . emacs)
-                        (directory . emacs)
-                        (system . "setsid -w xdg-open %s")
-                        (t . system)))
-
-  ;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
-  (setq org-log-done 'time
-        org-log-into-drawer t
-        org-treat-insert-todo-heading-as-state-change t)
-
   ;; https://stackoverflow.com/a/32353255/6723250
   (defun org-convert-csv-table (beg end)
     "convert csv to org-table considering '12,12'"
@@ -378,6 +378,12 @@ Version 2019-11-04 2021-02-16"
            ((org-agenda-compact-blocks t)))))
 
 )
+
+(after! org-fancy-priorities
+  ;; https://unicode-table.com/en/blocks/miscellaneous-symbols-and-arrows https://www.w3schools.com/colors/colors_names.asp
+  ; (custom-reevaluate-setting 'org-fancy-priorities-list) (add-to-list 'org-fancy-priorities-list "☠" t)
+  (setq org-fancy-priorities-list '("❗" "✯" "❖" "⬢" "■"))
+  )
 
 (use-package! org-journal
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
