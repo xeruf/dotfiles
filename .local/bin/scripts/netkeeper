@@ -1,0 +1,3 @@
+#!/bin/sh -e
+# Keeps the Internet at bay
+# TODO import nftables from iptables

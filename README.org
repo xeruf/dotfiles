@@ -108,3 +108,10 @@ yays clion clion-jre cmake gdb python-pre-commit
 : yays android-udev android-tools adbfs-rootless-git android-studio
 After running android-studio setup, accept licenses:
 : $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
+
+* Setup Tools
+** Ansible
+:PROPERTIES:
+:ID:       ansible
+:END:
+https://github.com/Oefenweb/ansible-updatedb

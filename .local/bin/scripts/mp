@@ -3,6 +3,7 @@
 # Play given files on mpd, playing external files through symlinking and recursively resolving playlists
 # depends: xargs realpath mpc
 # env: MUSIC
+# TODO auto-convert unknown types with ffmpeg to flac
 MUSIC="${MUSIC:-$(cat ${XDG_CONFIG_HOME:-$HOME/.config}/mpd/mpd.conf | grep music_directory | cut -d'"' -f2 | sed "s|~|$HOME|")}"
 PLAYLISTS="$MUSIC/Playlists"
 LINKS="$MUSIC/links"
