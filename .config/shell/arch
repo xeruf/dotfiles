@@ -53,7 +53,7 @@ yas() {
 # List installed packages into fzf and remove selection
 # Tip: use -e to list only explicitly installed packages
 yar() {
-	pkg=$(yay --color=always -Q "$@" | yzf 1 --tiebreak=length --preview="yay --color always -Qli {1}")
+	pkg=$(yay --color=always -Q "$@" | yzf 1 --tiebreak=length --preview="yay --color always -Qli {1} | sed 's/^[^a-z]*m{1}//'")
 	if test -n "$pkg"
 		then echo "Removing $pkg..."
 			cmd="yay -R --cascade --recursive $pkg"
