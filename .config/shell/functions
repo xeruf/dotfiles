@@ -366,8 +366,6 @@ then fn() { $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignor
 else
 	alias ff='find -not -path "*.sync*" -and -not \( -name daten -prune \)'
 	alias f1='find -mindepth 1 -maxdepth 1'
-	compdef ff=find
-	compdef f1=find
 fi
 
 lowercase_transliterate="y/A-Z /a-z-/"
@@ -386,6 +384,7 @@ alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
 alias rdiffe='rdiff --existing --size-only'
+compdef rcd=rsync
 
 # Swap the names of two files
 swap() {
@@ -394,11 +393,13 @@ swap() {
 	mv -n $2 $1
 	mv -n $1.tmp $2
 }
+compdef swap=mv
 
 # mv with automatic sudo if neccessary
 smv() {
 	test -w "$1" && test -w "$(dirname $2)" && mv "$@" || sudo mv "$@"
 }
+compdef smv=mv
 
 # Rename the file inside its directory
 mvf() {
@@ -417,8 +418,9 @@ mvln() {
 	[ $file -gt 0 -a -d $2 ] && 2="$2/$(basename $1)"
 	echo -n "Linking: " && ln -vsr "$2" "$1"
 }
+compdef mvln=mv
 
-# Move into an xdg dir (default XDG_DATA_HOME) and create a symlink
+# Move the given file into an xdg dir (default XDG_DATA_HOME) and create a symlink
 mvx() {
 	mvln "$1" "${2:-$XDG_DATA_HOME}/${1#.}"
 	yadm add "$1" ".config/$1" 2>/dev/null
@@ -428,6 +430,7 @@ mvx() {
 mkcd() {
 	mkdir -p "$1" && cd "$1"
 }
+compdef mkcd=mkdir
 
 # Other stuff {{{1
 

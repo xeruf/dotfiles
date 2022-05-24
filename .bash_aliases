@@ -16,9 +16,9 @@ eval "$(dircolors)"
 alias ls='ls --color=auto'
 alias ll='ls $LS_OPTIONS -l --all'
 alias l='ls $LS_OPTIONS --color=always --almost-all'
-which bat >/dev/null || alias bat="$(which batcat >/dev/null && echo batcat || echo less -FX)"
+which bat >/dev/null 2>&1 || alias bat="$(which batcat >/dev/null 2>&1 && echo batcat || echo less -FX)"
 b() { test -d "${1:-.}" && l "$@" || bat "$@"; }
-alias v="$(which nvim >/dev/null && echo nvim || echo ${EDITOR:-vi})"
+alias v="$(which nvim >/dev/null 2>&1 && echo nvim || echo ${EDITOR:-vi})"
 
 # Grep aliases
 

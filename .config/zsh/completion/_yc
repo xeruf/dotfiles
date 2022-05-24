@@ -1,5 +1,5 @@
 #compdef yc
-compadd $(git diff-index HEAD --name-only --relative=${XDG_CONFIG_HOME/$HOME\/} | sed 's/\.[^.]\+$//')
+compadd $(yadm diff-index HEAD --name-only --relative=${XDG_CONFIG_HOME/$HOME\/} | sed 's/\.[^.]\+$//')
 #_files -W $XDG_CONFIG_HOME -g "git*"
 # xargs _files -W $XDG_CONFIG_HOME -g
 # yadm diff HEAD --name-only -- $XDG_CONFIG_HOME
