@@ -1,9 +1,9 @@
 #!/bin/sh -e
 # Create a commit or stage files via fzf selection
 # If the first arg is "add", files are staged rather than committed.
-# All remaining args are passed to git-commit
+# All remaining args are passed to the last git command (add or commit).
 # TODO fix broken prep-commit-msg hook when there is no unifying path
-# fix broken alt-enter not opening editor --bind='alt-enter:change-prompt(hi>)'
+# TODO fix broken alt-enter not opening editor --bind='alt-enter:change-prompt(hi>)'
 
 fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain
@@ -22,9 +22,10 @@ case "$1" in
 	(add) shift
 		git status -z --porcelain --no-renames --untracked-files=all $wd |
 			grep -zv '^\\w ' | fzfpipe |
-			git -c advice.addEmptyPathspec=false add --verbose --pathspec-from-file=- "$@";;
+			xargs -d '\n' -L 1 git -c advice.addEmptyPathspec=false add --verbose "$@";;
 	(*)	git status -z --porcelain --no-renames $wd |
 			sed -z 's/^\\(\\w\\) / \\1/' | fzfpipe >"$prefix/files"
-			git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file="$prefix/files"
+			cat "$prefix/files" | xargs -d '\n' ls -fd 2>/dev/null >"$prefix/files-existing" || true
+			git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file="$prefix/files-existing"
 			git commit -v --only --pathspec-from-file="$prefix/files" "$@";;
 esac
