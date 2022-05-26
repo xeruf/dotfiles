@@ -5,6 +5,8 @@
 # TODO fix broken prep-commit-msg hook when there is no unifying path
 # TODO fix broken alt-enter not opening editor --bind='alt-enter:change-prompt(hi>)'
 
+set -o pipefail
+
 fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain
 	# and return a newline-separated list of selected files
@@ -22,10 +24,10 @@ case "$1" in
 	(add) shift
 		git status -z --porcelain --no-renames --untracked-files=all $wd |
 			grep -zv '^\\w ' | fzfpipe |
-			xargs -d '\n' -L 1 git -c advice.addEmptyPathspec=false add --verbose "$@";;
+			xargs -rd '\n' -L 1 git -c advice.addEmptyPathspec=false add --verbose "$@";;
 	(*)	git status -z --porcelain --no-renames $wd |
 			sed -z 's/^\\(\\w\\) / \\1/' | fzfpipe >"$prefix/files"
-			cat "$prefix/files" | xargs -d '\n' ls -fd 2>/dev/null >"$prefix/files-existing" || true
+			cat "$prefix/files" | xargs -rd '\n' ls -fd 2>/dev/null >"$prefix/files-existing" || true
 			git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file="$prefix/files-existing"
 			git commit -v --only --pathspec-from-file="$prefix/files" "$@";;
 esac

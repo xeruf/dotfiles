@@ -275,7 +275,8 @@ alias grpc='grep --color=auto --line-number --binary-files=without-match --direc
 # Default grep with some niceties and ignoring case
 alias grp='grpc --ignore-case'
 # Grep recursively and paginate
-grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's|-x \([^ ]*/\)\?|--exclude-dir |g') "$@" | less -FX; }
+# TODO remove some prefixes \([^ ]*/\)\?
+grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's|-x |--exclude-dir |g') "$@" | less -FX; }
 # Grep in shell config files
 grsh() { grpr --no-ignore-case "$@" $HOME/.{ba,z}sh* $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH; }
 
