@@ -9,7 +9,7 @@ case "$cmd" in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done
 		# need to install zsh-doc package for info pages
-		info --vi-keys $(test "$last" != zsh && echo "--index-search=$last") zsh ||
+		info $(test "$last" != zsh && echo "--index-search=$last") zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go|fossil) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && fossil ui "$repo" && exit
@@ -23,7 +23,7 @@ case "$cmd" in
 	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions | paste -s -d' ';;
 	(swaymsg) test $# -gt 1 && shift && man sway "$@" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
-	(*) { which info >/dev/null 2>&1 && info "$cmd" -w | grep -v "manpages" && pinfo "$@"; } ||
+	(*) { which info >/dev/null 2>&1 && info -f "$@" 2>/dev/null; } || #"$cmd" -w | grep -q . && pinfo "$@"; } ||
 		man "$@" ||
 		if which "$cmd" >/dev/null
 		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
