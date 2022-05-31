@@ -1,0 +1,40 @@
+# -*- mode: snippet -*-
+# name: LilyPond Foundation
+# --
+\header {
+  title = "${1:`(upcase-initials (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`}"
+  %%subtitle = ""
+  composer = "Janek Fischer"
+}
+\version "2.22.2"
+\score {
+<<
+  \time 4/4
+%%% Chords
+  \new ChordNames {
+    \set chordChanges = ##t
+    \chordmode {
+      c,,1\p
+    }
+  }
+%%% Melody
+  \new Staff {
+    \key c \major
+    \tempo 4 = 80
+    \relative c' {
+      $0
+    }
+    \addlyrics {
+    }
+  }
+%%% Bass
+  \new Staff {
+    \key c \major
+    \clef bass
+    \relative c {
+    }
+  }
+>>
+\midi { }
+\layout { }
+}

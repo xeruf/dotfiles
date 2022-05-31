@@ -3,5 +3,7 @@
 # --
 @startuml
 hide empty description
+!theme bluegray
+'top to bottom direction
 $0
 @enduml

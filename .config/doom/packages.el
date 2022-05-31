@@ -89,3 +89,4 @@
   :recipe (:host github :repo "magoyette/twee-chapbook-mode"))
 
 (package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
+(package! recompile-on-save)

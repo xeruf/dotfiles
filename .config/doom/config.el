@@ -123,8 +123,11 @@ Version 2019-11-04 2021-02-16"
 
 (setq initial-major-mode 'org-mode)
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+
 (add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 (add-hook 'twee-chapbook-mode-hook 'twee-mode)
+
 (whitespace-mode 0)
 (auto-correct-mode)
 
@@ -724,7 +727,7 @@ Version 2019-11-04 2021-02-16"
 ;;; File modes
 
 (use-package! plantuml-mode ; Diagrams
-  :defer t
+  :mode "\\.puml\\'"
   :config
     (set-file-template! 'plantuml-mode :mode 'plantuml-mode)
     (setq plantuml-executable-path "nostderr"
@@ -755,11 +758,13 @@ Version 2019-11-04 2021-02-16"
 (use-package! lilypond-mode
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config
-    ;; TODO template
+    (set-file-template! 'LilyPond-mode :mode 'LilyPond-mode)
     (setq LilyPond-pdf-command "xdg-open")
     (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
+    (add-hook 'LilyPond-mode-hook (lambda () (setq-local compile-command (format "lilypond %s" (shell-quote-argument buffer-file-name)))))
     (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
     (setq auto-revert-interval 2)
+    ; TODO (require 'lyqi nil t)
   )
 
 (setq js-indent-level 2)
@@ -816,6 +821,8 @@ Version 2019-11-04 2021-02-16"
     (setq direnv-always-show-summary nil)
     (direnv-mode)
   )
+
+(use-package! recompile-on-save)
 
 ;; https://emacs.stackexchange.com/questions/64532/emms-and-mpd-configuration
 (use-package! emms
