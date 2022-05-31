@@ -97,8 +97,8 @@ d() {
 				$(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
 			then echo "$query" | head -1
 			else test -n "$query" && echo "$query"; locate-zox "$@"
-		fi | zoxide-fzf)" &&
-	test -z "$target" && sudo updatedb && target="$(locate --basename "$@" | fzf-dir)"
+		fi | zoxide-fzf)"
+	test $? -lt 2 && test -z "$target" && sudo updatedb && target="$(locate --basename "$@" | fzf-dir)"
 	test -n "$target" && cd "$target"
 }
 # Switch directory interactively using zoxide and locate
