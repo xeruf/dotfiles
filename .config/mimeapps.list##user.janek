@@ -1,6 +1,5 @@
 [Added Associations]
 application/java-archive=org.kde.ark.desktop;
-application/pdf=org.kde.okular.desktop;
 application/rss+xml=nvim.desktop;
 application/x-java-archive=java-2.desktop;java.desktop;jconsole-java11-openjdk.desktop;
 application/x-ms-shortcut=firefox.desktop;
@@ -20,7 +19,7 @@ text/plain=nvim.desktop;emacs.desktop;okularApplication_txt.desktop;
 x-scheme-handler/tg=telegram.desktop;
 
 [Default Applications]
-application/pdf=org.kde.okular.desktop;
+application/pdf=org.pwmt.zathura.desktop;
 application/x-java-archive=java-2.desktop;
 application/x-ms-shortcut=firefox.desktop;
 application/x-mswinurl=firefox.desktop;

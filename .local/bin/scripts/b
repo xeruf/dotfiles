@@ -17,7 +17,7 @@ test "$1" = "-v" &&
 	set -eo xtrace &&
 	shift
 inspect=false
-# Show file info without preview
+# inspect: Show file info without preview
 test "$1" = "-i" &&
 	inspect=true &&
 	shift
@@ -30,7 +30,7 @@ fileinfo() {
 	tput setaf 6
 	for arg
 	do case "$arg" in (-*) continue;; esac
-		$elevate file -E "$arg"
+		$elevate file --exclude elf -E "$arg"
 		# TODO do not grep bitrate but extract properly
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
