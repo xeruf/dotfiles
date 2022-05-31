@@ -37,7 +37,6 @@ if test -d "$DATA"; then
 	d3=$(builtin cd $DATA/3* && pwd)
 	d4=$(builtin cd $DATA/4* && pwd)
 	d5=$(builtin cd $DATA/5* && pwd)
-	dd="$d5/downloads"
 fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps
@@ -68,7 +67,7 @@ wh() {
 	res=$(which "$@")
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
 	then echo "$res" | bat --style=plain --language=sh &&
-		tool="$(echo "$res" | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
+		tool="$(echo "$res" | head -1 | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
 		wh $(test $tool = $1 && echo "-p") $tool
 		# use command which for other shells
 	else test -r "$res" && b "$res" || echo "$res" | bat --style=plain --language=sh

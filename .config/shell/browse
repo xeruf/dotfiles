@@ -71,13 +71,13 @@ alias loca='noglob sudo updatedb -l 0 --prunenames "" --prunefs "tmpfs sysfs deb
 alias c=z
 # Listing for quick directory switcher based on zoxide and fzf
 alias zoxide-list='noglob zoxide query -sl'
-# fzf for zoxide
+__zx_ls="ls --almost-all --color --human-readable --group-directories-first --file-type"
+alias fzf-dir="fzf -0 -1 --tiebreak=index \
+		--preview-window=30% --preview='$__zx_ls {}' \
+		--height=80% --reverse --keep-right"
+# fzf for zoxide - returns the selected path stripped of its score
 zoxide-fzf() {
-	# returns the selected path stripped of its score
-	fzf -0 -1 -n2.. --tiebreak=index \
-		--preview-window=20% --preview="ls -a --color --human-readable --group-directories-first --file-type {2..}" \
-		--height=80% --reverse |
-		sed 's|.* /|/|'
+	fzf-dir -n2.. --preview="$__zx_ls {2..}" "$@" | sed 's|.* /|/|'
 }
 # Locate directories and add 0 zoxide score
 locate-zox() {
@@ -92,12 +92,14 @@ d() {
 	# First find out whether there is an obvious match
 	# (score at least ten times above runner-up and score above 20)
 	# If not select with fzf, using locate to find extra options
-	cd "$(if test -n "$query" &&
+	target="$(if test -n "$query" &&
 			expr "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
 				$(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
 			then echo "$query" | head -1
 			else test -n "$query" && echo "$query"; locate-zox "$@"
-		fi | zoxide-fzf)"
+		fi | zoxide-fzf)" &&
+	test -z "$target" && sudo updatedb && target="$(locate --basename "$@" | fzf-dir)"
+	test -n "$target" && cd "$target"
 }
 # Switch directory interactively using zoxide and locate
 di() {
