@@ -1,3 +1,5 @@
+test -n "$PS1" || return 0
+
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
 bind '"\ek":history-search-backward'
 bind '"\ej":history-search-forward'
