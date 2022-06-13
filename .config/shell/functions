@@ -105,7 +105,7 @@ edshell() {
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
 	test -f "$file" && checksum="$(md5sum "$file")"
-	$EDITOR "$(test "$line" && case "$EDITOR" in (nvim) echo "+normal! ${line}ggzx";; (*vi*) echo "+$line";; esac || echo "--")" "${file%:*}"
+	$EDITOR "$(test "$line" && case "$EDITOR" in (nvim) echo "+normal! ${line}ggzx";; (*vi*) echo "+$line";; (emacs*) echo "+${line}";; esac || echo "--")" "${file%:*}"
 	test -s "$file" || return 1
 	test "$checksum" != "$(md5sum $file)" && rs
 }
@@ -294,7 +294,8 @@ alias hx='sudo hexedit --maximize --color'
 # Paginated hexyl
 hex() { hexyl "$@" | "${PAGER:-less}"; }
 
-alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=length --bind='alt-bspace:clear-query'"
+alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | sed '/#/d;/&/d;/^$/d' | fzy"
+#fzf --tiebreak=length --bind='alt-bspace:clear-query'
 alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
 alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
 

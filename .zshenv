@@ -63,7 +63,17 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 export PATH="$HOME/.local/bin/scripts:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
-which nvim >/dev/null && export EDITOR='nvim' || export EDITOR='vim'
+export ALTERNATE_EDITOR="$(
+	if which nvim >/dev/null
+	then echo nvim
+	else echo vi
+	fi)"
+export EDITOR="$(
+	if which emacs >/dev/null
+	then echo emacsclient #'emacsclient -a ""'
+	else echo $ALTERNATE_EDITOR
+	fi
+)"
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__"
