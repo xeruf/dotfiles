@@ -65,7 +65,7 @@ Version 2019-11-04 2021-02-16"
 (defun dragon (&optional @file)
   "Share file from current buffer via dragon."
   (interactive)
-  (shell-command (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
+  (message (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -248,7 +248,7 @@ Version 2019-11-04 2021-02-16"
         "gR" 'org-mode-restart
         :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID"
                 (let ((heading (org-get-heading t t t t)))
-                  (if heading (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" (heading)))) (file-name-sans-extension (file-name-nondirectory buffer-file-name))))))
+                  (if heading (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" heading))) (file-name-sans-extension (file-name-nondirectory buffer-file-name))))))
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
@@ -441,6 +441,7 @@ Version 2019-11-04 2021-02-16"
   :config
     (require 'org-roam-protocol)
 
+    ;; https://github.com/org-roam/org-roam/pull/833
     (defun xf/dashify-slug (slug)
       (s-replace "_" "-" slug))
     (advice-add 'org-roam-node-slug :filter-return #'xf/dashify-slug)

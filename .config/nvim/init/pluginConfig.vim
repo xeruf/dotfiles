@@ -48,7 +48,6 @@ let g:firenvim_config = {
     \ '.*element\.io.*':                     { 'priority': 9, 'takeover': 'empty', },
     \ '.*openstreetmap\.org.*':              { 'priority': 9, 'takeover': 'once', },
     \ '.*openstreetmap\.de.*':               { 'priority': 9, 'takeover': 'once', },
-    \ '.*github\.com.*':                     { 'priority': 9, 'takeover': 'once', },
     \
     \ '.*discord\.com.*':                    { 'priority': 9, 'takeover': 'never', },
     \ '.*twitter\.com.*':                    { 'priority': 9, 'takeover': 'never', },

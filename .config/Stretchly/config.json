@@ -1,8 +1,8 @@
 {
 	"microbreakDuration": 20000,
-	"microbreakInterval": 900000,
+	"microbreakInterval": 1200000,
 	"breakDuration": 180000,
-	"breakInterval": 2,
+	"breakInterval": 3,
 	"breakNotification": true,
 	"microbreakNotification": true,
 	"breakNotificationInterval": 30000,
