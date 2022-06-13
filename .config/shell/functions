@@ -247,6 +247,8 @@ sshl() {
 
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
+alias scenic='/usr/lib/jvm/java-11-openjdk/bin/java --module-path /usr/lib/jvm/java-11-openjfx/lib --add-modules javafx.web,javafx.fxml,javafx.swing -jar scenicview.jar'
+
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
 
@@ -280,7 +282,9 @@ grpr() { grp --color=always --recursive $(echo $DIRS_IGNORE | sed 's|-x |--exclu
 grsh() { grpr --no-ignore-case "$@" $HOME/.{ba,z}sh* $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH; }
 
 # Recover stray swap files from neovim
-alias vrec="ls $XDG_DATA_HOME/nvim/swap | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs --no-run-if-empty nvim"
+vrec() {
+	ls "$XDG_DATA_HOME/nvim/swap/$1" | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs --no-run-if-empty nvim
+}
 alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r -i mv {} /tmp"
 
 # I think this was something about recovering backup files

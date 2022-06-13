@@ -1,4 +1,4 @@
 #!/bin/sh
 # Colorize with diffr
-diff --color=always --report-identical-files --unified=2 "$@" |
+diff --color=always --unified=2 "$@" |
   diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33

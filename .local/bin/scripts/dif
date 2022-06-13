@@ -2,6 +2,6 @@
 # interactive diff with pagination and nice coloring
 if file --mime "$1" "$2" | grep --quiet audio
 then ff() { ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty "$@"; }
-	$(test $(tput cols) -gt 120 && echo "diff --color=always --side-by-side" || echo "diff-color") --label="$1" --label="$2" <(ff "$1") <(ff "$2")
-else diff-color "$@"
+	$(test $(tput cols) -gt 120 && echo "diff --color=always --side-by-side" || echo "diff-color") --report-identical-files --label="$1" --label="$2" <(ff "$1") <(ff "$2")
+else diff-color --report-identical-files "$@"
 fi | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen

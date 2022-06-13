@@ -5,6 +5,10 @@
 # and shows progress indications for some operations
 # optdepends: rewrite(part of my dotfiles)
 for arg do
+case $arg in
+	(-d) del=$(expr ${del:-0} + 1);;
+	(-*) param="$arg";;
+	(*)
 	if test -r "$arg"; then
 		fullpath="$(realpath "$arg")"
 		name="$(basename "${fullpath%.*}")"
@@ -21,7 +25,7 @@ for arg do
 			(*.tgz)         tar xzf "$fullpath"   ;;
 			(*.7z|*.z01|*.zip|*.jar)
 				if which 7z >/dev/null
-				then 7z x "$fullpath"
+				then 7z x $param "$fullpath"
 				else unzip "$fullpath" | rewrite
 				fi;;
 			(*.gz)          gunzip "$fullpath"    ;;
@@ -35,13 +39,18 @@ for arg do
 		# If we created a temporary subfolder, check if it can be eliminated
 		if test "$(basename "$PWD")" = "$namepart"
 		then if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
-			then test "$(ls)" && mv * ..
+			then test "$(ls)" && mv -v * ..
 				cd .. && rm -d "$namepart"
-			else cd .. && mv "$namepart" "$name"
+			else cd .. && mv -v "$namepart" "$name"
 			fi
 		fi
+		case $del in
+			(2) rm "$arg";;
+			(1) mv -v "$arg" "/tmp";;
+		esac
 		)
 	else
 		echo "'$1' is not a readable file"
-	fi
+	fi;;
+esac
 done

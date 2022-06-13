@@ -151,7 +151,7 @@ if test "$bat" -o "$batplain"; then
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
 	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$flags"
 	then cut="--line-range :7"
-		batpager="cut -c-$(echo $(tput cols) \* 19 / 10 | cut -d. -f1)"
+		batpager="cut -c-$(expr $(tput cols) \* 19 / 10 | cut -d. -f1)"
 	fi
 	batcommand="$elevate bat $cut $flags --pager"
 	batstyle="--style plain$rule"
