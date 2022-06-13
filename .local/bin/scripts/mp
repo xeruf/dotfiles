@@ -3,7 +3,7 @@
 # Play given files on mpd, playing external files through symlinking and recursively resolving playlists
 # depends: xargs realpath mpc
 # env: MUSIC
-# TODO auto-convert unknown types with ffmpeg to flac
+# TODO auto-convert unknown types with ffmpeg to flac rather than linking (wav, opus, ...)
 MUSIC="${MUSIC:-$(cat ${XDG_CONFIG_HOME:-$HOME/.config}/mpd/mpd.conf | grep music_directory | cut -d'"' -f2 | sed "s|~|$HOME|")}"
 PLAYLISTS="$MUSIC/Playlists"
 LINKS="$MUSIC/links"
@@ -13,9 +13,10 @@ then shift
 	# TODO this is sooo slow...
 	for arg
 	do
-		filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$(basename -- "$arg")*" -exec realpath {} + ||
+		matchname="$(basename -- "$arg" | sed 's|\(\[.*\)\]|\\\1\\]|;s|\?|\\?|')*"
+		filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$matchname" -exec realpath {} + ||
 			find "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
-				-name "$(basename -- "$arg")*" -exec realpath {} +; } 2>/dev/null)"
+				-name "$matchname" -exec realpath {} +; } 2>/dev/null)"
 		test -n "$verbose" && echo "Scanning path '$filepath' $(
 			test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
 		test $(printf "$filepath" | wc -l) -gt 0 && printf "$filepath" | xargs --delim='\n' "$0" -r $verbose && continue
