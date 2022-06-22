@@ -113,9 +113,9 @@
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = !git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
-	find = log --patch --all --full-history
+	find = log --patch --all --full-history # Find a filename in all git knows
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
-	hf = log --patch --follow --find-renames=1 --
+	history = log --patch --follow --find-renames=1 -- # Show the history of the given file
 
 	# diffs
 	d = diff

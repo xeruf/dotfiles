@@ -27,7 +27,7 @@ if beginswith $'\n#' "$original"; then
 			do let count--
 			done
 		done <<<"$(git -P diff --cached --name-only -r)" &&
-			expr substr "$common" 1 "$count") || exit 0
+			expr substr "$common" 1 "$count" | sed 's|.local/bin/scripts|bin|') || exit 0
 	case "$path" in ([0-9]*) path="${path#*/}";; esac
 	path="${path#.}"
 	{
