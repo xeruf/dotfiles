@@ -1,0 +1,3 @@
+#!/bin/sh -e
+# Emacs in the terminal
+emacsclient --tty --alternate-editor="" "$@"

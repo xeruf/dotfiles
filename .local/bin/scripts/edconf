@@ -32,6 +32,6 @@ case "$sel" in
   (/etc/caddy/*) sudoedit "$sel" && caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload-or-restart caddy;;
   (/etc/ssh/*) sudoedit "$sel" && sudo systemctl reload-or-restart sshd;;
   (/etc/network/interfaces*) sudoedit "$sel" && sudo service networking reload;;
-  (*) $(test -w "$sel" || echo sudo) "$EDITOR" "$sel";;
+  (*) $(test -w "$sel" || echo sudo --preserve-env=ALTERNATE_EDITOR) $EDITOR "$sel";;
 esac
 echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"
