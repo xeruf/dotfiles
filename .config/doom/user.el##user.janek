@@ -11,12 +11,16 @@
             org-roam-directory org-directory
             ))
   )
+(setq org-attach-id-dir (expand-file-name "3-dox/attach" user-data-dir))
 (if (and org-directory (file-exists-p org-directory))
-    (setq default-directory org-directory
-          org-agenda-files (append
-                             (directory-files-recursively (expand-file-name "project/") "\\`[^.]*\\'" 't)
+    (progn
+      (if (file-equal-p command-line-default-directory "~")
+          (setq default-directory org-directory))
+      (setq org-agenda-files (append
+                             (directory-files-recursively (expand-file-name "project/" org-directory) "\\`[^.]*\\'" 't)
                              (list (expand-file-name "inbox/"))
-                            )))
+                            ))
+    ))
 
 (use-package! recentf
   :config

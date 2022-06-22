@@ -68,6 +68,8 @@
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
+(package! haml-mode)
+
 (package! adoc-mode) ; Asciidoc, a md alternative
 (package! nov) ; epub reader
 (package! pkgbuild-mode) ; AUR PKGBUILDs

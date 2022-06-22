@@ -18,9 +18,12 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one
+(setq doom-theme (if (equal (getenv "THEME") "light") 'doom-one-light 'doom-one)
       doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sans" :size 24))
+
+; TODO how to treat sequencep as string? - theme toggle
+;(s-chop-suffixes '("-light" "-dark") doom-theme)
 
 (setq display-line-numbers-type 'relative
       scroll-margin 6
@@ -123,7 +126,12 @@ Version 2019-11-04 2021-02-16"
 
 (setq initial-major-mode 'org-mode)
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
+
 (add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
+(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
+(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 
 (add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 (add-hook 'twee-chapbook-mode-hook 'twee-mode)
@@ -285,8 +293,9 @@ Version 2019-11-04 2021-02-16"
             (substring id 0 2)
             (if (> (seq-length id) 2) (substring id 2) id))
     )
-  (setq org-attach-id-dir (expand-file-name "attach" (xdg-user-dir "DOCUMENTS"))
-        org-attach-method 'mv
+  (unless (file-exists-p org-attach-id-dir)
+    (setq org-attach-id-dir (expand-file-name "attach" (xdg-user-dir "DOCUMENTS"))))
+  (setq org-attach-method 'mv
         org-attach-preferred-new-method nil
         org-attach-id-to-path-function-list '(xf/org-attach-id-folder-format)
         )
