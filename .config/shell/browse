@@ -81,7 +81,7 @@ zoxide-fzf() {
 }
 # Locate directories and add 0 zoxide score
 locate-zox() {
-	locate --existing --basename --ignore-case "$@" |
+	locate --basename --ignore-case "$@" |
 		# TODO too slow
 		# while read -r file; do test -d "$file" && echo "$file"; done |
 		sed 's/^/   0 /'
@@ -95,7 +95,7 @@ d() {
 	# If not select with fzf, using locate to find extra options
 	target="$(if test -n "$query" &&
 			expr "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
-				$(echo "$query" | sed 'N;s|/.* \([0-9]\+\) */.*|> 10 * \1|;q') >/dev/null #2>&1
+				$(echo "$query" | sed 'N;s|/.* \([0-9]\+\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
 			then echo "$query" | head -1
 			else test -n "$query" && echo "$query"; locate-zox "$@"
 		fi | zoxide-fzf)"
