@@ -1,7 +1,16 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 # Clones from resolving the arguments and switches into the new directory
-# ARGS see git-repo
+# ARGS see git-repo, all arguments beyond the first three are forwarded to git-clone
 remote=$(git-repo "$@")
 echo "Cloning $remote"
-git clone $remote ${@:4} --recurse-submodules
-cd "$(test -n "$2" && echo "$2" || basename ${remote%.git})"
+case $# in
+    (1) dir=$(basename ${remote%.git});;
+    (3) prefix=$(echo "$3" | sed "s|\(.\)\b.*$|\1|")
+       case "$2" in
+           ("$prefix"*) ;;
+           (*) dir="${prefix}_$2";;
+       esac;;
+esac
+shift 3
+git clone $remote "$@" $dir --recurse-submodules
+cd "${dir:-${4:-$2}}"
