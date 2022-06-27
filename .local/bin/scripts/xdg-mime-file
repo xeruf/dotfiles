@@ -1,9 +1,10 @@
 #!/bin/sh -e
 # Use xdg-mime with a file's mime type
 xdg-mime query default "$(xdg-mime query filetype "$1")"
-test $# -gt 1 &&
+if test $# -gt 1; then
 	desktop="$(find /usr/share/applications -name "*$2*" | fzf -0 -1)" &&
 	xdg-mime default "$desktop" "$(xdg-mime query filetype "$1")" &&
 	echo -n "Updated to: " &&
 	xdg-mime query default "$(xdg-mime query filetype "$1")"
+fi
 # || echo "Cannot find application $2 in /usr/share/applications!"

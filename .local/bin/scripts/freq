@@ -15,7 +15,7 @@ case $1 in
     $0 "$diff"
     ;;
   (*)
-    out="${2:-/tmp/freq-$(basename "$1").png}"
+    out="${2:-/tmp/freq-$(basename "$1")}.png"
     mkdir -p "$(dirname "$out")"
     sox "$1" -n spectrogram -o "$out"
     timg --title "$out"

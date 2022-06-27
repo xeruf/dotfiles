@@ -3,7 +3,7 @@
 # adapted and improved from the commonly circulating version
 # detects whether unpacking into a subfolder is sensible
 # and shows progress indications for some operations
-# optdepends: rewrite(part of my dotfiles)
+# optdepends: rewrite(part of my dotfiles, for unzip line rewriting)
 for arg do
 case $arg in
 	(-d) del=$(expr ${del:-0} + 1);;
@@ -14,6 +14,7 @@ case $arg in
 		name="$(basename "${fullpath%.*}")"
 		namepart="$name.part"
 		(
+		# Create temporary subfolder if current folder contains stuff
 		if test "$(ls -U | wc -l)" -gt 2; then
 			mkdir -p "$namepart"
 			cd "$namepart"
@@ -39,9 +40,9 @@ case $arg in
 		# If we created a temporary subfolder, check if it can be eliminated
 		if test "$(basename "$PWD")" = "$namepart"
 		then if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
-			then test "$(ls)" && mv -v * ..
+			then test "$(ls)" && mv -iv * ..
 				cd .. && rm -d "$namepart"
-			else cd .. && mv -v "$namepart" "$name"
+			else cd .. && mv -iv "$namepart" "$name"
 			fi
 		fi
 		case $del in

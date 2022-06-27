@@ -7,5 +7,5 @@ then cat
 else printf '%s\n' "$@"
 fi | while read f; do
   highlight "$f"
-  find "$f" -type f -exec ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty {} \;
+  find "$f" -type f -exec ffprobe -loglevel 20 -print_format default=noprint_wrappers=1 -show_format -pretty {} \;
 done | less

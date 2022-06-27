@@ -2,7 +2,7 @@
 #assume_yes = true
 
 # Disable specific steps - same options as the command line flag
-disable = ["node", "nix", "emacs"] #, "pnpm", "config-update"]
+disable = ["node", "nix", "emacs", "config_update"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
@@ -17,7 +17,7 @@ no_retry = true
 #run_in_tmux = true
 
 # List of remote machines with Topgrade installed on them
-#remote_topgrades = ["tiger"]
+remote_topgrades = ["tiger"]
 
 # Arguments to pass SSH when upgrading remote systems
 #ssh_arguments = "-o ConnectTimeout=2"
@@ -64,7 +64,7 @@ arguments = "--rebase --autostash"
 
 [linux]
 # Arguments to pass yay when updating packages
-yay_arguments = "--nodiffmenu --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm"
+yay_arguments = "--nodiffmenu --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm --ignore brave-bin"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"

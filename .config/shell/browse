@@ -45,7 +45,7 @@ cd() {
 		#   pr -4 -l1 -W $COLUMNS -S"  "
 		command ls --sort=none --quote-name |
 			head -12 |
-			xargs ls --sort=time --format=vertical --directory --literal --file-type --color=always --width $COLUMNS |
+			xargs ls --sort=time --format=vertical --directory --literal --classify --color=always --width $COLUMNS |
 			head -3
 		code=$? && test $code -eq 141 || return $code
 	fi
@@ -53,7 +53,7 @@ cd() {
 
 # LOCATE {{{1
 # TODO no double heading with bat
-alias fselect='fzf -0 -1 --reverse --height=30% | while read f; do test -d "$f" && cd "$f" || { highlight "$f" && print -s "b \"$f\"" && b "$f"; }; done';
+alias fselect='fzf -0 -1 --reverse --height=40% | while read f; do test -d "$f" && cd "$f" || { highlight "$f" && print -s "b \"$f\"" && b "$f"; }; done';
 loci() {
 	locate --all --ignore-case --basename --existing "$@" |
 		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') |
@@ -94,7 +94,7 @@ d() {
 	# If not select with fzf, using locate to find extra options
 	target="$(if test -n "$query" &&
 			expr "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
-				$(echo "$query" | sed 'N;s|/.* \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
+				$(echo "$query" | sed 'N;s|/.*  \([0-9]\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
 			then echo "$query" | head -1
 			else test -n "$query" && echo "$query"; locate-zox "$@"
 		fi | zoxide-fzf)"

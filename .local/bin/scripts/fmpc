@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 # Select a song in the mpd queue using fzf and mpc
-song_position=$(mpc -f "%position%) %artist% - %title%" playlist | \
-  fzf-tmux --query="$1" --reverse --select-1 --exit-0 | \
-  sed -n 's/^\([0-9]\+\)).*/\1/p') || return 1
+# depends: fzy/fzf-tmux mpc
+song_position=$(mpc -f "%position%) %artist% - %title%" playlist |
+  #fzy --query="$1" |
+  fzf-tmux --query="$1" --reverse --select-1 --exit-0 |
+  sed -n 's/^\([0-9]\+\)).*/\1/p')
 test -n "$song_position" && mpc play $song_position

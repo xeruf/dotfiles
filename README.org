@@ -67,7 +67,7 @@ makepkg -si
 - video :: [[https://github.com/phw/peek][peek]] vlc obs-studio kdenlive
 - music management :: puddletag beets picard ffmpegthumbnailer sox
   : sudo npm install -g bpm
-- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git
+- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git soundfont-fluid
 - communication :: zulip-desktop-bin ferdi-bin
 - hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight light
