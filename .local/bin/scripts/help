@@ -11,7 +11,7 @@ case "$cmd" in
 		# need to install zsh-doc package for info pages
 		info $(test "$last" != zsh && echo "--index-search=$last") zsh ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
-	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr) unbuffer "$@" --help | $paginate;;
+	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go|fossil) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && fossil ui "$repo" && exit
 		# TODO view fossil ui in terminal
 		shift
@@ -23,8 +23,12 @@ case "$cmd" in
 	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions | paste -s -d' ';;
 	(swaymsg) test $# -gt 1 && shift && man sway "$@" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
-	(*) { which info >/dev/null 2>&1 && info -f "$@" 2>/dev/null; } || #"$cmd" -w | grep -q . && pinfo "$@"; } ||
-		man "$@" ||
+	(*) {
+		case $EDITOR in
+			(*vim) info "$@" -w | grep -q . && $EDITOR -R -M  -c "Info $*" +only;;
+			(*) { which info >/dev/null 2>&1 && info -f "$@" 2>/dev/null; } || man "$@";;
+		esac
+		} ||
 		if which "$cmd" >/dev/null
 		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
 		fi;;

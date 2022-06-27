@@ -57,6 +57,8 @@ Plug 'austintraver/vim-jrnl'
 Plug 'weinshec/vim-dictcc' " TODO do not hang without internet
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'mipmip/vim-scimark'              " Edit markdown tables with sc-im
+Plug 'alx741/vinfo'
+Plug 'HiPhish/info.vim'
 
 call plug#end()
 
