@@ -13,14 +13,20 @@
 # Automatically requests elevation through sudo when needed
 
 set -o pipefail
-test "$1" = "-v" &&
-	set -eo xtrace &&
-	shift
+
 inspect=false
-# inspect: Show file info without preview
-test "$1" = "-i" &&
-	inspect=true &&
-	shift
+
+opts='itvh'
+while getopts "$opts" OPTION; do
+  case "$OPTION" in
+  	# inspect: Show file info without preview
+  	(i) inspect=true;;
+    (t) tree=true;;
+	(v) set -eo xtrace;;
+    (h|?) echo "Usage: $(basename $0) [-$opts] <paths...>" && exit 2;;
+  esac
+done
+shift "$(($OPTIND -1))"
 
 checkperm() {
 	checkaccess -r "$@" || elevate=sudo
@@ -182,7 +188,9 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	# Alternative: find -exec ls -dl {} +
 	{
 		timeout .6s sh -c "
-			if which exa 2>/dev/null >&2
+			if test '$tree'
+			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags $(printf "'%s' " "${ls[@]:-.}")
+			elif which exa 2>/dev/null >&2
 			then $elevate exa --color=always --long --group --classify --all --all --sort=changed --reverse $flags $(printf "'%s' " "${ls[@]:-.}")
 			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags $(printf "'%s' " "${ls[@]:-.}")
 			fi
