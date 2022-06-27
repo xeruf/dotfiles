@@ -22,8 +22,19 @@
       doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sans" :size 24))
 
-; TODO how to treat sequencep as string? - theme toggle
-;(s-chop-suffixes '("-light" "-dark") doom-theme)
+(defun load-theme-string (theme)
+  (if (-contains? (custom-available-themes) (intern theme)) (load-theme (intern theme))))
+(defun toggle-theme (&optional suffix)
+  "Heuristically toggle between light and dark themes."
+  (interactive)
+  (let* ((theme (s-replace-all '(("light" . "dark") ("dark" . "light")
+                     ("black" . "white") ("white" . "black")
+                     ("day" . "night") ("night" . "day"))
+                   (symbol-name doom-theme)))
+        (theme-base (s-replace-regexp "-[^-]*$" "" theme)))
+    (or (if suffix (or (load-theme-string (concat theme "-" suffix)) (load-theme-string (concat theme-base "-" suffix)))) (load-theme-string (if (and (not suffix) (equal theme (symbol-name doom-theme))) (concat theme "-light") theme)) (load-theme-string theme-base))
+    )
+  )
 
 (setq display-line-numbers-type 'relative
       scroll-margin 6
