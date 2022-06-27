@@ -70,7 +70,7 @@ wh() {
 		tool="$(echo "$res" | head -1 | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
 		wh $(test $tool = $1 && echo "-p") $tool
 		# use command which for other shells
-	else test -r "$res" && b "$res" || echo "$res" | bat --style=plain --language=sh
+	else test -r "$res" && b -- --language=sh "$res" || echo "$res" | bat --style=plain --language=sh
 	fi
 }
 compdef wh=which
@@ -294,10 +294,11 @@ alias hx='sudo hexedit --maximize --color'
 # Paginated hexyl
 hex() { hexyl "$@" | "${PAGER:-less}"; }
 
-alias dic="cat $XDG_DATA_HOME/dictcc/dict.txt | sed '/#/d;/&/d;/^$/d' | fzy"
+export DICT="$XDG_DATA_HOME/dictcc"
+alias dic="cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzy"
 #fzf --tiebreak=length --bind='alt-bspace:clear-query'
-alias dict="rlwrap rdictcc -d $XDG_DATA_HOME/dictcc"
-alias dictu="dict -i $XDG_DATA_HOME/dictcc/dict.txt"
+alias dict="rlwrap rdictcc --directory $DICT"
+alias dict_update="dict -i $DICT/dict.txt"
 
 npm-reinstall() {
 	rm -rf $TMPDIR/react-*

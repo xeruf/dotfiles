@@ -649,7 +649,7 @@ Version 2019-11-04 2021-02-16"
     (interactive)
     (let* ((file (dired-get-filename nil t))
            (mime (get-mimetype file)))
-      (if (or (string-prefix-p "audio" mime) (string-prefix-p "video" mime) (member mime unsupported-mime-types))
+      (if (or (string-suffix-p ".desktop" file) (string-prefix-p "audio" mime) (string-prefix-p "video" mime) (member mime unsupported-mime-types))
         (call-process "xdg-open" nil 0 nil file)
         (find-file file))))
 
@@ -812,6 +812,12 @@ Version 2019-11-04 2021-02-16"
   (remove-hook 'text-mode-hook #'spell-fu-mode)
   )
 (setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
+
+(use-package! rdictcc
+  :bind (("C-c t". 'rdictcc-translate-word-at-point)
+         ("C-c T". 'rdictcc-translate-word))
+  :config (setq rdictcc-program-args "--directory $XDG_DATA_HOME/dictcc")
+  )
 
 (after! tramp
   (setq tramp-default-method "scpx")

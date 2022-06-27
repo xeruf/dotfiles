@@ -24,10 +24,12 @@ case "$cmd" in
 	(swaymsg) test $# -gt 1 && shift && man sway "$@" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
 	(*) {
-		case $EDITOR in
-			(*vim) info "$@" -w | grep -q . && $EDITOR -R -M  -c "Info $*" +only;;
-			(*) { which info >/dev/null 2>&1 && info -f "$@" 2>/dev/null; } || man "$@";;
-		esac
+		which info >/dev/null 2>&1 &&
+			case $EDITOR in
+				(*vim) info "$@" -w | grep -q . && $EDITOR -R -M -c "Info $*" +only;;
+				(*) info -f "$@" 2>/dev/null;;
+			esac ||
+				man "$@"
 		} ||
 		if which "$cmd" >/dev/null
 		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
