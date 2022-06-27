@@ -1,11 +1,11 @@
 #!/bin/sh -e
 # Delete files under current or given path which exist elsewhere as listed in the locate database
 # Matches first by name, then by checksum (currently inefficiently via md5)
-case "$1" in ([0-9]) size=$1; shift;; esac
-find "$@" -size +${size:-5}M -type f -exec sh -c "IFS=$'\n'"'
+case $1 in ([0-9]|[0-9][0-9]) threshold=$1; shift;; esac
+find "$@" -size +${threshold:-50}M -type f -exec sh -c "IFS=$'\n'"'
   filepath="{}"
   target="$(basename "$filepath" | synct-unarchive)"
   highlight "$filepath"
   for existing in $(locate -b "$target")
-  do test "$(realpath "$target")" != "$(realpath "$existing")" -a -f "$existing" -a "$(md5sum "$existing" | cut -d\  -f1)" = "$(md5sum "$filepath" | cut -d\  -f1)" && echo "Found duplicate at $existing" && rm -vi "$filepath" && break
+  do test "$(realpath "$target")" != "$(realpath "$existing")" -a -f "$existing" && test "$(md5sum "$existing" | cut -d\  -f1)" = "$(md5sum "$filepath" | cut -d\  -f1)" && echo "Found duplicate at $existing" && rm -vi "$filepath" && break
   done' \;

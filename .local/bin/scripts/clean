@@ -21,7 +21,7 @@ find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p
 find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete
 
 highlight "e :: recursively remove empty folders and files"
-[[ $1 =~ "e" ]] && find -empty -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
+[[ $1 =~ "e" ]] && find \( -name ".stfolder" -o -name ".*keep" -o -name ".git" \) -prune -o -empty -printf "Removing empty %p\n" -exec rm -d {} +
 
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
@@ -49,9 +49,10 @@ if [[ $1 =~ "d" ]]; then
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm $i -r {} + -prune
 	echo -n "  " && highlight "build directories"
-	find \( -name ".git" -o -path "*/mixxx/build" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
+	find \( -name ".git" -o -path "*/mixxx/build" -o -name "app" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
 		-prune -o -name "build" -type d \
 		-print -exec rm -rI {} + -prune
+	# TODO consider gitignore / use git clean
 fi
 highlight "g :: clean gradle caches"
 if [[ $1 =~ "g" ]]; then
@@ -61,7 +62,7 @@ fi
 
 highlight "c :: clean electron caches"
 [[ $1 =~ "c" ]] && find "$dir$(expr "${XDG_CONFIG_HOME/$HOME}" \| "/.config")" \
-		-type d -name "*Cache" -print -exec rm $i -r {} + -prune
+		-type d -name "*Cache*" -print -exec rm $i -r {} + -prune
 
 if test -f "/var/log/apt/history.log"; then
 	aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)

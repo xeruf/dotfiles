@@ -1,3 +1,12 @@
-#!/bin/sh
-# Remove one level of folders
-find -mindepth 1 -maxdepth 1 -exec sh -c 'mv -nv {}/* . && rm -dv {}' \;
+#!/bin/sh -e
+# Flatten folder hierarchy
+# Args: depth
+find -mindepth 2 -maxdepth ${depth:-2} -depth -type d "$@" | while read folder; do
+	newname="$(echo "$folder" | sed 's|^./||;s|/|_|g')"
+	mv -v "$folder" "$newname"
+	parent="$(dirname "$folder")"
+	test "$(basename "$folder")" = "$(basename "$parent")" &&
+		rm -d "$parent" &&
+		mv -v "$newname" "$parent"
+done
+find -maxdepth ${depth:-2} -empty -type d -delete
