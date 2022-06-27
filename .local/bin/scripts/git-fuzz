@@ -1,18 +1,18 @@
-#!/bin/sh -e
+#!/bin/sh
 # Create a commit or stage files via fzf selection
 # If the first arg is "add", files are staged rather than committed.
 # All remaining args are passed to the last git command (add or commit).
 # TODO fix broken prep-commit-msg hook when there is no unifying path
 # TODO fix broken alt-enter not opening editor --bind='alt-enter:change-prompt(hi>)'
 
-set -o pipefail
+set -eo pipefail
 
 fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain
 	# and return a newline-separated list of selected files
 	cut -z -c2- |
 		git fzf-diff --read0 -d' ' --nth=2.. --bind="alt-enter:execute($EDITOR '$(git rev-parse --show-toplevel)/{2..}')" \
-			--preview="test {1} != \? && git diff --color HEAD --unified=4 -- {2..} | $(git config interactive.diffFilter) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
+			--preview="test {1} != \? && git diff --color HEAD --unified=4 -- {2..} | $(git config interactive.diffFilter | grep . || echo $PAGER) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
 		cut -c3-
 }
 
