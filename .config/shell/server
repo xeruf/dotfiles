@@ -11,7 +11,7 @@ stack() {
 	test $# -lt 1 &&
 		builtin cd "$STACKSPIN" &&
 		echo "Usage: $0 <COMMAND> [args...]" &&
-		echo "Inbuilt commands: select, sso, user, exec, pod, occ" &&
+		echo "Inbuilt commands: select, sso, user, exec, pod, occ, push" &&
 		return 1
 	local command="$1"
 	shift
@@ -29,23 +29,32 @@ stack() {
 		builtin cd "$STACKSPIN"
 		;;
 	(sso) builtin cd "$STACKSPIN"
-		"$0" exec single-sign-on-login -- flask "$@";;
-	(user)
+		"$0" exec dashboard --container backend -- flask "$@";;
+	(user|app)
 		if test "$1" = "init"
 		then mail="$2"
 			shift 2
-			stack user create "$mail"
-			stack user update "$mail" name "$*"
+			"$0" user create "$mail"
+			"$0" user update "$mail" name "$*"
 			echo "Initialized user '$*' with email '$mail'"
-		else "$0" exec single-sign-on-login -- flask "$command" "$@"
+		else "$0" sso cli "$command" "$@"
 		fi;;
 	# app clis via kubectl
 	(occ) "$0" exec nc-nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
-	(exec) kubectl exec -n $("$0" pod "$1-[0-9]") "${@:2}";;
+	(exec)
+		if ! pod=$("$0" pod "$1-[0-9]")
+		then echo "No pod found for $1" >&2
+			return 1
+		fi
+		shift
+		kubectl exec -n $(echo $pod) "$@";;
 	(pod)
 		local podname=$1
 		shift
 		kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never "$podname";;
+	(push)
+		git push
+		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))";;
 	# stackspin bare
 	(*) if which "$0-$command" >/dev/null 2>&1
 		then "$0-$command" "$@"
