@@ -1,0 +1,92 @@
+#!/bin/sh -e
+test $# -lt 1 &&
+  echo "Usage: $0 <app> [subdomain] [repo] [namespace]" &&
+  exit 1
+app=$1
+subdomain=${2:-$app}
+repo=${3:-$app}
+namespace=${4:-stackspout}
+cat <<EOF >$app-oauth-client.yaml
+apiVersion: hydra.ory.sh/v1alpha1
+kind: OAuth2Client
+metadata:
+  name: $app-oauth-client
+  # Has to live in the same namespace as the stackspin-$app-oauth-variables secret
+  namespace: flux-system
+spec:
+  # TODO copied from wekan: https://github.com/wekan/wekan/wiki/Keycloak
+  grantTypes:
+    - authorization_code
+    - refresh_token
+    - client_credentials
+    - implicit
+  responseTypes:
+    - id_token
+    - code
+  scope: "openid profile email stackspin_roles"
+  secretName: stackspin-$app-oauth-variables
+  #redirectUris:
+  #  - https://$subdomain.\${domain}/oauth/openid/
+  #tokenEndpointAuthMethod: client_secret_post
+EOF
+
+cat <<EOF >$app-release.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: $app
+  namespace: $namespace
+spec:
+  releaseName: $app
+  chart:
+    spec:
+      chart: $app
+      version: # TODO
+      sourceRef:
+        kind: HelmRepository
+        name: $repo
+        namespace: flux-system
+  interval: 5m
+  valuesFrom:
+    - kind: ConfigMap
+      name: stackspin-$app-values
+      optional: false
+    # Allow overriding values by ConfigMap or Secret
+    - kind: ConfigMap
+      name: stackspin-$app-override
+      optional: true
+    - kind: Secret
+      name: stackspin-$app-override
+      optional: true
+EOF
+
+cat <<EOF >$app-values-configmap.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stackspin-$app-values
+  namespace: $namespace
+data:
+  values.yaml: |
+    # TODO verify structure matches chart
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/tls-acme: "true"
+      hosts:
+        - host: "$subdomain.\${domain}"
+          paths:
+             - path: /
+               pathType: Prefix
+      tls:
+        - secretName: $app-tls
+          hosts:
+            - "$subdomain.\${domain}"
+    # TODO Adjust OIDC SSO to service
+    #    - name: Stackspin
+    #      key: "\${client_id}"
+    #      secret: "\${client_secret}"
+    #      autoDiscoverUrl: 'https://sso.\${domain}/.well-known/openid-configuration'
+EOF
+
