@@ -5,11 +5,13 @@ remote=$(git-repo "$@")
 echo "Cloning $remote"
 case $# in
     (1) dir=$(basename ${remote%.git});;
-    (3) prefix=$(echo "$3" | sed "s|\(.\)\b.*$|\1|")
-       case "$2" in
-           ("$prefix"*) ;;
-           (*) dir="${prefix}_$2";;
-       esac;;
+    (3) test "$3" != "$(git config --get user.name)" &&
+        prefix=$(echo "$3" | sed "s|\(.\)\b.*$|\1|") &&
+        case "$2" in
+            ("$prefix"*) ;;
+            ("$(git config --get user.name)") ;;
+            (*) dir="${prefix}_$2";;
+        esac;;
 esac
 shift 3
 git clone $remote "$@" $dir --recurse-submodules

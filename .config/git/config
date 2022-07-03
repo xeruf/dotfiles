@@ -107,7 +107,7 @@
 	lg = lgr HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local
-	my = lo --author [Jj]anek
+	my = lo --author "xeru\\|anek"
 
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
