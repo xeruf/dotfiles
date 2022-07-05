@@ -3,15 +3,21 @@
 # Usage:
 #  git repo <url>
 #  git repo <host> <repo> [user]
+test "$1" = https && https=true && shift
 case "$1" in
   (http*) echo "$1" | sed "s|.*//\([^/]*\)/\(.*\)|git@\1:\2.git|" ;;
-  (git:*) echo "$1" ;;
-  (*) host=$1
+  (git:*|ssh:*) echo "$1" ;;
+  (*)
     case $1 in
       (socha) user=software-challenge; host=git@github.com;;
       (hub) host=git@github.com;;
       (lab) host=git@gitlab.com;;
-      (*) host=$1;;
+      (*) host=${1:-gitea@git.jfischer.org};;
     esac
-    echo "${host:-gitea@git.jfischer.org}:${3:-${user:-$(git config user.name)}}/${2:-$(basename $PWD)}.git" ;;
+    user=${3:-${user:-$(git config user.name)}}
+    repo=${2:-$(basename $PWD)}
+    if test "$https"
+    then echo "https://${host#git*@}/$user/$repo"
+    else echo "$host:$user/$repo.git"
+    fi
 esac
