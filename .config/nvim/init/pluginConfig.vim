@@ -45,7 +45,7 @@ let g:firenvim_config = {
       \ 'takeover': 'once',
     \ },
     \ '.*church\.tools.*':                   { 'priority': 9, 'takeover': 'empty', },
-    \ '.*element\.io.*':                     { 'priority': 9, 'takeover': 'empty', },
+    \ '.*element\.io.*':                     { 'priority': 9, 'takeover': 'never', },
     \ '.*openstreetmap\.org.*':              { 'priority': 9, 'takeover': 'once', },
     \ '.*openstreetmap\.de.*':               { 'priority': 9, 'takeover': 'once', },
     \

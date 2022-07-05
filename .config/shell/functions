@@ -3,6 +3,7 @@
 if test "$ZSH_NAME" = "zsh"
 then
 	alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
+	alias -g B="| xargs bat"
 	alias -g G="| grp"
 	alias -g X="| xargs -d '\n' -L 1"
 	alias -g X1="| xargs -d '\n' -n 1"
@@ -227,26 +228,30 @@ dns() {
 	drill A @8.8.8.8 -Q "$@"
 	drill AAAA @8.8.8.8 -Q "$@"
 }
-alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
 sshl() {
 	test "$1" = "-a" && shift && local all=true
 	lemonade server -allow 127.0.0.1 &
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
 	file="$authcache/$1"
-	if test ! -e "$file"; then
-		test "$all" && pass scp ~/.bash_aliases "$@:"
-		if ! ssh -G "$1" | grep --silent "^user root$" && touch "$file"; then
-		ssh-copy-id -i "$(ssh -G "$1" | grep --max-count 1 "^identityfile " | cut -d " " -f2- | sed "s|^~|$HOME|")" "$1" && touch "$file"
+	test "$all" && pass scp ~/.bash_aliases "$@:"
+	if ssh -G "$1" | grep --silent "^user root$"
+	then TERM=xterm-256color pass ssh "$@"
+	else
+		test ! -e "$file" &&
+			ssh-copy-id -i "$(ssh -G "$1" |
+				grep --max-count 1 "^identityfile " |
+				cut -d " " -f2- |
+				sed "s|^~|$HOME|")" "$1" &&
+			touch "$file"
 		TERM=xterm-256color kitty +kitten ssh -R 2489:127.0.0.1:2489 "$@"
-		return $?
-		fi
+	return $?
 	fi
-	TERM=xterm-256color pass ssh "$@"
 }
 
+alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
+# Hardcoded Programs
 alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
-
 alias scenic='/usr/lib/jvm/java-11-openjdk/bin/java --module-path /usr/lib/jvm/java-11-openjfx/lib --add-modules javafx.web,javafx.fxml,javafx.swing -jar scenicview.jar'
 
 # Listen to loopback of mic
@@ -440,8 +445,10 @@ compdef mkcd=mkdir
 
 # Other stuff {{{1
 
+# This is a function rather than a script as it potentially needs to cd out of the directory
 umoul() {
 	local arg
+	# get the last arg
 	for arg; do true; done
 	if test "$arg"
 	then mountpoint="$(test -d "$arg" && realpath "$arg" || echo "${MNT:-${XDG_RUNTIME_DIR}/mnt}/$arg")"
@@ -456,10 +463,10 @@ umoul() {
 		test "$(dirname "$mountpoint")" = "/" && return 1
 	fi
 	case "$PWD" in
-		("$mountpoint"*) cd "$(dirname $mountpoint)";;
+		("$mountpoint"*) builtin cd "$(dirname $mountpoint)";;
 	esac
 	# pass on all args except last
-	moul -u "${@:1:$#-1}" "$mountpoint"
+	moul -u "${@:1:$(((# > 1) ? #-1 : 0))}" "$mountpoint"
 }
 
 resetdocker() {

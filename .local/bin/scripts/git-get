@@ -13,6 +13,6 @@ case $# in
             (*) dir="${prefix}_$2";;
         esac;;
 esac
-shift 3
+shift $(expr $# \& $# \< 3 \| 3)
 git clone $remote "$@" $dir --recurse-submodules
 cd "${dir:-${4:-$2}}"

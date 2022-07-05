@@ -1,12 +1,19 @@
-#!/bin/sh
+#!/bin/sh -e
 # Test disk performance
 # Adapted from https://www.shellhacks.com/disk-speed-test-read-write-hdd-ssd-perfomance-linux/
+test "$1" = "-w" && write=true && shift
 disk="${1:-$(df --output=source . | tail -1)}"
+if test "$write"
+then exec &> >(tee "disktest-$(date +"%y%m%d")")
+fi
+# Needs sudo for read test
 sudo hdparm -MWAgt "$disk"
 if test $# -eq 0
 then echo "Write test:"
 	sync
-	#sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=1K && sudo dd status=progress if=/var/tmp/tempfile of=tempfile bs=1M count=1K
-	sudo dd status=progress if=/dev/zero of=tempfile bs=1M count=1K
+	# This prevents predictions by using random, but since that is too slow we have to copy a previously created file
+	# sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=1K && sudo dd status=progress if=/var/tmp/tempfile of=tempfile bs=1M count=1K
+	# TODO adjust size to disk
+	sudo dd status=progress if=/dev/zero of=tempfile bs=1000K count=1000
 	sudo rm tempfile
 fi

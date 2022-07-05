@@ -174,7 +174,7 @@ Version 2019-11-04 2021-02-16"
 
 ;;; Data Preservation
 
-;; UNDO
+;; Undo
 (setq evil-want-fine-undo t)
 (setq amalgamating-undo-limit 5)
 

@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences/33206814
+# https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences/33206814#33206814
 
 print("\\033[XXm")
 
 for i in range(30,37+1):
-    print("\033[%dm%d\t\t\033[%dm%d" % (i,i,i+60,i+60));
+    print("\033[%dm%d\t\t\033[%dm%d" % (i,i,i+30,i+30));
 
 print("\033[39m\\033[39m - Reset colour (0 to reset all)")
 print("\\033[2K - Clear Line")
@@ -18,7 +18,20 @@ print("\\033[K Erase to end of line")
 print("\\033[s Save cursor position")
 print("\\033[u Restore cursor position")
 print(" ")
-print("\\033[4m  Underline on")
-print("\\033[24m Underline off")
-print("\\033[1m  Bold on")
-print("\\033[21m Bold off")
+
+def illustrate(command, *text):
+    print("\033[", command, "m\\033[", command, "m - ", *text, sep="", end="\t")
+
+def toggle(command, text):
+    illustrate(command, text, " on")
+    illustrate(command + 20, text, " off\033[0m")
+    print()
+toggle(1, "Bold")
+toggle(2, "Grey")
+toggle(3, "Italic")
+toggle(4, "Underline")
+#toggle(5, "Bold")
+#toggle(6, "Bold")
+toggle(7, "Highlight")
+#toggle(8, "Bold")
+toggle(9, "Strike")

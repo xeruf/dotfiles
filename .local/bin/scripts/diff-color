@@ -2,4 +2,8 @@
 # Colorize with diffr
 # TODO light mode
 diff --color=always --minimal --unified=2 "$@" |
-  diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33
+  $(which diffr >/dev/null 2>&1 && test "$THEME" != "light" && echo 'diffr
+    --colors refine-added:none:background:0x33,0x66,0x33:bold
+    --colors added:none:background:0x33,0x44,0x33
+    --colors refine-removed:none:background:0x66,0x33,0x33:bold
+    --colors removed:none:background:0x44,0x33,0x33' || echo cat)

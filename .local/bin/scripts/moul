@@ -38,7 +38,7 @@ shift $(expr 2 \& $# \> 1 \| 1)
 #uid=$(id --user),gid=$(id --group), \
 if ! mountpoint "$mountpoint" 2>/dev/null
 then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
-	sudo mount -vo users,X-mount.mkdir,noatime $partition $mountpoint "$@"
+	sudo mount -vo users,X-mount.mkdir,noatime,umask=003,gid=users,uid=$USER $partition $mountpoint "$@"
 fi
 cd $mountpoint
 exec $SHELL
