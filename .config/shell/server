@@ -1,12 +1,13 @@
 export STACKSPIN="${STACKSPIN:-$HOME/projects/stackspin}"
 _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 
-# Stackspin CLI Wrapper
+# Stackspin CLI Wrapper:
 # Initialize once with "stack select example.org",
 # then it loads the last selected cluster on startup.
 # Presumes a mapping like the following in your ssh config:
 # Host example.org
 #    Hostname [IP]
+# This is a function so it can change directory
 stack() {
 	test $# -lt 1 &&
 		builtin cd "$STACKSPIN" &&
@@ -42,7 +43,7 @@ stack() {
 	# app clis via kubectl
 	(occ) "$0" exec nc-nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
 	(exec)
-		if ! pod=$("$0" pod "$1-[0-9]")
+		if ! pod=$("$0" pod "$1-\(0\|[0-f]\+\)")
 		then echo "No pod found for $1" >&2
 			return 1
 		fi
@@ -53,6 +54,7 @@ stack() {
 		shift
 		kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never "$podname";;
 	(push)
+		git commit -a
 		git push
 		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))";;
 	# stackspin bare
