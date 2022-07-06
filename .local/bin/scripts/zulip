@@ -1,0 +1,10 @@
+#!/bin/sh
+# Execute commands on a zulip server
+zulipdepl="/home/zulip/deployments/current"
+sudo su zulip -c "$(
+    scr="$zulipdepl/scripts/$1"
+    if test -f "$scr"
+    then shift && echo "$scr $@"
+    else echo "$zulipdepl/manage.py $@"
+    fi
+)"
