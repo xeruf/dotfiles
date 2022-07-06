@@ -16,7 +16,8 @@ case "$cmd" in
 		# TODO view fossil ui in terminal
 		shift
 		"$cmd" help "$@" | $paginate;;
-	(rails) { rails -H && rails --help; } | $paginate;;
+	(doom) "$@" --help;;
+	(rails) { "$@" -H && "$@" --help; } | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
 	(kdeconnect*) shift && kdeconnect-cli --help-all "$@" | $paginate;;

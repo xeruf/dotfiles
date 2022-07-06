@@ -98,10 +98,10 @@ for arg; do
 		case "$(file --dereference "$arg")" in
 		(*\ ?udio*)
 			# TODO preconvert aac - |*\ ADTS\ *
-			img="$tmpfile.png"
-			case $TERM in (*-kitty) kitty=true; audioheight=2;; (*) audioheight=5;; esac
-			if which audiowaveform 2>/dev/null >&2
-			then find "$img" -not -empty 2>/dev/null | grep --quiet . ||
+			if ! $inspect && which audiowaveform 2>/dev/null >&2; then
+				img="$tmpfile.png"
+				case $TERM in (*-kitty) kitty=true; audioheight=2;; (*) audioheight=5;; esac
+				find "$img" -not -empty 2>/dev/null | grep --quiet . ||
 				audiowaveform --quiet --pixels-per-second 2 --height 36 --width 2000 --amplitude-scale auto \
 					--background-color 000000 --waveform-color 99BBFF --axis-label-color 000000 \
 					--input-filename "$arg" --output-format png >"$img" && {
@@ -187,6 +187,7 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	checkperm .
 	# Alternative: find -exec ls -dl {} +
 	{
+		# TODO handle single quotes in filenames
 		timeout .6s sh -c "
 			if test '$tree'
 			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags $(printf "'%s' " "${ls[@]:-.}")

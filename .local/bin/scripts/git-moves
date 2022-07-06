@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/bin/sh -e
 # Stage moved files fitting the already staged ones
+set -o pipefail
 git diff --name-only --cached >/tmp/staged
 root=$(git rev-parse --show-toplevel)
 git add "$root"

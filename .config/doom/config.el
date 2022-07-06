@@ -79,7 +79,7 @@ Version 2019-11-04 2021-02-16"
 (defun dragon (&optional @file)
   "Share file from current buffer via dragon."
   (interactive)
-  (message (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
+  (shell-command (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -450,7 +450,7 @@ Version 2019-11-04 2021-02-16"
       (interactive)
       (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
 
-    (if (file-exists-p org-journal-dir) (xf/survey-mode))
+    ;(if (file-exists-p org-journal-dir) (xf/survey-mode))
     ; TODO journal at start (call-interactively 'org-journal-new-entry)
   )
 
@@ -479,7 +479,7 @@ Version 2019-11-04 2021-02-16"
              :unnarrowed t)
             )
           )
-    (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration")
+    (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration" "writing")
       do (add-to-list 'org-roam-capture-templates
             `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
              (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat xf/org-roam-capture-props "#+filetags: :" item ":" xf/org-roam-capture-title))

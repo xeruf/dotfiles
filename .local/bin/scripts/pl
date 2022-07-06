@@ -7,14 +7,16 @@ test "$1" = '-v' && verbose='true' && shift || verbose='false'
 case $command in
   (update)
     for pl; do
-      highlight $pl
-      cat $pl | rev | cut -d'/' -f-2 | rev | while read f; do
+      highlight $pl >&2
+      bak="/tmp/$pl"
+      cat $pl | tee "$bak" | rev | cut -d'/' -f-2 | rev | while read f; do
           $verbose && printf "\e[31;1mSearching for '$f'\e[0m\n" >&2
           test -n "$f" || continue
           newpath="$(find $MUSIC -path "*${f#*../}" -prune | grep . || find $MUSIC -path "*${f##* - }" -o -path "*${f##*/}" | grep -m 1 .)"
           $verbose && printf "\e[31;1mFound '$newpath'\e[0m\n" >&2
           test -n "$newpath" && realpath --relative-to $(dirname "$pl") "$newpath" || echo "$f"
         done | tee $pl
+      echo "Backup of $pl saved to $bak" >&2
     done;;
   (edit) ${EDITOR:-nano} $(find $MUSIC/Playlists -iname "$1\.*" | grep . || find $MUSIC/Playlists -iname "$1*");;
   (make)

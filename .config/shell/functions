@@ -185,11 +185,12 @@ alias jcj='jce -o json-pretty --unit' # JSON View
 # Shorthands
 alias v='edit'
 alias st='synct'
+alias ex='dtrx'
 alias expr='noglob expr'
 alias get='noglob ='
-alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
 
 # Shortcuts
+alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
 alias logoff="loginctl terminate-user $USER"
 alias calb='rlwrap -a bc -l'
 alias dt='python -c "import time;print(time.asctime(time.localtime()))"'
@@ -216,10 +217,11 @@ u() {
 		sudo pacman -Syy
 	if which topgrade >/dev/null
 	then
-	  topgrade &&
-	  topgrade --only emacs --yes
-	  # TODO autodetect failure in emacs and rebuild completely
-	else yadm l && sudo apt update && sudo apt upgrade
+	  topgrade
+	  builtin cd $XDG_CONFIG_HOME/emacs && git pull --rebase && doom sync -u
+	  # TODO autodetect failure in emacs and rebuild it completely
+	else yadm l
+		 sudo apt update && sudo apt upgrade
 	fi
 }
 
@@ -250,12 +252,11 @@ sshl() {
 }
 
 alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
-# Hardcoded Programs
-alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
-alias scenic='/usr/lib/jvm/java-11-openjdk/bin/java --module-path /usr/lib/jvm/java-11-openjfx/lib --add-modules javafx.web,javafx.fxml,javafx.swing -jar scenicview.jar'
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
+
+alias startMinecraftServer='curl https://ipinfo.io/ip | xclip -sel clip && cd ~/daten/games/sharedgames/minecraft/server && java -jar forge-1.12.2-14.23.5.2768-universal.jar -mx 8G'
 
 alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
 

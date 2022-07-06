@@ -2,7 +2,7 @@
 #assume_yes = true
 
 # Disable specific steps - same options as the command line flag
-disable = ["node", "nix", "emacs", "config_update"]
+disable = ["node", "nix", "config_update", "containers"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
