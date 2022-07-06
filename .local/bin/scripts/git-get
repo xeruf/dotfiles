@@ -16,3 +16,4 @@ esac
 shift $(expr $# \& $# \< 3 \| 3)
 git clone $remote "$@" $dir --recurse-submodules
 cd "${dir:-${4:-$2}}"
+exec

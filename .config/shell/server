@@ -32,7 +32,7 @@ stack() {
 		#export GITLAB_CI="true"
 		echo Selected "$_cluster_name" with IP "$_cluster_ip"
 		echo "$_cluster_name" >"$_stackspin_cluster_cache"
-		builtin cd "$STACKSPIN"
+		test "$PWD" = "$HOME" && builtin cd "$STACKSPIN"
 		;;
 	(sso) builtin cd "$STACKSPIN"
 		"$0" exec dashboard --container backend -- flask "$@";;
