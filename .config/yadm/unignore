@@ -5,4 +5,4 @@ $XDG_CONFIG_HOME/nvim
 $XDG_CONFIG_HOME/espanso
 $XDG_CONFIG_HOME/zsh/completion
 $CONFIG_SHELLS
-$HOME/.local/bin/scripts
+$HOME/.local/bin/*/

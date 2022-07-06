@@ -1,3 +1,8 @@
+test -z "$DISPLAY" || return 0
+
+PATH="$PATH:$HOME/.local/bin/server"
+
+## STACKSPIN
 export STACKSPIN="${STACKSPIN:-$HOME/projects/stackspin}"
 _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 
@@ -7,7 +12,7 @@ _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 # Presumes a mapping like the following in your ssh config:
 # Host example.org
 #    Hostname [IP]
-# This is a function so it can change directory
+# This is a function so it can change directory.
 stack() {
 	test $# -lt 1 &&
 		builtin cd "$STACKSPIN" &&

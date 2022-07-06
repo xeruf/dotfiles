@@ -62,8 +62,8 @@ export CONFIG_SHELLS="$XDG_CONFIG_HOME"/shell
 mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
-BIN="$HOME/.local/bin/scripts"
-export PATH="$BIN:$HOME/.local/bin:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
+BIN="$HOME/.local/bin"
+export PATH="$BIN/scripts:$BIN:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
 export ALTERNATE_EDITOR="$(
 	if which nvim >/dev/null
 	then echo nvim
@@ -71,7 +71,7 @@ export ALTERNATE_EDITOR="$(
 	fi)"
 export EDITOR="$(
 	if which emacs >/dev/null
-	then echo $BIN/emacstty
+	then echo $BIN/scripts/emacstty
 	else echo $ALTERNATE_EDITOR
 	fi
 )"

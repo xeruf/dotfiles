@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # Find config files with fzf, preview and edit them
 # Common config files are automatically checked/reloaded
 alias dedup='awk '"'"'!a[$0]++'"'"
