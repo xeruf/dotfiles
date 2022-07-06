@@ -1,0 +1,8 @@
+#!/bin/sh -ex
+# Ampache CLI helper
+case $1 in
+	(update) shift; exec $0 "run:updateCatalog" "${@:---import}";;
+	(*:*|"") command="php -f /var/www/bin/cli";;
+esac
+sudo docker-compose -f $PROJECTS/ampache-docker/docker-compose.yml exec ampache su www-data -s /bin/sh -c "$command $*"
+

@@ -1,9 +1,11 @@
 test -z "$DISPLAY" || return 0
 
-PATH="$PATH:$HOME/.local/bin/server"
+export PATH="$PATH:$HOME/.local/bin/server"
+export PROJECTS="$HOME/projects"
+test -d "$MUSIC" || export MUSIC="/srv/funkwhale/data/music/janek"
 
 ## STACKSPIN
-export STACKSPIN="${STACKSPIN:-$HOME/projects/stackspin}"
+export STACKSPIN="${STACKSPIN:-$PROJECTS/stackspin}"
 _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 
 # Stackspin CLI Wrapper:
@@ -78,3 +80,5 @@ stack() {
 }
 cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
+
+test "$PWD" = "$HOME" && cde "$PROJECTS/ampache-docker"

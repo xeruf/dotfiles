@@ -116,7 +116,7 @@ edbin() {
 	if f="$(which $1 2>/dev/null)" && test -f "$f"
 	then edit "$f"
 	else edshell -f "$1"
-		test $? != 2 || edit "$HOME/.local/bin/scripts/$1"
+		test $? != 2 || edit "$HOME/.local/bin/${2:-scripts}/$1"
 	fi
 }
 
