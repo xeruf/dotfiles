@@ -205,8 +205,8 @@ alias hedgedoc="tmux kill-session -t hedgedoc; builtin cd '$d4/dev/_forks/hedged
 
 alias rm='rm -I'
 del() {
-	# TODO create on current partition and clean on reboot via cron
-	trash=/tmp/thrash/
+	# TODO use current partition and clean on reboot via cron
+	trash=/tmp/trash/
 	#mkdir $trash
 	m "$@" $trash
 }
