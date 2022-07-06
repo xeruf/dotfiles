@@ -1,20 +1,21 @@
-#!/bin/sh
+#!/bin/sh -e
 umask 0
 {
 case $ACTION in
 	(add) id=1;;
 	(remove) id=0;;
-	(*) id=$(! test -c /dev/ttyACM0; echo $?);;
+	(*) id=$(! test -c /dev/ttyACM0 -o -c /dev/model01; echo $?);;
 esac
-echo "Keyboard layout update to $id($ACTION) at $(date)"
+echo "Keyboard layout update to $id($ACTION) at $(/usr/bin/date)"
 export XAUTHORITY="/run/user/1000/Xauthority" DISPLAY=:0
 
 xkbstate="$(dirname $(dirname $0))/xkblayout-state"
 test "$($xkbstate print %C)" -gt 1 && $xkbstate set $id
-# Swap semicolon and colon - https://unix.stackexchange.com/questions/615799/swap-semicolon-colon-to-p-unexpected-cause-semicolon-colon-affected-by-cpas-lock
+# Swap semicolon and colon
+# https://unix.stackexchange.com/questions/615799/swap-semicolon-colon-to-p-unexpected-cause-semicolon-colon-affected-by-cpas-lock
 # test "$id" = "eu" && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon'
 if test "$id" = "1"
-then	setxkbmap eu && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon'
+then	setxkbmap eu -option "" && xmodmap -e 'keysym semicolon = colon semicolon colon semicolon'
 else	setxkbmap de nodeadkeys caps:swapescape
 fi
 } 2>&1 | tee -a /tmp/scripts.log
