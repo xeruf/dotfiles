@@ -17,7 +17,7 @@ case "$command" in
 		exec $SHELL;;
 	(create)
 		git add -f .gitignore PKGBUILD
-		git commit -m "Create package" "$@"
+		git commit -m "Create Package" "$@"
 		git aur push --amend;;
 	(commit)
 		makepkg --printsrcinfo > .SRCINFO

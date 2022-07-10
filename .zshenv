@@ -9,8 +9,10 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_CONFIG_HOME="$HOME/.config"
+
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
+export INSTALEE_HOME="$DATA/1-projects/1-personal/instalee"
  # adjust programs to use xdg
 export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
