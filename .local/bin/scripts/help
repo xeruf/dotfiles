@@ -4,12 +4,22 @@
 # optdepends: highlight(dotfiles)
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
+
+showinfo() {
+	local veditor=${ALTERNATE_EDITOR:-$EDITOR}
+	which info >/dev/null 2>&1 &&
+		case $veditor in
+			(*vim) info "$@" -w | grep -q . && $veditor -R -M -c "Info $1" +only;;
+			(*) info -f "$1" $(test "$2" && echo "--index-search=$2") 2>/dev/null;;
+		esac
+}
+
 cmd="$1"
 case "$cmd" in
 	(zsh|zmv) # https://unix.stackexchange.com/questions/19290/zmv-for-zsh-dry-runs-and-man-pages
 		for last; do true; done
 		# need to install zsh-doc package for info pages
-		info $(test "$last" != zsh && echo "--index-search=$last") zsh ||
+		showinfo zsh $(test "$last" != zsh && echo "$last") ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go|fossil) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && fossil ui "$repo" && exit
@@ -17,6 +27,7 @@ case "$cmd" in
 		shift
 		"$cmd" help "$@" | $paginate;;
 	(doom) "$@" --help;;
+	(mpw) "$@" -h 2>&1 | $paginate;;
 	(rails) { "$@" -H && "$@" --help; } | $paginate;;
 	(plantuml) unbuffer "$@" -help | $paginate;;
 	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
@@ -24,14 +35,7 @@ case "$cmd" in
 	(pandoc) man pandoc; highlight "Extensions" && pandoc --list-extensions | paste -s -d' ';;
 	(swaymsg) test $# -gt 1 && shift && man sway "$@" || man swaymsg;;
 	(swaymsg-*) man sway "${1#swaymsg-}";;
-	(*) {
-		which info >/dev/null 2>&1 &&
-			case $EDITOR in
-				(*vim) info "$@" -w | grep -q . && $EDITOR -R -M -c "Info $*" +only;;
-				(*) info -f "$@" 2>/dev/null;;
-			esac ||
-				man "$@"
-		} ||
+	(*) { showinfo "$@" || man "$@"; } ||
 		if which "$cmd" >/dev/null
 		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
 		fi;;
