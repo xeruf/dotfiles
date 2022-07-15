@@ -6,10 +6,10 @@ paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
 
 showinfo() {
-	local veditor=${ALTERNATE_EDITOR:-$EDITOR}
 	which info >/dev/null 2>&1 &&
-		case $veditor in
-			(*vim) info "$@" -w | grep -q . && $veditor -R -M -c "Info $1" +only;;
+		case $EDITOR in
+			(*emacs*) $EDITOR --eval "(progn (info \"$1\") (if \"$2\" (Info-index \"$2\")) (delete-other-windows))";;
+			(*vim) info "$@" -w | grep -q . && $EDITOR -R -M -c "Info $1" +only;;
 			(*) info -f "$1" $(test "$2" && echo "--index-search=$2") 2>/dev/null;;
 		esac
 }
