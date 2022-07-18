@@ -61,7 +61,6 @@ spec:
 EOF
 
 cat <<EOF >$app-values-configmap.yaml
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -71,6 +70,12 @@ data:
   values.yaml: |
     # TODO verify structure matches chart
     ingress:
+      enabled: true
+      # Bitnami style
+      hostname: "$subdomain.\${domain}"
+      tls: true
+      certManager: true
+      # Gitea style
       enabled: true
       annotations:
         kubernetes.io/tls-acme: "true"

@@ -38,6 +38,13 @@ stack() {
 		;;
 	(sso) builtin cd "$STACKSPIN"
 		"$0" exec dashboard --container backend -- flask "$@";;
+	(users)
+		if test $# -gt 0
+		then for arg
+			do "$0" user show $arg
+			done
+		else "$0" users $("$0" user list | sed 's|.*<\(.*\)>.*|\1|')
+		fi;;
 	(user|app)
 		if test "$1" = "init"
 		then mail="$2"
@@ -49,21 +56,24 @@ stack() {
 		fi;;
 	# app clis via kubectl
 	(occ) "$0" exec nc-nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
-	(exec)
-		if ! pod=$("$0" pod "$1-\(0\|[0-f]\+\)")
-		then echo "No pod found for $1" >&2
+	(exec) "$0" kube exec "$@";;
+	(kube)
+		if ! pod=$("$0" pod "$2-\(0\|[0-f]\+\)")
+		then echo "No pod found for $2" >&2
 			return 1
 		fi
-		shift
-		kubectl exec -n $(echo $pod) "$@";;
+		local subcommand=$1
+		shift 2
+		kubectl "$subcommand" -n $(echo $pod) "$@";;
 	(pod)
 		local podname=$1
 		shift
 		kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never "$podname";;
 	(push)
-		git commit -a
-		git push
-		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))";;
+		git commit -a "$@"
+		git push &&
+		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))"
+		flux reconcile kustomization -n flux-system "$(basename $(git rev-parse --show-toplevel))";;
 	# stackspin bare
 	(*) if which "$0-$command" >/dev/null 2>&1
 		then "$0-$command" "$@"
