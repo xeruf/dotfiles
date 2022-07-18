@@ -113,6 +113,7 @@ edshell() {
 
 # Edit a file in the PATH
 edbin() {
+	# TODO resolve simple alias
 	if f="$(which $1 2>/dev/null)" && test -f "$f"
 	then edit "$f"
 	else edshell -f "$1"
@@ -218,7 +219,9 @@ u() {
 	if which topgrade >/dev/null
 	then
 	  topgrade
-	  builtin cd $XDG_CONFIG_HOME/emacs && git pull --rebase && doom sync -u
+	  test -d "$XDG_CONFIG_HOME/emacs" &&
+		  builtin cd $XDG_CONFIG_HOME/emacs &&
+		  git pull --rebase && doom sync -u
 	  # TODO autodetect failure in emacs and rebuild it completely
 	else yadm l
 		 sudo apt update && sudo apt upgrade

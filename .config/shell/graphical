@@ -16,6 +16,7 @@ if which jrnl >/dev/null; then
 	compdef jn=jrnl
 	alias jnc='jn -contains'
 	alias jne='jrnl --edit'
+	# TODO jump to end
 fi
 
 test "$DISPLAY" || return 0

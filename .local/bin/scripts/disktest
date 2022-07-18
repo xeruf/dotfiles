@@ -4,7 +4,7 @@
 test "$1" = "-w" && write=true && shift
 disk="${1:-$(df --output=source . | tail -1)}"
 if test "$write"
-then exec &> >(tee "disktest-$(date +"%y%m%d")")
+then exec &> >(tee "disktest-$(date +%F)")
 fi
 # Needs sudo for read test
 sudo hdparm -MWAgt "$disk"
