@@ -186,7 +186,7 @@ alias jcj='jce -o json-pretty --unit' # JSON View
 # Shorthands
 alias v='edit'
 alias st='synct'
-alias ex='dtrx'
+which dtrx >/dev/null && alias ex='dtrx'
 alias expr='noglob expr'
 alias get='noglob ='
 

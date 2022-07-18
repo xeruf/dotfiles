@@ -27,7 +27,9 @@ case $arg in
 			(*.7z|*.z01|*.zip|*.jar)
 				if which 7z >/dev/null
 				then 7z x $param "$fullpath"
-				else unzip "$fullpath" | rewrite
+				else which p7zip >/dev/null &&
+					p7zip --decompress $param "$fullpath" ||
+					unzip "$fullpath" | rewrite
 				fi;;
 			(*.gz)          gunzip "$fullpath"    ;;
 			(*.bz2)         bunzip2 "$fullpath"   ;;

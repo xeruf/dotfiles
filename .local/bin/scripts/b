@@ -1,7 +1,7 @@
 #!/bin/bash
 # [b]rowse - overview of given files or current directory
 # depends: tput stat bat checkaccess(in my dotfiles)
-# optdepends: timg, neovim (compressed files), pdftoppm (PDF), mtn (video), audiowaveform
+# optdepends: timg, neovim (compressed files), pdftoppm (PDF), mtn (video), audiowaveform, imagemagick (images)
 # args: files to inspect, any arg starting with dash is passed on to bat
 #
 # Supports:
@@ -75,13 +75,11 @@ for arg; do
 		# https://ask.libreoffice.org/t/convert-to-command-line-parameter/840/4
 		echo Converting "$arg"
 		soffice --headless --convert-to png --outdir "$prefix" "$arg" >/dev/null
-		timg+=("${tmpfile%.*}.png")
-		continue;;
+		timg+=("${tmpfile%.*}.png");;
 	(*/x-xcf*)
 		echo Converting "$arg"
 		convert -flatten "$arg" png:"$tmpfile"
-		timg+=("$tmpfile")
-		continue;;
+		timg+=("$tmpfile");;
 	(*\ video/*)
 		suffix=_thumbs.jpg
 		mtn -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
@@ -89,7 +87,8 @@ for arg; do
 		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)
-		timg+=("$arg"); continue;;
+		timg+=("$arg")
+		which identify && continue;;
 	(*\ inode/directory\;*)
 		ls+=("$arg")
 		test -L "$arg" || continue
@@ -140,7 +139,7 @@ if test "$timg"; then
 		$(test $# -gt 1 &&
 		echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
 		"${timg[@]}" "${timga[@]}" 2>/dev/null || true
-	if $inspect || test $# -lt 10; then
+	if which identify && ( $inspect || test $# -lt 10 ); then
 		tput setaf 6
 		for img in "${timg[@]}"
 		do ident="$(identify -ping -precision 3 -format "%wx%h %b %m %[bit-depth]-bit %[colorspace]" "$img")"

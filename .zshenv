@@ -34,6 +34,7 @@ export GOPATH="$XDG_STATE_HOME"/go
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
 export NVM_DIR="$XDG_DATA_HOME"/nvm
+export KREW_ROOT="$XDG_DATA_HOME"/krew
 
 export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
 export CABAL_DIR="$XDG_CACHE_HOME"/cabal
@@ -65,7 +66,7 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 BIN="$HOME/.local/bin"
-export PATH="$BIN/scripts:$BIN:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin"
+export PATH="$BIN/scripts:$BIN:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin"
 export ALTERNATE_EDITOR="$(
 	if which nvim >/dev/null
 	then echo nvim
