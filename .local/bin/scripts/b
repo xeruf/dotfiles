@@ -62,6 +62,7 @@ for arg; do
 		fi
 		continue
 	fi
+	# amount of columns in a grid
 	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
 	tmpfile="$prefix/$(basename "$arg")"
 	mkdir -p "$prefix"
@@ -135,10 +136,16 @@ done
 # timga: potentially viewable as image
 if test "$timg"; then
 	# TODO Don't show info on all images for gifs
-	$inspect || $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
-		$(test $# -gt 1 &&
-		echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
-		"${timg[@]}" "${timga[@]}" 2>/dev/null || true
+	$inspect ||
+		if which timg
+		then $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
+			$(test $# -gt 1 &&
+			echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
+			"${timg[@]}" "${timga[@]}" 2>/dev/null || true
+		else for img in "${timg[@]}"
+			do catimg -H $(expr $(tput lines) / 2) $img
+			done
+		fi
 	if which identify && ( $inspect || test $# -lt 10 ); then
 		tput setaf 6
 		for img in "${timg[@]}"
