@@ -20,8 +20,13 @@ done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
 find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete
 
-highlight "e :: recursively remove empty folders and files"
-[[ $1 =~ "e" ]] && find \( -name ".stfolder" -o -name ".*keep" -o -name ".git" \) -prune -o -empty -printf "Removing empty %p\n" -exec rm -d {} +
+highlight "y :: recursively remove empty folders and files"
+[[ $1 =~ "y" ]] &&
+	find \( -name ".stfolder" -o -name ".*keep" -o -name ".git" \) -prune -o -empty -printf "Removing empty %p\n" -exec rm -d {} +
+
+highlight "e :: remove downloaded emacs packages (rebuild takes minutes!)"
+[[ $1 =~ "e" ]] &&
+	find $DOOMLOCALDIR -maxdepth 1 \( -name straight -o -type f \) -exec rm -rf {} +
 
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
