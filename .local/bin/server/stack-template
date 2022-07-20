@@ -71,12 +71,7 @@ data:
     # TODO verify structure matches chart
     ingress:
       enabled: true
-      # Bitnami style
-      hostname: "$subdomain.\${domain}"
-      tls: true
-      certManager: true
-      # Gitea style
-      enabled: true
+      # Elaborate style
       annotations:
         kubernetes.io/tls-acme: "true"
       hosts:
@@ -88,7 +83,19 @@ data:
         - secretName: $app-tls
           hosts:
             - "$subdomain.\${domain}"
-    # TODO Adjust OIDC SSO to service
+      # Bitnami style
+      hostname: "$subdomain.\${domain}"
+      tls: true
+      certManager: true
+    # TODO Adjust Mailer config
+    #    mailer:
+    #      enabled: "\${outgoing_mail_enabled}"
+    #      host: "\${outgoing_mail_smtp_host}"
+    #      port: "\${outgoing_mail_smtp_port}"
+    #      username: "\${outgoing_mail_smtp_user}"
+    #      password: "\${outgoing_mail_smtp_password}"
+    #      fromemail: "\${outgoing_mail_from_address}"
+    # TODO Adjust OpenID Connect Single Sign-On Configuration
     #    - name: Stackspin
     #      key: "\${client_id}"
     #      secret: "\${client_secret}"

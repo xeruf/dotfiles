@@ -55,8 +55,9 @@ stack() {
 		else "$0" sso cli "$command" "$@"
 		fi;;
 	# app clis via kubectl
-	(occ) "$0" exec nc-nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
+	(occ) "$0" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
 	(exec) "$0" kube exec "$@";;
+	(logs) "$0" kube logs "$@";;
 	(kube)
 		if ! pod=$("$0" pod "$2-\(0\|[0-f]\+\)")
 		then echo "No pod found for $2" >&2
