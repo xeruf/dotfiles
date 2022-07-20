@@ -214,8 +214,11 @@ del() {
 
 u() {
 	which pacman-mirrors >/dev/null &&
-		sudo pacman-mirrors --geoip &&
-		sudo pacman -Syy
+		sudo pacman-mirrors --geoip
+	which pacman >/dev/null &&
+		sudo pacman -Syy --needed gnupg archlinux-keyring &&
+		sudo pacman-key --populate archlinux &&
+		sudo pacman-key --refresh-keys
 	if which topgrade >/dev/null
 	then
 	  topgrade
@@ -230,6 +233,7 @@ u() {
 
 # Networking
 dns() {
+	# TODO implement rdns via -x
 	drill A @8.8.8.8 -Q "$@"
 	drill AAAA @8.8.8.8 -Q "$@"
 }
@@ -304,7 +308,7 @@ alias hx='sudo hexedit --maximize --color'
 hex() { hexyl "$@" | "${PAGER:-less}"; }
 
 export DICT="$XDG_DATA_HOME/dictcc"
-alias dic="cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzy"
+alias dic="cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzy -l $(expr $(tput lines) / 3 * 2)"
 #fzf --tiebreak=length --bind='alt-bspace:clear-query'
 alias dict="rlwrap rdictcc --directory $DICT"
 alias dict_update="dict -i $DICT/dict.txt"
