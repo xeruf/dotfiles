@@ -18,7 +18,7 @@ do file="$dir/$f"
 	test -f "$file" || test -d "$file" && echo "Removing superfluous $file" && rm -rf $i "$file"
 done
 find "$dir" -maxdepth 2 -not -name ".stfolder" -empty -printf "Removing empty %p\n" -delete
-find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete
+find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete 2>/dev/null
 
 highlight "y :: recursively remove empty folders and files"
 [[ $1 =~ "y" ]] &&
@@ -26,7 +26,7 @@ highlight "y :: recursively remove empty folders and files"
 
 highlight "e :: remove downloaded emacs packages (rebuild takes minutes!)"
 [[ $1 =~ "e" ]] &&
-	find $DOOMLOCALDIR -maxdepth 1 \( -name straight -o -type f \) -exec rm -rf {} +
+	find $DOOMLOCALDIR -maxdepth 1 \( -name straight -o -type f \) -printf "Removing %p\n" -exec rm -rf {} +
 
 for k in "${!_clean_map[@]}"; do
 	folder="${_clean_map[$k]}"
