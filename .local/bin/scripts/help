@@ -2,6 +2,7 @@
 # open info-page, man-page or command help
 # depends: unbuffer
 # optdepends: highlight(dotfiles)
+# TODO show tldr page
 paginate="${PAGER:-less} +Gg"
 test "$1" = "-d" && browse=1 && shift
 

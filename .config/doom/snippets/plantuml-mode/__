@@ -3,7 +3,10 @@
 # --
 @startuml
 hide empty description
-!theme bluegray
+'!theme bluegray 'organigram
+'!theme sandstone
+'!theme blueprint 'class
+'!theme reddress-lightblue 'class
 'top to bottom direction
 $0
 @enduml

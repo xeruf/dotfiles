@@ -3,6 +3,7 @@
 # ARGS see git-repo, all arguments beyond the first three are forwarded to git-clone
 remote=$(git-repo "$@")
 echo "Cloning $remote"
+test $1 = https && shift
 case $# in
     (1) dir=$(basename ${remote%.git});;
     (3) test "$3" != "$(git config --get user.name)" &&

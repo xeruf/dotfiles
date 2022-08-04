@@ -1,6 +1,7 @@
 #!/bin/sh -ex
 # Turn white (or another color) into transparent for the given images
-# TODO https://safe.duckduckgo.com/?q=imagemagick+color+to+alpha&ia=web https://stackoverflow.com/questions/26408022/imagemagick-color-to-alpha-like-the-gimp/27194202#27194202
+# TODO https://safe.duckduckgo.com/?q=imagemagick+color+to+alpha&ia=web
+# https://stackoverflow.com/questions/26408022/imagemagick-color-to-alpha-like-the-gimp/27194202#27194202
 case $1 in (-*) color=${1#-};; esac
 for arg
 do  extension="-transparent.${arg##*.}"

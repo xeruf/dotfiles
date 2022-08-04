@@ -225,6 +225,7 @@ Version 2019-11-04 2021-02-16"
               time-stamp-end "$")
   :hook before-save)
 
+(setq image-file-name-regexps "/preview/")
 ;(add-to-list 'image-file-name-regexps "/preview/")
 
 ;;;; ORG

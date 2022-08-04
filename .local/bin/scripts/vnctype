@@ -1,6 +1,7 @@
 #!/bin/sh -e
 # Type in NoVNC with german layout
-xdotool search --onlyvisible --classname Navigator windowactivate
-#setxkbmap de
+xdotool search --onlyvisible --classname Navigator windowactivate # Activate Firefox
+setxkbmap de
+sleep 0.1
 xdotool type --clearmodifiers "$@"
-#update-keyboard-layout >/dev/null
+update-keyboard-layout >/dev/null
