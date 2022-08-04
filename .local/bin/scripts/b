@@ -37,6 +37,7 @@ fileinfo() {
 	for arg
 	do case "$arg" in (-*) continue;; esac
 		$elevate file --exclude elf -E "$arg"
+		$elevate ssh-keygen -l -f "$arg" 2>/dev/null
 		# TODO do not grep bitrate but extract properly
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
@@ -89,7 +90,7 @@ for arg; do
 		;;
 	(*\ image/*)
 		timg+=("$arg")
-		which identify && continue;;
+		which identify >/dev/null && continue;;
 	(*\ inode/directory\;*)
 		ls+=("$arg")
 		test -L "$arg" || continue
@@ -114,18 +115,25 @@ for arg; do
 			;;
 		(*:\ *compress*|*\ archive*)
 			list="$tmpfile-list.txt"
-			if test $# = 1
-			then nvim "$arg"
-			else case "$arg" in (*.part);; (*)
-				nvim -es "+2w$list|5,w>>$list" "$arg"
-				batplain+=("$list");;
-			esac; fi
+			case "$arg" in
+				(*.7z) test $# = 1 && 7z l "$arg";;
+				(*.tar*) tar --list --file "$arg";;
+				(*)
+				if test $# = 1
+				then nvim "$arg"
+				else case "$arg" in (*.part);; (*)
+					nvim -es "+2w$list|5,w>>$list" "$arg"
+					batplain+=("$list");;
+					esac
+				fi
+			esac
 			;;
 		(*:\ *database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
 		(*:\ data) ;;
 		(*) bat+=("$arg")
 			timga+=("$arg")
-			continue;;
+			continue
+			;;
 		esac
 		;;
 	esac
@@ -137,7 +145,7 @@ done
 if test "$timg"; then
 	# TODO Don't show info on all images for gifs
 	$inspect ||
-		if which timg
+		if which timg >/dev/null
 		then $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
 			$(test $# -gt 1 &&
 			echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
@@ -146,10 +154,11 @@ if test "$timg"; then
 			do catimg -H $(expr $(tput lines) / 2) $img
 			done
 		fi
-	if which identify && ( $inspect || test $# -lt 10 ); then
+	if which identify >/dev/null && ( $inspect || test $# -lt 10 ); then
 		tput setaf 6
 		for img in "${timg[@]}"
-		do ident="$(identify -ping -precision 3 -format "%wx%h %b %m %[bit-depth]-bit %[colorspace]" "$img")"
+		do case $img in (*.gif) continue;; esac
+			ident="$(identify -ping -precision 3 -format "%wx%h %b %m %[bit-depth]-bit %[colorspace]" "$img")"
 			printf "%11s %-30s	%s\n" "${ident%% *}" "$(basename "$img")" "${ident#* }"
 		done
 		tput sgr0
@@ -185,7 +194,7 @@ if test "$bat" -o "$batplain"; then
 				done;;
 			esac
 		else $inspect || $batcommand "${batpager:-$pager}" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
-			test $# -lt $(expr $(tput lines) / 3) && fileinfo "${bat[@]}"
+			{ $inspect || test $# -lt $(expr $(tput lines) / 3); } && fileinfo "${bat[@]}"
 		fi
 fi
 
@@ -194,6 +203,7 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	# Alternative: find -exec ls -dl {} +
 	{
 		# TODO handle single quotes in filenames
+		# TODO listing sometimes doubles as exa prints partial listings while working
 		timeout .6s sh -c "
 			if test '$tree'
 			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags $(printf "'%s' " "${ls[@]:-.}")

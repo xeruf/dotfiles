@@ -24,12 +24,11 @@ case $arg in
 			(*.tar.*|*.tar) tar --extract --file "$fullpath";;
 			(*.tbz2)        tar xjf "$fullpath"   ;;
 			(*.tgz)         tar xzf "$fullpath"   ;;
-			(*.7z|*.z01|*.zip|*.jar)
+			(*.7z) 7z$(which 7z >/dev/null || echo r) x $param "$fullpath";;
+			(*.z01|*.zip|*.jar)
 				if which 7z >/dev/null
 				then 7z x $param "$fullpath"
-				else which p7zip >/dev/null &&
-					p7zip --decompress $param "$fullpath" ||
-					unzip "$fullpath" | rewrite
+				else unzip "$fullpath" | rewrite
 				fi;;
 			(*.gz)          gunzip "$fullpath"    ;;
 			(*.bz2)         bunzip2 "$fullpath"   ;;
@@ -37,7 +36,9 @@ case $arg in
 			(*.deb)         ar x "$fullpath"      ;;
 			(*.zst)         unzstd "$fullpath"    ;;
 			(*.Z)           uncompress "$fullpath";;
-			(*)             echo "'$arg' cannot be extracted by ex" >&2;;
+			(*)             which 7z >/dev/null &&
+					  			7z x $param "$fullpath" ||
+								echo "'$arg' cannot be extracted by ex" >&2;;
 		esac
 		# If we created a temporary subfolder, check if it can be eliminated
 		if test "$(basename "$PWD")" = "$namepart"
