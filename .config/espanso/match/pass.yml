@@ -30,6 +30,31 @@ matches:
         params:
           cmd: pass info/email/aur
   # {{{1 ADDRESS
+  - trigger: ";add"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: pass info/address
+  - triggers:
+      - ";adb"
+      - ";adt"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: pass info/address-bt
+  - triggers:
+      - ";adw"
+      - ";ads"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: pass info/address-bt-short
   # Postal name
   - trigger: ";a0"
     replace: "{{output}}"
@@ -78,6 +103,7 @@ matches:
         type: shell
         params:
           cmd: "pass info/address | tail -1 | cut -d' ' -f2"
+  # {{{1 NUMBERS
   - trigger: ";tel"
     replace: "{{output}}"
     vars:
@@ -85,21 +111,6 @@ matches:
         type: shell
         params:
           cmd: pass info/phone
-  - trigger: ";adt"
-    replace: "{{output}}"
-    vars:
-      - name: output
-        type: shell
-        params:
-          cmd: pass info/address-bt
-  - trigger: ";add"
-    replace: "{{output}}"
-    vars:
-      - name: output
-        type: shell
-        params:
-          cmd: pass info/address
-  # {{{1 NUMBERS
   - trigger: ";tax"
     replace: "{{output}}"
     vars:
@@ -129,6 +140,7 @@ matches:
         params:
           cmd: pass info/banking/dkb | head -1
   # {{{1 EXTRAS
+  # TODO turn into emacs template
   - trigger: ";sigo"
     replace: |-
       #+ATTR_ORG: :width 200

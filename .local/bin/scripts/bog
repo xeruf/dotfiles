@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 # Simple backup with borg
 if test $# -eq 0
-then borg list --format "{barchive:40} Created {time}{NL}"; exit $?
+then borg list --format "{barchive:40} Created {time}{NL}"
+	 exit $?
 fi
 while test $# -gt 0; do
 	case "$1" in
@@ -15,7 +16,8 @@ while test $# -gt 0; do
 			borg umount backups
 			rm -d backups
 			exit 0;;
-		(ls) borg list --short "::$2" | tree --fromfile . | less -F; exit $?;;
+		(tree) borg list --short "::$2" | tree --fromfile . | less -F
+			   exit $?;;
 		(-n) run=arg-test; shift;;
 		(*_) prefix=$1; shift;;
 		(*) break;;

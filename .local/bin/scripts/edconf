@@ -26,12 +26,13 @@ case "$sel" in
   ("") exit 1;;
   (/etc/sudoers) sudo visudo;;
   (/etc/fstab) sudoedit "$sel" && sudo findmnt --verify;;
+               #systemctl daemon-reload && mount -af -o remount;;
   (/etc/default/grub) sudoedit "$sel" && sudo grub-mkconfig -o /boot/grub/grub.cfg;;
   (/etc/locale.gen) sudoedit "$sel" && sudo locale-gen;;
   (/etc/nginx/*) sudoedit "$sel" && sudo nginx -t && sudo nginx -s reload;;
   (/etc/caddy/*) sudoedit "$sel" && caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload-or-restart caddy;;
   (/etc/ssh/*) sudoedit "$sel" && sudo systemctl reload-or-restart sshd;;
   (/etc/network/interfaces*) sudoedit "$sel" && sudo service networking reload;;
-  (*) $(test -w "$sel" || echo "sudo -E") edit "$sel";;
+  (*) edit "$sel";;
 esac
 echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"
