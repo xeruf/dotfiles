@@ -74,6 +74,7 @@
 (package! nov) ; epub reader
 (package! pkgbuild-mode) ; AUR PKGBUILDs
 (package! picpocket) ; image viewer - https://github.com/johanclaesson/picpocket
+(package! dictcc)
 
 (package! chordpro-mode
   :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets

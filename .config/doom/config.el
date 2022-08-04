@@ -106,13 +106,16 @@ Version 2019-11-04 2021-02-16"
       "SN"      '+snippets/new
       "Sm"      'smerge-mode
       "m;"      'comment-line
-      :desc "Dragon current buffer" "d" (lambda () (interactive) (dragon))
+      :desc "Dragon current buffer" "d" 'dragon
       :desc "Update & Quit"        "qu" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map text-mode-map
-      :desc "Markdown to Zulip" "mam" ":%s/\\n\\n<a id=.*<\\/a>\\n\\n//
-:%s/\\n *\\n /\\n /
-:%s/<\\(http[^ ]+\\)>/\\1/
-:%s/    /  /g")
+      :desc "Markdown to Zulip" "mam" "ggd2/# 
+:%s/<\\/?span ?[^ >]*>//g
+:%s/\\n\\n<a id=.*<\\/a>\\n\\n//g
+:%s/<\\(http[^ \\n]+\\)>/\\1/g"
+;:%s/\\n *\\n /\\n /
+;:%s/    /  /g"
+      )
 
 ; TODO use smerge-basic-map
 (map! :map smerge-mode-map
@@ -146,6 +149,8 @@ Version 2019-11-04 2021-02-16"
 
 (add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 (add-hook 'twee-chapbook-mode-hook 'twee-mode)
+
+(add-to-list 'auto-mode-alist `("\\.erb\\'" . html-mode))
 
 (whitespace-mode 0)
 (auto-correct-mode)
@@ -220,6 +225,8 @@ Version 2019-11-04 2021-02-16"
               time-stamp-end "$")
   :hook before-save)
 
+;(add-to-list 'image-file-name-regexps "/preview/")
+
 ;;;; ORG
 
 (use-package! org
@@ -234,13 +241,16 @@ Version 2019-11-04 2021-02-16"
 
   ;; Behavior
   (setq org-read-date-prefer-future nil
-        org-extend-today-until 5)
+        org-extend-today-until 5
+        )
 
   (setq org-id-method 'org
-        org-id-ts-format "%Y%m%dT%H%M%S")
+        org-id-ts-format "%Y%m%dT%H%M%S"
+        )
 
   ;; Visuals
   ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
+  (setq org-fold-core-style 'overlays)
   (setq org-image-actual-width nil)
   (setq org-ellipsis "◀")
 
@@ -289,7 +299,8 @@ Version 2019-11-04 2021-02-16"
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
-        org-display-remote-inline-images 'cache)
+        org-display-remote-inline-images 'cache
+        )
 
   ; TODO customize org-log-note-headings
 
@@ -543,8 +554,9 @@ Version 2019-11-04 2021-02-16"
     (setq org-export-with-tags nil
           org-export-with-tasks 'done
           org-export-with-todo-keywords nil
-          org-export-with-toc nil
+          ;org-export-with-toc nil
           org-export-with-section-numbers nil
+          org-export-with-broken-links 't
           org-ascii-text-width 999
           org-export-headline-levels 4
           org-export-with-sub-superscripts '{}
@@ -658,9 +670,9 @@ Version 2019-11-04 2021-02-16"
         :n "l" 'dired-find-file-dwim
         :n "h" 'dired-up-directory
         :n "ö" 'evil-ex-search-forward
+        ;:desc "Dragon marked files" "d"
+        [remap dragon] (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
         :localleader
-        :desc "Dragon marked files" "d"
-                (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
                 (lambda () (interactive) (dired-do-shell-command "s"))
@@ -674,6 +686,7 @@ Version 2019-11-04 2021-02-16"
         :map wdired-mode-map
         :n "RET" (lambda () (interactive) (wdired-exit) (dired-find-file-dwim))
         )
+
   )
 (use-package! dired-ranger
   :disabled
@@ -869,6 +882,31 @@ Version 2019-11-04 2021-02-16"
     (setq emms-player-mpd-server-port "6600")
     (setq emms-player-mpd-music-directory (expand-file-name "music" user-data-dir))
   )
+
+
+(use-package! mu4e
+  :defer 3
+  :config
+  (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
+      mu4e-update-interval (* 10 60) ; check mail 10 minutes
+      mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+      mu4e-get-mail-command "offlineimap -o"
+      mu4e-maildir "~/.local/share/mail")
+  (setq mu4e-drafts-folder "/mail/Drafts"
+      mu4e-sent-folder   "/mail/Sent"
+      mu4e-refile-folder "/mail/All Mail"
+      mu4e-trash-folder  "/mail/Trash")
+  (setq mu4e-maildir-shortcuts
+      '(("/mail/inbox"     . ?i)
+	("/mail/Sent"      . ?s)
+	("/mail/Trash"     . ?t)
+	("/mail/Drafts"    . ?d)
+	("/mail/All Mail"  . ?a)))
+  (setq message-send-mail-function 'smtpmail-send-it
+      auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
+      smtpmail-smtp-server "127.0.0.1"
+      smtpmail-smtp-service 1025
+      smtpmail-stream-type 'ssl))
 
 ;(with-eval-after-load "ispell"
 ;  (setq ispell-program-name "hunspell")
