@@ -8,6 +8,7 @@ if test -f /etc/bash_completion && ! shopt -oq posix
 then . /etc/bash_completion
 fi
 
+alias scs="sudo systemctl status"
 alias scr="sudo systemctl reload-or-restart"
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
 

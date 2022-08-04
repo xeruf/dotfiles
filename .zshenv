@@ -2,7 +2,7 @@ export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
 export MUSIC="$DATA/4-media/music"
 
 export BORG_REPO="/mnt/backup/borg"
-export BORG_PASSCOMMAND='pass service/devices/borg/backup'
+export BORG_PASSCOMMAND='pass service/device/borg/backup'
 
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -31,10 +31,13 @@ export WINEPREFIX="$XDG_DATA_HOME"/wine
 
  ## Development tools
 export GOPATH="$XDG_STATE_HOME"/go
+export KREW_ROOT="$XDG_DATA_HOME"/krew
+
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+
 export NVM_DIR="$XDG_DATA_HOME"/nvm
-export KREW_ROOT="$XDG_DATA_HOME"/krew
+export N_PREFIX="$XDG_STATE_HOME"/n
 
 export CABAL_CONFIG="$XDG_CONFIG_HOME"/cabal/config
 export CABAL_DIR="$XDG_CACHE_HOME"/cabal
@@ -51,7 +54,7 @@ export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GRADLE_USER_HOME="$XDG_STATE_HOME"/gradle
 export ANDROID_PREFS_ROOT="$XDG_CONFIG_HOME"/android
 export ANDROID_EMULATOR_HOME="$XDG_STATE_HOME"/android/emulator
-export ANDROID_SDK_ROOT="/opt/android-sdk"
+export ANDROID_SDK_ROOT="/opt/android/sdk"
  # taskwarrior & timewarrior
 export TIMEWARRIORDB="$XDG_DATA_HOME"/timewarrior
 export TASKRC="$XDG_CONFIG_HOME"/task/taskrc
@@ -66,7 +69,7 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 BIN="$HOME/.local/bin"
-export PATH="$BIN/scripts:$BIN:$PATH:$XDG_CONFIG_HOME/emacs/bin:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin"
+export PATH="$BIN/scripts:$BIN:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin"
 export ALTERNATE_EDITOR="$(
 	if which nvim >/dev/null
 	then echo nvim

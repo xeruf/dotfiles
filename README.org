@@ -28,15 +28,10 @@ and configuration for ~less~ and ~fzf~.
   including many essential git scripts
 * Packages
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
-# Use org-yank-visible
-- essentials :: curl git zsh bat neovim man-db
-- basic tools :: tree wget texinfo fzf expect zoxide mlocate
-- arch basics :: fd ripgrep zsh-completions python-pynvim unrar man-pages base-devel topgrade
 - dotfiles :: yadm
   : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
   : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
   Run ~bootstrap~ after starting ZSH
-- Server :: sudo apt install cargo && cargo install diffr #zoxide
 ** Applications
 - utilities :: youtube-dl dos2unix rlwrap
 - powertools :: hexedit hexyl [[https://lftp.yar.ru/][lftp]] glances zsh-doc pacman-contrib
@@ -62,18 +57,12 @@ makepkg -si
 - needs extra setup :: rdictcc-git
 - experiments :: kakoune
 ** Graphical
-- office :: libreoffice-fresh zathura zathura-pdf-poppler zathura-djvu zathura-ps
 - fonts :: fontpreview noto-fonts noto-fonts-emoji ttf-dejavu adobe-source-code-pro-fonts texlive-myriadpro-git
-- video :: [[https://github.com/phw/peek][peek]] vlc obs-studio kdenlive
 - music management :: puddletag beets picard ffmpegthumbnailer sox
   : sudo npm install -g bpm
-- music production :: lilypond lilypond-docs timidity++ chordpro-git musescore mixxx-beta-git soundfont-fluid
-- communication :: zulip-desktop-bin ferdi-bin
-- hacking :: etcher-bin
 - health :: stretchly-xeruf-git redshift acpilight light
   : scu enable --now redshift
   -> https://www.reddit.com/r/linuxquestions/comments/pm1bxn/setting_brightness_on_amd_ryzen_7_5800h_with
-- games :: opendungeons 0ad mindustry-bin minetest sauerbraten teeworlds
 *** Desktop
 - xorg :: xorg-xserver xorg-xkill xorg-setxkbmap xorg-xinit xterm xclip xprintidle light
 - wayland :: sway azote dex
@@ -97,18 +86,6 @@ https://addons.mozilla.org/firefox/addon/passff
 https://addons.mozilla.org/firefox/addon/masterpassword-firefox
 **** [[https://addons.mozilla.org/en-US/firefox/collections/15727735/integration?collection_sort=-popularity][System Integration]]
 **** [[https://addons.mozilla.org/en-US/firefox/collections/15727735/privacy?collection_sort=-popularity][Privacy]]
-*** Dev
-#+begin_source sh
-yays intellij-idea-ultimate-edition intellij-idea-ultimate-edition-jre \
-jdk-openjdk java-openjfx jdk8-openjdk java8-openjfx
-archlinux-java set jdk8-openjdk
-yays clion clion-jre cmake gdb python-pre-commit
-#+end_source
-**** Android
-: yays android-udev android-tools adbfs-rootless-git android-studio
-After running android-studio setup, accept licenses:
-: $ANDROID_SDK_ROOT/tools/bin/sdkmanager --licenses
-
 * Setup Tools
 ** Ansible
 :PROPERTIES:
