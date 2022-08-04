@@ -216,9 +216,9 @@ u() {
 	which pacman-mirrors >/dev/null &&
 		sudo pacman-mirrors --geoip
 	which pacman >/dev/null &&
-		sudo pacman -Syy --needed gnupg archlinux-keyring &&
-		sudo pacman-key --populate archlinux &&
-		sudo pacman-key --refresh-keys
+		sudo pacman -Syyu --needed gnupg archlinux-keyring
+		#sudo pacman-key --populate archlinux &&
+		#sudo pacman-key --refresh-keys
 	if which topgrade >/dev/null
 	then
 	  topgrade
@@ -237,6 +237,7 @@ dns() {
 	drill A @8.8.8.8 -Q "$@"
 	drill AAAA @8.8.8.8 -Q "$@"
 }
+alias sshk='kitty +kitten ssh'
 sshl() {
 	test "$1" = "-a" && shift && local all=true
 	lemonade server -allow 127.0.0.1 &
@@ -245,7 +246,7 @@ sshl() {
 	file="$authcache/$1"
 	test "$all" && pass scp ~/.bash_aliases "$@:"
 	if ssh -G "$1" | grep --silent "^user root$" && ! [[ "$1" =~ "pve*" ]]
-	then TERM=xterm-256color pass ssh "$@"
+	then pass ssh "$@"
 	else
 		test ! -e "$file" &&
 			ssh-copy-id -i "$(ssh -G "$1" |
@@ -253,8 +254,7 @@ sshl() {
 				cut -d " " -f2- |
 				sed "s|^~|$HOME|")" "$1" &&
 			touch "$file"
-		$(case $TERM in (*-kitty) TERM=xterm-256color echo 'kitty +kitten';; esac) ssh -R 2489:127.0.0.1:2489 "$@"
-	return $?
+		$(case $TERM in (*-kitty) echo 'kitty +kitten';; esac) ssh -R 2489:127.0.0.1:2489 "$@"
 	fi
 }
 

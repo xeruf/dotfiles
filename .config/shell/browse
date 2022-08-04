@@ -93,10 +93,12 @@ d() {
 	local query="$(zoxide-list "$@")"
 	# First find out whether there is an obvious match
 	# (score at least ten times above runner-up and score above 20)
+	# which is not the current directory
 	# If not select with fzf, using locate to find extra options
 	target="$(if test -n "$query" &&
 			expr "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
-				$(echo "$query" | sed 'N;s|/.* \([0-9]\+\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null #2>&1
+				$(echo "$query" | sed 'N;s|/.* \([0-9]\+\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null &&
+			[[ ! "$(echo "$query" | head -1)" =~ ".*$PWD" ]]
 			then echo "$query" | head -1
 			else test -n "$query" && echo "$query"; locate-zox "$@"
 		fi | zoxide-fzf)"
