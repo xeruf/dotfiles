@@ -827,12 +827,6 @@ Version 2019-11-04 2021-02-16"
   )
 (setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
 
-(use-package! rdictcc
-  :bind (("C-c t". 'rdictcc-translate-word-at-point)
-         ("C-c T". 'rdictcc-translate-word))
-  :config (setq rdictcc-program-args "--directory $XDG_DATA_HOME/dictcc")
-  )
-
 (after! tramp
   (setq tramp-default-method "scpx")
   (add-to-list 'tramp-methods
