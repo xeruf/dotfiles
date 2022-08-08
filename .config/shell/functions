@@ -213,19 +213,24 @@ del() {
 }
 
 u() {
-	which pacman-mirrors >/dev/null &&
+	if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d' ' -f1)" != "$(date +%F)"
+	then which pacman-mirrors >/dev/null &&
 		sudo pacman-mirrors --geoip
-	which pacman >/dev/null &&
-		sudo pacman -Syyu --needed gnupg archlinux-keyring
-		#sudo pacman-key --populate archlinux &&
-		#sudo pacman-key --refresh-keys
+		if which pacman >/dev/null; then
+			sudo pacman -Syy --needed base gnupg archlinux-keyring
+			sudo pacman-key --populate
+			sudo pacman-key --refresh-keys
+		fi
+	fi
 	if which topgrade >/dev/null
 	then
 	  topgrade
-	  test -d "$XDG_CONFIG_HOME/emacs" &&
-		  builtin cd $XDG_CONFIG_HOME/emacs &&
-		  git pull --rebase && doom sync -u
-	  # TODO autodetect failure in emacs and rebuild it completely
+	  if test -d "$XDG_CONFIG_HOME/emacs"
+	  then
+		  builtin cd $XDG_CONFIG_HOME/emacs
+		  git pull --rebase
+		  true | doom sync -u || { rm -rf "$DOOMLOCALDIR/straight" && doom sync -u; }
+	  fi
 	else yadm l
 		 sudo apt update && sudo apt upgrade
 	fi
