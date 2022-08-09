@@ -225,7 +225,7 @@ Version 2019-11-04 2021-02-16"
               time-stamp-end "$")
   :hook before-save)
 
-(setq image-file-name-regexps "/preview/")
+;(setq image-file-name-regexps "/preview/")
 ;(add-to-list 'image-file-name-regexps "/preview/")
 
 ;;;; ORG
@@ -726,7 +726,23 @@ Version 2019-11-04 2021-02-16"
 (use-package! evil
   :ensure t
   :init (setq evil-respect-visual-line-mode nil)
-  :config (evil-set-register ?i "yiwjgriw")
+  :config
+        (evil-set-register ?i "yiwjgriw") ; copy current word and replace down
+        (after! evil-surround
+          (setq-default evil-embrace-evil-surround-keys (-union evil-embrace-evil-surround-keys '(?` ?~ ?\~)))
+          ;; TILDE https://github.com/emacs-evil/evil-surround/issues/20#issuecomment-471516289
+          (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
+            (let ((inner-name (make-symbol (concat "evil-inner-" name)))
+                  (outer-name (make-symbol (concat "evil-a-" name))))
+              `(progn
+                 (evil-define-text-object ,inner-name (count &optional beg end type)
+                   (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+                 (evil-define-text-object ,outer-name (count &optional beg end type)
+                   (evil-select-paren ,start-regex ,end-regex beg end type count t))
+                 (define-key evil-inner-text-objects-map ,key #',inner-name)
+                 (define-key evil-outer-text-objects-map ,key #',outer-name))))
+          (define-and-bind-quoted-text-object "tilde" "~" "~" "~")
+          )
   )
 
 (use-package! evil-replace-with-register ; gr
