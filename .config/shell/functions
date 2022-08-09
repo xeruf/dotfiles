@@ -55,6 +55,7 @@ h() {
   help "$@"
   # TODO resolve aliases in 'h' alias
   # TODO call 'wh' on scripts instead
+  # TODO integrate tldr
 }
 
 xtrace() {
@@ -66,6 +67,7 @@ xtrace() {
 # Shows source code for command, resolving nested aliases
 wh() {
 	res=$(which "$@") || return $?
+	# only works in zsh, not bash
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
 	then echo "$res" | bat --style=plain --language=sh &&
 		tool="$(echo "$res" | head -1 | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
@@ -90,10 +92,14 @@ pathadd() {
 alias rs="reset && source $HOME/.zshenv && exec $SHELL"
 alias hist='print -z $(history | grep -v "killm " | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
-# Edit shell config files
-# Exit code 1 - no change, 2 - file not found
+alias es='edit-shell'
+alias ec='edit-config'
+alias eb='edit-bin'
+
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
-edshell() {
+# Fuzzy find and edit shell config files
+# Exit code: 1 - no change, 2 - file not found
+edit-shell() {
 	case $1 in
 		("") file="$CONFIG_SHELL_FUNCTIONS";;
 		(zsh) file="$CONFIG_ZSH/.zshrc";;
@@ -108,15 +114,17 @@ edshell() {
 	test -f "$file" && checksum="$(md5sum "$file")"
 	$EDITOR "$(test "$line" && case "$EDITOR" in (nvim) echo "+normal! ${line}ggzx";; (*vi*) echo "+$line";; (emacs*|*/emacs*) echo "+${line}";; esac || echo "--")" "${file%:*}"
 	test -s "$file" || return 1
+	# Reload shell config upon change
 	test "$checksum" != "$(md5sum $file)" && rs
 }
 
-# Edit a file in the PATH
-edbin() {
-	# TODO resolve simple alias
-	if f="$(which $1 2>/dev/null)" && test -f "$f"
+# Edit an executable in the PATH
+edit-bin() {
+	alias=$(alias "$1" 2>/dev/null | sed "s/.*='\?\([-A-z]*\)'\?\$/\1/")
+	toedit=${alias:-$1}
+	if f="$(which "$toedit" 2>/dev/null)" && test -f "$f"
 	then edit "$f"
-	else edshell -f "$1"
+	else edit-shell -f "$toedit"
 		test $? != 2 || edit "$HOME/.local/bin/${2:-scripts}/$1"
 	fi
 }

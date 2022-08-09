@@ -15,7 +15,7 @@ listconf() {
   } | dedup
 }
 
-conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/edconf"
+conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/$(basename "$0")"
 conf_cache="$conf_cache_dir/files"
 conf_tmp="${conf_cache}.tmp"
 mkdir -p "$conf_cache_dir"

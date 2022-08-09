@@ -1,4 +1,4 @@
-#compdef edbin
+#compdef edit-bin
 _files -W $HOME/.local/bin/scripts
 #compadd $(ls --almost-all --indicator-style=slash $HOME/.local/bin/scripts)
 #$(echo $PATH | cut -d':' -f1 | xargs ls -pA)

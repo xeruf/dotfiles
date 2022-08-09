@@ -1,2 +1,2 @@
-#compdef edshell
+#compdef edit-shell
 compadd -V unsorted zsh profile $(ls -pA $CONFIG_SHELLS)
