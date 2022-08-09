@@ -12,18 +12,18 @@ then
 	alias -g T=" | tree -C --fromfile . | less -F"
 
 	# Edit zsh completion
-	edcomp() {
+	edit-completion() {
 		file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
-		$EDITOR "${fpath[-1]}/$file"
+		filepath="${fpath[-1]}/$file"
+		test -f "$filepath" ||
+			echo "#compdef $1" >"$filepath"
+		$EDITOR "$filepath"
 		unfunction "$file" && compinit
 	}
-	compdef "_files -W ${fpath[-1]}/" edcomp
-	
-	writecompletion() {
-		echo "#compdef $1" > "_$1"
-		$EDITOR "_$1"
-	}
+	compdef "_files -W ${fpath[-1]}/" edit-completion
+	alias comp='edit-completion'
 else
+	# So bash does not error out on zsh completion definitions
 	compdef() { true; }
 fi
 

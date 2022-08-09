@@ -1,4 +1,5 @@
 #compdef edit-bin
-_files -W $HOME/.local/bin/scripts
+dirs=($HOME/.local/bin/*/)
+_files -W dirs
 #compadd $(ls --almost-all --indicator-style=slash $HOME/.local/bin/scripts)
 #$(echo $PATH | cut -d':' -f1 | xargs ls -pA)
