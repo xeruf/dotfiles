@@ -42,7 +42,8 @@ fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps
 
-which lsb_release >/dev/null && export DIST=$(lsb_release --id | cut -d'	' -f2) || true
+which lsb_release >/dev/null &&
+	export DIST=$(lsb_release --id | cut -d'	' -f2)
 
 unalias rd 2>/dev/null
 
@@ -51,11 +52,16 @@ unalias rd 2>/dev/null
 compdef help=man
 alias info='info --vi-keys'
 
+resolvealias() {
+	alias "$1" 2>/dev/null | sed "s/.*='\?\([-A-z]*\)'\?\$/\1/" || echo $1
+}
+
 h() {
-  help "$@"
-  # TODO resolve aliases in 'h' alias
-  # TODO call 'wh' on scripts instead
-  # TODO integrate tldr
+  arg="$1"
+  local alias=$(resolvealias "$arg")
+  shift
+  help "$alias" "$@" || wh "$arg" "$@"
+  # TODO call 'wh' on scripts rather than passing potentially hazardous args (as in clean)
 }
 
 xtrace() {
@@ -66,7 +72,7 @@ xtrace() {
 
 # Shows source code for command, resolving nested aliases
 wh() {
-	res=$(which "$@") || return $?
+	local res=$(which "$@") || return $?
 	# only works in zsh, not bash
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
 	then echo "$res" | bat --style=plain --language=sh &&
@@ -120,8 +126,7 @@ edit-shell() {
 
 # Edit an executable in the PATH
 edit-bin() {
-	alias=$(alias "$1" 2>/dev/null | sed "s/.*='\?\([-A-z]*\)'\?\$/\1/")
-	toedit=${alias:-$1}
+	local toedit="$(resolvealias "$1")"
 	if f="$(which "$toedit" 2>/dev/null)" && test -f "$f"
 	then edit "$f"
 	else edit-shell -f "$toedit"
@@ -151,6 +156,8 @@ alias syslog='less +F /var/log/syslog'
 alias sc='sudo systemctl'
 alias sce='sudo systemctl enable --now' # TODO or show log
 alias scd='sudo systemctl disable --now'
+
+unalias scs 2>/dev/null
 scs() {
 	(
 	export SYSTEMD_COLORS=true
@@ -194,7 +201,7 @@ alias jcj='jce -o json-pretty --unit' # JSON View
 # Shorthands
 alias v='edit'
 alias st='synct'
-which dtrx >/dev/null && alias ex='dtrx'
+command -v dtrx >/dev/null && alias ex='dtrx'
 alias expr='noglob expr'
 alias get='noglob ='
 
@@ -222,15 +229,15 @@ del() {
 
 u() {
 	if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d' ' -f1)" != "$(date +%F)"
-	then which pacman-mirrors >/dev/null &&
+	then command -v pacman-mirrors >/dev/null &&
 		sudo pacman-mirrors --geoip
-		if which pacman >/dev/null; then
+		if command -v pacman >/dev/null; then
 			sudo pacman -Syy --needed base gnupg archlinux-keyring
 			sudo pacman-key --populate
 			sudo pacman-key --refresh-keys
 		fi
 	fi
-	if which topgrade >/dev/null
+	if command -v topgrade >/dev/null
 	then
 	  topgrade
 	  if test -d "$XDG_CONFIG_HOME/emacs"
@@ -398,7 +405,7 @@ killJava() {
 alias l="ls -l --almost-all --human-readable --group-directories-first --file-type"
 
 if which fd >/dev/null
-then fn() { $(which fd >/dev/null && echo fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; } # [F]ind [n]o ignore
+then fn() { $(command -v fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; } # [F]ind [n]o ignore
 	alias ff="noglob fn --color=always " # [F]ind [F]ile
 	compdef ff=fd
 	compdef fn=fd
