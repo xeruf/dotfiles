@@ -8,9 +8,6 @@
 # message's source.	The hook's purpose is to edit the commit
 # message file.	If the hook fails with a non-zero status,
 # the commit is aborted.
-#
-# To enable this hook, set the hooksPath in git:
-# git config core.hooksPath .dev/githooks
 
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
@@ -31,7 +28,7 @@ if beginswith $'\n#' "$original"; then
 	case "$path" in ([0-9]*) path="${path#*/}";; esac
 	path="${path#.}"
 	{
-      echo "${path%/}:"
+      echo "${path%-}:"
 		echo "$original"
 	} > "$COMMIT_MSG_FILE"
 fi

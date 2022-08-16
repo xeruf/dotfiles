@@ -106,7 +106,7 @@
 	lgr = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --graph
 	lg = lgr HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
-	lp = log -p --date=local
+	lp = log -p --date=local # Like --full-diff
 	my = lo --author "xeru\\|anek"
 
 	standup = my --since yesterday --all

@@ -12,12 +12,12 @@ case "$1" in
       (socha) user=software-challenge; host=git@github.com;;
       (hub) host=git@github.com;;
       (lab) host=git@gitlab.com;;
-      (*) host=${1:-gitea@git.jfischer.org};;
+      (*)   host=${1:-gitea@git.jfischer.org};;
     esac
     user=${3:-${user:-$(git config user.name)}}
     repo=${2:-$(basename $PWD)}
     if test "$https"
-    then echo "https://${host#git*@}/$user/$repo"
+    then echo "https://${host#git*@}/$user/$repo.git"
     else echo "$host:$user/$repo.git"
     fi
 esac
