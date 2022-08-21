@@ -119,10 +119,10 @@
 
 	# diffs
 	d = diff
-	dm = !git diff $(git merge-base $(git main) HEAD)
-	dw = diff --color-words
-	dc = diff --color-words="[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+"
-	du = diff @{push}
+	dm = !git diff $(git merge-base $(git main) HEAD) # [d]iff to [m]ain
+	dw = diff --color-words # [d]iff [w]ords
+	dc = diff --color-words="[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+" # [d]iff [c]haracters
+	du = diff @{push} # [d]iff [u]pstream
 
 	# MODIFY
 

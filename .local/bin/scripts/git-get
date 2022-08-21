@@ -1,6 +1,6 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 # Clones from resolving the arguments and switches into the new directory
-# ARGS see git-repo, all arguments beyond the first three are forwarded to git-clone
+# ARGS: see git-repo, all arguments beyond the first three are forwarded to git clone
 remote=$(git-repo "$@")
 echo "Cloning $remote"
 test $1 = https && shift
@@ -14,7 +14,8 @@ case $# in
             (*) dir="${prefix}_$2";;
         esac;;
 esac
-shift $(expr $# \& $# \< 3 \| 3)
+case "$4" in (-*|"") cdir="$2";; (*) cdir="$4";; esac
+shift $(expr 3 \& $# \> 3 \| $#)
 git clone $remote "$@" $dir --recurse-submodules
-cd "${dir:-${4:-$2}}"
+cd "${dir:-$cdir}"
 exec
