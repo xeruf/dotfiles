@@ -68,6 +68,10 @@
 (package! togetherly) ; Collaborative editing
 (package! direnv) ; directory-local environment for haskell-nix things
 
+(package! xterm-color)
+
+; Programming
+(package! go-mode)
 (package! haml-mode)
 
 (package! adoc-mode) ; Asciidoc, a md alternative

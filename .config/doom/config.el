@@ -43,7 +43,7 @@
 
 ;;;; BINDINGS
 
-(defun xah-open-in-external-app (&optional @fname)
+(defun xah/open-in-external-app (&optional @fname)
   "Open the current file or dired marked files in external app.
 When called in emacs lisp, if @fname is given, open that.
 URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
@@ -76,10 +76,16 @@ Version 2019-11-04 2021-02-16"
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 
-(defun dragon (&optional @file)
+(defun xf/dragon (&optional @file)
   "Share file from current buffer via dragon."
   (interactive)
   (shell-command (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
+  )
+
+(defun xf/org-journal-current ()
+  (interactive)
+  (org-journal-open-current-journal-file)
+  (end-of-buffer)
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -87,6 +93,10 @@ Version 2019-11-04 2021-02-16"
 (define-key universal-argument-map (kbd "C-#") 'universal-argument-more)
 (global-set-key (kbd "C-*") 'universal-argument)
 (define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
+
+;; https://emacs.stackexchange.com/questions/21335/prevent-folding-org-files-opened-by-ediff
+(with-eval-after-load 'outline
+  (add-hook 'ediff-prepare-buffer-hook 'outline-show-all))
 
 (map! ;; Buffer-local font resizing
       :n
@@ -100,13 +110,18 @@ Version 2019-11-04 2021-02-16"
       "u"       'evil-prev-buffer
       "i"       'evil-next-buffer
       "bq"      'doom/save-and-kill-buffer
-      "#"       'xah-open-in-external-app
-      "njo"     'org-journal-open-current-journal-file
+      "#"       'xah/open-in-external-app
+      "-"       'evil-quick-diff
+      "_"       'ediff
+      "os"      'eshell
+      "oj"      'xf/org-journal-current
+      "njo"     'xf/org-journal-current
+      "nrb"     (lambda () (interactive) (setq +org-roam-auto-backlinks-buffer (not +org-roam-auto-backlinks-buffer)) (org-roam-buffer-toggle))
       "Se"      '+snippets/edit
       "SN"      '+snippets/new
       "Sm"      'smerge-mode
       "m;"      'comment-line
-      :desc "Dragon current buffer" "d" 'dragon
+      :desc "Dragon current buffer" "d" 'xf/dragon
       :desc "Update & Quit"        "qu" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map text-mode-map
       :desc "Markdown to Zulip" "mam" "ggd2/# 
@@ -421,6 +436,17 @@ Version 2019-11-04 2021-02-16"
   (setq org-fancy-priorities-list '("❗" "✯" "❖" "⬢" "■"))
   )
 
+
+(require 'xterm-color)
+(require 'eshell)
+(add-hook 'eshell-before-prompt-hook
+          (lambda ()
+            (setq xterm-color-preserve-properties t)))
+
+(add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+(setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
+(setenv "TERM" "xterm-256color")
+
 (use-package! org-journal
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
   :init
@@ -432,6 +458,7 @@ Version 2019-11-04 2021-02-16"
           org-journal-time-format "%02H "
           )
   :config
+    ; TODO map njj to open-or-create-entry
 
     ;; https://emacs.stackexchange.com/questions/17897/create-an-org-journal-template-for-daily-journal-entry/32655#32655
     (defun pc/new-buffer-p ()
