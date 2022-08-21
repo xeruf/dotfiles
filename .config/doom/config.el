@@ -437,15 +437,16 @@ Version 2019-11-04 2021-02-16"
   )
 
 
-(require 'xterm-color)
-(require 'eshell)
-(add-hook 'eshell-before-prompt-hook
-          (lambda ()
-            (setq xterm-color-preserve-properties t)))
-
-(add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
-(setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
-(setenv "TERM" "xterm-256color")
+(after! eshell
+  ; https://stackoverflow.com/questions/63469203/eshell-and-color-output
+  (require 'xterm-color)
+  (add-hook 'eshell-before-prompt-hook
+            (lambda ()
+              (setq xterm-color-preserve-properties t)))
+  (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
+  (setenv "TERM" "xterm-256color")
+  )
 
 (use-package! org-journal
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
@@ -619,7 +620,7 @@ Version 2019-11-04 2021-02-16"
     ;;(setq org-latex-toc-command "\\tableofcontents*\n\n")
     (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
           org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
-          org-latex-listings 'minted
+          org-latex-src-block-backend 'minted
           org-latex-default-class "article4")
     (add-to-list 'org-latex-classes
          '("article4" "\\documentclass{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
