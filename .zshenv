@@ -1,7 +1,7 @@
 export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
 export MUSIC="$DATA/4-media/music"
 
-export BORG_REPO="/mnt/backup/borg"
+export BORG_REPO='/mnt/backup/borg'
 export BORG_PASSCOMMAND='pass service/device/borg/backup'
 
 # xdg
@@ -89,20 +89,20 @@ export DIRS_IGNORE="-x .sync -x .stfolder -x *build -x .git -x .idea -x env -x o
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
- #export TEXMF=/usr/share/context
+export TEXMF=/usr/share/texmf-dist
 export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 ## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
 ## man
 export MANPAGER="less --squeeze-blank-lines +Gg"
-export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
-export LESS_TERMCAP_md=$'\e[1;33m'     # begin blink
-export LESS_TERMCAP_so=$'\e[36m'       # bottom blue
-export LESS_TERMCAP_us=$'\e[01;37m'    # begin underline
-export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
-export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
-export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
-export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
+export LESS_TERMCAP_mb=$'\e[1;31m'	# begin bold
+export LESS_TERMCAP_md=$'\e[1;32m'	# begin blink
+export LESS_TERMCAP_so=$'\e[36m'	# bottom indication
+export LESS_TERMCAP_us=$'\e[4;33m'	# begin underline
+export LESS_TERMCAP_me=$'\e[0m'	# reset bold/blink
+export LESS_TERMCAP_se=$'\e[0m'	# reset reverse video
+export LESS_TERMCAP_ue=$'\e[0m'	# reset underline
+export GROFF_NO_SGR=1				# for konsole and gnome-terminal
 ## fzf defaults
 [[ "$(fzf --version 2>/dev/null | grep --only-matching '[0-9]\.[^. ]*')" > 0.24 ]] && _fzf_latest=true || _fzf_latest=false
 FZF_BINDINGS=$(echo "
@@ -124,7 +124,7 @@ alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
 export FZF_DEFAULT_OPTS="--select-1 --ansi
---tiebreak=end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
+--tiebreak=chunk,end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
 $($_fzf_latest && echo '--preview-window=60%,border-left --marker=o')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"

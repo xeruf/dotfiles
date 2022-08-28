@@ -62,6 +62,8 @@ theme() {
 	#mozfile=$(find $HOME/.mozilla/firefox/ -maxdepth 2 -name addonStartup.json.lz4 | grep ".test")
 	case "$theme" in
 		(light)
+			export LESS_TERMCAP_md=$'\e[1;34m'	# bold
+			export LESS_TERMCAP_so=$'\e[37m'	# bottom indication
 			export BAT_THEME="OneHalfLight"
 			konsoleprofile colors="Light"
 			sed -i 's/#\(include.*\/light-256.theme\)/\1/' "$XDG_CONFIG_HOME/task/taskrc"
@@ -78,4 +80,3 @@ theme() {
 export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
 theme $THEME
-
