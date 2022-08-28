@@ -730,10 +730,12 @@ Version 2019-11-04 2021-02-16"
           :n "r" 'ranger)
     )
 (use-package! image-dired
-  :config
+  :init
     (setq image-dired-external-viewer "gimp"
-          image-dired-thumb-size 300
+          image-dired-thumb-size 400
           image-dired-show-all-from-dir-max-files 300)
+  :config
+  ; TODO map image-dired-delete-marked
     (add-to-list 'image-dired-cmd-create-thumbnail-options "-auto-orient")
     (add-to-list 'image-dired-cmd-create-temp-image-options "-auto-orient")
     (add-to-list 'image-dired-cmd-create-standard-thumbnail-options "-auto-orient")

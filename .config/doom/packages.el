@@ -41,15 +41,14 @@
 (setq straight-host-usernames '((github . "xeruf")))
 
 (package! emms)
+(package! exiftool)
 
 (package! dired+)
 
 (package! elpher)
 
-(unpin! evil-collection)
-
 (package! ox-context
-  :recipe (:host github :repo "Jason-S-Ross/ox-context"))
+  :recipe (:host github :repo "Jason-S-Ross/ox-context" :branch "develop"))
 (package! ox-bb
   :recipe (:host github :repo "mmitch/ox-bb"))
 
