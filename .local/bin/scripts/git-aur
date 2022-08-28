@@ -24,12 +24,12 @@ case "$command" in
 		git add -f .SRCINFO
 		git commit -v "$@";;
 	(push)
-		updpkgsums
+		grep -q SKIP PKGBUILD || updpkgsums
 		git add -f *.install 2>/dev/null || true
 		git aur commit -a "$@"
 		git push;;
 	(clean)
-		find "$aurdir" -mindepth 2 -maxdepth 2 \( -iname "*.pkg.tar.*" -o -type d -not -name ".*" \) \
+		find "$aurdir" -mindepth 2 -maxdepth 2 \( -iname "*.pkg.tar.*" -o -iname "*.zip" -o -type d -not -name ".*" \) \
 			-print -exec sudo rm -rI {} +;;
 	(*) echo "Unknown command!"; exit 3;;
 esac
