@@ -31,10 +31,19 @@ test -d "/etc/yadm" || sy clone
 
 SECTION "Software"
 
-doomuser="$XDG_CONFIG_HOME/doom/user.el"
-test -d "$(dirname "$doomuser")" &&
-	! test -f "$doomuser" &&
-	cp -v "$(dirname "$doomuser")/user.template.el" "$doomuser"
+template() {
+	local dir=$(dirname "$1")
+	local file=${1/.template}
+	test -d "$dir" && ! test -f "$file" &&
+		cp -iv "$1" "$file"
+}
+template "$XDG_CONFIG_HOME/doom/user.template.el"
+template "$XDG_CONFIG_HOME/MuseScore/MuseScore3.template.ini"
+
+if command -v nvim >/dev/null 2>&1; then
+  echo "Updating NeoVim Plugins"
+  nvim '+PlugClean!' '+PlugUpgrade' '+PlugUpdate' '+qall'
+fi
 
 link() {
 	test -e "$2" -o -h "$2" || $($HOME/.local/bin/scripts/checkaccess -w "$2" || echo sudo) ln -sv "$@"
