@@ -13,7 +13,7 @@ then
 
 	# Edit zsh completion
 	edit-completion() {
-		file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
+		local file=$(echo "$1" | sed 's/^\([^_]\)/_\1/')
 		filepath="${fpath[-1]}/$file"
 		test -f "$filepath" ||
 			echo "#compdef $1" >"$filepath"
@@ -53,7 +53,7 @@ compdef help=man
 alias info='info --vi-keys'
 
 resolvealias() {
-	alias "$1" 2>/dev/null | sed "s/.*='\?\([-A-z]*\)'\?\$/\1/" || echo $1
+	alias "$1" 2>/dev/null | sed -n "s/$1='\?\(noglob \)\?\([-A-z]\+\)'\?\$/\2/p" | grep -m 1 . || echo $1
 }
 
 h() {
@@ -106,6 +106,7 @@ CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 # Fuzzy find and edit shell config files
 # Exit code: 1 - no change, 2 - file not found
 edit-shell() {
+	local file
 	case $1 in
 		("") file="$CONFIG_SHELL_FUNCTIONS";;
 		(zsh) file="$CONFIG_ZSH/.zshrc";;
@@ -244,7 +245,12 @@ u() {
 	  then
 		  builtin cd $XDG_CONFIG_HOME/emacs
 		  git pull --rebase
-		  true | doom sync -u || { rm -rf "$DOOMLOCALDIR/straight" && doom sync -u; }
+		  if ! true | doom sync -u
+		  then echo "Rebuild doom from scratch?"
+			  read result
+			  test "$result" = "y" && rm -rf "$DOOMLOCALDIR/straight" && doom sync -u
+		  fi
+		  pkill --full "emacs --daemon" && emacs --daemon &
 	  fi
 	else yadm l
 		 sudo apt update && sudo apt upgrade
@@ -263,7 +269,7 @@ sshl() {
 	lemonade server -allow 127.0.0.1 &
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
-	file="$authcache/$1"
+	local file="$authcache/$1"
 	test "$all" && pass scp ~/.bash_aliases "$@:"
 	if ssh -G "$1" | grep --silent "^user root$" && ! [[ "$1" =~ "pve*" ]]
 	then pass ssh "$@"
@@ -316,7 +322,9 @@ grsh() { grpr --no-ignore-case "$@" $HOME/.{ba,z}sh* $HOME/.local/bin $CONFIG_SH
 
 # Recover stray swap files from neovim
 vrec() {
-	ls "$XDG_DATA_HOME/nvim/swap/$1" | sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' | head -1 | xargs --no-run-if-empty nvim
+	find "$XDG_DATA_HOME/nvim/swap" -name "*$1*" |
+		sed 's/\%/\//g' | sed 's|\(.*\)\..*|\1|' |
+		xargs --no-run-if-empty nvim
 }
 alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r -i mv {} /tmp"
 
@@ -330,8 +338,8 @@ hex() { hexyl "$@" | "${PAGER:-less}"; }
 export DICT="$XDG_DATA_HOME/dictcc"
 dic() {
 	# TODO tiebreak=chunk
-	result=$(cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=length --bind='alt-bspace:clear-query' --print-query --query="$1") &&
-		dic "$(echo "$result" | sed 's/	/\n/g' | grep --invert-match --ignore-case $(echo "$result" | head -1) | head -1)"
+	result=$(cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=chunk,length --bind='alt-bspace:clear-query' --print-query --query="$1") &&
+		dic "$(echo "$result" | tail -1 | sed 's/\t/\n/g' | grep --invert-match --ignore-case "$(echo "$result" | head -1)" | head -1 | sed 's/ \W.*//')"
 }
 #fzf --tiebreak=length --bind='alt-bspace:clear-query'
 alias dict="rlwrap rdictcc --directory $DICT"
@@ -454,7 +462,7 @@ mvf() {
 
 # Move from $1 to $2 and create a relative symlink
 mvln() {
-	file=$(test -f "$1" && echo 1 || echo 0)
+	local file=$(test -f "$1" && echo 1 || echo 0)
 	if test -d $1; then
 		mkdir -p "$2"
 		mv -vT $1 $2

@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # Emacs in the terminal
-# TODO timeout start because first does not open file
-emacsclient --tty --alternate-editor="" "$@"
+pgrep --full "emacs --daemon" >/dev/null || emacs --daemon
+emacsclient --create-frame --tty  "$@"
