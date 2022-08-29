@@ -191,6 +191,7 @@ Version 2019-11-04 2021-02-16"
 
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+(add-hook 'window-setup-hook #'xclip-mode)
 
 ;;; Data Preservation
 
