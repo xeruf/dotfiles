@@ -1,5 +1,8 @@
 #!/bin/sh
 # [c]at the given files as prettified [j]son
+# TODO quit on interrupt
 
 # add echo in case file is missing newline at the end
-{ cat "$@"; echo; } | while read -r line; do echo -n "$line" | python3 -m json.tool; done | bat --language json --style numbers
+{ cat "$@"; echo; } | while read -r line
+  do test -n "$line" && python -c "import json; print(json.dumps($line, ensure_ascii=False))"
+  done | bat --language json --style numbers
