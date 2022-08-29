@@ -1,0 +1,7 @@
+#!/bin/sh -e
+wd=$PWD
+mkdir -p /tmp/context
+cd /tmp/context
+pdffile=${1%.*}.pdf
+context --luatex --path=$wd "$wd/$@"
+cp -v "/tmp/context/$pdffile" "$wd"
