@@ -39,6 +39,9 @@ template() {
 }
 template "$XDG_CONFIG_HOME/doom/user.template.el"
 template "$XDG_CONFIG_HOME/MuseScore/MuseScore3.template.ini"
+# TODO JOSM
+# TODO audacity
+# TODO puddletag
 
 if command -v nvim >/dev/null 2>&1; then
   echo "Updating NeoVim Plugins"

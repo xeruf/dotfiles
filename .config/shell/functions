@@ -131,7 +131,11 @@ edit-bin() {
 	if f="$(which "$toedit" 2>/dev/null)" && test -f "$f"
 	then edit "$f"
 	else edit-shell -f "$toedit"
-		test $? != 2 || edit "$HOME/.local/bin/${2:-scripts}/$1"
+		if test $? = 2
+		then local script="$HOME/.local/bin/${2:-scripts}/$1"
+			edit "$script" &&
+			chmod +x "$script"
+		fi
 	fi
 }
 
@@ -260,8 +264,10 @@ u() {
 # Networking
 dns() {
 	# TODO implement rdns via -x
-	drill A @8.8.8.8 -Q "$@"
-	drill AAAA @8.8.8.8 -Q "$@"
+	for arg; do
+		drill A @8.8.8.8 -Q "${arg##*/}"
+		drill AAAA @8.8.8.8 -Q "${arg##*/}"
+	done
 }
 alias sshk='kitty +kitten ssh'
 sshl() {
