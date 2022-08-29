@@ -98,8 +98,10 @@ Version 2019-11-04 2021-02-16"
 (with-eval-after-load 'outline
   (add-hook 'ediff-prepare-buffer-hook 'outline-show-all))
 
-(map! ;; Buffer-local font resizing
+(map! :map ctrl-x-map
+      "8 SPC" (lambda () (insert-char "200B"))
       :n
+      ;; Buffer-local font resizing
       "M-C-+"   'text-scale-increase
       "M-C--"   'text-scale-decrease
       ;; Frame-local font resizing
@@ -845,8 +847,6 @@ Version 2019-11-04 2021-02-16"
     (setq LilyPond-pdf-command "xdg-open")
     (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
     (add-hook 'LilyPond-mode-hook (lambda () (setq-local compile-command (format "lilypond %s" (shell-quote-argument buffer-file-name)))))
-    (add-hook 'pdf-view-mode-hook 'auto-revert-mode)
-    (setq auto-revert-interval 2)
     ; TODO (require 'lyqi nil t)
   )
 
@@ -859,6 +859,9 @@ Version 2019-11-04 2021-02-16"
 ;;; Misc package config
 
 (setq pdf-misc-print-programm "/usr/bin/lpr")
+
+(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+(setq auto-revert-interval 2)
 
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
 
