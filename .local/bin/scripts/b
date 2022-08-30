@@ -99,7 +99,7 @@ for arg; do
 		case "$(file --dereference "$arg")" in
 		(*\ ?udio*)
 			# TODO preconvert aac - |*\ ADTS\ *
-			if ! $inspect && which audiowaveform 2>/dev/null >&2; then
+			if ! $inspect && which audiowaveform >/dev/null; then
 				img="$tmpfile.png"
 				case $TERM in (*-kitty) kitty=true; audioheight=2;; (*) audioheight=5;; esac
 				find "$img" -not -empty 2>/dev/null | grep --quiet . ||
@@ -177,7 +177,8 @@ if test "$bat" -o "$batplain"; then
 	batcommand="$elevate bat $cut $flags --pager"
 	batstyle="--style plain$rule"
 	test "$batplain" && $batcommand "${batpager:-$pager}" $batstyle "${batplain[@]}"
-	test "$bat" && if test "$cut" && ! $inspect
+	test "$bat" &&
+		if test "$cut" && ! $inspect
 		then case $TERM in (*kitty)
 				declare -a timgtxt
 				for file in "${bat[@]}"
@@ -193,8 +194,23 @@ if test "$bat" -o "$batplain"; then
 					fileinfo "$file"
 				done;;
 			esac
-		else $inspect || $batcommand "${batpager:-$pager}" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
-			{ $inspect || test $# -lt $(expr $(tput lines) / 3); } && fileinfo "${bat[@]}"
+		else
+			if ! $inspect
+			then json=false
+				if which cj >/dev/null; then
+					json=true
+					for file in "${bat[@]}"; do
+						case $file in (*.json);; (*) json=false;; esac
+					done
+				fi
+				if $json
+				then cj "${bat[@]}"
+				else $batcommand "${batpager:-$pager}" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
+				fi
+			fi
+			if $inspect || test $# -lt $(expr $(tput lines) / 3);
+			then fileinfo "${bat[@]}"
+			fi
 		fi
 fi
 

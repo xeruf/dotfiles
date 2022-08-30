@@ -1,0 +1,10 @@
+#!/bin/sh -e
+# Format json as bat pager with python json.tool
+while read -r line
+  do
+    echo $line | bat -A
+    line="$(echo ${line%} | sed "s|.*\[0m\(.*\)|\1|")"
+    echo $line | bat -A
+    command expr length "$line" \> 2 &&
+      echo "${line%,}" | python3 -m json.tool --no-ensure-ascii --sort-keys
+  done
