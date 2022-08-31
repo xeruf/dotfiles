@@ -703,7 +703,7 @@ Version 2019-11-04 2021-02-16"
         :n "h" 'dired-up-directory
         :n "ö" 'evil-ex-search-forward
         ;:desc "Dragon marked files" "d"
-        [remap dragon] (lambda () (interactive) (dragon (s-join " " (dired-get-marked-files))))
+        [remap xf/dragon] (lambda () (interactive) (xf/dragon (s-join " " (dired-get-marked-files))))
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
