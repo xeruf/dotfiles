@@ -87,7 +87,8 @@ data:
       hostname: "$subdomain.\${domain}"
       tls: true
       certManager: true
-    # TODO Adjust Mailer config
+    # TODO Configure PVC for data & database
+    # TODO Adjust $app Mailing config
     #    mailer:
     #      enabled: "\${outgoing_mail_enabled}"
     #      host: "\${outgoing_mail_smtp_host}"
@@ -95,10 +96,27 @@ data:
     #      username: "\${outgoing_mail_smtp_user}"
     #      password: "\${outgoing_mail_smtp_password}"
     #      fromemail: "\${outgoing_mail_from_address}"
-    # TODO Adjust OpenID Connect Single Sign-On Configuration
+    # TODO Adjust $app OpenID Connect Single Sign-On Configuration
     #    - name: Stackspin
     #      key: "\${client_id}"
     #      secret: "\${client_secret}"
     #      autoDiscoverUrl: 'https://sso.\${domain}/.well-known/openid-configuration'
 EOF
 
+cat <<EOF >$app-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: $app-data
+  namespace: $namespace
+  labels:
+    stackspin.net/backupSet: "$app"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+EOF

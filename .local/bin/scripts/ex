@@ -3,7 +3,7 @@
 # adapted and improved from the commonly circulating version
 # detects whether unpacking into a subfolder is sensible
 # and shows progress indications for some operations
-# optdepends: rewrite(part of my dotfiles, for unzip line rewriting)
+# optdepends: rewrite(part of my dotfiles, for unzip line rewriting) 7z p7zip unzip
 for arg do
 case $arg in
 	(-d) del=$(expr ${del:-0} + 1);;
@@ -12,6 +12,9 @@ case $arg in
 	if test -r "$arg"; then
 		fullpath="$(realpath "$arg")"
 		name="$(basename "${fullpath%.*}")"
+		ls --color -dlhF "$name" >&2 2>/dev/null &&
+			echo "Target directory exists - archive already extracted?" >&2 &&
+			continue
 		namepart="$name.part"
 		(
 		# Create temporary subfolder if current folder contains stuff
@@ -45,7 +48,7 @@ case $arg in
 		then if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
 			then test "$(ls)" && mv -iv * ..
 				cd .. && rm -d "$namepart"
-			else cd .. && mv -iv "$namepart" "$name"
+			else cd .. && mv -ivT "$namepart" "$name"
 			fi
 		fi
 		case $del in
