@@ -1,6 +1,10 @@
 #!/bin/sh -e
 aurdir="$DATA/1-projects/aur"
-test $# -eq 0 && cd "$aurdir" && exec $SHELL
+commands="<origin|clone|create|commit|push|clean>"
+if test $# -eq 0
+then echo "Usage: $0 $commands"
+	 case "$PWD" in ($aurdir*) exit 0;; (*) cd "$aurdir"; exec $SHELL;; esac
+fi
 command=$1
 shift
 url="ssh://aur@aur.archlinux.org/${1:-$(basename $PWD)}.git"
@@ -31,5 +35,5 @@ case "$command" in
 	(clean)
 		find "$aurdir" -mindepth 2 -maxdepth 2 \( -iname "*.pkg.tar.*" -o -iname "*.zip" -o -type d -not -name ".*" \) \
 			-print -exec sudo rm -rI {} +;;
-	(*) echo "Unknown command!"; exit 3;;
+	(*) echo "Unknown command! Available: $commands"; exit 3;;
 esac

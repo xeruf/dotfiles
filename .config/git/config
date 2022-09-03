@@ -32,6 +32,9 @@
 	tool = nvim
 	submodule = log
 	context = 2
+	renames = copy
+	colorMoved = dimmed-zebra
+	colorMovedWS = allow-indentation-change
 [merge]
 	tool = nvim
 [mergetool "nvim"]
@@ -179,8 +182,8 @@
 	cap = !git commit --amend --no-edit && git push --force-with-lease
 
 	# CLEANUP
-	rg = rmgonebranches
 	gcr = !git gc && git repack -a -d
+	# see git-prunerefs
 
 [include]
 	path= "diffr"
