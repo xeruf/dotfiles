@@ -1,7 +1,7 @@
 #!/bin/sh
 # Conveniently use sysyadm
 unignore="/etc/yadm/unignore"
-test -r "$unignore" && cat "$unignore" | while read f; do eval ls -d $f; done | sysyadm add --intent-to-add --pathspec-from-file=-
+test -r "$unignore" && cat "$unignore" | while read f; do eval ls -d $f; done | sysyadm add --intent-to-add --pathspec-from-file=- 2>/dev/null
 case "$1" in
   ("") sysyadm s;;
   (p) sysyadm p;;

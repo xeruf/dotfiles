@@ -159,9 +159,12 @@ alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewar
 alias syslog='less +F /var/log/syslog'
 
 alias sc='sudo systemctl'
-alias sce='sudo systemctl enable --now' # TODO or show log
 alias scd='sudo systemctl disable --now'
 
+sce() {
+	sudo systemctl enable --now "$@" ||
+		sudo systemctl status "$@"
+}
 unalias scs 2>/dev/null
 scs() {
 	(
@@ -170,7 +173,7 @@ scs() {
 		systemctl --user status "*$1*"
 	sudo -E systemctl status "$1" 2>/dev/null ||
 		sudo -E systemctl status "*$1*"
-	) | less -F
+	) # | less -RF
 }
 alias scu='systemctl --user'
 alias scue='systemctl --user enable --now'
@@ -179,19 +182,19 @@ alias scud='systemctl --user disable --now'
 # Reload or restart matching systemctl service
 unalias scr 2>/dev/null
 scr() {
-	echo -n "User: "
-	systemctl --user reload-or-restart "$1" ||
-		{ echo -n "System: " && sudo systemctl reload-or-restart "$1"; } &&
-		echo "Successful reload"
+	echo -n "User: " && systemctl --user reload-or-restart "$@" ||
+		{ echo -n "System: " && sudo systemctl reload-or-restart "$@"; } &&
+		echo "Successful reload" ||
+			scs "$@"
 }
 
 # Restart matching systemctl service with time for adjustments inbetween
 scb() {
-	systemctl --user stop --show-transaction "$1"
-	sudo systemctl stop --show-transaction "$1"
+	systemctl --user stop --show-transaction "$@"
+	sudo systemctl stop --show-transaction "$@"
 	read
-	systemctl --user start --show-transaction "$1"
-	sudo systemctl start --show-transaction "$1"
+	systemctl --user start --show-transaction "$@"
+	sudo systemctl start --show-transaction "$@"
 }
 
 alias jch='sudo SYSTEMD_LESS=FRKiM journalctl --no-hostname'
@@ -233,9 +236,10 @@ del() {
 }
 
 u() {
-	if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d' ' -f1)" != "$(date +%F)"
+	if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
 	then command -v pacman-mirrors >/dev/null &&
-		sudo pacman-mirrors --geoip
+			sudo pacman-mirrors --geoip ||
+			sudo touch /etc/pacman.d/mirrorlist
 		if command -v pacman >/dev/null; then
 			sudo pacman -Syy --needed base gnupg archlinux-keyring
 			sudo pacman-key --populate
@@ -244,7 +248,7 @@ u() {
 	fi
 	if command -v topgrade >/dev/null
 	then
-	  topgrade
+	  topgrade --disable node emacs remotes
 	  if test -d "$XDG_CONFIG_HOME/emacs"
 	  then
 		  builtin cd $XDG_CONFIG_HOME/emacs
@@ -254,6 +258,7 @@ u() {
 			  read result
 			  test "$result" = "y" && rm -rf "$DOOMLOCALDIR/straight" && doom sync -u
 		  fi
+		  pgrep emacsclient && echo -n "^ Emacs client processes. Press enter to restart the emacs server." && read
 		  pkill --full "emacs --daemon" && emacs --daemon &
 	  fi
 	else yadm l
