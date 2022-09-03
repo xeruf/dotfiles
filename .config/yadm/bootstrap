@@ -130,9 +130,5 @@ if ! test -d "$mx"
 then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
 fi
 
-#subhighlight "Block internet at night & on weekdays in the morning to force focus"
-#walli 22 --save
-# TODO netkeeper
-
 subhighlight "Setup kakoune plugin loader"
 cloneshallow plug.kak robertmeta "${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"
