@@ -1,8 +1,15 @@
 #!/bin/sh
+outfile=/tmp/args$(date +%s)
+# echo "dot - graphviz version 5.0.1 (0)" >&2
 {
 echo "$# Args: ${@:-DEFAULT}"
 #echo "Starred: $*"
 #echo "${@:-default}" | sed 's/\w\+/\0-w/g'
 for last; do true; done
 echo "Last arg: $last"
-} | tee /tmp/args$(date +%s)
+} | tee "$outfile"
+
+if tty -s || test "$1" = "-V"
+then echo "Not reading from stdin"
+else tee "$outfile-stdin"
+fi
