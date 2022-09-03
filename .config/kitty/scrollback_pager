@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # https://github.com/kovidgoyal/kitty/issues/719#issuecomment-952039731
 set -eu
 
