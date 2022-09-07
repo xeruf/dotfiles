@@ -105,7 +105,7 @@ export LESS_TERMCAP_se=$'\e[0m'	# reset reverse video
 export LESS_TERMCAP_ue=$'\e[0m'	# reset underline
 export GROFF_NO_SGR=1				# for konsole and gnome-terminal
 ## fzf defaults
-[[ "$(fzf --version 2>/dev/null | grep --only-matching '[0-9]\.[^. ]*')" > 0.24 ]] && _fzf_latest=true || _fzf_latest=false
+[[ "$(fzf --version 2>/dev/null | grep --only-matching '[0-9]\.[^. ]*')" > 0.31 ]] && _fzf_latest=true || _fzf_latest=false
 FZF_BINDINGS=$(echo "
 change:top
 alt-enter:execute(test -O {} && $EDITOR {} || sudoedit {})
@@ -125,7 +125,7 @@ alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
 export FZF_DEFAULT_OPTS="--select-1 --ansi
---tiebreak=chunk,end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
+--tiebreak=$($_fzf_latest && echo "chunk,")end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
 $($_fzf_latest && echo '--preview-window=60%,border-left --marker=o')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"

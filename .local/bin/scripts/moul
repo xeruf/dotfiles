@@ -1,5 +1,6 @@
 #!/bin/sh -e
 # Mount a partition by label or device identifier automatically
+# TODO make this interactive with a fuzzy finder :)
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
 	("") ds && echo "$_help" && exit 2;;
