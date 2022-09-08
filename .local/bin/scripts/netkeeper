@@ -7,6 +7,6 @@ if test -e "$JOURNAL"; then
   done
   jrnl intentions "$intention"
   sudo nft flush chain inet filter outall
-  sudo nft add rule inet filter outall meta hour "$(date +%H:%M)"-"$(date +%H:%M --date="${1:-10}min")" accept
+  sudo nft add rule inet filter outall meta hour "$(date +%H:%M)"-"$(date +%H:%M --date="${1:-5}min")" accept
   #expr \( "$1" \> 40 \) \* 10 \| "$1"
 fi

@@ -84,8 +84,8 @@ for arg; do
 		timg+=("$tmpfile");;
 	(*\ video/*)
 		suffix=_thumbs.jpg
-		mtn -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
-			-O "$prefix" -o "$suffix" "$arg" 2>/dev/null
+		mtn -q -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
+			-O "$prefix" -o "$suffix" "$arg"
 		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)

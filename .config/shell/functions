@@ -274,7 +274,7 @@ dns() {
 		drill AAAA @8.8.8.8 -Q "${arg##*/}"
 	done
 }
-alias sshk="$(case $TERM in (*-kitty) echo 'kitty +kitten';; esac) ssh"
+alias sshk="$(case $TERM in (*-kitty) echo 'TERM=xterm-256color kitty +kitten';; esac) ssh"
 sshl() {
 	test "$1" = "-a" && shift && local all=true
 	lemonade server -allow 127.0.0.1 &
