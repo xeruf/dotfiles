@@ -29,9 +29,3 @@
     (add-to-list 'recentf-list (expand-file-name "5-incubator/downloads/" user-data-dir))
     (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
   )
-
-(use-package! rdictcc
-  :bind (("C-c t". 'rdictcc-translate-word-at-point)
-         ("C-c T". 'rdictcc-translate-word))
-  :config (setq rdictcc-program-args "--directory $XDG_DATA_HOME/dictcc")
-  )
