@@ -121,8 +121,9 @@ Version 2019-11-04 2021-02-16"
       "SN"      '+snippets/new
       "Sm"      'smerge-mode
       "m;"      'comment-line
+      "Q"       'save-buffers-kill-terminal
       :desc "Dragon current buffer" "d" 'xf/dragon
-      :desc "Update DB & Quit"        "qu" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
+      :desc "Update DB & Quit"      "WU" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map ctl-x-map
       "8 SPC" (lambda () (insert-char "200B"))
       :map text-mode-map
