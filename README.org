@@ -24,7 +24,8 @@ Here are some basic commands you should remember:
 - loc  :: quickly find a file on your system, case-insensitive
 - loca :: do a deep search for a file on the whole system, case-insensitive
 - loce :: find a file/directory with exact name match
-
+- moul :: mount a device interatively (unmount with ~umoul~)
+*** Mounting Manually
 To mount a device,
 first check ~ds~ ([d]isk [s]tats, a prettification of ~lsblk --fs~)
 and find your device,

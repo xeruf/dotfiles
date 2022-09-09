@@ -515,7 +515,11 @@ umoul() {
 			mountpoint "$mountpoint" >/dev/null && break
 			mountpoint="$(dirname "$mountpoint")"
 		done
-		test "$(dirname "$mountpoint")" = "/" && return 1
+		test "$(dirname "$mountpoint")" != "/" ||
+			mountpoint="$(mount |
+				grep --invert-match -e " /[^/]*\(/[^/]*\)\? " -e "/sys" -e "/run/user" -e "/run/docker" |
+				fzf --select-1 --exit-0 | awk '{print $3}')" ||
+			return $?
 	fi
 	case "$PWD" in
 		("$mountpoint"*) builtin cd "$(dirname $mountpoint)";;

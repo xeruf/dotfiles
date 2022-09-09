@@ -128,7 +128,7 @@ alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
 #alt-r:preview(bat {}),
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
-export FZF_DEFAULT_OPTS="--select-1 --ansi
+export FZF_DEFAULT_OPTS="--select-1 --exit-0 --ansi
 --tiebreak=$($_fzf_latest && echo "chunk,")end,length --history=$FZF_HISTDIR/history --bind='$FZF_BINDINGS'
 $($_fzf_latest && echo '--preview-window=60%,border-left --marker=o')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"

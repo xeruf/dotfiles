@@ -1,9 +1,11 @@
-#!/bin/sh -e
+#!/bin/sh
 # Mount a partition by label or device identifier automatically
-# TODO make this interactive with a fuzzy finder :)
+set -eo pipefail
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
-	("") ds && echo "$_help" && exit 2;;
+	("") arg=$(lsblk --list --noheadings --output name,label,fstype,mountpoint |
+			grep -v '/' | grep ".\+ [^ ]\+" | fzf --select-1 --exit-0 |
+			sed "s/^\([^ ]\+ \+\)\?\([^ ]\+\) \+[^ ]\+ *$/\2/");;
 	("--help") echo "$_help" && exit 0;;
 	("-u") shift
 		for last; do true; done
@@ -11,9 +13,9 @@ case $1 in
 		code=$?
 		sudo rm -df "$last"
 		exit $code;;
+	(*) arg=$1;;
 esac
 
-arg=$1
 # FSTAB: BY LABEL
 if grep --word-regexp "LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory
@@ -28,14 +30,18 @@ fi
 # MANUALLY
 mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$(basename "$arg")}"
 if grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab
-then shift; mount "$mountpoint" "$@"; code=$?; cd $mountpoint; exit $code
+then test $# -gt 0 && shift
+	 mount "$mountpoint" "$@"
+	 code=$?
+	 cd $mountpoint
+	 exit $code
 fi
 case "$arg" in
 	(sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$arg";;
 	(/dev/*) partition="$arg";;
 	(*) partition="-L $arg";;
 esac
-shift $(expr 2 \& $# \> 1 \| 1)
+shift $(expr 2 \& $# \> 2 \| $#)
 #uid=$(id --user),gid=$(id --group), \
 if ! mountpoint "$mountpoint" 2>/dev/null
 then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
