@@ -98,9 +98,7 @@ Version 2019-11-04 2021-02-16"
 (with-eval-after-load 'outline
   (add-hook 'ediff-prepare-buffer-hook 'outline-show-all))
 
-(map! :map ctrl-x-map
-      "8 SPC" (lambda () (insert-char "200B"))
-      :n
+(map! :n
       ;; Buffer-local font resizing
       "M-C-+"   'text-scale-increase
       "M-C--"   'text-scale-decrease
@@ -124,7 +122,9 @@ Version 2019-11-04 2021-02-16"
       "Sm"      'smerge-mode
       "m;"      'comment-line
       :desc "Dragon current buffer" "d" 'xf/dragon
-      :desc "Update & Quit"        "qu" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
+      :desc "Update DB & Quit"        "qu" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
+      :map ctl-x-map
+      "8 SPC" (lambda () (insert-char "200B"))
       :map text-mode-map
       :desc "Markdown to Zulip" "mam" "ggd2/# 
 :%s/<\\/?span ?[^ >]*>//g
@@ -882,10 +882,13 @@ Version 2019-11-04 2021-02-16"
   :bind (("C-c t". 'rdictcc-translate-word-at-point)
          ("C-c T". 'rdictcc-translate-word))
   :config
+
+        ;; TODO what happened to q?
         (map! :leader "T" 'rdictcc-translate-word
               :map rdictcc-buffer-mode-map
+              :n "q" 'kill-this-buffer
               "q" 'kill-this-buffer
-              :n "q" 'kill-this-buffer)
+              )
 
         (setq rdictcc-program-args "--directory $XDG_DATA_HOME/dictcc")
   )
