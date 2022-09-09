@@ -9,15 +9,19 @@ import subprocess
 
 SetLogLevel(0)
 
-modelBase = os.path.join(os.getenv('XDG_DATA_HOME', os.environ['HOME']), 'vosk/models')
+modelBase = os.getenv('VOSK_MODELS', os.path.join(os.getenv('XDG_DATA_HOME', os.environ['HOME']), 'vosk/models'))
 modelPath = os.path.join(modelBase, sys.argv[2] if len(sys.argv) > 2 else 'daanzu')
 if not os.path.exists(modelPath):
     print (f"Please download a model from https://alphacephei.com/vosk/models and unpack it to {modelPath}.", file=sys.stderr)
     exit (1)
 
+if len(sys.argv) < 2:
+    print (f"Usage: {sys.argv[0]} <audio> [model]", file=sys.stderr)
+    exit (1)
+
 sample_rate=16000
 model = Model(modelPath)
-rec = KaldiRecognizer(model, sample_rate)
+kaldi = KaldiRecognizer(model, sample_rate)
 
 process = subprocess.Popen(['ffmpeg', '-loglevel', 'quiet', '-i',
                             sys.argv[1],
@@ -36,7 +40,7 @@ while True:
     data = process.stdout.read(4000)
     if len(data) == 0:
         break
-    if rec.AcceptWaveform(data):
-        print(getText(rec.Result()))
+    if kaldi.AcceptWaveform(data):
+        print(getText(kaldi.Result()))
 
-print(getText(rec.FinalResult()))
+print(getText(kaldi.FinalResult()))

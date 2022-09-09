@@ -13,6 +13,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
 export INSTALEE_HOME="$DATA/1-projects/1-personal/instalee"
+test -d "/mnt/data/projects/vosk/models" &&
+	export VOSK_MODELS="/mnt/data/projects/vosk/models"
  # adjust programs to use xdg
 export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
@@ -33,8 +35,8 @@ export WINEPREFIX="$XDG_DATA_HOME"/wine
 export GOPATH="$XDG_STATE_HOME"/go
 export KREW_ROOT="$XDG_DATA_HOME"/krew
 
-export CARGO_HOME="$XDG_DATA_HOME"/cargo
-export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export CARGO_HOME="$XDG_STATE_HOME"/cargo
+export RUSTUP_HOME="$XDG_STATE_HOME"/rustup
 
 export NVM_DIR="$XDG_DATA_HOME"/nvm
 export N_PREFIX="$XDG_STATE_HOME"/n
