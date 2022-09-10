@@ -244,6 +244,10 @@ Version 2019-11-04 2021-02-16"
               time-stamp-end "$")
   :hook before-save)
 
+(use-package! image
+  :custom
+  ;; Enable converting external formats (ie. webp) to internal ones.
+  (image-use-external-converter t))
 ;(setq image-file-name-regexps "/preview/")
 ;(add-to-list 'image-file-name-regexps "/preview/")
 
