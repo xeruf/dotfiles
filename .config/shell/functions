@@ -268,10 +268,11 @@ u() {
 
 # Networking
 dns() {
+	local dig="$(which drill || echo "dig +short")"
 	# TODO implement rdns via -x
 	for arg; do
-		drill A @8.8.8.8 -Q "${arg##*/}"
-		drill AAAA @8.8.8.8 -Q "${arg##*/}"
+		$dig A @8.8.8.8 -Q "${arg##*/}"
+		$dig AAAA @8.8.8.8 -Q "${arg##*/}"
 	done
 }
 alias sshk="$(case $TERM in (*-kitty) echo 'TERM=xterm-256color kitty +kitten';; esac) ssh"
