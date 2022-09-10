@@ -268,11 +268,18 @@ u() {
 
 # Networking
 dns() {
-	local dig="$(which drill || echo "dig +short")"
+	local dig="drill -Q"
+	which drill >/dev/null || dig="dig +short"
+	local server=1.1.1.1
+	# allow changing DNS server with @
 	# TODO implement rdns via -x
 	for arg; do
-		$dig A @8.8.8.8 -Q "${arg##*/}"
-		$dig AAAA @8.8.8.8 -Q "${arg##*/}"
+		if which host >/dev/null 2>&1
+		then host "${arg##*/}" $server
+		else
+			$(echo $dig) A @$server "${arg##*/}"
+			$(echo $dig) AAAA @$server "${arg##*/}"
+		fi
 	done
 }
 alias sshk="$(case $TERM in (*-kitty) echo 'TERM=xterm-256color kitty +kitten';; esac) ssh"
