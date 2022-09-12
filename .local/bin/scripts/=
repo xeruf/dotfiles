@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/bin/bash -ex
 # Shortcut for mathematical calculations
-# Assumes german numbers as in 1.000,5
-calc="$(echo "$@" | sed -e 's/p/+/g' -e 's/\.//g' -e 's/,/./g' -e 's/x/*/g' -e 's/m/-/g')"
-bc -l <<<"scale=10;$calc" | sed 's/0\+$/0/'
+# Converts german numbers such as 1.000,5
+calc="$(echo "$@" | sed -e 's/p/+/g' -e 's/\.\(.*,\)/\1/g' -e 's/,/./g' -e 's/x/*/g' -e 's/m/-/g')"
+bc -l <<<"scale=10;$calc" | sed 's/\(\..*\)0\+$/\10/'
