@@ -73,7 +73,7 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 BIN="$HOME/.local/bin"
-export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin"
+export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$HOME/.rvm/bin"
 export ALTERNATE_EDITOR="$(
 	if which nvim >/dev/null
 	then echo nvim

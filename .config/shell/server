@@ -126,3 +126,7 @@ cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
 
 test "$PWD" = "$HOME" && cde "$PROJECTS/ampache-docker"
+
+test -f "$HOME/.rvm/scripts/rvm" &&
+	source "$HOME/.rvm/scripts/rvm" && # Load RVM into a shell session *as a function*
+	rvm use 3.0
