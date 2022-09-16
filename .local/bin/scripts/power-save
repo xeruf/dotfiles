@@ -1,0 +1,6 @@
+#!/bin/sh
+# TODO set brightness
+pkill signal
+pkill aw-server
+pkill aw-qt
+systemctl stop --user syncthing plasma-baloorunner kde-baloo
