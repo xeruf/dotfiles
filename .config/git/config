@@ -43,14 +43,15 @@
 [difftool "nvim"]
 	cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 
-[status]
-	showStash = true
 [pager]
 	branch = false # Disable pagination for branch list
+[status]
+	showStash
 [grep]
-	lineNumber = true
+	lineNumber
 [log]
 	date=local
+	follow
 [commit]
 	verbose
 
