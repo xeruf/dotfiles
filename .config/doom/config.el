@@ -109,6 +109,7 @@ Version 2019-11-04 2021-02-16"
       :leader
       "u"       'evil-prev-buffer
       "i"       'evil-next-buffer
+      "q"       'doom/save-and-kill-buffer
       "bq"      'doom/save-and-kill-buffer
       "#"       'xah/open-in-external-app
       "-"       'evil-quick-diff
@@ -121,7 +122,7 @@ Version 2019-11-04 2021-02-16"
       "SN"      '+snippets/new
       "Sm"      'smerge-mode
       "m;"      'comment-line
-      "Q"       'save-buffers-kill-terminal
+      "Q"       'save-buffers-kill-terminal ; or evil-quit-all?
       :desc "Dragon current buffer" "d" 'xf/dragon
       :desc "Update DB & Quit"      "WU" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map ctl-x-map
@@ -168,6 +169,7 @@ Version 2019-11-04 2021-02-16"
 (add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 (add-hook 'twee-chapbook-mode-hook 'twee-mode)
 
+(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
 (add-to-list 'auto-mode-alist `("\\.erb\\'" . html-mode))
 
 (whitespace-mode 0)
@@ -284,7 +286,8 @@ Version 2019-11-04 2021-02-16"
   ;(add-to-list 'org-global-properties-fixed '("ID_ALL" . "id"))
   (map! :map org-mode-map
         :leader
-        "\\" 'org-ctrl-c-ctrl-c
+        "\\"    'org-ctrl-c-ctrl-c
+        :desc "Agenda" "oA" (lambda () (interactive) (org-agenda nil "d"))
         :localleader
         "C" 'org-clock-in
         "v" 'org-insert-heading
@@ -299,6 +302,9 @@ Version 2019-11-04 2021-02-16"
         "ra" 'org-change-tag-in-region
         "lk" 'counsel-org-link
         "gR" 'org-mode-restart
+        :desc "Low Priority" "pc" (lambda () (interactive) (org-priority "C"))
+        :desc "Medium Priority" "pb" (lambda () (interactive) (org-priority "B"))
+        :desc "High Priority" "pa" (lambda () (interactive) (org-priority "A"))
         :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID"
                 (let ((heading (org-get-heading t t t t)))
                   (if heading (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" heading))) (file-name-sans-extension (file-name-nondirectory buffer-file-name))))))
@@ -320,6 +326,8 @@ Version 2019-11-04 2021-02-16"
         org-priority-lowest 68
         org-priority-start-cycle-with-default nil)
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
+
+  (push "PERM(e)" (cdr (car org-todo-keywords)))
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels

@@ -17,7 +17,7 @@
       (if (file-equal-p command-line-default-directory "~")
           (setq default-directory org-directory))
       (setq org-agenda-files (append
-                             (directory-files-recursively (expand-file-name "project/" org-directory) "\\`[^.]*\\'" 't)
+                             (directory-files-recursively (expand-file-name "project/" org-directory) ".org\\'")
                              (list (expand-file-name "inbox/"))
                             ))
     ))
