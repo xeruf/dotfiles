@@ -3,7 +3,8 @@
 set -eo pipefail
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
-	("") arg=$(lsblk --list --noheadings --output name,label,fstype,mountpoint |
+	("") # TODO include size
+		arg=$(lsblk --list --noheadings --output name,label,fstype,mountpoint |
 			grep -v '/' | grep ".\+ [^ ]\+" | fzf --select-1 --exit-0 |
 			sed "s/^\([^ ]\+ \+\)\?\([^ ]\+\) \+[^ ]\+ *$/\2/");;
 	("--help") echo "$_help" && exit 0;;
