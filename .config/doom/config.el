@@ -580,6 +580,10 @@ Version 2019-11-04 2021-02-16"
           "E" 'org-export-repeat
           )
 
+    (setq org-html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://gongzhitaao.org/orgcss/org.css\"/>"
+          org-html-head-include-default-style nil
+          org-html-htmlize-output-type 'css)
+
     (defun org-export-repeat ()
       (interactive)
       (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
@@ -921,9 +925,10 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! magit
   :defer t
-  :init
+  :config
     (setq magit-clone-set-remote.pushDefault 't
-          magit-clone-default-directory (expand-file-name "1-projects" user-data-dir))
+          magit-clone-default-directory (expand-file-name "1-projects" user-data-dir)
+          magit-blame--style (car magit-blame-styles))
     (setq magit-clone-name-alist
       '(("\\`\\(?:github:\\|gh:\\)?\\([^:]+\\)\\'" "github.com" "user.name")
         ("\\`\\(?:gitlab:\\|gl:\\)\\([^:]+\\)\\'" "gitlab.com" "user.name")

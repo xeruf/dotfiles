@@ -51,6 +51,8 @@
   :recipe (:host github :repo "Jason-S-Ross/ox-context" :branch "develop"))
 (package! ox-bb
   :recipe (:host github :repo "mmitch/ox-bb"))
+(package! org-journal
+  :recipe (:host github :repo "xeruf/org-journal"))
 
 (package! websocket)
 (package! org-roam-ui
