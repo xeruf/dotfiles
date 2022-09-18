@@ -274,11 +274,13 @@ dns() {
 	# allow changing DNS server with @
 	# TODO implement rdns via -x
 	for arg; do
+		local trimmed="${arg##*//}"
+		local cut="${trimmed%%/*}"
 		if which host >/dev/null 2>&1
-		then host "${arg##*/}" $server
+		then host "$cut" $server
 		else
-			$(echo $dig) A @$server "${arg##*/}"
-			$(echo $dig) AAAA @$server "${arg##*/}"
+			$(echo $dig) A @$server "$cut"
+			$(echo $dig) AAAA @$server "$cut"
 		fi
 	done
 }
