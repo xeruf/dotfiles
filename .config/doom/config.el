@@ -282,6 +282,8 @@ Version 2019-11-04 2021-02-16"
 
   :config
 
+  (defun xf/slugify (string) (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" string)))
+
   ; the value does not matter, see https://emacs.stackexchange.com/questions/71774/pass-default-value-to-org-set-property/71777#71777
   ;(add-to-list 'org-global-properties-fixed '("ID_ALL" . "id"))
   (map! :map org-mode-map
@@ -305,9 +307,11 @@ Version 2019-11-04 2021-02-16"
         :desc "Low Priority" "pc" (lambda () (interactive) (org-priority "C"))
         :desc "Medium Priority" "pb" (lambda () (interactive) (org-priority "B"))
         :desc "High Priority" "pa" (lambda () (interactive) (org-priority "A"))
-        :desc "Set ID property" "lI" (lambda () (interactive) (org-set-property "ID"
+        :desc "Set ID property" "lI" (lambda () (interactive)
+              (org-set-property "ID"
                 (let ((heading (org-get-heading t t t t)))
-                  (if heading (org-read-property-value "ID" nil (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" heading))) (file-name-sans-extension (file-name-nondirectory buffer-file-name))))))
+                  (if heading (org-read-property-value "ID" nil (xf/slugify heading)) (file-name-sans-extension (file-name-nondirectory buffer-file-name)))
+                )))
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
@@ -331,8 +335,10 @@ Version 2019-11-04 2021-02-16"
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
-        org-display-remote-inline-images 'cache
-        )
+        org-display-remote-inline-images 'cache)
+
+  (add-variable-watcher 'org-display-custom-times (lambda (symbol val op wh) (cl-flet ((wrapper (if val (-cut concat "<" <> ">") 'identity))) (setq org-time-stamp-custom-formats `(,(wrapper "%d.%m.%Y %a") . ,(wrapper "%d.%m.%Y %a %H:%M"))))))
+  (setq org-display-custom-times 't)
 
   ; TODO customize org-log-note-headings
 
@@ -572,11 +578,10 @@ Version 2019-11-04 2021-02-16"
   :config
     (map! :map org-mode-map
           :leader
-          "e" 'org-export-dispatch-custom-date
+          "e" 'org-export-dispatch-without-time
           "E" 'org-export-repeat
           :desc "Save and Export" "be" (lambda () (interactive) (basic-save-buffer) (org-export-repeat))
           :localleader
-          "e" 'org-export-dispatch-custom-date
           "E" 'org-export-repeat
           )
 
@@ -590,11 +595,12 @@ Version 2019-11-04 2021-02-16"
       )
 
     ;; TODO name file according to subtree headline
-    (defun org-export-dispatch-custom-date ()
+    (defun org-export-dispatch-without-time ()
       (interactive)
       (let ((org-time-stamp-custom-formats
-             '("<%d.%m.%Y>" . "<%d.%m.%Y>"))
+             '("%d.%m.%Y" . "%d.%m.%Y"))
             (org-display-custom-times 't))
+        (org-set-property "EXPORT_FILE_NAME" (xf/slugify (org-get-heading t t t t)))
         (org-export-dispatch))
       )
 
@@ -828,6 +834,13 @@ Version 2019-11-04 2021-02-16"
 
 ;;; File modes
 
+(use-package! adoc-mode ; Asciidoc, a md alternative
+  :mode "\\.adoc\\'"
+  )
+(use-package! nov
+  :mode ("\\.epub\\'" . nov-mode)
+  )
+
 (use-package! plantuml-mode ; Diagrams
   :mode "\\.puml\\'"
   :config
@@ -844,17 +857,11 @@ Version 2019-11-04 2021-02-16"
       (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
       )
   )
-(use-package! adoc-mode ; Asciidoc, a md alternative
-  :mode "\\.adoc\\'"
-  )
-(use-package! nov
-  :mode ("\\.epub\\'" . nov-mode)
-  )
 
 (use-package! chordpro-mode
   :mode "\\.cho"
   :config
-    ;; TODO template
+    (set-file-template! 'chordpro-mode :mode 'chordpro-mode) ; TODO broken
     (define-key chordpro-mode-map (kbd "C-c C-c") 'chordpro-insert-chord)
   )
 (use-package! lilypond-mode

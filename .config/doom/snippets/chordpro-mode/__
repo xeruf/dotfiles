@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: ChordPro Scaffold
+# --
+{title: ${1:`(upcase-initials (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`}}
+{artist: Janek Fischer}
+
+{sov: Vers 1}
+
+{eov}
+
+{sov: Vers 2}
+
+{eov}
+
+{soc}
+
+{eoc}
+
+{sob}
+
+{eob}

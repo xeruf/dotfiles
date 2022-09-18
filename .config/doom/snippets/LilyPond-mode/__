@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: LilyPond Foundation
+# name: LilyPond Scaffold
 # --
 \header {
   title = "${1:`(upcase-initials (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`}"
