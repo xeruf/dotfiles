@@ -18,7 +18,7 @@ showinfo() {
 cmd="$1"
 case "$cmd" in
 	# TODO extract help in standard format from scripts
-	(rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff) unbuffer "$@" --help | $paginate;;
+	(hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go|fossil) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && fossil ui "$repo" && exit
 		# TODO view fossil ui in terminal
 		shift
@@ -39,10 +39,9 @@ case "$cmd" in
 		# need to install zsh-doc package for info pages
 		showinfo zsh $(test "$last" != zsh && echo "$last") ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
-	(*) showinfo "$@" || man "$@"
-		return=$?
-		if test $return -gt 0 && which "$cmd" >/dev/null
-		then { "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
+	(*) showinfo "$@" || man "$@" || return=$?
+		if test "$return" -gt 0 && which "$cmd" >/dev/null
+		then { unbuffer "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
 			 return=$?
 		fi;;
 esac
