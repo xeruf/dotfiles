@@ -157,21 +157,6 @@ Version 2019-11-04 2021-02-16"
       lazy-highlight-cleanup nil
       large-file-warning-threshold 40000000)
 
-(setq initial-major-mode 'org-mode)
-(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
-
-(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
-(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
-(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
-
-(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
-(add-hook 'twee-chapbook-mode-hook 'twee-mode)
-
-(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
-(add-to-list 'auto-mode-alist `("\\.erb\\'" . html-mode))
-
 (whitespace-mode 0)
 (auto-correct-mode)
 
@@ -687,6 +672,9 @@ Version 2019-11-04 2021-02-16"
       :n "q"  'kill-this-buffer
       :n "+"  'image-increase-size
       :n "-"  'image-decrease-size
+      :map Info-mode-map
+      :desc "Go Home" :n "gu" 'Info-directory
+      :desc "Go Home" :n "gU" 'Info-directory
       :map thumbs-mode-map
       :n "q"  'thumbs-kill-buffer
       )
@@ -832,13 +820,33 @@ Version 2019-11-04 2021-02-16"
     (define-key evil-normal-state-map "K" 'evil-jump-out-args)
   )
 
-;;; File modes
+;;; File Editing Modes
+
+(setq initial-major-mode 'org-mode)
+(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
+
+(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
+(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
+(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
+
+(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
+(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+
+(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+(use-package! web-mode
+  :mode "\\.phtml\\'"
+  :mode "\\.tpl\\.php\\'"
+  :mode "\\.[agj]sp\\'"
+  :mode "\\.as[cp]x\\'"
+  :mode "\\.erb\\'"
+  :mode "\\.mustache\\'"
+  :mode "\\.djhtml\\'"
+  )
 
 (use-package! adoc-mode ; Asciidoc, a md alternative
   :mode "\\.adoc\\'"
-  )
-(use-package! nov
-  :mode ("\\.epub\\'" . nov-mode)
   )
 
 (use-package! plantuml-mode ; Diagrams
@@ -947,6 +955,10 @@ Version 2019-11-04 2021-02-16"
   :config
     (setq direnv-always-show-summary nil)
     (direnv-mode)
+  )
+
+(use-package! nov
+  :mode ("\\.epub\\'" . nov-mode)
   )
 
 (use-package! recompile-on-save)

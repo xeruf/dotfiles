@@ -40,13 +40,20 @@
 
 (setq straight-host-usernames '((github . "xeruf")))
 
+;;; Multimedia & Integration
 (package! emms)
 (package! exiftool)
-
-(package! dired+)
-
 (package! elpher)
+(package! activity-watch-mode :recipe (:fork t)) ; eagle eyes
 
+(package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
+(package! recompile-on-save)
+
+;;; Prettification
+(package! dired+)
+(package! xterm-color)
+
+;;; ORG
 (package! ox-context
   :recipe (:host github :repo "Jason-S-Ross/ox-context" :branch "develop"))
 (package! ox-bb
@@ -58,28 +65,33 @@
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 
-; https://elpa.gnu.org/packages/auto-correct.html
-(package! auto-correct)
+;;; Editing
 
 (package! evil-tutor) ; dark vim tutor
 (package! evil-replace-with-register) ; grrrrr
 (package! visual-fill-column) ; Soft line wrapping at character count
 
-(package! activity-watch-mode :recipe (:fork t)) ; eagle eyes
 (package! togetherly) ; Collaborative editing
-(package! direnv) ; directory-local environment for haskell-nix things
 
-(package! xterm-color)
+; https://elpa.gnu.org/packages/auto-correct.html
+(package! auto-correct)
 
-; Programming
+;;; Viewers
+
+(package! nov) ; epub reader
+(package! picpocket) ; image viewer - https://github.com/johanclaesson/picpocket
+
+(package! dictcc)
+
+;;; Programming
 (package! go-mode)
 (package! haml-mode)
+(package! web-mode)
 
-(package! adoc-mode) ; Asciidoc, a md alternative
-(package! nov) ; epub reader
 (package! pkgbuild-mode) ; AUR PKGBUILDs
-(package! picpocket) ; image viewer - https://github.com/johanclaesson/picpocket
-(package! dictcc)
+(package! adoc-mode) ; Asciidoc, a md alternative
+
+(package! direnv) ; directory-local environment for haskell-nix things
 
 (package! chordpro-mode
   :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets
@@ -95,6 +107,3 @@
   :recipe (:host github :repo "magoyette/twee-mode"))
 (package! twee-chapbot-mode
   :recipe (:host github :repo "magoyette/twee-chapbook-mode"))
-
-(package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
-(package! recompile-on-save)
