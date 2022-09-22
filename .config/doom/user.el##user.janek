@@ -5,6 +5,8 @@
 (setq user-full-name "Janek"
       user-mail-address "27jf@pm.me")
 
+(setq git-commit-summary-max-length 70)
+
 (let ((box (expand-file-name "2-box/" user-data-dir)))
   (if (file-exists-p box)
       (setq org-directory box

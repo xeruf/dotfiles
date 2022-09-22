@@ -85,7 +85,7 @@ Version 2019-11-04 2021-02-16"
 (defun xf/org-journal-current ()
   (interactive)
   (org-journal-open-current-journal-file)
-  (end-of-buffer)
+  (goto-char (point-max))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -93,6 +93,8 @@ Version 2019-11-04 2021-02-16"
 (define-key universal-argument-map (kbd "C-#") 'universal-argument-more)
 (global-set-key (kbd "C-*") 'universal-argument)
 (define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
+
+; TODO map C-c C-c to save and quit if unmapped
 
 ;; https://emacs.stackexchange.com/questions/21335/prevent-folding-org-files-opened-by-ediff
 (with-eval-after-load 'outline
@@ -106,6 +108,7 @@ Version 2019-11-04 2021-02-16"
       "C-="     'doom/reset-font-size
       "C-+"     'doom/increase-font-size
       "C--"     'doom/decrease-font-size
+      "C-u"     'evil-scroll-up
       :leader
       "u"       'evil-prev-buffer
       "i"       'evil-next-buffer
@@ -114,6 +117,7 @@ Version 2019-11-04 2021-02-16"
       "#"       'xah/open-in-external-app
       "-"       'evil-quick-diff
       "_"       'ediff
+      "wO"      'delete-other-windows
       "os"      'eshell
       "oj"      'xf/org-journal-current
       "njo"     'xf/org-journal-current
@@ -322,9 +326,6 @@ Version 2019-11-04 2021-02-16"
   (setq org-startup-folded 'show2levels
         org-display-remote-inline-images 'cache)
 
-  (add-variable-watcher 'org-display-custom-times (lambda (symbol val op wh) (cl-flet ((wrapper (if val (-cut concat "<" <> ">") 'identity))) (setq org-time-stamp-custom-formats `(,(wrapper "%d.%m.%Y %a") . ,(wrapper "%d.%m.%Y %a %H:%M"))))))
-  (setq org-display-custom-times 't)
-
   ; TODO customize org-log-note-headings
 
   ;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
@@ -434,6 +435,13 @@ Version 2019-11-04 2021-02-16"
                                                      (org-agenda-skip-if nil '(scheduled deadline))))
                       (org-agenda-overriding-header "ALL normal priority tasks:"))))
            ((org-agenda-compact-blocks t)))))
+
+  (use-package! dash
+    :defer t
+    :config
+    (add-variable-watcher 'org-display-custom-times (lambda (symbol val op wh) (cl-flet ((wrapper (if val (-cut concat "<" <> ">") 'identity))) (setq org-time-stamp-custom-formats `(,(wrapper "%d.%m.%Y %a") . ,(wrapper "%d.%m.%Y %a %H:%M"))))))
+    (setq org-display-custom-times 't)
+    )
 
 )
 
@@ -865,6 +873,12 @@ Version 2019-11-04 2021-02-16"
       (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
       )
   )
+
+(use-package vc-fossil
+  ;; Keep from loading unnecessarily at startup.
+  :defer t
+  ;; This allows VC to load vc-fossil when needed.
+  :init (add-to-list 'vc-handled-backends 'Fossil))
 
 (use-package! chordpro-mode
   :mode "\\.cho"

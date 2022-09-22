@@ -49,21 +49,26 @@
 (package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
 (package! recompile-on-save)
 
+(package! vc-fossil)
+
 ;;; Prettification
 (package! dired+)
 (package! xterm-color)
 
 ;;; ORG
-(package! ox-context
-  :recipe (:host github :repo "Jason-S-Ross/ox-context" :branch "develop"))
-(package! ox-bb
-  :recipe (:host github :repo "mmitch/ox-bb"))
+(unpin! org-journal)
 (package! org-journal
-  :recipe (:host github :repo "xeruf/org-journal"))
+  :recipe (:host github :repo "toemacs/org-journal")
+  )
 
 (package! websocket)
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+
+(package! ox-context
+  :recipe (:host github :repo "Jason-S-Ross/ox-context" :branch "develop"))
+(package! ox-bb
+  :recipe (:host github :repo "mmitch/ox-bb"))
 
 ;;; Editing
 
@@ -90,8 +95,6 @@
 
 (package! pkgbuild-mode) ; AUR PKGBUILDs
 (package! adoc-mode) ; Asciidoc, a md alternative
-
-(package! direnv) ; directory-local environment for haskell-nix things
 
 (package! chordpro-mode
   :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets
