@@ -121,6 +121,7 @@ highlight "Desktop Applications"
 subhighlight "Application symlinks"
 link .bash_aliases "$HOME/.bashrc"
 link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
+link "$XDG_DATA_HOME/.cpan/CPAN/MyConfig.pm" "$XDG_CONFIG_HOME/cpan/MyConfig.pm"
 
 link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
 link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
