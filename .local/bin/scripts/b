@@ -70,12 +70,14 @@ for arg; do
 	case "$mime" in
 	(*\ application/pdf\;*)
 		echo Converting "$arg"
-		grid=$(expr $(tput cols) / 20 \* $#)
-		limit=$(expr $grid \& \( $grid \> 3 \| $# \> 1 \) \| $grid '*' 2)
+		grid=$(expr $(tput cols) \* $# / $(tput lines))
+		grid=$(expr 3 \& $grid \< 3 \| $grid)
+		#limit=$(expr $grid \& \( $grid \> 3 \| $# \> 1 \) \| $grid '*' 2)
+		limit=$grid
 		test -f "$tmpfile-1.ppm" || pdftoppm -forcenum -r 70 "$arg" "$tmpfile" -l $limit
-		find "$prefix" -path "$tmpfile*.ppm" | head -$limit | xargs timg -W --grid=$grid
+		find "$prefix" -path "$tmpfile*.ppm" | sort | head -$limit | xargs -d'\n' timg -W --grid=$grid
 		;;
-	(*\ application/*document*)
+	(*\ application/*document*|*.xlsx:\ *)
 		# https://ask.libreoffice.org/t/convert-to-command-line-parameter/840/4
 		echo Converting "$arg"
 		soffice --headless --convert-to png --outdir "$prefix" "$arg" >/dev/null
