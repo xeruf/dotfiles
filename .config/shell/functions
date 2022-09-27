@@ -188,6 +188,7 @@ alias scud='systemctl --user disable --now'
 # Reload or restart matching systemctl service
 unalias scr 2>/dev/null
 scr() {
+	systemctl --user daemon-reload
 	echo -n "User: " && systemctl --user reload-or-restart "$@" ||
 		{ echo -n "System: " && sudo systemctl reload-or-restart "$@"; } &&
 		echo "Successful reload" ||
@@ -298,7 +299,7 @@ sshl() {
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
 	local file="$authcache/$1"
-	test "$all" && pass scp ~/.bash_aliases "$@:"
+	test "$all" && pass scp ~/.bash_aliases "$@:" # TODO also add sourcing to bashrc if needed
 	if ssh -G "$1" | grep --silent "^user root$" && ! [[ "$1" =~ "pve*" ]]
 	then pass ssh "$@"
 	else

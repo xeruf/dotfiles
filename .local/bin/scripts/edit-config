@@ -33,6 +33,7 @@ case "$sel" in
   (/etc/caddy/*) sudoedit "$sel" && caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload-or-restart caddy;;
   (/etc/ssh/*) sudoedit "$sel" && sudo systemctl reload-or-restart sshd;;
   (/etc/network/interfaces*) sudoedit "$sel" && sudo service networking reload;;
+  (/etc/samba/smb.conf) sudoedit "$sel" && testparm;;
   (*) edit "$sel";;
 esac
 echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"
