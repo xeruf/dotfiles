@@ -1,4 +1,4 @@
-test -z "$DISPLAY" || return 0
+test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 || return 0
 
 export PATH="$PATH:$HOME/.local/bin/server"
 export PROJECTS="$HOME/projects"

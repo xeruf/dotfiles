@@ -94,7 +94,7 @@ export DIRS_IGNORE="-x .sync -x .stfolder -x *build -x .git -x .idea -x env -x o
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
 export OSFONTDIR="$XDG_DATA_HOME"/fonts:/usr/share/fonts
-export TEXMF=/usr/share/texmf-dist
+export TEXMF=/usr/share/texmf-dist/texmf-context
 export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 ## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
