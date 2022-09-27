@@ -892,7 +892,23 @@ Version 2019-11-04 2021-02-16"
     (set-file-template! 'LilyPond-mode :mode 'LilyPond-mode)
     (setq LilyPond-pdf-command "xdg-open")
     (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
-    (add-hook 'LilyPond-mode-hook (lambda () (setq-local compile-command (format "lilypond %s" (shell-quote-argument buffer-file-name)))))
+
+    (defun xf/live-preview ()
+      (interactive)
+      (setq-local compile-command (format "lilypond %s" (shell-quote-argument buffer-file-name)))
+      ; TODO this does not quite work
+      (message mode-name)
+      (message buffer-file-name)
+      (message "%s" (length (window-list)))
+      (unless (> (length (window-list)) 1)
+        (split-window-horizontally)
+        (find-file (concat (file-name-sans-extension buffer-file-name) ".pdf"))
+        (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".ly"))
+        )
+      )
+
+    (add-hook 'LilyPond-mode-hook 'xf/live-preview)
+
     ; TODO (require 'lyqi nil t)
   )
 
