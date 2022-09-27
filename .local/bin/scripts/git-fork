@@ -7,7 +7,7 @@
 # - host
 # - target directory name (and further arguments to clone)
 # In an existing repo, first arg is omitted
-test $# -eq 0 && echo "Usage: $0 [repo] [upstream owner] [own user] [url]" && exit 2
+test $# -eq 0 && echo "Usage: $0 [repo (omit if in repo)] [upstream owner] [own user] [url]" && exit 2
 # TODO check from subdir
 if test -d ".git"
 then repo="$(basename "$PWD")"
@@ -21,5 +21,6 @@ else repo="$1" && shift
 	cd "$(expr "$4" \| "$repo")"
 fi
 user="${1:-$repo}"
+git remote remove upstream 2>/dev/null
 git remote add upstream "$(git-repo "${3:-github.com}" "$repo" "$user")"
 git remote -v

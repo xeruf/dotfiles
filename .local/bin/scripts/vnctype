@@ -3,5 +3,5 @@
 xdotool search --onlyvisible --classname Navigator windowactivate # Activate Firefox
 setxkbmap de
 sleep 0.1
-xdotool type --clearmodifiers "$@"
+xdotool type --delay 80ms --clearmodifiers "$@"
 update-keyboard-layout >/dev/null

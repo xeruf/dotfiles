@@ -9,7 +9,7 @@ then
   name="$3"
   git remote remove "$3" 2>/dev/null
 else
-  git remote get-url upstream 2>/dev/null && name="$1" || name="upstream"
+  git remote get-url upstream >/dev/null 2>&1 && name="$1" || name="upstream"
 fi
 origin="$(git remote get-url origin)"
 git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/${2:-$(echo $origin | cut -d'/' -f2)}"
