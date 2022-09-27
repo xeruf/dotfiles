@@ -52,6 +52,12 @@ unalias rd 2>/dev/null
 compdef help=man
 alias info='info --vi-keys'
 
+sudos() {
+	cmd=$1
+	shift
+	sudo "$(which $cmd)" "$@"
+}
+
 resolvealias() {
 	alias "$1" 2>/dev/null | sed -n "s/$1='\?\(noglob \)\?\([-A-z]\+\)'\?\$/\2/p" | grep -m 1 . || echo $1
 }
@@ -212,6 +218,7 @@ alias st='synct'
 command -v dtrx >/dev/null && alias ex='dtrx'
 alias expr='noglob expr'
 alias get='noglob ='
+alias bi='b .*ignore*'
 
 # Shortcuts
 alias kc='kdeconnect-cli --refresh && kdeconnect-cli --list-devices'
@@ -386,6 +393,7 @@ updateDeps() {
 	name="$1"
 	pattern="$2"
 	depth="4"
+	#test $# -gt 2 || echo "Please specify a new version!"
 	case $name in
 		(gradle-wrapper.properties) depth=6;;
 	esac
@@ -398,13 +406,13 @@ updateDeps() {
 		esac
 		shift 2
 	done
-	echo name $name depth $depth pattern $oldversion version $version
-	find -maxdepth $depth -type f -name $name | while read f
+	echo name "'$name'" depth "'$depth'" pattern "'$oldversion'" version "'$version'"
+	find -maxdepth $depth -not \( -name "*forks" -prune \) -type f -name $name | while read f
 	do	highlight $f
-		sed -i "s/\($pattern\)$oldversion/\1$version/gw /dev/stdout" $f
+		sed -i "s/\($pattern\)\($oldversion\)/\1${version:-\2}/gw /dev/stdout" $f
 	done
 }
-alias updateKotlin="updateDeps build.gradle.kts 'kotlin(\"jvm\") version ' --version"
+alias updateKotlin="updateDeps build.gradle.kts 'kotlin(\"jvm\") version \"' --version"
 alias updateGradle='updateDeps gradle-wrapper.properties "services.gradle.org\/distributions\/gradle-" --version'
 alias updateUtils="updateDeps build.gradle.kts '"'"com.github.Xerus2000.util", ".*", "'" --pattern '[^\"]\+' --version"
 
@@ -531,9 +539,12 @@ umoul() {
 				fzf --select-1 --exit-0 | awk '{print $3}')" ||
 			return $?
 	fi
-	case "$PWD" in
-		("$mountpoint"*) builtin cd "$(dirname $mountpoint)";;
-	esac
+	while true; do
+		case "$PWD" in
+			("$mountpoint"*) popd || builtin cd "$(dirname $mountpoint)";;
+			(*) break;;
+		esac
+	done
 	# pass on all args except last
 	moul -u "${@:1:$(((# > 1) ? #-1 : 0))}" "$mountpoint"
 }

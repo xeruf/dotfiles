@@ -69,6 +69,9 @@ alias loce='noglob locei'
 alias loca='noglob sudo updatedb -l 0 --prunenames "" --prunefs "tmpfs sysfs debugfs" --prunepaths "" -o /var/cache/locate-all.db &&
 	  sudo chmod +r /var/cache/locate-all.db &&
 	  loci --database /var/cache/locate-all.db'
+hunta() {
+	unbuffer hunt -h "$@" / | less -RF +G
+}
 
 # ZOXIDE {{{1
 alias c=z
