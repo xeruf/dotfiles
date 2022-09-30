@@ -219,7 +219,7 @@ Version 2019-11-04 2021-02-16"
   :init
     (add-to-list 'projectile-ignored-projects (expand-file-name user-data-dir))
     (add-to-list 'projectile-ignored-projects user-data-dir)
-    (projectile-add-known-project (expand-file-name "music/" user-data-dir))
+    (projectile-add-known-project (expand-file-name "4-media/" user-data-dir))
     (after! org
       (projectile-add-known-project org-directory)
       (projectile-register-project-type 'org '(".orgids"))

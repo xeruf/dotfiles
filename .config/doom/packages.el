@@ -78,7 +78,7 @@
 
 (package! togetherly) ; Collaborative editing
 
-; https://elpa.gnu.org/packages/auto-correct.html
+;; https://elpa.gnu.org/packages/auto-correct.html
 (package! auto-correct)
 
 ;;; Viewers
@@ -92,6 +92,9 @@
 (package! go-mode)
 (package! haml-mode)
 (package! web-mode)
+
+;; https://www.emacswiki.org/emacs/CsvMode
+(package! csv-mode)
 
 (package! pkgbuild-mode) ; AUR PKGBUILDs
 (package! adoc-mode) ; Asciidoc, a md alternative
