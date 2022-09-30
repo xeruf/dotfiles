@@ -1,8 +1,14 @@
 #!/bin/bash -e
 # interactive diff with pagination and nice coloring
 # TODO diff sqlite repos with sqldiff
-if file --brief --mime "$1" "$2" | grep --quiet audio
-then ff() { ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty "$@"; }
-	$(test $(tput cols) -gt 120 && echo "diff --color=always --side-by-side" || echo "diff-color") --report-identical-files --label="$1" --label="$2" <(ff "$1") <(ff "$2")
-else wiked-diff "$@" # diff-color --report-identical-files "$@"
-fi | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
+mime="$(file --brief --mime "$1" "$2")"
+case "$mime" in
+(*audio*)
+	ff() { ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty "$@"; }
+	$(test $(tput cols) -gt 120 && echo "diff --color=always --side-by-side" || echo "diff-color") \
+		--report-identical-files --label="$1" --label="$2" <(ff "$1") <(ff "$2")
+	;;
+(*sqlite*) sqldiff "$@" ;;
+(*) wiked-diff "$@" ;;
+	# diff-color --report-identical-files "$@";;
+esac | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
