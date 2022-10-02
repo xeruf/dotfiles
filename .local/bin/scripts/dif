@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 # interactive diff with pagination and nice coloring
 # TODO diff sqlite repos with sqldiff
 mime="$(file --brief --mime "$1" "$2")"
@@ -9,6 +9,9 @@ case "$mime" in
 		--report-identical-files --label="$1" --label="$2" <(ff "$1") <(ff "$2")
 	;;
 (*sqlite*) sqldiff "$@" ;;
-(*) wiked-diff "$@" ;;
-	# diff-color --report-identical-files "$@";;
+(*) # Use wiked-diff only for text <10MB
+	if expr "$mime" : "text/" >/dev/null && test 10000000 -gt "$(stat --format=%s *.geojson | paste -s -d'+' | bc)"
+	then wiked-diff "$@"
+	else diff-color --report-identical-files "$@"
+	fi;;
 esac | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
