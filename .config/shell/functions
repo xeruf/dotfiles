@@ -102,7 +102,7 @@ pathadd() {
 
 # ZSH completion and stuff {{{1
 alias rs="reset && source $HOME/.zshenv && exec $SHELL"
-alias hist='print -z $(history | grep -v "killm " | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
+alias hist='print -z $(history | grep -v -e "killm " -e "netkeeper " | tac | fzf --tiebreak=index --bind='"'"'del:execute(sed "\;$(echo {4..})$d" -i.bak $HISTFILE)'"'"' | sed "s|^ \+||" | cut -d" " -f5-)'
 
 alias es='edit-shell'
 alias ec='edit-config'

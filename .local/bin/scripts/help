@@ -40,7 +40,7 @@ case "$cmd" in
 		showinfo zsh $(test "$last" != zsh && echo "$last") ||
 			LESS="$LESS +/^ *$last *\\[" man zshall;;
 	(*) showinfo "$@" || man "$@" || return=$?
-		if test "$return" -gt 0 && which "$cmd" >/dev/null
+		if test "${return:-0}" -gt 0 && which "$cmd" >/dev/null
 		then { unbuffer "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
 			 return=$?
 		fi;;
