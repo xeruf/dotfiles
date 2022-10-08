@@ -842,7 +842,8 @@ Version 2019-11-04 2021-02-16"
 (add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 (add-hook 'twee-chapbook-mode-hook 'twee-mode)
 
-(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (use-package! web-mode
   :mode "\\.phtml\\'"
   :mode "\\.tpl\\.php\\'"
@@ -852,6 +853,9 @@ Version 2019-11-04 2021-02-16"
   :mode "\\.mustache\\'"
   :mode "\\.djhtml\\'"
   )
+
+(after! lsp-mode
+  (setq lsp-disabled-clients '(typeprof-ls)))
 
 (use-package! adoc-mode ; Asciidoc, a md alternative
   :mode "\\.adoc\\'"
