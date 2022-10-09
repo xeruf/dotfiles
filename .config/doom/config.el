@@ -79,7 +79,8 @@ Version 2019-11-04 2021-02-16"
 (defun xf/dragon (&optional @file)
   "Share file from current buffer via dragon."
   (interactive)
-  (shell-command (concat "dragon-drop -a -x " (or @file (buffer-file-name))))
+  ; TODO somehow fails in image-mode
+  (shell-command (concat "dragon-drop -a -x " (if (string-blank-p @file) (or (buffer-file-name) (image-dired-original-file-name) default-directory) @file)))
   )
 
 (defun xf/org-journal-current ()
@@ -132,7 +133,7 @@ Version 2019-11-04 2021-02-16"
       :map ctl-x-map
       "8 SPC" (lambda () (insert-char "200B"))
       :map text-mode-map
-      :desc "Markdown to Zulip" "mam" "ggd2/# 
+      :desc "Markdown to Zulip" "mam" "4dip
 :%s/<\\/?span ?[^ >]*>//g
 :%s/\\n\\n<a id=.*<\\/a>\\n\\n//g
 :%s/<\\(http[^ \\n]+\\)>/\\1/g"
@@ -845,6 +846,7 @@ Version 2019-11-04 2021-02-16"
 ;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (use-package! web-mode
+  :mode "\\.html\\'"
   :mode "\\.phtml\\'"
   :mode "\\.tpl\\.php\\'"
   :mode "\\.[agj]sp\\'"

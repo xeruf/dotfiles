@@ -93,6 +93,8 @@
 (package! haml-mode)
 (package! web-mode)
 
+(package! ess)
+
 ;; https://www.emacswiki.org/emacs/CsvMode
 (package! csv-mode)
 
