@@ -18,7 +18,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme (if (equal (getenv "THEME") "light") 'doom-one-light 'doom-one)
+(setq doom-theme (if (equal (getenv "THEME") "light") 'doom-opera-light 'doom-one)
       doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sans" :size 24))
 
