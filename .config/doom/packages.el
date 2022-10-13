@@ -54,6 +54,7 @@
 ;;; Prettification
 (package! dired+)
 (package! xterm-color)
+(package! rainbow-mode)
 
 ;;; ORG
 (unpin! org-journal)

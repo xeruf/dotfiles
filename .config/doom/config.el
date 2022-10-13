@@ -452,18 +452,6 @@ Version 2019-11-04 2021-02-16"
   (setq org-fancy-priorities-list '("❗" "✯" "❖" "⬢" "■"))
   )
 
-
-(after! eshell
-  ; https://stackoverflow.com/questions/63469203/eshell-and-color-output
-  (require 'xterm-color)
-  (add-hook 'eshell-before-prompt-hook
-            (lambda ()
-              (setq xterm-color-preserve-properties t)))
-  (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
-  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
-  (setenv "TERM" "xterm-256color")
-  )
-
 (use-package! org-journal
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
   :init
@@ -667,6 +655,52 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; PACKAGES
 
+;;; Colors
+
+; https://www.emacswiki.org/emacs/HexColour
+;;(require 'cl)
+;;(defun hexcolor-luminance (color)
+;;  "Calculate the luminance of a color string (e.g. \"#ffaa00\", \"blue\").
+;;This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
+;;  (let* ((values (x-color-values color))
+;;         (r (car values))
+;;         (g (cadr values))
+;;         (b (caddr values)))
+;;    (floor (+ (* .3 r) (* .59 g) (* .11 b)) 256)))
+;;(defun hexcolor-add-to-font-lock ()
+;;  (interactive)
+;;  (font-lock-add-keywords nil
+;;   `((,(concat "#[0-9a-fA-F]\\{3\\}[0-9a-fA-F]\\{3\\}?\\|"
+;;               (regexp-opt (x-defined-colors) 'words))
+;;      (0 (let ((color (match-string-no-properties 0)))
+;;           (put-text-property
+;;            (match-beginning 0) (match-end 0)
+;;            'face `((:foreground ,(if (> 128.0 (hexcolor-luminance color))
+;;                                       "white" "black"))
+;;                    (:background ,color)))))))))
+
+;;(defvar hexcolor-keywords
+;;  '(("#[abcdef[:digit:]]\\{6\\}"
+;;     (0 (put-text-property (match-beginning 0)
+;;                           (match-end 0)
+;;		    'face (list :background
+;;			        (match-string-no-properties 0)))))))
+;;(defun hexcolor-add-to-font-lock ()
+;;  (font-lock-add-keywords nil hexcolor-keywords))
+
+;;(add-hook 'web-mode-hook 'hexcolor-add-to-font-lock)
+
+(after! eshell
+  ; https://stackoverflow.com/questions/63469203/eshell-and-color-output
+  (require 'xterm-color)
+  (add-hook 'eshell-before-prompt-hook
+            (lambda ()
+              (setq xterm-color-preserve-properties t)))
+  (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
+  (setenv "TERM" "xterm-256color")
+  )
+
 ;;; Mappings
 
 (map! :map special-mode-map
@@ -698,8 +732,8 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! dired
   :config
-  ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
-  ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
+  ; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
+  ; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
     '("image/x-xcf")) ; "application/zip"))
   (load "subr-x")
@@ -854,6 +888,7 @@ Version 2019-11-04 2021-02-16"
   :mode "\\.erb\\'"
   :mode "\\.mustache\\'"
   :mode "\\.djhtml\\'"
+  :config (add-hook 'web-mode-hook 'rainbow-mode)
   )
 
 (after! lsp-mode
