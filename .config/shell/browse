@@ -1,5 +1,7 @@
 # Utilities for file system navigation
 
+alias watchdir='watch -c -n 1 exa -l --icons'
+
 # Useful when the current directory was recreated
 alias recd='cd $PWD'
 # [c]hange [d]irectory [e]xisting - cd into the first existing directory

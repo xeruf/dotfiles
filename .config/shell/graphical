@@ -2,14 +2,6 @@
 command -v notify-send >/dev/null &&
 	alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-xo() {
-	while test $# -gt 0; do
-		xdg-open "$1"
-		shift
-	done
-}
-
-
 if which jrnl >/dev/null; then
 	alias j='jrnl'
 	jn() { jrnl -to today "$@" | less +G; }

@@ -244,11 +244,15 @@ del() {
 }
 
 u() {
-	if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
-	then command -v pacman-mirrors >/dev/null &&
-			sudo pacman-mirrors --geoip ||
-			sudo touch /etc/pacman.d/mirrorlist
-		if command -v pacman >/dev/null; then
+	# Line below handy for users of netkeeper
+	ping example.com -c 1 -w 2 >/dev/null && sudo nft list ruleset | grep -1 outall | grep -q 'meta hour' || echo sysupgrade | netkeeper 30 2>/dev/null
+	if command -v pacman >/dev/null; then
+		if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
+		then
+			if command -v pacman-mirrors >/dev/null
+			then sudo pacman-mirrors --geoip
+			else sudo touch /etc/pacman.d/mirrorlist
+			fi
 			sudo pacman -Syy --needed base gnupg archlinux-keyring
 			sudo pacman-key --populate
 			sudo pacman-key --refresh-keys
@@ -373,7 +377,12 @@ dic() {
 }
 #fzf --tiebreak=length --bind='alt-bspace:clear-query'
 alias dict="rlwrap rdictcc --directory $DICT"
-alias dict_update="dict -i $DICT/dict.txt"
+dict_update() {
+	local dictfile="$DICT/dict.txt"
+	test $# -gt 0 && mv -v $1 "$dictfile"
+	echo "Reading in $dictfile..."
+	unbuffer rdictcc --directory $DICT -i "$dictfile" | rewrite
+}
 
 npm-reinstall() {
 	rm -rf $TMPDIR/react-*
