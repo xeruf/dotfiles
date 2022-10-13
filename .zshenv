@@ -1,4 +1,12 @@
-export DATA="$(test -d $HOME/daten && echo $HOME/daten || echo $HOME/data)"
+export_existing() {
+    local var=$1
+    while test $# -gt 0
+    do test -d "$2" && export $var="$2" && break
+       shift
+    done
+    echo
+}
+export_existing DATA $HOME/daten $HOME/data
 export MUSIC="$DATA/4-media/music"
 
 export BORG_REPO='/mnt/backup/borg'
@@ -12,9 +20,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
-export INSTALEE_HOME="$DATA/1-projects/1-personal/instalee"
-test -d "/mnt/data/projects/vosk/models" &&
-	export VOSK_MODELS="/mnt/data/projects/vosk/models"
+export_existing INSTALEE_HOME "$HOME/projects/instalee" "$DATA/1-projects/1-personal/instalee"
+export_existing VOSK_MODELS "/mnt/data/projects/vosk/models"
  # adjust programs to use xdg
 export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
@@ -52,6 +59,8 @@ export PYTHONSTARTUP="$XDG_CONFIG_HOME"/pythonstartup.py
 export KSCRIPT_CACHE_DIR="$XDG_CACHE_HOME"/kscript
 
 export RBENV_ROOT="$XDG_STATE_HOME"/rbenv
+
+export R_LIBS="$XDG_STATE_HOME"/R/lib
 
  # Java & Android
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"

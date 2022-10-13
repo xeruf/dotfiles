@@ -156,6 +156,7 @@ setopt hist_find_no_dups
 setopt hist_save_no_dups
 setopt hist_reduce_blanks
 unsetopt hist_ignore_space
+# TODO filter from history: netkeeper killm
 
 setopt extended_glob
 unsetopt case_glob
