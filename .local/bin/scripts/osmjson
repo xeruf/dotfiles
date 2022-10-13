@@ -1,0 +1,24 @@
+#!/bin/sh -ex
+filebase="${1%%.*}"
+file_orig="$1"
+
+#case "$1" in
+#    (*.o5m) file_o5m="$1";;
+#    (*) file_o5m="$filebase.o5m"
+#        test -f "$file_o5m" || osmconvert --verbose --drop-relations "$1" -o="$file_o5m";;
+#esac
+
+shift
+if ! expr "$1" : "-" >/dev/null
+then filebase="$filebase-$1"
+     test $# -gt 1 && shift
+fi
+file_osm="$filebase.osm"
+
+#osmfilter --verbose "$file_o5m" "$@" >"$file_osm"
+#osmium tags-filter --verbose --omit-referenced "$file_orig" -o "$file_osm" "$@"
+
+file_json="$filebase.geojson"
+#node --max_old_space_size=$(free | awk 'NR == 2 {print $7}' | rev | cut -c4- | rev) "$(which osmtogeojson)" -n -v "$file_osm" >"$file_json"
+osmium export --verbose --geometry-types=point "$file_osm" -o "$file_json" --overwrite
+echo "Output saved to $file_json!" >&2

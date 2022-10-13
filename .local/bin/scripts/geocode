@@ -1,0 +1,8 @@
+#!/bin/sh -e
+endpoint='https://photon.komoot.io'
+lsof -i :2322 >/dev/null && endpoint='http://localhost:2322'
+
+location=$(echo "$@" | sed 's| |%20|g')
+echo "Geocoding $location" >&2
+curl "$endpoint/api/?q=$location&lang=de&limit=1" | jq
+# Germany: &bbox=5.98865807458,47.3024876979,15.0169958839,54.983104153
