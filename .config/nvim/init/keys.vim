@@ -15,7 +15,7 @@ let @t = ':%s/^\(\(\t\)*\)  /\1\t/g:%s/^\(\(\t\)*\)  /\1\t/g:%s/^\(\(\t\)*\)  
 " Sane yanking
 map Y y$
 " Disable Ex mode - https://vi.stackexchange.com/q/457
-nnoremap Q @q
+nnoremap Q :wqa<CR>
 noremap q: <Nop>
 
 " Alias replace all to S

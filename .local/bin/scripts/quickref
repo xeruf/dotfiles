@@ -1,0 +1,19 @@
+#!/bin/sh
+test-colors
+
+cat <<'EOF'
+Globbing:
+- ${VAR#pattern}  :: delete shortest match from beginning
+: file='sdf/fd' && echo ${file#sdf/}
+- ${VAR##pattern}  :: delete longest match from beginning
+- ${VAR%pattern}  :: delete shortest match from end
+- ${VAR%%pattern}  :: delete longest match from end
+- ${VAR/search/replace} :: Regex replacement (kinda?)
+Examples:
+- ${VAR:*}   :: retain the part before the last colon
+- ${VAR##*/} :: retain the basename
+- ${VAR%.*}  :: remove extension
+- [[https://unix.stackexchange.com/a/486694][argument from end of list]] ::
+  : eval x=\$$(($#-1))
+  (uses arithmetic substitution, a non-POSIX feature)
+EOF

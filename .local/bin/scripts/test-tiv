@@ -4,7 +4,7 @@
 set -x
 size=10
 if test $# -eq 0
-	then args=$DATA/images/*.png
+	then args=$DATA/4-media/images/*.png
 	else echo "$1" | grep -v -e "\." -e "/" && size=$1 && shift
 fi
 cols="$(expr $(tput cols) / $size / 3 \| 1)"

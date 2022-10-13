@@ -9,9 +9,11 @@ case "$mime" in
 		--report-identical-files --label="$1" --label="$2" <(ff "$1") <(ff "$2")
 	;;
 (*sqlite*) sqldiff "$@" ;;
-(*) # Use wiked-diff only for text <10MB
-	if expr "$mime" : "text/" >/dev/null && test 10000000 -gt "$(stat --format=%s *.geojson | paste -s -d'+' | bc)"
+(text/*)
+	# Use wiked-diff only for text <10MB
+	if test 10000000 -gt "$(stat --format=%s *.geojson | paste -s -d'+' | bc)"
 	then wiked-diff "$@"
-	else diff-color --report-identical-files "$@"
+	else diff --color=always --unified=1 --report-identical-files "$@"
 	fi;;
+(*) diff-color --report-identical-files "$@";;
 esac | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen

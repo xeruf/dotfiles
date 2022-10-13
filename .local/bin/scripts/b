@@ -204,7 +204,7 @@ if test "$bat" -o "$batplain"; then
 				if which cj >/dev/null; then
 					json=true
 					for file in "${bat[@]}"; do
-						case $file in (*.json);; (*) json=false;; esac
+						case $file in (*.json|*.geojson);; (*) json=false;; esac
 					done
 				fi
 				if $json
@@ -228,7 +228,7 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 			if test '$tree'
 			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags $(printf "'%s' " "${ls[@]:-.}")
 			elif which exa 2>/dev/null >&2
-			then $elevate exa --color=always --long --group --classify --all --all --sort=changed --reverse $flags $(printf "'%s' " "${ls[@]:-.}")
+			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=changed --reverse $flags $(printf "'%s' " "${ls[@]:-.}")
 			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags $(printf "'%s' " "${ls[@]:-.}")
 			fi
 		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags "${ls[@]:-.}"

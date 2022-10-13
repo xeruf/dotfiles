@@ -21,6 +21,7 @@ else repo="$1" && shift
 	cd "$(expr "$4" \| "$repo")"
 fi
 user="${1:-$repo}"
-git remote remove upstream 2>/dev/null
+git remote remove upstream 2>/dev/null || true
 git remote add upstream "$(git-repo "${3:-github.com}" "$repo" "$user")"
 git remote -v
+exec $SHELL

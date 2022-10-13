@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # Keeps the Internet at bay
 if test -e "$JOURNAL"; then
-  echo "What do you want to do? Check your journal!"
+  echo "What do you want to do? Check your journal!" >&2
   while test $(echo "$intention" | wc -c) -lt 10
   do read intention
   done

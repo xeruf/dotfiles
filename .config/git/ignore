@@ -37,6 +37,7 @@ cache/
 *_build/
 cmake*build*/
 __pycache__/
+node_modules/
 
 # Logs
 *.log
