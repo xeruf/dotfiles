@@ -20,7 +20,7 @@ esac
 # FSTAB: BY LABEL
 if grep --word-regexp "LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory
-	mount -L "$@" 2>/dev/null || mount -L "$@"
+	mount -L "$arg" "$@" 2>/dev/null || mount -L "$arg" "$@"
 	exit $?
 fi
 # FSTAB: BY MOUNTPOINT/NAME
