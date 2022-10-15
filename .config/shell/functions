@@ -545,7 +545,7 @@ umoul() {
 		done
 		test "$(dirname "$mountpoint")" != "/" ||
 			mountpoint="$(mount |
-				grep --invert-match -e " /[^/]*\(/[^/]*\)\? " -e "/sys" -e "/run/user" -e "/run/docker" |
+				grep --invert-match -e " /[^m][^/]*\(/[^/]*\)\? " -e "/sys" -e "/run/user" -e "/run/docker" |
 				fzf --select-1 --exit-0 | awk '{print $3}')" ||
 			return $?
 	fi
