@@ -1,19 +1,31 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 # interactive diff with pagination and nice coloring
-# TODO diff sqlite repos with sqldiff
-mime="$(file --brief --mime "$1" "$2")"
-case "$mime" in
-(*audio*)
-	ff() { ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty "$@"; }
+declare -a files
+while test $# -gt 0
+do	test "$1" == "--" && shift &&
+		command="$@" && break
+	files+=("$1")
+	shift
+done
+{
+if ! test "$command"; then
+	mime="$(file --brief --mime "${files[@]}")"
+	case "$mime" in
+	(*audio*) command="ffprobe -loglevel warning -print_format default=noprint_wrappers=1 -show_format -pretty";;
+	(image/*) command="exiftool";;
+	(*sqlite*) sqldiff --summary "${files[@]}" | grep -v '0 changes, 0 inserts, 0 deletes';; # TODO syntax highlighting for INSERT/UPDATE/DELETE
+	(text/*)
+		# Use wiked-diff only for text <10MB
+		if test 10000000 -gt "$(stat --format=%s *.geojson | paste -s -d'+' | bc)"
+		then wiked-diff "${files[@]}"
+		else diff --color=always --unified=1 --report-identical-files "${files[@]}"
+		fi;;
+	(*) diff-color --report-identical-files "${files[@]}";;
+	esac
+fi
+if test "$command"; then
+	echo "Generated through $command"
 	$(test $(tput cols) -gt 120 && echo "diff --color=always --side-by-side" || echo "diff-color") \
-		--report-identical-files --label="$1" --label="$2" <(ff "$1") <(ff "$2")
-	;;
-(*sqlite*) sqldiff "$@" ;;
-(text/*)
-	# Use wiked-diff only for text <10MB
-	if test 10000000 -gt "$(stat --format=%s *.geojson | paste -s -d'+' | bc)"
-	then wiked-diff "$@"
-	else diff --color=always --unified=1 --report-identical-files "$@"
-	fi;;
-(*) diff-color --report-identical-files "$@";;
-esac | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
+		--report-identical-files --label="${files[0]}" --label="${files[1]}" <($command "${files[0]}") <($command "${files[1]}")
+fi
+} | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
