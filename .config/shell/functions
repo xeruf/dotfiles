@@ -462,10 +462,10 @@ else
 	alias f1='find -mindepth 1 -maxdepth 1'
 fi
 
-lowercase_transliterate="y/A-Z /a-z-/"
-which perl-rename >/dev/null &&
-	alias lowercase="perl-rename -iv '$lowercase_transliterate'" ||
-	alias lowercase="rename -iv '$lowercase_transliterate'"
+lowercase() {
+	#$(which perl-rename || echo rename) -iv 'y/A-Z /a-z-/' "$@"
+	find "$@" -exec sh -c 'mv -iv {} "$(echo {} | tr "A-Z " "a-z-" | sed "s|---|_|;s|\.-|.|")" 2>/dev/null' \;
+}
 
 # TODO replace cp by rsync, automatically use compression for remote transfers
 # rsync directory properly - suffix both dirs with / to act on contents
