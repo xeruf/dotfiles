@@ -245,7 +245,7 @@ del() {
 
 u() {
 	# Line below handy for users of netkeeper
-	ping example.com -c 1 -w 2 >/dev/null && sudo nft list ruleset | grep -1 outall | grep -q 'meta hour' || echo sysupgrade | netkeeper 30 2>/dev/null
+	timeout 1 curl -s https://github.com >/dev/null || echo "Suspending netkeeper" >&2 | echo sysupgrade | netkeeper 30 2>/dev/null
 	if command -v pacman >/dev/null; then
 		if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
 		then

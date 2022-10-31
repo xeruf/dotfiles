@@ -1,5 +1,6 @@
 #!/bin/bash
 # Clean up files according to given parameters
+# TODO filter recently accessed files
 
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
