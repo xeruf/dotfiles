@@ -129,7 +129,7 @@ Version 2019-11-04 2021-02-16"
       "m;"      'comment-line
       "Q"       'save-buffers-kill-terminal ; or evil-quit-all?
       :desc "Dragon current buffer" "d" 'xf/dragon
-      :desc "Update DB & Quit"      "WU" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
+      :desc "Update DB & Quit"      "wU" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map ctl-x-map
       "8 SPC" (lambda () (insert-char "200B"))
       :map text-mode-map
@@ -697,7 +697,9 @@ Version 2019-11-04 2021-02-16"
             (lambda ()
               (setq xterm-color-preserve-properties t)))
   (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
-  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
+  (setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions)
+        eshell-scroll-to-bottom-on-output 'others
+        )
   (setenv "TERM" "xterm-256color")
   )
 
