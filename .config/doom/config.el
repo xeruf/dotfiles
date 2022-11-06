@@ -79,11 +79,15 @@ Version 2019-11-04 2021-02-16"
 (defun xf/dragon ()
   "Share file from current buffer via dragon."
   (interactive)
-  ; TODO somehow fails in image-mode
-  (apply 'call-process
-         `("dragon-drop" nil nil nil
-         "-a" "-x"
-                 ,@(or (dired-get-marked-files) (buffer-file-name) (image-dired-original-file-name) default-directory)))
+  (apply 'start-process
+         `("dragon" nil
+         "dragon-drop" "-a" "-x"
+           ,@(dired-get-marked-files)
+           ,(unless (dired-get-marked-files)
+             (or (buffer-file-name)
+                 (image-dired-original-file-name)
+                 default-directory)
+             )))
   )
 
 (defun xf/org-journal-current ()
