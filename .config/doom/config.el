@@ -76,11 +76,14 @@ Version 2019-11-04 2021-02-16"
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 
-(defun xf/dragon (&optional @file)
+(defun xf/dragon ()
   "Share file from current buffer via dragon."
   (interactive)
   ; TODO somehow fails in image-mode
-  (shell-command (concat "dragon-drop -a -x " (if (string-blank-p @file) (or (buffer-file-name) (image-dired-original-file-name) default-directory) @file)))
+  (apply 'call-process
+         `("dragon-drop" nil nil nil
+         "-a" "-x"
+                 ,@(or (dired-get-marked-files) (buffer-file-name) (image-dired-original-file-name) default-directory)))
   )
 
 (defun xf/org-journal-current ()
@@ -460,7 +463,7 @@ Version 2019-11-04 2021-02-16"
           org-journal-created-property-timestamp-format time-stamp-format
           org-journal-carryover-delete-empty-journal 'always
           org-journal-date-format (concat "[" time-stamp-bare " %3a]")
-          org-journal-time-format "%02H "
+          ;org-journal-time-format "%02H "
           )
   :config
     ; TODO map njj to open-or-create-entry
@@ -502,6 +505,10 @@ Version 2019-11-04 2021-02-16"
 (use-package! org-roam
   ;:after org-mode
   :defer 3
+  :init
+    (setq company-minimum-prefix-length 1
+          company-dabbrev-ignore-case 't
+          completion-ignore-case 't)
   :config
     (require 'org-roam-protocol)
 
@@ -758,8 +765,6 @@ Version 2019-11-04 2021-02-16"
         :n "l" 'dired-find-file-dwim
         :n "h" 'dired-up-directory
         :n "ö" 'evil-ex-search-forward
-        ;:desc "Dragon marked files" "d"
-        [remap xf/dragon] (lambda () (interactive) (xf/dragon (s-join " " (dired-get-marked-files))))
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
@@ -846,6 +851,7 @@ Version 2019-11-04 2021-02-16"
       (call-interactively '+eval:region)
     )
     (map! :n "gR" 'eval-paragraph
+          :n "g%" 'eval-defun
           :v "gR" '+eval/region)
   )
 
