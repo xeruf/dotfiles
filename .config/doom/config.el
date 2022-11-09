@@ -83,11 +83,12 @@ Version 2019-11-04 2021-02-16"
          `("dragon" nil
          "dragon-drop" "-a" "-x"
            ,@(dired-get-marked-files)
-           ,(unless (dired-get-marked-files)
-             (or (buffer-file-name)
+           ,@(unless (dired-get-marked-files)
+             (list (or (buffer-file-name)
                  (image-dired-original-file-name)
-                 default-directory)
-             )))
+                 default-directory))
+             ))
+         )
   )
 
 (defun xf/org-journal-current ()
