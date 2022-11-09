@@ -51,6 +51,7 @@ Plug 'mhinz/vim-signify'               " VCS info on the left
 
 " Integrations
 "Plug 'airblade/vim-gitgutter'          " Git info on the left and hunk bindings
+" TODO disable for giant files
 Plug 'tpope/vim-fugitive'               " Difftool usage
 Plug 'xeruf/vim-fossil'
 Plug 'austintraver/vim-jrnl'

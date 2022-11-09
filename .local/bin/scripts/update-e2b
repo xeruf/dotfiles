@@ -2,7 +2,10 @@
 # Update an Easy2Boot USB Stick after adding ISOs
 # Call with Linux ISOs to be copied as args
 # Need to be around E2B mountpoint if it is not the default
-dir="$(find . "${MNT:-${XDG_RUNTIME_DIR}/mnt}" -maxdepth 3 -name _ISO -type d | grep .)"
+if ! dir="$(find . "${MNT:-${XDG_RUNTIME_DIR}/mnt}" -maxdepth 3 -name _ISO -type d | grep .)"
+then echo "Please mount your multiboot stick first!"
+     exit 1
+fi
 test $# -eq 0 || mv -vi "$@" "$dir/LINUX"
 find "$dir" -iname "*32-*.iso" -exec mv -vi {} {}def32 \;
 find "$dir" -iname "*.iso" -exec mv -vi {} {}def64 \;

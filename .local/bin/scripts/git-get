@@ -6,7 +6,8 @@ echo "Cloning $remote"
 test $1 = https && shift
 case $# in
     (1) dir=$(basename ${remote%.git});;
-    (3) test "$3" != "$(git config --get user.name)" &&
+    (3) # TODO recognize shared prefix
+        test "$3" != "$(git config --get user.name)" &&
         prefix=$(echo "$3" | sed "s|\(.\)\b.*$|\1|") &&
         case "$2" in
             ("$prefix"*) ;;

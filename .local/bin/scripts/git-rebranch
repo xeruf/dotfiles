@@ -1,6 +1,6 @@
 #!/bin/sh
-# Recreates the current or given branch with the state from master or another given branch.
+# Recreates the current or given branch with the state from main or another given branch.
 branch=${1:-$(git curbranch)}
-test "$(git curbranch)" = "$branch" && git checkout ${2:-master}
+test "$(git curbranch)" = "$branch" && git switch ${2:-main}
 git branch -D $branch
-git checkout -b $branch
+git switch -c $branch
