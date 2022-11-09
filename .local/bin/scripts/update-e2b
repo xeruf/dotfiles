@@ -4,8 +4,8 @@
 # Need to be around E2B mountpoint if it is not the default
 dir="$(find . "${MNT:-${XDG_RUNTIME_DIR}/mnt}" -maxdepth 3 -name _ISO -type d | grep .)"
 test $# -eq 0 || mv -vi "$@" "$dir/LINUX"
-find "$dir" -name "*32-*.iso" -exec mv -vi {} {}def32 \;
-find "$dir" -name "*.iso" -exec mv -vi {} {}def64 \;
+find "$dir" -iname "*32-*.iso" -exec mv -vi {} {}def32 \;
+find "$dir" -iname "*.iso" -exec mv -vi {} {}def64 \;
 drive=$(mount | grep "$(basename "$dir")" | cut -d' ' -f1)
 sudo umount $drive
 sudo udefrag $drive

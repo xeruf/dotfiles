@@ -46,13 +46,14 @@ highlight "s :: recursively remove logs"
 highlight "m :: recursively remove mac-files"
 if [[ $1 =~ "m" ]]; then
 	find -name '__MACOSX' -print -exec rm -r {} +
-	find -iname '.spotlight*' -print -exec rm -rI {} +
+	find \( -iname '.spotlight*' -o -name 'System Volume Information' -o -name '.fseventsd' \) -print -exec rm -rI {} +
 	find -name '*.DS_Store' -delete
 fi
 
 highlight "d :: recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
-	find -maxdepth 1 \( -name "*.aux" -o -name "*.log" -o -name "*.t[uo]c" -o -name "*.out" \) -print -delete
+	# TODO some matches duplicate log clearing
+	find -maxdepth 1 \( -name "*.aux" -o -name "*.log" -o -name "*.t[uo][ca]" -o -name "*.out" \) -print -delete
 	find \( -name 'src' -o -name 'vendor' \) -prune -o \
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm $i -r {} + -prune

@@ -37,7 +37,7 @@ fileinfo() {
 	for arg
 	do case "$arg" in (-*) continue;; esac
 		$elevate file --exclude elf -E "$arg"
-		$elevate ssh-keygen -l -f "$arg" 2>/dev/null
+		$elevate ssh-keygen -l -f "$arg" 2>/dev/null || true
 		# TODO do not grep bitrate but extract properly
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
@@ -101,7 +101,7 @@ for arg; do
 		;;
 	(*)
 		case "$(file --dereference "$arg")" in
-		(*\ ?udio*)
+		(*\ ?udio*|*\ ADTS,*)
 			# TODO preconvert aac - |*\ ADTS\ *
 			if ! $inspect && which audiowaveform >/dev/null; then
 				img="$tmpfile.png"

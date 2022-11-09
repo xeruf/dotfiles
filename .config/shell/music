@@ -5,7 +5,7 @@ alias scbra='scpr zebra "/srv/funkwhale/data/music${PWD/$MUSIC}"'
 
 findsongs() {
 	find -regextype posix-extended -maxdepth 1 -type f \
-		-regex "${1:-.*\.(mp3|flac|wav|m4a)}" -printf "%P\n"
+		-iregex "${1:-.*\.(mp3|flac|wav|m4a)}" -printf "%P\n"
 }
 
 addtopl() {
@@ -44,13 +44,13 @@ addsong() {
 addalbum() {
 	mkdir -p "$MUSIC/$1"
 	mkdir -p "$MUSIC_RAW/$1"
-	f1 -regextype posix-extended -type f -regex "\./(cover|folder)\.(png|jpg|jpeg)" |
+	f1 -regextype posix-extended -type f -iregex "\./(cover|folder)\.(png|jpg|jpeg)" |
 		while read cover; do
 			foundcover="true"
 			cp -v "$cover" "$MUSIC/$1" &&
 			mv -v "$cover" "$MUSIC_RAW/$1"
 		done
-	test "$foundcover" || f1 -regextype posix-extended -type f -regex ".*\.(png|jpg|jpeg)" |
+	test "$foundcover" || f1 -regextype posix-extended -type f -iregex ".*\.(png|jpg|jpeg)" |
 		while read cover; do
 			cp -v "$cover" "$MUSIC/$1" &&
 			mv -v "$cover" "$MUSIC_RAW/$1"
@@ -72,7 +72,7 @@ formatsongs() {
 		done
 	)
 	# fd --no-ignore-vcs --type f --extension opus --exec opusdec --quiet "{}" "{.}.wav" \; ".*" "$@"
-	find "$@" -type f -name "*.wav" -exec sh -c '
+	find "$@" -type f -iname "*.wav" -exec sh -c '
 		f="{}" &&
 		echo "Converting $f to ${f%.*}.flac" &&
 		ffmpeg -i "$f" "${f%.*}.flac" -v warning &&
