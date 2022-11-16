@@ -1,11 +1,19 @@
 #!/bin/sh -e
-test $# -lt 1 &&
-  echo "Usage: $0 <app> [subdomain] [repo] [namespace]" &&
+if test $# -lt 1; then
+  echo "You should be in the root apps folder."
+  echo "Usage: $0 <app> [subdomain] [repo] [namespace]"
   exit 1
+fi
+
 app=$1
 subdomain=${2:-$app}
 repo=${3:-$app}
 namespace=${4:-stackspout}
+
+if test "$(basename "$PWD")" != "$subdomain"
+then mkdir -p "$subdomain" && cd "$subdomain"
+fi
+
 cat <<EOF >$app-oauth-client.yaml
 apiVersion: hydra.ory.sh/v1alpha1
 kind: OAuth2Client
@@ -120,3 +128,7 @@ spec:
       storage: 2Gi
   storageClassName: local-path
 EOF
+
+ls -l
+echo "To do: Obtain chart version, check configmap, create oauth secrets if needed" >&2
+exec $SHELL
