@@ -36,7 +36,7 @@ cl() {
 cd() {
 	if test -d "$DATA" && test "${1:--}" != "-" -a ! -d "$1" -a $# -eq 1
 	then
-		dir=$(fd --no-ignore --glob "$1*" "$DATA" --maxdepth 2 --type d --max-results 1 2>/dev/null)
+		dir=$(fd --no-ignore --glob "$1*" "$DATA" $MNT --maxdepth 2 --type d --max-results 1 2>/dev/null)
 		test -n "$dir" && cd "$dir"
 	else
 		builtin cd "$@" &&
