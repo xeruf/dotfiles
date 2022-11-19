@@ -144,7 +144,8 @@ Version 2019-11-04 2021-02-16"
       :desc "Markdown to Zulip" "mam" "4dip
 :%s/<\\/?span ?[^ >]*>//g
 :%s/\\n\\n<a id=.*<\\/a>\\n\\n//g
-:%s/<\\(http[^ \\n]+\\)>/\\1/g"
+:%s/<\\(http[^ \\n]+\\)>/\\1/g
+:%s/\\\\<\\(.*\\)\\\\>/<\\1>/g"
 ;:%s/\\n *\\n /\\n /
 ;:%s/    /  /g"
       )
@@ -469,7 +470,7 @@ Version 2019-11-04 2021-02-16"
           org-journal-created-property-timestamp-format time-stamp-format
           org-journal-carryover-delete-empty-journal 'always
           org-journal-date-format (concat "[" time-stamp-bare " %3a]")
-          ;org-journal-time-format "%02H "
+          org-journal-time-format "%02H "
           )
   :config
     ; TODO map njj to open-or-create-entry

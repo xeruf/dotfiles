@@ -243,6 +243,10 @@ del() {
 	m "$@" $trash
 }
 
+curlh() {
+	curl -v --location "$@" >/dev/null
+}
+
 u() {
 	# Line below handy for users of netkeeper
 	sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo sysupgrade | netkeeper 30 2>/dev/null
