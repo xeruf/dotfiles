@@ -1,6 +1,5 @@
 [Added Associations]
 application/java-archive=org.kde.ark.desktop;
-application/rss+xml=nvim.desktop;
 application/x-java-archive=java-2.desktop;java.desktop;jconsole-java11-openjdk.desktop;
 application/x-ms-shortcut=firefox.desktop;
 application/x-mswinurl=firefox.desktop;
@@ -13,9 +12,8 @@ audio/x-wav=mpc.desktop;
 audio/aac=mpc.desktop;
 image/jpeg=org.kde.showfoto.desktop;
 image/png=org.kde.showfoto.desktop;
-inode/directory=org.kde.dolphin.desktop;vifm.desktop;
 text/html=firefox.desktop;
-text/plain=nvim.desktop;emacs.desktop;okularApplication_txt.desktop;
+text/plain=emacs.desktop;okularApplication_txt.desktop;
 x-scheme-handler/tg=telegram.desktop;
 
 [Default Applications]
@@ -33,7 +31,6 @@ image/jpeg=org.kde.showfoto.desktop;
 image/png=org.kde.showfoto.desktop;
 inode/directory=org.kde.dolphin.desktop;
 text/html=firefox.desktop;
-text/plain=nvim.desktop;
 x-scheme-handler/discord-757737740241731714=discord-757737740241731714.desktop
 x-scheme-handler/etcher=balena-etcher-electron.desktop
 x-scheme-handler/ferdi=ferdi.desktop

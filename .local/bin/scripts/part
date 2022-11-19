@@ -1,10 +1,12 @@
 #!/bin/sh
-# Run parted with rlwrap
+# Manage partitions
+# TODO completion
 case "$1" in
 	([a-z]) part=/dev/sd$1;;
 	("") part= ;; # TODO unmount and run on current
 	(/*) part=$1;;
 	(*) part=/dev/$1;;
 esac
-shift
-fdisk $part "$@"
+test "$#" -eq 0 || shift
+cfdisk $part "$@" ||
+	sudo cfdisk $part "$@"

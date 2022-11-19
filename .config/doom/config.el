@@ -306,6 +306,7 @@ Version 2019-11-04 2021-02-16"
         :desc "Medium Priority" "pb" (lambda () (interactive) (org-priority "B"))
         :desc "High Priority" "pa" (lambda () (interactive) (org-priority "A"))
         :desc "Set ID property" "lI" (lambda () (interactive)
+              ;; Check out https://github.com/novoid/dot-emacs/blob/master/config.org#my-id-get-or-generate
               (org-set-property "ID"
                 (let ((heading (org-get-heading t t t t)))
                   (if heading (org-read-property-value "ID" nil (xf/slugify heading)) (file-name-sans-extension (file-name-nondirectory buffer-file-name)))

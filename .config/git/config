@@ -190,3 +190,5 @@
 	path= "diffr"
 [includeIf "gitdir:yadm/repo.git"]
 	path = "~/.config/yadm/gitconfig"
+[safe]
+	directory = /opt/flutter
