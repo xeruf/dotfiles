@@ -78,6 +78,8 @@ stack() {
 		(*) echo "Unknown Subcommand";;
 		esac
 		;;
+	(maria) app=$1
+		"$0" exec $app-mariadb -it -- env "MYSQL_PWD=$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d)" mysql -u $app "$@";;
 	# high-level
 	(shell)
 		container=$1
@@ -96,7 +98,9 @@ stack() {
 		kubectl cp "$2" -n $("$0" pod "$1$pod_suffix"):$2 "${@:3}"
 		"$0" ls "$1" "${@:3}";;
 	(exec) "$0" kube exec "$@";;
-	(logs) "$0" kube logs "$@" | $(command which lnav || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF');;
+	(logs) podname=$1
+		shift
+		"$0" kube logs "$podname" | $(command which lnav || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
 	# low-level
 	(kube)
 		test $# -gt 1 || { echo "Please provide a command and pod name" >&2 && return 1; }
