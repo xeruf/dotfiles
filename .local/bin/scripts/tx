@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# LaTeX fixed
+dir=/tmp/latexmk
+filename="$(basename "${1%.tex}.pdf")"
+TEXMF="" pdflatex -shell-escape -recorder -output-directory="$dir" "$@"
+mv -v "$dir/$filename" .
+b "$filename"

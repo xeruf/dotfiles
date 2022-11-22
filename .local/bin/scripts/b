@@ -65,16 +65,18 @@ for arg; do
 	fi
 	# amount of columns in a grid
 	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
-	tmpfile="$prefix/$(basename "$arg")"
+	tmpfile="$prefix/$(basename "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ')"
 	mkdir -p "$prefix"
 	case "$mime" in
 	(*\ application/pdf\;*)
-		echo Converting "$arg"
 		grid=$(expr $(tput cols) \* $# / $(tput lines))
 		grid=$(expr 3 \& $grid \< 3 \| $grid)
 		#limit=$(expr $grid \& \( $grid \> 3 \| $# \> 1 \) \| $grid '*' 2)
 		limit=$grid
-		test -f "$tmpfile-1.ppm" || pdftoppm -forcenum -r 70 "$arg" "$tmpfile" -l $limit
+		if ! test -f "$tmpfile-1.ppm"
+		then echo Converting "$arg"
+			 pdftoppm -forcenum -r 70 "$arg" "$tmpfile" -l $limit
+		fi
 		find "$prefix" -path "$tmpfile*.ppm" | sort | head -$limit | xargs -d'\n' timg -W --grid=$grid
 		;;
 	(*\ application/*document*|*.xlsx:\ *)
@@ -152,7 +154,7 @@ if test "$timg"; then
 		if which timg >/dev/null
 		then $elevate timg $(test "$timga" && echo "-V") --rotate=exif -g $(tput cols)x$(expr $(tput lines) / 2) \
 			$(test $# -gt 1 &&
-			echo "-t0.2 --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
+			echo "-t0.2 --auto-crop --center $(test $# -lt 20 && echo "--title") --grid=$((grid < $# ? grid : $#))x2") \
 			"${timg[@]}" "${timga[@]}" 2>/dev/null || true
 		else for img in "${timg[@]}"
 			do catimg -H $(expr $(tput lines) / 2) $img

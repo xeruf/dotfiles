@@ -80,6 +80,7 @@ alias c=z
 # Listing for quick directory switcher based on zoxide and fzf
 alias zoxide-list='noglob zoxide query -sl'
 __zx_ls="ls --almost-all --color --human-readable --group-directories-first --file-type"
+ # Check fzf features first
 alias fzf-dir="fzf -0 -1 --tiebreak=chunk,end,length \
 		--preview-window=30% --preview='$__zx_ls {}' \
 		--height=80% --reverse --keep-right"

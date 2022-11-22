@@ -373,7 +373,6 @@ hex() { hexyl "$@" | "${PAGER:-less}"; }
 
 export DICT="$XDG_DATA_HOME/dictcc"
 dic() {
-	# TODO tiebreak=chunk
 	result=$(cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=chunk,length --bind='alt-bspace:clear-query' --print-query --query="$1") &&
 		dic "$(echo "$result" | tail -1 | sed 's/\t/\n/g' | grep --invert-match --ignore-case "$(echo "$result" | head -1)" | head -1 | sed 's/ \W.*//')"
 }

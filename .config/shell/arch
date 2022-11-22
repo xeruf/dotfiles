@@ -31,14 +31,14 @@ yzf() {
 # List installable packages into fzf and install selection
 yas() {
 	cache_dir="/tmp/yas-$USER"
-	test "$1" = "-y" && rm -rf "$cache_dir" && shift
+	case "$1" in (-y*) rm -rf "$cache_dir"; shift; param=$1;; esac
 	mkdir -p "$cache_dir"
 	preview_cache="$cache_dir/preview_{2}"
 	list_cache="$cache_dir/list$*"
 	{ test "$(cat "$list_cache" | wc -l)" -lt 50000 && rm "$list_cache"; } 2>/dev/null
 	pkg=$(
 		( cat "$list_cache" 2>/dev/null ||
-			{ pacman --color=always -Sl "$@"; yay --color=always -Sl aur "$@" } |
+			{ $(test $param && echo sudo) pacman --color=always -Sl $param "$@"; yay --color=always -Sl aur $param "$@" } |
 			sed 's/ [^ ]*unknown-version[^ ]*//' | tee "$list_cache" ) |
 		yzf 2 --tiebreak=chunk,index --preview="cat $preview_cache 2>/dev/null | grep -v 'Querying' | grep . || yay --color always -Si {2} | tee $preview_cache"
 	)
