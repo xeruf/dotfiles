@@ -52,6 +52,7 @@ let g:firenvim_config = {
     \ '.*discord\.com.*':                    { 'priority': 9, 'takeover': 'never', },
     \ '.*twitter\.com.*':                    { 'priority': 9, 'takeover': 'never', },
     \ '.*wiki.*\.org.*':                     { 'priority': 9, 'takeover': 'never', },
+    \ '://pve.*':                            { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*calendar\.google\.com.*':           { 'priority': 9, 'takeover': 'empty', },
     \ '.*docs\.google\.com.*':               { 'priority': 9, 'takeover': 'never', },
