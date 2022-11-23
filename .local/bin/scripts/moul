@@ -3,12 +3,14 @@
 set -eo pipefail
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
+	(-v) shift
+		bash -x "$0" "$@";;
 	("") # TODO include size
 		arg=$(lsblk --list --noheadings --output name,label,fstype,mountpoint |
 			grep -v '/' | grep ".\+ [^ ]\+" | fzf --select-1 --exit-0 |
 			sed "s/^\([^ ]\+ \+\)\?\([^ ]\+\) \+[^ ]\+ *$/\2/");;
-	("--help") echo "$_help" && exit 0;;
-	("-u") shift
+	(--help) echo "$_help" && exit 0;;
+	(-u) shift
 		for last; do true; done
 		sudo umount --verbose "$@"
 		code=$?
@@ -46,7 +48,8 @@ shift $(expr 2 \& $# \> 2 \| $#)
 #uid=$(id --user),gid=$(id --group), \
 if ! mountpoint "$mountpoint" 2>/dev/null
 then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
-	sudo mount -vo users,X-mount.mkdir,noatime,umask=003,gid=users,uid=$USER $partition $mountpoint "$@"
+	sudo mount -vo users,X-mount.mkdir,noatime,umask=003,gid=users,uid=$USER $partition $mountpoint "$@" ||
+		sudo mount -vo users,X-mount.mkdir,noatime $partition $mountpoint "$@"
 fi
 cd $mountpoint
 exec $SHELL
