@@ -1,7 +1,8 @@
 #!/bin/sh -e
 # Simple backup with borg
 if test $# -eq 0
-then borg list --format "{barchive:40} Created {time}{NL}"
+then echo "To backup: bog [prefix_] folder"
+	 borg list --format "{barchive:40} Created {time}{NL}"
 	 exit $?
 fi
 while test $# -gt 0; do
