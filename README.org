@@ -63,6 +63,9 @@ and configuration for ~less~ and ~fzf~.
   most have a short documentation header -
   including many essential git scripts
 * Package Setup (moving to [[https://git.jfischer.org/xeruf/instalee][Instalee]])
+By Size:
+: LC_ALL=C pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
+Copy list:
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 - dotfiles :: yadm
   : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
