@@ -1,27 +1,5 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;;;; VISUALS
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-(setq doom-theme (if (equal (getenv "THEME") "light") 'doom-opera-light 'doom-one)
-      doom-font (font-spec :family "monospace" :size 24 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sans" :size 24))
-
 (defun load-theme-string (theme)
   (if (-contains? (custom-available-themes) (intern theme)) (load-theme (intern theme))))
 (defun toggle-theme (&optional suffix)
@@ -221,6 +199,7 @@ Version 2019-11-04 2021-02-16"
 
 (load! "./user.el" nil t)
 (load! "./local.el" nil t)
+(load! "./theme.el" nil t)
 
 (setq backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
       custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
@@ -926,8 +905,13 @@ Version 2019-11-04 2021-02-16"
           plantuml-indent-level 4
           )
     (after! org
-      (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
+      (org-babel-do-load-languages 'org-babel-load-languages
+                                   '((plantuml . t)))
       )
+
+    (add-hook 'plantuml-mode-hook
+              (lambda () (setq-local compile-command (format "plantuml %s" (shell-quote-argument buffer-file-name)))))
+
   )
 
 (use-package vc-fossil
