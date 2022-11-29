@@ -93,9 +93,12 @@ export EDITOR="$(
 	else echo $ALTERNATE_EDITOR
 	fi
 )"
+
+export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
 export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
-export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x 'System Volume Information'"
+ # -x 'System Volume Information'
+export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__"
 export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .pyenv -x .local/cache -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
 export DIRS_IGNORE="-x .sync -x .stfolder -x *build -x .git -x .idea -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
 # red stderr

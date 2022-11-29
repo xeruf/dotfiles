@@ -45,6 +45,8 @@ ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION" # Cache completions
 DISABLE_UPDATE_PROMPT=true
 ZSH_DISABLE_COMPFIX=true
 
+# For fresh systems
+test -d "$ZSH" || source $HOME/.zshenv
 source $ZSH/oh-my-zsh.sh
 
 ## Functions
@@ -158,6 +160,7 @@ setopt hist_reduce_blanks
 unsetopt hist_ignore_space
 # TODO filter from history: netkeeper killm
 
+setopt sh_word_split
 setopt extended_glob
 unsetopt case_glob
 
@@ -196,7 +199,7 @@ source_existing $XDG_CONFIG_HOME/broot/launcher/bash/br
 which zoxide >/dev/null &&
 	eval "$(zoxide init zsh)"
 
-source_existing /home/janek/.nix-profile/etc/profile.d/nix.sh
+source_existing $HOME/.nix-profile/etc/profile.d/nix.sh
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 
 true
