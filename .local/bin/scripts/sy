@@ -6,7 +6,10 @@ case "$1" in
   ("") sysyadm s;;
   (p) sysyadm p;;
   (l) sysyadm fetch && sy rebase main --onto origin/main;;
-  (clone) sudo -E sysyadm clone -w / git.jfischer.org:xeruf/etc.git --bootstrap;;
+  (clone)
+    sudo mkdir -p /etc/yadm
+    sudo chown -R $USER /etc/yadm
+    sysyadm clone -w / gitea@git.jfischer.org:xeruf/etc.git --bootstrap;;
   (init) sudo -E sysyadm init -b main -w /;;
   (*) sudo -E sysyadm "$@";;
 esac

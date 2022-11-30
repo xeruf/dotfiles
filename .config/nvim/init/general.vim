@@ -1,3 +1,4 @@
+set title
 set termguicolors
 set mouse=nvh " Disable mouse in insert mode to allow middle-click paste in remote session - https://vi.stackexchange.com/q/23080
 set clipboard+=unnamedplus " Merge with system clipboard
