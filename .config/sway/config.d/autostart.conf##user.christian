@@ -1,0 +1,5 @@
+assign [class="Emacs"] workspace 1
+assign [app_id="firefox"] workspace 2
+exec swaymsg "workspace 2; exec google-chrome-stable;"
+exec swaymsg "workspace 3; exec kitty;"
+exec swaymsg "workspace 1"
