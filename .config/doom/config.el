@@ -109,6 +109,7 @@ Version 2019-11-04 2021-02-16"
       "oj"      'xf/org-journal-current
       "njo"     'xf/org-journal-current
       "nrb"     (lambda () (interactive) (setq +org-roam-auto-backlinks-buffer (not +org-roam-auto-backlinks-buffer)) (org-roam-buffer-toggle))
+      "sa"      'projectile-find-file-in-known-projects
       "Se"      '+snippets/edit
       "SN"      '+snippets/new
       "Sm"      'smerge-mode
@@ -206,14 +207,15 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! projectile
   :init
-    (add-to-list 'projectile-ignored-projects (expand-file-name user-data-dir))
-    (add-to-list 'projectile-ignored-projects user-data-dir)
     (projectile-add-known-project (expand-file-name "4-media/" user-data-dir))
     (after! org
       (projectile-add-known-project org-directory)
       (projectile-register-project-type 'org '(".orgids"))
       ;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
       )
+    :config
+      (add-to-list 'projectile-project-root-files "README.org")
+      (add-to-list 'projectile-project-root-files ".orgids")
   )
 
 (setq time-stamp-bare "%Y-%m-%d"
