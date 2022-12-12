@@ -1,10 +1,18 @@
-#!/bin/sh
+#!/bin/sh -e
 # Execute commands on a zulip server
 zulipdepl="/home/zulip/deployments/current"
-sudo su zulip -c "$(
-    scr="$zulipdepl/scripts/$1"
-    if test -f "$scr"
-    then shift && echo "$scr $@"
-    else echo "$zulipdepl/manage.py $@"
-    fi
-)"
+case $1 in
+	(upgrade)
+		cd /tmp
+		curl -fLO https://download.zulip.com/server/zulip-server-latest.tar.gz
+		sudo "$zulipdepl/scripts/upgrade-zulip" zulip-server-latest.tar.gz;;
+	(status) sudo supervisorctl status;;
+	(*)
+		sudo su zulip -c "$(
+		    scr="$zulipdepl/scripts/$1"
+		    if test -f "$scr"
+		    then shift && echo "$scr $@"
+		    else echo "$zulipdepl/manage.py $@"
+		    fi
+		)";;
+esac
