@@ -1,0 +1,2 @@
+#!/bin/sh -e
+unbuffer swaymsg -t get_$1 | less -RF

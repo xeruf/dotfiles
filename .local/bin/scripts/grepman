@@ -1,3 +1,5 @@
 #!/bin/sh
 # Grep through all manuals
-find /usr/share/man -name "*$1*" | xargs gunzip -c | grep $2 --color=auto
+manual=$1
+shift
+find /usr/share/man -name "*$manual*" | xargs gunzip -c | grep "$@" --color=auto

@@ -78,7 +78,7 @@ highlight "c :: clean electron caches"
 
 highlight "o :: optimize space extensively"
 if [[ $1 =~ "o" ]]; then
-	sudo find $XDG_CACHE_HOME /var/cache /var/log /var/tmp -maxdepth 2 -atime +2 -exec rm -r {} +
+	sudo find $XDG_CACHE_HOME /var/cache /var/log /var/tmp -mindepth 1 -maxdepth 2 -atime +2 -exec rm -r {} + -prune
 
 	if test -f "/var/log/apt/history.log"; then
 		aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
@@ -90,9 +90,10 @@ if [[ $1 =~ "o" ]]; then
 
 	sudo rm -rf "$XDG_DATA_HOME/baloo"
 	docker image prune
-	which yay &>/dev/null && yay -Sc --noconfirm
-	nix-collect-garbage -d
-	nix-store --optimize
+	which yay &>/dev/null &&
+		yay -Sc --noconfirm
+	nix-collect-garbage -d 2>/dev/null &&
+		nix-store --optimize
 fi
 
 df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"

@@ -91,7 +91,7 @@ for arg; do
 	(*\ video/*)
 		suffix=_thumbs.jpg
 		mtn -q -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
-			-O "$prefix" -o "$suffix" "$arg"
+			-O "$prefix" -o "$suffix" "$arg" &&
 		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)
@@ -134,7 +134,7 @@ for arg; do
 				fi
 			esac
 			;;
-		(*:\ *database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
+		(*:\ SQLite\ *\ database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
 		(*:\ data) ;;
 		(*) bat+=("$arg")
 			timga+=("$arg")
@@ -175,6 +175,7 @@ pager="${PAGER:-'less -RF'}"
 # bat: unknown files
 # batplain: files to print without header
 if test "$bat" -o "$batplain"; then
+	# TODO allow plain less
 	test "$(bat --version | cut -d. -f2)" -gt 16 && rule=,rule
 	if test $# -gt ${#bat[@]} -a $# -gt ${#batplain[@]} && test -z "$flags"
 	then cut="--line-range :7"
@@ -214,7 +215,7 @@ if test "$bat" -o "$batplain"; then
 				else $batcommand "${batpager:-$pager}" $batstyle,header$(test $# -gt 1 && echo ",numbers") "${bat[@]}"
 				fi
 			fi
-			if $inspect || test $# -lt $(expr $(tput lines) / 3);
+			if $inspect || test $# -lt $(expr $(tput lines) / 10);
 			then fileinfo "${bat[@]}"
 			fi
 		fi
@@ -230,7 +231,7 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 			if test '$tree'
 			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags $(printf "'%s' " "${ls[@]:-.}")
 			elif which exa 2>/dev/null >&2
-			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=changed --reverse $flags $(printf "'%s' " "${ls[@]:-.}")
+			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags $(printf "'%s' " "${ls[@]:-.}")
 			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags $(printf "'%s' " "${ls[@]:-.}")
 			fi
 		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags "${ls[@]:-.}"

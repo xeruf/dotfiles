@@ -4,7 +4,10 @@
 # optdepends: highlight(dotfiles)
 # TODO show tldr page
 paginate="${PAGER:-less} +Gg"
-test "$1" = "-d" && browse=1 && shift
+case "$1" in
+	(-d) browse=1; shift;;
+	(-v) set -o xtrace; shift;;
+esac
 
 showinfo() {
 	which info >/dev/null 2>&1 &&
@@ -38,7 +41,8 @@ case "$cmd" in
 		for last; do true; done
 		# need to install zsh-doc package for info pages
 		showinfo zsh $(test "$last" != zsh && echo "$last") ||
-			LESS="$LESS +/^ *$last *\\[" man zshall;;
+			LESS="$LESS$(test "$last" != zsh && echo "+/^ *$last *\\[")" man zshall;;
+	(emacs) man emacs;;
 	(*) showinfo "$@" || man "$@" || return=$?
 		if test "${return:-0}" -gt 0 && which "$cmd" >/dev/null
 		then { unbuffer "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
@@ -47,18 +51,19 @@ case "$cmd" in
 esac
 docs="/usr/share/doc/$cmd"
 if test -d "$docs"; then
+	len() { echo "$1" | wc -c; }
+	shortest() {
+		read shortest
+		while read in
+		do test $(len $shortest) -gt $(len $in) && shortest=$in
+		done
+		echo $shortest
+	}
+	file="$(find $docs -name index.html | shortest | grep . || find $docs -name $1*.html | shortest)"
+
 	if test -z "$browse"
-	then echo "Find more in $docs"
-	else
-		len() { echo "$1" | wc -c; }
-		shortest() {
-			read shortest
-			while read in
-			do test $(len $shortest) -gt $(len $in) && shortest=$in
-			done
-			echo $shortest
-		}
-		firefox "file://$(find $docs -name index.html | shortest | grep . || find $docs -name $1*.html | shortest)"
+	then echo "Find more in file://${file:-docs}"
+	else firefox "file://$file"
 	fi
 fi
 exit $return
