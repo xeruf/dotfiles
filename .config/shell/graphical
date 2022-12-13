@@ -5,7 +5,6 @@ command -v notify-send >/dev/null &&
 if which jrnl >/dev/null; then
 	alias j='jrnl'
 	jn() { jrnl -to today "$@" | less +G; }
-	compdef jn=jrnl
 	alias jnc='jn -contains'
 	alias jne='jrnl --edit'
 	# TODO jump to end

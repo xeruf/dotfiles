@@ -96,7 +96,7 @@ bindkey '^q' push-line-or-edit
 
 export KEYTIMEOUT=1
 
-# Obsolete: zsh-vim-mode plugin - Custom VIM bindings {{{
+# Obsolete because of zsh-vim-mode plugin - Custom VIM bindings {{{
 #bindkey -v
 #autoload -Uz history-search-end
 #

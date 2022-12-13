@@ -36,7 +36,7 @@ cl() {
 cd() {
 	if test -d "$DATA" && test "${1:--}" != "-" -a ! -d "$1" -a $# -eq 1
 	then
-		dir=$(fd --no-ignore --glob "$1*" "$DATA" $MNT --maxdepth 2 --type d --max-results 1 2>/dev/null)
+		dir=$(fd --no-ignore --glob "$1*" "$DATA" "$MNT" --maxdepth 2 --type d --max-results 1 2>/dev/null)
 		test -n "$dir" && cd "$dir"
 	else
 		builtin cd "$@" &&
@@ -45,9 +45,10 @@ cd() {
 		# - column malaligns output with ANSI escape sequences (view with LESS="" less)
 		#   column --fillrows --output-width $(expr $COLUMNS + 20)
 		#   pr -4 -l1 -W $COLUMNS -S"  "
+		# TODO test whether still needed with exa
 		command ls --sort=none --quote-name |
 			head -12 |
-			xargs ls --sort=time --format=vertical --directory --literal --classify --color=always --width $COLUMNS |
+			COLUMNS=$(tput cols) xargs $(which exa >/dev/null 2>&1 && echo "exa --list-dirs --icons --reverse" || echo 'ls --format=vertical --literal --classify --directory') --sort=time --color=always |
 			head -3
 		code=$? && test $code -eq 141 || return $code
 	fi
