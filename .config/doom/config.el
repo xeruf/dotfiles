@@ -518,7 +518,7 @@ Version 2019-11-04 2021-02-16"
              :unnarrowed t)
             )
           )
-    (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration" "writing")
+    (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration" "writing:blog")
       do (add-to-list 'org-roam-capture-templates
             `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
              (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat xf/org-roam-capture-props "#+filetags: :" item ":" xf/org-roam-capture-title))

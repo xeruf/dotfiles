@@ -39,6 +39,9 @@ cmake*build*/
 __pycache__/
 node_modules/
 
+# Templates
+*.example
+
 # Logs
 *.log
 *.log.*

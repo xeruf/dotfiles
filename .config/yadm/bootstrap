@@ -27,7 +27,10 @@ ExecStart=-$agetty --skip-login --login-options $USER %I" |
 	sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
 highlight "Sysyadm setup"
-test -d "/etc/yadm" || sy clone
+if test -d "/etc/yadm"
+then sy l
+else sy clone
+fi
 
 SECTION "Software"
 
@@ -52,12 +55,13 @@ link() {
 	test -e "$2" -o -h "$2" || $($HOME/.local/bin/scripts/checkaccess -w "$2" || echo sudo) ln -sv "$@"
 }
 
-mkdir -p .config/audacity
+mkdir -p "$XDG_CONFIG_HOME/audacity"
 find $HOME -maxdepth 1 -type l -exec file {} + |
 	grep '.local/share' | grep broken |
 	sed 's/.* //' | xargs -r mkdir -p
 
 link python /usr/bin/python3
+# TODO don't do these prematurely
 link fdfind /usr/bin/fd
 link batcat /usr/bin/bat
 
@@ -100,7 +104,7 @@ case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh);; (*) chsh -s $(wh
 highlight "Arch"
 if test -f /etc/pacman.conf; then
 	subhighlight "Pacman"
-	sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+	sudo sed -i 's/#Parallel/Parallel/;s/#Color/Color/;s/#UseSyslog/UseSyslog/' /etc/pacman.conf
 	sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
 	if which reflector 2>/dev/null
 	then subhighlight "Reflector"
@@ -128,8 +132,10 @@ link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autosta
 link "/usr/share/applications/stretchly.desktop" "$XDG_CONFIG_HOME/autostart/"
 mx="$HOME/.mixxx"
 if ! test -d "$mx"
-then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* ${XDG_CONFIG_HOME:-$HOME/.config}/mixxx/*
+then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* $XDG_CONFIG_HOME/mixxx/*
 fi
 
 subhighlight "Setup kakoune plugin loader"
-cloneshallow plug.kak robertmeta "${XDG_CONFIG_HOME:-$HOME/.config}/kak/plugins/plug.kak"
+cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
+
+touch $HOME/.local/state/wget-hsts

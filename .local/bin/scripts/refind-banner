@@ -1,0 +1,9 @@
+#!/bin/sh -e
+# TODO compress
+dir="${2:-/boot/efi}"
+refind="$dir/EFI/${3:-refind}"
+imagepath="icons/wallpaper"
+test -d "$refind/"
+sudo mkdir -pv "$refind/$imagepath/"
+sudo cp -v "$1" "$refind/$imagepath/"
+printf "\nbanner $imagepath/$(basename "$1")\nbanner_scale fillscreen\n" | sudo tee -a "$refind/refind.conf"
