@@ -3,6 +3,7 @@
 # depends: mp mpc
 # env: MUSIC
 # args: either a playlist file name, or a list of terms which all have to match
+# TODO fails on "Alchemy"
 PLAYLISTS="${PLAYLISTS:-$MUSIC/Playlists}"
 mpc -q clear
 if test -z "$1"

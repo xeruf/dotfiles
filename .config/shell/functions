@@ -315,7 +315,9 @@ sshl() {
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
 	local file="$authcache/$1"
-	test "$all" && pass scp ~/.bash_aliases "$@:" # TODO also add sourcing to bashrc if needed
+	test "$all" &&
+		pass scp ~/.bash_aliases "$1:" &&
+		pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if ssh -G "$1" | grep --silent "^user root$" && ! [[ "$1" =~ "pve*" ]]
 	then pass ssh "$@"
 	else
@@ -393,7 +395,7 @@ hex() { hexyl "$@" | "${PAGER:-less}"; }
 export DICT="$XDG_DATA_HOME/dictcc"
 dic() {
 	result=$(cat $DICT/dict.txt | sed '/#/d;/&/d;/^$/d' | fzf --tiebreak=chunk,length --bind='alt-bspace:clear-query' --print-query --query="$1") &&
-		dic "$(echo "$result" | tail -1 | sed 's/\t/\n/g' | grep --invert-match --ignore-case "$(echo "$result" | head -1)" | head -1 | sed 's/ \W.*//')"
+		dic "$(echo "$result" | tail -1 | sed 's/\t/\n/g' | head -2 | grep --invert-match --ignore-case "$(echo "$result" | head -1)" || echo "$result" | head -1 | sed 's/ \W.*//')"
 }
 #fzf --tiebreak=length --bind='alt-bspace:clear-query'
 alias dict="rlwrap rdictcc --directory $DICT"
@@ -493,14 +495,14 @@ lowercase() {
 # rsync directory properly - suffix both dirs with / to act on contents
 alias rcn='rsync -v --recursive --human-readable --links --dry-run'
 rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }
-alias rc='rcs --links --times'
+compdef rcd=rsync
+alias rc='rcs --links --hard-links --times'
 alias rcu='rc --existing --size-only'
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
 alias rdiff='rsync --recursive --progress --delete --links --dry-run'
 alias rdiffe='rdiff --existing --size-only'
-compdef rcd=rsync
 
 # Swap the names of two files
 swap() {

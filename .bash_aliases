@@ -8,9 +8,15 @@ if test -f /etc/bash_completion && ! shopt -oq posix
 then . /etc/bash_completion
 fi
 
+alias sc="sudo systemctl"
 alias scs="sudo systemctl status"
+alias sce="sudo systemctl enable --now"
 alias scr="sudo systemctl reload-or-restart"
+
+# Diff recursively
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
+# Copy recursively with rsync
+alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links --hard-links --times'
 
 # ls aliases
 
