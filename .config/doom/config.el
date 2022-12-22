@@ -549,6 +549,25 @@ Version 2019-11-04 2021-02-16"
       (when (equal major-mode 'org-mode) (org-mode-restart)))
 
     (if (file-exists-p org-roam-directory) (xf/auto-org-roam-db-sync-mode))
+
+    ;; Node Search
+    (setq org-roam-node-display-template
+          #("${doom-hierarchy:*} ${doom-type:7} ${doom-tags:30}" 20 35
+            (face font-lock-keyword-face)
+            28 40
+            (face org-tag)
+            ))
+
+    ;; REVIEW Remove when addressed upstream. See org-roam/org-roam#2066.
+    (defun my/org-roam-node-read--to-candidate (node template)
+      "Return a minibuffer completion candidate given NODE.
+    TEMPLATE is the processed template used to format the entry."
+      (let ((candidate-main (org-roam-node--format-entry
+                             template
+                             node
+                             (1- (frame-width)))))
+        (cons (propertize candidate-main 'node node) node)))
+    (advice-add 'org-roam-node-read--to-candidate :override #'my/org-roam-node-read--to-candidate)
   )
 
 (use-package! ox
