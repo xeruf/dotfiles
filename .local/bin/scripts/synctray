@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/sh -ex
+# Install syncthingtray with dependencies
 suffix=$1
 yay --noconfirm -Syyu --nobatchinstall c++utilities$suffix qtforkawesome$suffix qtutilities$suffix
 yay --noconfirm -S syncthingtray$suffix

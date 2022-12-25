@@ -18,13 +18,14 @@ inspect=false
 
 opts='itvh'
 while getopts "$opts" OPTION; do
-  case "$OPTION" in
-  	# inspect: Show file info without preview
-  	(i) inspect=true;;
-    (t) tree=true;;
-	(v) set -eo xtrace;;
-    (h|?) echo "Usage: $(basename $0) [-$opts] <paths...>" && exit 2;;
-  esac
+case "$OPTION" in
+	# inspect: Show file info without preview
+	(i) inspect=true;;
+	(t) tree=true;;
+	(v) set -eo xtrace;
+		export PS4='+\#> ';;
+	(h|?) echo "Usage: $(basename $0) [-$opts] <paths...>" && exit 2;;
+esac
 done
 shift "$(($OPTIND -1))"
 
@@ -65,7 +66,7 @@ for arg; do
 	fi
 	# amount of columns in a grid
 	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
-	tmpfile="$prefix/$(basename "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ')"
+	tmpfile="$prefix/$(basename "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ' || true)"
 	mkdir -p "$prefix"
 	case "$mime" in
 	(*\ application/pdf\;*)
@@ -193,7 +194,8 @@ if test "$bat" -o "$batplain"; then
 					cp "$file" "$txt"
 					timgtxt+=("$txt")
 				done
-				timg -V --grid="$(expr 4 \& ${#bat[@]} \> 5 \| ${#bat[@]})" --title="%b" --frames=3 "${timgtxt[@]}"
+				timg -V --grid="$(expr 4 \& ${#bat[@]} \> 5 \| ${#bat[@]})" --title="%b" --frames=3 "${timgtxt[@]}" ||
+					head -3 "${timgtxt[@]}"
 				#fileinfo "${bat[@]}"
 				;;
 			(*) for file in "${bat[@]}"; do

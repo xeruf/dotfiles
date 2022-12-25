@@ -29,7 +29,7 @@ case "$cmd" in
 	# Non-standard help flags
 	(doom) "$@" --help;;
 	(mpw) "$@" -h 2>&1 | $paginate;;
-	(plantuml) unbuffer "$@" -help | $paginate;;
+	(plantuml|java) unbuffer "$@" -help | $paginate;;
 	(rails) { "$@" -H && "$@" --help; } | $paginate;;
 	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
 	(kdeconnect*) shift && kdeconnect-cli --help-all "$@" | $paginate;;
