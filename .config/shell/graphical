@@ -4,10 +4,9 @@ command -v notify-send >/dev/null &&
 
 if which jrnl >/dev/null; then
 	alias j='jrnl'
-	jn() { jrnl -to today "$@" | less +G; }
+	jn() { jrnl -to today "$@" | less --exit-follow-on-close +F; }
 	alias jnc='jn -contains'
 	alias jne='jrnl --edit'
-	# TODO jump to end
 fi
 
 test "$DISPLAY" || return 0

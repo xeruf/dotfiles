@@ -9,7 +9,7 @@ snapinstall() {
 }
 
 alias aptupdate='sudo apt-get update'
-alias aptremove='sudo apt-get remove'
+alias aptremove='sudo apt-get remove --autoremove'
 alias aptpurge='sudo apt-get purge --autoremove'
 alias aptclean='sudo apt-get clean && sudo apt-get autoremove'
 upgrade() {

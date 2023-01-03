@@ -1,0 +1,2 @@
+#!/bin/sh
+curl --location $1.patch | git am
