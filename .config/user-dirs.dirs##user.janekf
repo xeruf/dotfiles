@@ -1,1 +1,16 @@
-user-dirs.dirs##user.janek
+# This file is written by xdg-user-dirs-update
+# If you want to change or add directories, just edit the line you're
+# interested in. All local changes will be retained on the next run.
+# Format is XDG_xxx_DIR="$HOME/yyy", where yyy is a shell-escaped
+# homedir-relative path, or XDG_xxx_DIR="/yyy", where /yyy is an
+# absolute path. No other format is supported.
+#
+XDG_DESKTOP_DIR="$HOME/.local/desktop"
+XDG_TEMPLATES_DIR="$HOME/.local/templates"
+XDG_DOWNLOAD_DIR="$HOME/data/3-dox"
+XDG_MUSIC_DIR="$HOME/data/4-media/music"
+XDG_PICTURES_DIR="$HOME/data/4-media/images"
+XDG_VIDEOS_DIR="$HOME/data/4-media/videos"
+XDG_DOCUMENTS_DIR="$HOME/data/4-media/multimedia"
+XDG_NOTES_DIR="$HOME/data/2-box"
+#XDG_PUBLICSHARE_DIR="$HOME/data/3-resources/multimedia"
