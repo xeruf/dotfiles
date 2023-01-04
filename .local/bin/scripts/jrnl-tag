@@ -1,2 +1,10 @@
-#!/bin/sh -e
-rpl "\(^\|[^@]\)\b$1\b" "\1@$1" $JOURNAL/*.txt
+#!/bin/sh
+# Find terms in jrnl and turn them into tags
+# Check with jrnl --tags
+if test $# -eq 0
+then $0 sleep nap health tech read dev phone Zinc run bike tour laptop computer PC CB piano faith journal
+else
+  for arg
+  do rpl "\(^\|[^@]\)\b$arg\b" "\1@$arg" $JOURNAL/*.txt
+  done
+fi
