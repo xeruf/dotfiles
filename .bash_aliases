@@ -1,13 +1,5 @@
 test -n "$PS1" || return 0
 
-export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
-bind '"\ek":history-search-backward'
-bind '"\ej":history-search-forward'
-
-if test -f /etc/bash_completion && ! shopt -oq posix
-then . /etc/bash_completion
-fi
-
 alias sc="sudo systemctl"
 alias scs="sudo systemctl status"
 alias sce="sudo systemctl enable --now"
@@ -17,6 +9,8 @@ alias scr="sudo systemctl reload-or-restart"
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
 # Copy recursively with rsync
 alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links --hard-links --times'
+
+export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
 
 # ls aliases
 
@@ -47,13 +41,25 @@ alias rm='rm -I'
 alias cp='cp -i'
 alias mv='mv -i'
 
+# Bash completion
+
+src() { test -f "$1" && source "$1"; }
+
+case $(readlink /proc/$$/exe) in (*bash)
+bind '"\ek":history-search-backward'
+bind '"\ej":history-search-forward'
+
+shopt -oq posix || src /etc/bash_completion
+
 # Fancy prompt
 
 PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]"
 PS1="$PS1 \`if [ \$? = 0 ]; then echo -e '\[\033[01;32m\]:)';"
 PS1="$PS1 else echo -e '\[\033[01;31m\]' \$?; fi\`\[\033[00m\]"
+;;
+(*zsh) setopt sh_word_split;;
+esac
 
-src() { test -f "$1" && source "$1"; }
 src /usr/share/git/completion/git-prompt.sh && PS1="$PS1\$(__git_ps1 \" (%s)\")"
 src $HOME/.config/shell/functions
 
