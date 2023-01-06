@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# Diff the existing filenames between the given directories
+command() {
+    find "$1" -printf '%P\n' | sort
+}
+wiked-diff --colored-blocks false <(command "$1") <(command "$2") |
+    less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen
