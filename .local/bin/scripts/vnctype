@@ -1,7 +1,12 @@
 #!/bin/sh -e
-# Type in NoVNC with german layout
+# Type in NoVNC - from clipboard or interactively with german layout
 xdotool search --onlyvisible --classname Navigator windowactivate # Activate Firefox
+if test $# -gt 0
+then
 setxkbmap de
 sleep 0.1
-xdotool type --delay 80ms --clearmodifiers "$@"
+xdotool type --delay 80ms --clearmodifiers "${@:-$(xclip -sel clip -o)}"
 update-keyboard-layout >/dev/null
+else
+xdotool type --delay 80ms --clearmodifiers "${xclip -sel clip -o}"
+fi
