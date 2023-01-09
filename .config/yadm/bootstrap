@@ -61,7 +61,7 @@ find $HOME -maxdepth 1 -type l -exec file {} + |
 	sed 's/.* //' | xargs -r mkdir -p
 
 link python /usr/bin/python3
-# TODO don't do these prematurely
+# TODO don't link these prematurely, might lead to installation conflicts
 link fdfind /usr/bin/fd
 link batcat /usr/bin/bat
 

@@ -68,7 +68,7 @@ formatsongs() {
 	(
 	find -maxdepth 1 -type d | formatin
 	find "$@" "$PWD" -type d | while read d;
-		do builtin cd $d && findsongs | formatin
+		do builtin cd "$d" && findsongs | formatin
 		done
 	)
 	# fd --no-ignore-vcs --type f --extension opus --exec opusdec --quiet "{}" "{.}.wav" \; ".*" "$@"
@@ -91,8 +91,9 @@ formatin() {
 formatsong() {
 	echo "$1" | sed -e 's/\b\(ft\|Ft\|Feat\|featuring\)\([ .]\)/feat\2/;
 		s/\bfeat /feat. /;
+		s/)(/) (/g;
 		s/ [[(]\(Free Download\|Original Mix\|Original\|Full Stream\|NCS Release\)[])]//i;
-		s/ (\(Acoustic\|Live\))/ [\1]/i;
+		s/ (\(Acoustic\|Live|.* Remix\))/ [\1]/i;
 		s/ \[\(feat.*\)\]/ (\1)/i;
 		s/^\([A-z]\+\) The \([^-]\+\)$/\1, the \2/g;
 		s/ \(\..\{2,4\}\)$/\1/;
