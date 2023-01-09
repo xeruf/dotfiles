@@ -58,9 +58,6 @@
 
 ;;; ORG
 (unpin! org-journal)
-(package! org-journal
-  :recipe (:host github :repo "toemacs/org-journal")
-  )
 
 (package! websocket)
 (package! org-roam-ui
