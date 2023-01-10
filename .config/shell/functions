@@ -332,7 +332,7 @@ sshl() {
 	fi
 }
 
-alias delta="sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service"
+alias delta='sudo systemctl restart openvpn-client@deltaPeak.service || jcl --unit openvpn-client@deltaPeak.service'
 
 # Listen to loopback of mic
 alias listen='pactl load-module module-loopback; echo "Press Enter to stop"; read; pactl unload-module module-loopback'
@@ -345,15 +345,16 @@ alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
 
 p() { pass "$@" || pass edit "$@"; }
 
-alias omd="(echo '#+OPTIONS: tags:nil'; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter"
-alias mdo="pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org-auto_identifiers --wrap preserve"
-alias mdox="xclip -o -selection clipboard | mdo | xclip -filter"
+alias omd='(echo "#+OPTIONS: tags:nil"; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter'
+alias mdo='pandoc -f gfm-ascii_identifiers-gfm_auto_identifiers -t org-auto_identifiers --wrap preserve'
+alias mdox='xclip -o -selection clipboard | mdo | xclip -filter'
+alias pmd='pandoc -t markdown_strict-raw_html'
 
-alias clr="diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less -F"
+alias clr='diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less -F'
 
-alias f="fossil"
-alias fs="fossil status"
-alias fc="fossil commit -v"
+alias f='fossil'
+alias fs='fossil status'
+alias fc='fossil commit -v'
 fdf() {
 	fossil diff "$@" | clr
 }
