@@ -1,0 +1,4 @@
+#!/bin/sh -x
+tmux ls
+sudo docker ps || sudo systemctl status docker
+zulips status
