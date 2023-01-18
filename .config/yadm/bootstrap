@@ -27,12 +27,25 @@ ExecStart=-$agetty --skip-login --login-options $USER %I" |
 	sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
 highlight "Sysyadm setup"
-if test -d "/etc/yadm"
+if test -d "/etc/yadm/repo.git/"
 then sy l
-else sy clone
+else echo "" | sy clone
 fi
 
 SECTION "Software"
+
+highlight "Cleanup Manjaro Sway Dotfiles"
+rmexist() {
+	for arg
+	do test -e "$arg" && echo -n "$arg: " && rm -rI "$arg"
+	done
+}
+rmexist "$XDG_CONFIG_HOME/nvim/init.lua" "$HOME/.emacs.d/"
+
+highlight "MPD"
+mkdir "${XDG_STATE_HOME}/mpd"
+sudo systemctl enable --now mpd
+mpc update
 
 template() {
 	local dir=$(dirname "$1")
@@ -76,10 +89,13 @@ test -d "$_ovpn" &&
 	sudo chown -vR janek:openvpn "$_ovpn"
 
 highlight "Cron"
-echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
-hasService=$(which service 2>/dev/null)
-test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
-test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
+sudo systemctl enable --now cronie
+if test -d "/etc/rsyslog.d"; then
+	echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
+	hasService=$(which service 2>/dev/null)
+	test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
+	test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
+fi
 
 highlight "Zsh"
 test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"

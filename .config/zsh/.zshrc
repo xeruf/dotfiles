@@ -187,7 +187,6 @@ source_existing() {
 	done
 }
 
-source_existing /usr/share/zsh/manjaro-zsh-config
 source_existing $CONFIG_ZSH/.p10k.zsh # To customize prompt, run `p10k configure` or edit .p10k.zsh.
 source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 
