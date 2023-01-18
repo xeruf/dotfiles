@@ -41,7 +41,7 @@ alias rm='rm -I'
 alias cp='cp -i'
 alias mv='mv -i'
 
-# Bash completion
+# Completion and Extras
 
 src() { test -f "$1" && source "$1"; }
 
@@ -52,7 +52,6 @@ bind '"\ej":history-search-forward'
 shopt -oq posix || src /etc/bash_completion
 
 # Fancy prompt
-
 PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]"
 PS1="$PS1 \`if [ \$? = 0 ]; then echo -e '\[\033[01;32m\]:)';"
 PS1="$PS1 else echo -e '\[\033[01;31m\]' \$?; fi\`\[\033[00m\]"

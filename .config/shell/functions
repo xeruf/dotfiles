@@ -175,11 +175,11 @@ alias syslog='less +F /var/log/syslog'
 alias sc='sudo systemctl'
 alias scd='sudo systemctl disable --now'
 
+unalias scs sce 2>/dev/null
 sce() {
 	sudo systemctl enable --now "$@" ||
 		sudo systemctl status "$@"
 }
-unalias scs 2>/dev/null
 scs() {
 	(
 	export SYSTEMD_COLORS=true
@@ -478,7 +478,7 @@ which exa >/dev/null &&
 	alias l='exa --icons' &&
 	alias ll='l --long --extended --git --all'
 
-if which fd >/dev/null
+if which fd >/dev/null 2>&1
 then fn() { $(command -v fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; } # [F]ind [n]o ignore
 	alias ff="noglob fn --color=always " # [F]ind [F]ile
 	compdef ff=fd
