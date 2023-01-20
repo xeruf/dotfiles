@@ -1,4 +1,5 @@
 #!/bin/sh -x
+sudo systemctl list-units --failed
 tmux ls
 sudo docker ps || sudo systemctl status docker
 zulips status

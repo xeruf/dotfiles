@@ -4,6 +4,7 @@ alias sc="sudo systemctl"
 alias scs="sudo systemctl status"
 alias sce="sudo systemctl enable --now"
 alias scr="sudo systemctl reload-or-restart"
+alias status="sudo systemctl list-units --failed || service --status-all; tmux ls; sudo docker ps || sudo systemctl status docker"
 
 # Diff recursively
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
