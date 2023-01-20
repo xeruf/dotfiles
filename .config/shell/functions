@@ -49,6 +49,7 @@ unalias rd 2>/dev/null
 
 # System help {{{1
 
+compdef tldr=man
 compdef help=man
 compdef h=help
 alias info='info --vi-keys'

@@ -120,7 +120,7 @@ Version 2019-11-04 2021-02-16"
       :map ctl-x-map
       "8 SPC" (lambda () (insert-char "200B"))
       :map text-mode-map
-      :desc "Markdown to Zulip" "mam" "4dip
+      :desc "Markdown to Zulip" "mam" "gg4dip
 :%s/<\\/?span ?[^ >]*>//g
 :%s/\\n\\n<a id=.*<\\/a>\\n\\n//g
 :%s/<\\(http[^ \\n]+\\)>/\\1/g
