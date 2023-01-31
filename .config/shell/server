@@ -79,7 +79,14 @@ stack() {
 		esac
 		;;
 	(maria) app=$1
-		"$0" exec $app-mariadb -it -- env "MYSQL_PWD=$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d)" mysql -u $app "$@";;
+		pw="$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d 2>/dev/null ||
+			kubectl get secret -n flux-system stackspin-$app-variables --template "{{.data.${app}_mariadb_password}}" | base64 -d)"
+		case $app in
+			(nextcloud) n=nc-mariadb;;
+			(wordpress) n=wordpress-database;;
+			(*) n=$app-mariadb;;
+		esac
+		"$0" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u $app "$@";;
 	# high-level
 	(shell)
 		container=$1
@@ -100,7 +107,7 @@ stack() {
 	(exec) "$0" kube exec "$@";;
 	(logs) podname=$1
 		shift
-		"$0" kube logs "$podname" | $(command which lnav || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
+		"$0" kube logs "$podname" | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
 	# low-level
 	(kube)
 		test $# -gt 1 || { echo "Please provide a command and pod name" >&2 && return 1; }
@@ -111,10 +118,12 @@ stack() {
 		for arg
 		do case "$arg" in (-*) break;; (*) commands+="$arg"; shift;; esac
 		done
+		local IFS=$'\n'
 		for namespacedpod in $pods; do
 			test "$subcommand" = get ||
 				highlight "Running $subcommand on $namespacedpod" >&2
-			kubectl "$subcommand" "$commands[@]" -n $(echo $namespacedpod) "$@"
+			local IFS=' '
+			kubectl "$subcommand" "$commands[@]" -n $namespacedpod "$@"
 		done;;
 	(pod)
 		test $# -gt 0 && local podname=$1 && shift
