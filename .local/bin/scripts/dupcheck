@@ -1,0 +1,17 @@
+#!/bin/sh
+# Check the first file against all other ones given and print duplicates.
+# Checks first size then diff.
+# TODO diff initial bytes
+if ! test $# -lt 2
+then echo "Need at least 2 files to compare!" 2>/dev/null
+     exit 2
+fi
+target="$1"
+shift
+for existing
+do test "$(realpath "$target")" != "$(realpath "$existing")" -a -f "$existing" &&
+    test "$(stat --format %s "$target")" -eq "$(stat --format %s "$existing")" &&
+    diff -q "$target" "$existing" >/dev/null &&
+    echo "$existing"
+    #test "$(md5sum "$existing" | cut -d\  -f1)" = "$(md5sum "$filepath" | cut -d\  -f1)" &&
+done

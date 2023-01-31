@@ -1,11 +1,15 @@
 #!/bin/sh
-# Delete files under current or given path which exist elsewhere as listed in the locate database
-# Matches first by name, then by checksum (currently inefficiently via md5)
+# Delete files under current or given path
+# which exist elsewhere as listed by locate.
+# Args: [threshold (MB)] <filepaths...>
+# OptDepends: synct (for checking against original filename)
 case $1 in ([0-9]|[0-9][0-9]) threshold=$1; shift;; esac
 find "$@" -size +${threshold:-50}M -type f -exec sh -c "IFS=$'\n'"'
   filepath="{}"
-  target="$(synct-unarchive "$filepath")"
+  target="$(synct-unarchive "$filepath" || echo "$filepath")"
   highlight "$filepath"
   for existing in $(locate -b "$target")
-  do test "$(realpath "$target")" != "$(realpath "$existing")" -a -f "$existing" && test "$(md5sum "$existing" | cut -d\  -f1)" = "$(md5sum "$filepath" | cut -d\  -f1)" && echo "Found duplicate at $existing" && rm -vi "$filepath" && break
+  do test -n "$(dupcheck "$target" "$existing") &&
+     echo "Duplicate found at $existing"
+     rm -vi "$filepath" && break
   done' \;
