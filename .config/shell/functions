@@ -316,10 +316,15 @@ sshl() {
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
 	local file="$authcache/$1"
+    ssh -G "$1" | grep --silent "^user root$" &&
+        ! [[ "$1" =~ "pve.*" ]] &&
+        ! [[ "$1" =~ "encee.*" ]] &&
+        ! [[ "$1" =~ ".*fmh.de" ]] &&
+        pass=pass
 	test "$all" &&
-		pass scp ~/.bash_aliases "$1:" &&
-		pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
-	if ssh -G "$1" | grep --silent "^user root$" && ! [[ "$1" =~ "pve*" ]]
+		$pass scp ~/.bash_aliases "$1:" &&
+		$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
+	if test -n "$pass"
 	then pass ssh "$@"
 	else
 		test ! -e "$file" &&

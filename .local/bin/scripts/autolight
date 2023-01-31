@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# Automatically set screen brightness based on time of day.
+# OLD: value=$(expr 100 - $(expr 13 - $(date +%H) | tr -d -) \* 5)
+# S Function: echo "(c($(date +%H) / 4 - 3) + 1) * 50" | bc -l
+value=$(echo "l=(100 - 1.5 * ( 11 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
+light -S $value
+{ date && echo $value; } >>/var/log/autolight

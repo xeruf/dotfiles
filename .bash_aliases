@@ -1,10 +1,35 @@
 test -n "$PS1" || return 0
 
-alias sc="sudo systemctl"
-alias scs="sudo systemctl status"
-alias sce="sudo systemctl enable --now"
-alias scr="sudo systemctl reload-or-restart"
-alias status="sudo systemctl list-units --failed || service --status-all; tmux ls; sudo docker ps || sudo systemctl status docker"
+test $(id -u) -eq 0 || sudo=sudo
+
+alias sc="$sudo systemctl"
+alias scs="$sudo systemctl status"
+alias sce="$sudo systemctl enable --now"
+alias sced="$sudo --preserve-env=EDITOR systemctl edit"
+alias scr="$sudo systemctl reload-or-restart"
+
+highlight() { echo "[4m$1[0m"; }
+status() {
+	highlight 'System'
+	free -h
+	df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
+	zfs list -d 0
+	highlight 'Internet'
+    #--color=always
+	ip -brief address | grep --color=none -E '^(wl|en|tun|vmbr)'
+	ip route
+	echo -n 'IPv4: ' && timeout 3s ping example.com -A -c 3 -w 3 -q -4
+	echo -n 'IPv6: ' && timeout 3s ping example.com -A -c 3 -w 3 -q -6
+	highlight 'Programs'
+	tmux ls
+	$sudo systemctl --no-pager list-units --failed || service --status-all
+	if type docker >/dev/null
+	then $sudo docker ps || $sudo systemctl status docker
+	fi
+}
+
+alias u='$sudo apt update && sudo apt upgrade'
+alias ur='u && $sudo reboot'
 
 # Diff recursively
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
