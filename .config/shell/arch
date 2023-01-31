@@ -22,7 +22,7 @@ yzf() {
 	sed "s/ /\t/g" |
 		fzf --nth=$pos --multi --history="${FZF_HISTDIR:-$XDG_STATE_HOME/fzf}/history-yzf$pos" \
 			--preview-window=60%,border-left \
-			--bind="double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}'),alt-enter:execute(xdg-open 'https://aur.archlinux.org/packages?K={$pos}&SB=p&SO=d&PP=100')" \
+			--bind="alt-bspace:clear-query,double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}'),alt-enter:execute(xdg-open 'https://aur.archlinux.org/packages?K={$pos}&SB=p&SO=d&PP=100')" \
 			 "$@" | cut -f$pos | xargs
 }
 

@@ -42,7 +42,8 @@ fileinfo() {
 		# TODO do not grep bitrate but extract properly
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
-		$elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
+		$inspect ||
+			$elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
 			$elevate stat --format "%U:%G %A %s $(
 					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
 						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"
@@ -91,7 +92,7 @@ for arg; do
 		timg+=("$tmpfile");;
 	(*\ video/*)
 		suffix=_thumbs.jpg
-		mtn -q -i -t -W -r2 -D6 -b 0,6 -c $grid -w $(expr $(tput cols) '*' 20) \
+		mtn -q -i -t -W -r$(expr 5 - $# \& $# \< 4 \| 1) -D6 -b 0.6 -c $grid -w $(expr $(tput cols) '*' 20) \
 			-O "$prefix" -o "$suffix" "$arg" &&
 		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
 		;;

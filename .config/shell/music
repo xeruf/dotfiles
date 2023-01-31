@@ -66,7 +66,7 @@ addalbum() {
 
 formatsongs() {
 	(
-	find -maxdepth 1 -type d | formatin
+	find -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | formatin
 	find "$@" "$PWD" -type d | while read d;
 		do builtin cd "$d" && findsongs | formatin
 		done
@@ -83,13 +83,17 @@ formatsongs() {
 formatin() {
 	while read song; do
 		new="$(formatsong "$song")"
-		test "$new" && test "$new" != "$song" && mv -iv "$song" "$new"
+		if test "$new" && test "$new" != "$song"
+		then mkdir -p "$(dirname "$new")" && mv -iv "$song" "$new"
+		fi
 	done
 }
 
 # Normalize the given filename
 formatsong() {
-	echo "$1" | sed -e 's/\b\(ft\|Ft\|Feat\|featuring\)\([ .]\)/feat\2/;
+	echo "$1" | sed -e '# First Entry for Qobuz folders
+		/^[A-z0-9_-]\+$/{s|_| |g;s|-|/|g};
+		s/\b\(ft\|Ft\|Feat\|featuring\)\([ .]\)/feat\2/;
 		s/\bfeat /feat. /;
 		s/)(/) (/g;
 		s/ [[(]\(Free Download\|Original Mix\|Original\|Full Stream\|NCS Release\)[])]//i;

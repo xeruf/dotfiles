@@ -1,7 +1,7 @@
 #!/bin/sh
-# TODO set brightness
+# TODO set brightness? light -S
 pkill electron
-pkill discord
+pkill --ignore-case discord
 pkill signal
 pkill aw-server
 pkill aw-qt
