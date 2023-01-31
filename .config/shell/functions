@@ -481,7 +481,7 @@ killJava() {
 # Files {{{1
 
 which exa >/dev/null &&
-	alias l='exa --icons' &&
+	alias l='exa --icons --group-directories-first' &&
 	alias ll='l --long --extended --git --all'
 
 if which fd >/dev/null 2>&1

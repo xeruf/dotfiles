@@ -4,11 +4,15 @@ matches:
   - trigger: ";grue"
     replace: |-
       Grüße,
-      Janek
+       Janek
   - trigger: ";gree"
     replace: |-
       Best,
-      Janek
+       Janek
+  - trigger: ";greg"
+    replace: |-
+      Greetings from Germany,
+       Janek
   - trigger: ";date"
     replace: "{{mydate}}"
     vars:

@@ -7,18 +7,21 @@
 # - host
 # - target directory name (and further arguments to clone)
 # In an existing repo, first arg is omitted
-test $# -eq 0 && echo "Usage: $0 [repo (omit if in repo)] [upstream owner] [own user] [url]" && exit 2
-# TODO check from subdir
-if test -d ".git"
+if test -d ".git" # TODO search upwards
 then repo="$(basename "$PWD")"
-	git remote set-url origin "$(git-repo "${3:-github.com}" "$repo" "$2" "${@:4}")"
-else repo="$1" && shift
-	test -d "$d1" && cd "$d1/0-forks"
-	if ! git-get "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}"
-	then repo="$1-$repo"
-		git-get "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}"
+	git remote set-url origin "$(git-repo "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}")"
+else test $# -eq 0 && echo "Usage: $0 [repo (omit if in repo)] [upstream owner] [own user] [url]" && exit 2
+	repo="$1" && shift
+	if test "$#" -eq 0
+	then git-get "$repo"
+	else
+		test -d "$d1" && cd "$d1/0-forks"
+		if ! git-get "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}"
+		then repo="$1-$repo"
+			 git-get "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}"
+		fi
 	fi
-	cd "$(expr "$4" \| "$repo")"
+	cd "$(basename "$(expr "$4" \| "$repo")")"
 fi
 user="${1:-$repo}"
 git remote remove upstream 2>/dev/null || true
