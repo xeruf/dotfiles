@@ -6,8 +6,8 @@ if test -e "$JOURNAL"; then
   do read intention
   done
   jrnl intentions "$intention"
-  apprise $(pass service/apprise/intentions) -t 'janeks intention' -b "$intention"
   sudo nft flush chain inet filter outall
   sudo nft add rule inet filter outall meta hour "$(date +%H:%M)"-"$(date +%H:%M --date="${1:-10}min")" accept
   #expr \( "$1" \> 40 \) \* 10 \| "$1"
+  apprise $(pass service/apprise/intentions | head -1) -t 'janeks intention' -b "$intention"
 fi

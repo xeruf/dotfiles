@@ -1,0 +1,5 @@
+#!/bin/sh -e
+# Suspend screen until enter is pressed
+xset dpms force off
+read
+xset dpms force on

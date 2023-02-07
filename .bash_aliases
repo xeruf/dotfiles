@@ -6,7 +6,7 @@ alias sc="$sudo systemctl"
 alias scs="$sudo systemctl status"
 alias sce="$sudo systemctl enable --now"
 alias sced="$sudo --preserve-env=EDITOR systemctl edit"
-alias scr="$sudo systemctl reload-or-restart"
+alias scr="$sudo systemctl daemon-reload && $sudo systemctl reload-or-restart"
 
 highlight() { echo "[4m$1[0m"; }
 status() {
@@ -28,8 +28,8 @@ status() {
 	fi
 }
 
-alias u='$sudo apt update && sudo apt upgrade'
-alias ur='u && $sudo reboot'
+alias u="$sudo apt update && $sudo apt upgrade"
+alias ur="u && $sudo reboot"
 
 # Diff recursively
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }

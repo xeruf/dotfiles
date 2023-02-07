@@ -155,3 +155,5 @@ subhighlight "Setup kakoune plugin loader"
 cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
 
 touch $HOME/.local/state/wget-hsts
+
+dasht-docsets-install haskell rails_4 >/dev/null
