@@ -127,7 +127,3 @@ https://addons.mozilla.org/firefox/addon/passff
 https://addons.mozilla.org/firefox/addon/masterpassword-firefox
 **** [[https://addons.mozilla.org/en-US/firefox/collections/15727735/integration?collection_sort=-popularity][System Integration]]
 **** [[https://addons.mozilla.org/en-US/firefox/collections/15727735/privacy?collection_sort=-popularity][Privacy]]
-* Issues
-** Manjaro Sway
-- zsh vim bindings don't work properly
-- clipboard sync does not work in Doom Emacs (fixed?)
