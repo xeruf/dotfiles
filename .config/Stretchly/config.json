@@ -2,7 +2,7 @@
 	"microbreakDuration": 30000,
 	"microbreakInterval": 900000,
 	"breakDuration": 180000,
-	"breakInterval": 3,
+	"breakInterval": 2,
 	"breakNotification": false,
 	"microbreakNotification": false,
 	"breakNotificationInterval": 30000,
@@ -282,7 +282,7 @@
 		{
 			"data": [
 				"Intention",
-				"Are you doing what you set out to? Journal what you have been doing."
+				"Take a break, reflect and review your plans."
 			],
 			"enabled": true
 		}
@@ -386,11 +386,11 @@
 		},
 		{
 			"data": "Do one thing at a time.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Is your attention spent wisely?",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Adjust your posture",
@@ -398,7 +398,7 @@
 		},
 		{
 			"data": "Expose your eyes to natural light.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "With your eyes closed, slowly and gently move eyes up to the ceiling, then slowly down to the floor.",
@@ -422,14 +422,10 @@
 		},
 		{
 			"data": "Make a fist and then fan your fingers out and stretch them as far as you can.",
-			"enabled": false
-		},
-		{
-			"data": "Relax your eyes",
 			"enabled": true
 		},
 		{
-			"data": "What are you doing?",
+			"data": "Relax your eyes by looking into the distance",
 			"enabled": true
 		},
 		{
@@ -437,7 +433,7 @@
 			"enabled": true
 		},
 		{
-			"data": "Stretch",
+			"data": "Stretch up and down",
 			"enabled": true
 		},
 		{
