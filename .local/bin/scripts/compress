@@ -1,0 +1,3 @@
+#!/bin/sh
+# Just compress the given directory!
+7z a "$1" "$@"

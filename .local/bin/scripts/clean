@@ -4,8 +4,10 @@
 
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
-_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .electron .electron-gyp .gradle .gradle-kotlin-dsl .hex .java .kscript .konan .m2 .mix .nix-defexpr .node-gyp .node_modules .npm .pnpm-store .nv .openjfx .parallel .stack .surf .texlive .yarn luametatex-cache
-  .lesshst .python_history .rubberband.wisdom.d .yarnrc)
+_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .electron .electron-gyp .gradle .gradle-kotlin-dsl .hex .java .kscript .konan .m2 .mix .nix-defexpr .node-gyp .nv .openjfx .parallel .stack .surf .texlive
+             .yarn .node_modules .npm .pnpm-store 
+             luametatex-cache luatex-cache
+             .lesshst .python_history .rubberband.wisdom.d .yarnrc)
 
 [[ $1 =~ "." ]] && local=pwd
 [[ $1 =~ "i" ]] && i=-i
