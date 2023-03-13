@@ -25,7 +25,7 @@ sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r {} || echo
 case "$sel" in
   ("") exit 1;;
   (/etc/sudoers) sudo visudo;;
-  (/etc/fstab) sudoedit "$sel" && sudo findmnt --verify;;
+  (/etc/fstab) sudoedit "$sel" && sudo findmnt --verify && sudo systemctl daemon-reload;;
                #systemctl daemon-reload && mount -af -o remount;;
   (/etc/default/grub) sudoedit "$sel" && sudo grub-mkconfig -o /boot/grub/grub.cfg;;
   (/etc/locale.gen) sudoedit "$sel" && sudo locale-gen;;

@@ -4,7 +4,8 @@
 
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
-_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .electron .electron-gyp .gradle .gradle-kotlin-dsl .hex .java .kscript .konan .m2 .mix .nix-defexpr .node-gyp .nv .openjfx .parallel .stack .surf .texlive
+# TODO .mix - outdated version in socha
+_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .electron .electron-gyp .gradle .gradle-kotlin-dsl .hex .java .kscript .konan .m2 .nix-defexpr .node-gyp .nv .openjfx .parallel .stack .surf .texlive
              .yarn .node_modules .npm .pnpm-store 
              luametatex-cache luatex-cache
              .lesshst .python_history .rubberband.wisdom.d .yarnrc)
@@ -50,16 +51,17 @@ highlight "s :: recursively remove logs"
 
 highlight "m :: recursively remove mac-files"
 if [[ $1 =~ "m" ]]; then
-	find -name '__MACOSX' -print -exec rm -r {} +
+	find \( -name '__MACOSX' -o -name '._.Trashes' \) -print -exec rm -r {} +
 	find \( -iname '.spotlight*' -o -name 'System Volume Information' -o -name '.fseventsd' \) -print -exec rm -rI {} +
 	find -name '*.DS_Store' -delete
+	echo 'Removed DS Stores'
 fi
 
 highlight "d :: recursively remove development caches"
 if [[ $1 =~ "d" ]]; then
 	# TODO some matches duplicate log clearing
 	find -maxdepth 1 \( -name "*.aux" -o -name "*.log" -o -name "*.t[uo][ca]" -o -name "*.out" \) -print -delete
-	find \( -name 'src' -o -name 'vendor' \) -prune -o \
+	find \( -name 'src' -o -name 'vendor' -o -name 'web' \) -prune -o \
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm $i -r {} + -prune
 	echo -n "  " && highlight "build directories"

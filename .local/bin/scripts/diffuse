@@ -1,0 +1,5 @@
+#!/bin/sh -e
+case "$1" in ([0-9]*) count=$1; shift;; esac
+for i in {1..${count:-9}}
+do txt2img --prompt "$*" --output "${1}_$(date +%y%m%d)-${i}.png"
+done

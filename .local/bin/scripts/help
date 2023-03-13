@@ -7,6 +7,12 @@ paginate="${PAGER:-less} +Gg"
 case "$1" in
 	(-d) browse=1; shift;;
 	(-v) set -o xtrace; shift;;
+	("") echo "Try:
+		tldr
+		info
+		man
+		test-colors
+		arg-test / arg-notify"
 esac
 
 showinfo() {

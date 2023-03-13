@@ -1,13 +1,15 @@
 #!/bin/sh -e
 # Keeps the Internet at bay
 if test -e "$JOURNAL"; then
+  # TODO ask previous
   echo "What do you want to do? Check your journal!" >&2
-  while test $(echo "$intention" | wc -c) -lt 10
+  mins=${1:-10}
+  while test $(echo "$intention" | wc -c) -lt $mins
   do read intention
   done
   jrnl intentions "$intention"
   sudo nft flush chain inet filter outall
-  sudo nft add rule inet filter outall meta hour "$(date +%H:%M)"-"$(date +%H:%M --date="${1:-10}min")" accept
+  sudo nft add rule inet filter outall meta hour "$(date +%H:%M)"-"$(date +%H:%M --date="${mins}min")" accept
   #expr \( "$1" \> 40 \) \* 10 \| "$1"
-  apprise $(pass service/apprise/intentions | head -1) -t 'janeks intention' -b "$intention"
+  apprise $(pass service/apprise/intentions | head -1) -t "janeks intention for ${mins} min" -b "$intention"
 fi

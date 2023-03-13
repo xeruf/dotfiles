@@ -1,0 +1,4 @@
+#!/bin/sh -e
+# Make a gzipped image of a disk with dd
+sudo dd status=progress "if=$1" bs=1M | gzip > "$2.img.gz"
+# bs=4k | ssh naspi dd bs=4k of=/data/backups/sd/220811_janek.gz

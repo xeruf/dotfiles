@@ -1,0 +1,8 @@
+#!/bin/sh -e
+# Clean the download folder of empty files and duplicates
+IFS='
+'
+find -name '*([0-9])*' -exec sh -c 'file="{}";
+ new="$(echo $file | sed "s| \?([0-9])||")";
+ mv -v$(test -s "$new" && ! command diff "$file" "$new" >&2 && echo i) "$file" "$new"' \;
+find -name "*.part" -exec rm -vi {} +

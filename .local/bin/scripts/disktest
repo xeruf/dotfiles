@@ -17,12 +17,12 @@ if test $# -eq 0
 then highlight "[1mWrite Test"
 	sync
 	# This prevents predictions by using random, but since that is too slow we have to copy a previously created file
-	highlight "Preparing:" &&
-		sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=1K &&
+	count=100$(test $(df --output="avail" . | tail -1) -gt 999999 && echo 0 || true)
+	highlight "Preparing random bits:" &&
+		sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=$count &&
 		highlight "Copying random bits:" &&
-		sudo dd status=progress if=/var/tmp/tempfile of=tempfile bs=1M count=1K
-	# TODO adjust size to disk
+		sudo dd status=progress if=/var/tmp/tempfile of=tempfile bs=1M count=$count
 	highlight "Copying zero bits:" &&
-		sudo dd status=progress if=/dev/zero of=tempfile bs=1M count=1K
+		sudo dd status=progress if=/dev/zero of=tempfile bs=1M count=$count
 	sudo rm tempfile
 fi
