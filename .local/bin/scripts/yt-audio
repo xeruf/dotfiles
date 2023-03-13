@@ -1,0 +1,2 @@
+#!/bin/sh
+yt-dlp --extract-audio "$@"

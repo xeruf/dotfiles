@@ -18,8 +18,8 @@ case $1 in
   (socha) user=software-challenge; host=git@github.com;;
   (hub) host=git@github.com;;
   (lab) host=git@gitlab.com;;
-  (ftt) host=git@code.ftt.gmbh; user=janek;;
-  (*)   host=${1:-gitea@git.jfischer.org};;
+  (jf)   host=${1:-gitea@git.jfischer.org};;
+  (*|ftt) host=git@code.ftt.gmbh; user=janek;;
 esac
 user=${3:-${user:-$(git config user.name)}}
 repo=${2:-$(basename $PWD)}
