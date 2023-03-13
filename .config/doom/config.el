@@ -87,6 +87,7 @@ Version 2019-11-04 2021-02-16"
 (with-eval-after-load 'outline
   (add-hook 'ediff-prepare-buffer-hook 'outline-show-all))
 
+
 (map! :n
       ;; Buffer-local font resizing
       "M-C-+"   'text-scale-increase
@@ -172,9 +173,35 @@ Version 2019-11-04 2021-02-16"
     (setq buffer-file-coding-system 'utf-8)
   (setq default-buffer-file-coding-system 'utf-8))
 
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-(add-hook 'window-setup-hook #'xclip-mode)
+;;; Clipboard
+
+;; Checks if the session type is in fact for Wayland.
+(if (string= (getenv "XDG_SESSION_TYPE") "wayland")
+  (progn
+    ;; Clipboard from Terminal in Wayland: https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
+    (setq wl-copy-process nil)
+    
+    (defun wl-copy (text)
+      (setq wl-copy-process (make-process :name "wl-copy"
+                                          :buffer nil
+                                          :command '("wl-copy" "-f" "-n")
+                                          :connection-type 'pipe
+                                          :noquery t))
+      (process-send-string wl-copy-process text)
+      (process-send-eof wl-copy-process))
+    
+    (defun wl-paste ()
+      (if (and wl-copy-process (process-live-p wl-copy-process))
+          nil ; should return nil if we're the current paste owner
+        (shell-command-to-string "wl-paste -n | tr -d \r")))
+    
+    (setq interprogram-cut-function 'wl-copy)
+    (setq interprogram-paste-function 'wl-paste)
+    )
+  ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+  (add-hook 'window-setup-hook #'xclip-mode)
+)
 
 ;;; Data Preservation
 
@@ -222,7 +249,7 @@ Version 2019-11-04 2021-02-16"
       time-stamp-format (concat "[" time-stamp-bare "]"))
 ;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
 (use-package! time-stamp
-  :init (setq time-stamp-start "modified:[       ]+\\\\?"
+  :init (setq time-stamp-start "modified:[	 ]+\\\\?"
               time-stamp-end "$")
   :hook before-save)
 
@@ -262,7 +289,9 @@ Version 2019-11-04 2021-02-16"
 
   :config
 
-  (defun xf/slugify (string) (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-" string)))
+  (defun xf/slugify (string)
+    (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-"
+                                (s-replace-regexp ".*://\\([^.]+\\)\\..*" "\\1" (substring-no-properties (org-sort-remove-invisible string))))))
 
   ; the value does not matter, see https://emacs.stackexchange.com/questions/71774/pass-default-value-to-org-set-property/71777#71777
   ;(add-to-list 'org-global-properties-fixed '("ID_ALL" . "id"))
@@ -313,6 +342,7 @@ Version 2019-11-04 2021-02-16"
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
   (push "PERM(e)" (cdr (car org-todo-keywords)))
+  ; #+TODO: IDEA(i!) PROMPT(p!) OUTLINE(o!) DRAFT(t!) | DONE(d!) REVIEWED(r!) ABANDON(a!)
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
@@ -527,7 +557,7 @@ Version 2019-11-04 2021-02-16"
       )
 
     (defvar xf/auto-org-roam-db-sync--timer nil)
-    (defvar xf/auto-org-roam-db-sync--timer-interval 10)
+    (defvar xf/auto-org-roam-db-sync--timer-interval 40)
     (define-minor-mode xf/auto-org-roam-db-sync-mode
       "Toggle automatic `org-roam-db-sync' when Emacs is idle.
        Reference: `auto-save-visited-mode'"
@@ -884,16 +914,19 @@ Version 2019-11-04 2021-02-16"
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
 
-(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
-(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
-(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
+;(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
+;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
+;(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 
-(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
-(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
+;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+;
+;;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 
-;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
-(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+
 (use-package! web-mode
   :mode "\\.html\\'"
   :mode "\\.phtml\\'"
@@ -942,11 +975,12 @@ Version 2019-11-04 2021-02-16"
   :init (add-to-list 'vc-handled-backends 'Fossil))
 
 (use-package! chordpro-mode
-  :mode "\\.cho"
+  :mode ("\\.cho\\'" . chordpro-mode)
   :config
     (set-file-template! 'chordpro-mode :mode 'chordpro-mode) ; TODO broken
     (define-key chordpro-mode-map (kbd "C-c C-c") 'chordpro-insert-chord)
   )
+
 (use-package! lilypond-mode
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config
