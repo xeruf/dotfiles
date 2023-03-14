@@ -119,6 +119,7 @@ case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh);; (*) chsh -s $(wh
 
 highlight "Arch"
 if test -f /etc/pacman.conf; then
+# TODO adjust makepkg.conf to at least half of processor count
 	subhighlight "Pacman"
 	sudo sed -i 's/#Parallel/Parallel/;s/#Color/Color/;s/#UseSyslog/UseSyslog/' /etc/pacman.conf
 	sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf

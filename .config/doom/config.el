@@ -939,6 +939,7 @@ Version 2019-11-04 2021-02-16"
   :config (add-hook 'web-mode-hook 'rainbow-mode)
   )
 
+; https://discourse.doomemacs.org/t/disabling-ruby-typeprof/3197/3
 (after! lsp-mode
   (setq lsp-disabled-clients '(typeprof-ls)))
 
@@ -1066,7 +1067,8 @@ Version 2019-11-04 2021-02-16"
 (use-package! magit
   :defer t
   :config
-    (setq magit-clone-set-remote.pushDefault 't
+    (setq git-commit-summary-max-length 60
+          magit-clone-set-remote.pushDefault 't
           magit-clone-default-directory (expand-file-name "1-projects" user-data-dir)
           magit-blame--style (car magit-blame-styles))
     (setq magit-clone-name-alist

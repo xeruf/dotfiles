@@ -158,7 +158,9 @@ setopt hist_find_no_dups
 setopt hist_save_no_dups
 setopt hist_reduce_blanks
 unsetopt hist_ignore_space
-# TODO filter from history: netkeeper killm
+zshaddhistory() {
+  [[ $1 != netkeeper* ]] && [[ $1 != killm* ]]
+}
 
 setopt sh_word_split
 setopt extended_glob

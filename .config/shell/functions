@@ -45,6 +45,9 @@ ulimit -c unlimited # Enable core dumps
 which lsb_release >/dev/null &&
 	export DIST=$(lsb_release --id | cut -d'	' -f2)
 
+# Weird alias to broken color-diff
+unalias diff 2>/dev/null
+# Alias on some systems?
 unalias rd 2>/dev/null
 
 # System help {{{1
@@ -174,6 +177,7 @@ alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewar
 alias syslog='less +F /var/log/syslog'
 
 alias sc='sudo systemctl'
+alias sced="EDITOR=nvim sudo --preserve-env=EDITOR systemctl edit"
 alias scd='sudo systemctl disable --now'
 
 unalias scs sce 2>/dev/null
@@ -320,7 +324,8 @@ sshl() {
         ! [[ "$1" =~ "pve.*" ]] &&
         ! [[ "$1" =~ "encee.*" ]] &&
         ! [[ "$1" =~ ".*fmh.de" ]] &&
-        pass=pass
+        ! [[ "$1" =~ "delta*" ]] &&
+        local pass=pass
 	test "$all" &&
 		$pass scp ~/.bash_aliases "$1:" &&
 		$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
