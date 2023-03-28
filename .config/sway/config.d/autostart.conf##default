@@ -1,4 +1,4 @@
 assign [app_id="firefox"] workspace 2
-# exec swaymsg "workspace 2; exec firefox;"
+exec swaymsg "workspace 2; exec firefox;"
 exec swaymsg "workspace 3; exec kitty;"
 exec swaymsg "workspace 1; exec emacs"
