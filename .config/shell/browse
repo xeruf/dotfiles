@@ -99,6 +99,7 @@ locate-zox() {
 }
 # Switch directory heuristically using zoxide and locate
 d() {
+	# TODO do not use expr, rather test, so there can be floats
 	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return; }
 	local query="$(zoxide-list "$@")"
 	# First find out whether there is an obvious match
@@ -106,7 +107,7 @@ d() {
 	# which is not the current directory
 	# If not select with fzf, using locate to find extra options
 	target="$(if test -n "$query" &&
-			expr "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
+			echo "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
 				$(echo "$query" | sed 'N;s|/.* \([0-9]\+\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null &&
 			[[ ! "$(echo "$query" | head -1)" =~ ".*$PWD" ]]
 			then echo "$query" | head -1

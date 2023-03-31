@@ -262,7 +262,7 @@ curlh() {
 
 u() {
 	# Line below handy for users of netkeeper
-	sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo sysupgrade | netkeeper 30 2>/dev/null
+	sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo 'pausing netkeeper for sysupgrade' | netkeeper 30 2>/dev/null
 	if command -v pacman >/dev/null; then
 		if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
 		then
@@ -428,6 +428,9 @@ npm-reinstall() {
 
 # Reconnect to ONKYO since it is buggy
 alias onkyo='bluetoothctl disconnect 00:09:B0:1D:DC:98 && sleep 1 && bluetoothctl connect 00:09:B0:1D:DC:98'
+
+alias pdfcon='TEXMF="" pdfjam -o $(date +%F).pdf'
+alias pdfwor='TEXMF="" pdfjam -o collections/$(date +%F)_Akkorde.pdf'
 
 # Custom tools {{{1
 
