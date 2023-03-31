@@ -34,10 +34,12 @@ checkperm() {
 	mime="$(test -n "$shifted" || $elevate file --dereference --mime "$@")"
 }
 fileinfo() {
-	tput setaf 6
+	tput setaf 4
 	for arg
 	do case "$arg" in (-*) continue;; esac
+		tput smso
 		$elevate file --exclude elf -E "$arg"
+		tput rmso
 		$elevate ssh-keygen -l -f "$arg" 2>/dev/null || true
 		# TODO do not grep bitrate but extract properly
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
@@ -138,6 +140,7 @@ for arg; do
 			;;
 		(*:\ SQLite\ *\ database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
 		(*:\ data) ;;
+		(*\ key) bat+=("$arg");;
 		(*) bat+=("$arg")
 			timga+=("$arg")
 			continue

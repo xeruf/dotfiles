@@ -1,6 +1,6 @@
 #!/bin/sh -e
 test "$1" = "-q" && quiet=$1 && shift
-test ! -r "$1" && echo "Usage: sign <document.pdf> [hoffset [voffset [scale [signature-image]]]]" && exit 1
+test ! -r "$1" && echo "Usage: sign <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
 
 signature=$(pass info/signature$(test -n "$5" && echo "-$5"))
 
@@ -12,8 +12,16 @@ tmp_reversed=$tmp_base/$1_reverse.pdf
 sig=$tmp_base/signature_offset.pdf
 result="${1%.pdf}_${5:-signed}.pdf"
 
+h=${2:--160}
+v=${3:--310}
+if test $# -lt 2; then
+  case "$1" in
+  (*\ TU.pdf) v=-260;;
+  esac
+fi
+export TEXMF=""
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
-    --offset "${2:--160}pt ${3:--310}pt" --scale "${4:-1}"
+    --offset "${h}pt ${v}pt" --scale "${4:-1}"
 pdfjam $quiet "$1" last "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
 
 timg "$tmp_signed"
