@@ -1,5 +1,5 @@
 # Don't ask for confirmations
-#assume_yes = true
+#assume_yes = ["emacs"]
 
 # Disable specific steps - same options as the command line flag
 disable = ["nix", "containers", "config_update"]
@@ -14,7 +14,7 @@ disable = ["nix", "containers", "config_update"]
 no_retry = true
 
 # Run inside tmux
-#run_in_tmux = true
+run_in_tmux = true
 
 # List of remote machines with Topgrade installed on them
 remote_topgrades = ["tiger"]

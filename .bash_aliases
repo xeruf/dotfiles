@@ -40,10 +40,11 @@ export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(t
 
 # ls aliases
 
-export LS_OPTIONS='--human-readable --si --group-directories-first --file-type --dereference-command-line'
+export LS_OPTIONS='--human-readable --si --group-directories-first --dereference-command-line'
 eval "$(dircolors)"
 alias ls='ls --color=auto'
-alias ll='ls $LS_OPTIONS -l --all'
+alias ll='ls $LS_OPTIONS --file-type -l'
+alias la='ll --all'
 alias l='ls $LS_OPTIONS --color=always --almost-all'
 
 which bat >/dev/null 2>&1 || alias bat="$(which batcat >/dev/null 2>&1 && echo batcat || echo less -FX)"

@@ -13,6 +13,15 @@ matches:
     replace: |-
       Greetings from Germany,
        Janek
+  - trigger: ";greb"
+    replace: |-
+      Grüße aus Bayreuth,
+       Janek Fischer
+     
+      --
+      Technischer Leiter https://software-challenge.de, deutscher Programmierwettbewerb für Schüler
+      CTO der FTT Forensic Discovery GmbH - gesunde IT aus Bayreuth: https://forensicdiscovery.de
+      Software Engineering Student @ https://code.berlin
   - trigger: ";date"
     replace: "{{mydate}}"
     vars:

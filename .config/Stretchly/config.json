@@ -338,7 +338,7 @@
 		},
 		{
 			"data": "Take a moment to think about something you appreciate.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Take a moment to smile at being alive.",
@@ -354,11 +354,11 @@
 		},
 		{
 			"data": "Close your eyes and name the things you hear.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Place your fingertips on your shoulders. Roll your shoulders forward for 10 seconds, then backward.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Raise your right arm, stretch it over your head to the left, and hold for 10 seconds. Repeat on the other side.",
@@ -398,7 +398,7 @@
 		},
 		{
 			"data": "Expose your eyes to natural light.",
-			"enabled": true
+			"enabled": false
 		},
 		{
 			"data": "With your eyes closed, slowly and gently move eyes up to the ceiling, then slowly down to the floor.",
@@ -406,7 +406,7 @@
 		},
 		{
 			"data": "With your eyes closed, slowly and gently move eyes to the left, then slowly to the right.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Shake your hands out to get some relief.",
@@ -414,26 +414,38 @@
 		},
 		{
 			"data": "One at a time, touch the tip of each finger to the tip of your thumb so they make an O-shape.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Make a fist and then slide your fingers up until they point toward the ceiling, like you're telling someone to stop.",
-			"enabled": false
+			"enabled": true
 		},
 		{
 			"data": "Make a fist and then fan your fingers out and stretch them as far as you can.",
 			"enabled": true
 		},
 		{
-			"data": "Relax your eyes by looking into the distance",
+			"data": "Relax your face muscles and eyes by looking into the distance.",
 			"enabled": true
 		},
 		{
-			"data": "Rub your palms and cover your eyes",
+			"data": "Rub your palms and cover your eyes - or close your eyes and gently move them around",
 			"enabled": true
 		},
 		{
-			"data": "Stretch up and down",
+			"data": "Stretch Up and Down",
+			"enabled": true
+		},
+		{
+			"data": "Lie down with your back on the ground, stretch your limbs up and breathe.",
+			"enabled": true
+		},
+		{
+			"data": "Go for a pull-up and a glass of water.",
+			"enabled": true
+		},
+		{
+			"data": "Gently tilt and turn your head to side and bend your opposite hand.",
 			"enabled": true
 		},
 		{
