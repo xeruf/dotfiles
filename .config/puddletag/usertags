@@ -1,4 +1,6 @@
 
+REPLAYGAIN_TRACK_GAIN
+REPLAYGAIN_TRACK_PEAK
 album
 albumartist
 albumartist2
@@ -13,6 +15,7 @@ author
 band
 bpm
 comment
+comment:ID3v1 Comment
 composer
 conductor
 copyright
