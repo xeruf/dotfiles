@@ -457,9 +457,15 @@
 	"appExclusions": [],
 	"appExclusionsCheckInterval": 1000,
 	"pauseForSuspendOrLock": true,
-	"pauseBreaksShortcut": "",
-	"resumeBreaksShortcut": "",
+	"pauseBreaksToggleShortcut": "",
 	"screen": "primary",
 	"timeToBreakInTray": false,
-	"currentTimeInBreaks": false
+	"currentTimeInBreaks": false,
+	"pauseBreaksShortcut": "",
+	"resumeBreaksShortcut": "",
+	"__internal__": {
+		"migrations": {
+			"version": "1.13.1"
+		}
+	}
 }

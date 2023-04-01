@@ -914,10 +914,10 @@ Version 2019-11-04 2021-02-16"
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
 
-;(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
 ;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
 ;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
-;(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
+(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 
 ;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 ;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
