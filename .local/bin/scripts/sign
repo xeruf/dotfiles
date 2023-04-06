@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 test "$1" = "-q" && quiet=$1 && shift
 test ! -r "$1" && echo "Usage: sign <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
 
-signature=$(pass info/signature$(test -n "$5" && echo "-$5"))
+signature=$(pass info/signature$(test -n "$5" && echo "-$5") || echo "$5")
 
 # TODO make filenames unique and don't rerun unneccessarily
 tmp_base=/tmp/sign
@@ -10,7 +10,7 @@ mkdir -p $tmp_base
 tmp_signed=$tmp_base/$1_last-signature.pdf
 tmp_reversed=$tmp_base/$1_reverse.pdf
 sig=$tmp_base/signature_offset.pdf
-result="${1%.pdf}_${5:-signed}.pdf"
+result="${1%.pdf}_$(basename "${5:-signed}").pdf"
 
 h=${2:--160}
 v=${3:--310}

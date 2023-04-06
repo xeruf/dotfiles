@@ -4,6 +4,7 @@
 # detects whether unpacking into a subfolder is sensible
 # and shows progress indications for some operations
 # optdepends: rewrite(part of my dotfiles, for unzip line rewriting) 7z p7zip unzip
+# TODO auto-delete archive, auto-extract in current dir, trim .tar.gz fully
 for arg do
 case $arg in
 	(-d) del=$(expr ${del:-0} + 1);;

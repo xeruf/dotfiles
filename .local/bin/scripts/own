@@ -1,3 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 # Recursively take ownership of the given files or the current directory
-sudo chown -R --preserve-root $USER:$USER "${@:-.}"
+u=$USER
+case "$1" in
+	(+*) sudo chmod -R "$1" "${@:-.}"; shift; break;;
+	(-*) u="${1#-}"; shift; break;;
+esac
+sudo chown -R --preserve-root "$u:$u" "${@:-.}"
