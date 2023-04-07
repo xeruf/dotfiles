@@ -1,6 +1,6 @@
 input * {
 	xkb_layout eu,de,us
-	xkb_variant nodeadkeys,basic,euro
+	xkb_variant basic,nodeadkeys,euro
 	xkb_numlock enabled
 	xkb_options caps:escape_shifted_capslock
 }
