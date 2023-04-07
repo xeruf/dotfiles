@@ -13,6 +13,8 @@ test "$DISPLAY" || return 0
 
 alias graphics='lspci -vnn | grep VGA --color=never && xrandr --listproviders'
 
+alias clip='cliphist list | fzf | cliphist decode | wl-copy'
+
 # WIP Edit mozilla config
 mozedit() (
 	set -eo pipefail

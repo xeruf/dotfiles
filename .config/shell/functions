@@ -31,6 +31,9 @@ fi
 xdh="$XDG_DATA_HOME"
 xch="$XDG_CONFIG_HOME"
 xsh="$XDG_STATE_HOME"
+alias xdh="cd $XDG_DATA_HOME"
+alias xch="cd $XDG_CONFIG_HOME"
+alias xsh="cd $XDG_STATE_HOME"
 if test -d "$DATA"; then
 	da=$(builtin cd $DATA/_* && pwd)
 	d1=$(builtin cd $DATA/1* && pwd)
@@ -320,12 +323,12 @@ sshl() {
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
 	local file="$authcache/$1"
-    ssh -G "$1" | grep --silent "^user root$" &&
-        ! [[ "$1" =~ "pve.*" ]] &&
-        ! [[ "$1" =~ "encee.*" ]] &&
-        ! [[ "$1" =~ ".*fmh.de" ]] &&
-        ! [[ "$1" =~ "delta*" ]] &&
-        local pass=pass
+	ssh -G "$1" | grep --silent "^user root$" &&
+		! [[ "$1" =~ "pve.*" ]] &&
+		! [[ "$1" =~ "encee.*" ]] &&
+		! [[ "$1" =~ ".*fmh.*" ]] &&
+		! [[ "$1" =~ "delta*" ]] &&
+	local pass=pass
 	test "$all" &&
 		$pass scp ~/.bash_aliases "$1:" &&
 		$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
@@ -568,27 +571,34 @@ compdef mkcd=mkdir
 
 # Other stuff {{{1
 
-# This is a function rather than a script as it potentially needs to cd out of the directory
+alias unmount=umoul
+# This is a function rather than a script as it potentially needs to cd out
+# if the current directory is the one to unmount
 umoul() {
 	local arg
+	local mnt="${MNT:-${XDG_RUNTIME_DIR}/mnt}"
 	# get the last arg
 	for arg; do true; done
-	if test "$arg"
-	then mountpoints="$(test -d "$arg" && realpath "$arg" || echo "${MNT:-${XDG_RUNTIME_DIR}/mnt}/$arg")"
-		mountpoint "$mountpoints" 2>/dev/null || test -b "$mountpoints" ||
-			mountpoints="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
-		test "$mountpoints" || return 1
-	else mountpoints="$PWD"
+	case "$arg" in
+	(-a|--all)
+		mountpoints=$(mount | grep "$mnt" | cut -d' ' -f3)
+	("")
+		mountpoints="$(pwd | grep -v /home || echo /)"
 		while test "$mountpoints" != "/"; do
 			mountpoint "$mountpoints" >/dev/null && break
 			mountpoints="$(dirname "$mountpoints")"
 		done
 		test "$(dirname "$mountpoints")" != "/" ||
 			mountpoints="$(mount |
-				grep --invert-match -e " /[^m][^/]*\(/[^/]*\)\? " -e "/sys" -e "/run/user" -e "/run/docker" |
-				fzf --select-1 --exit-0 | awk '{print $3}')" ||
+				grep --invert-match -e " /[^m][^/]*\(/[^/]*\)\? " -e "/sys" -e "/run/user" -e "/run/docker" -e "/home" |
+				fzf --exit-0 | awk '{print $3}')" ||
 			return $?
-	fi
+	(*)
+		mountpoints="$(test -d "$arg" && realpath "$arg" || echo "$mnt/$arg")"
+		mountpoint "$mountpoints" 2>/dev/null || test -b "$mountpoints" ||
+			mountpoints="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
+		test "$mountpoints" || return 1
+	esac
 	while true; do
 		case "$PWD" in
 			("$mountpoints"*) popd || builtin cd "$(dirname $mountpoints)";;
