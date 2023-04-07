@@ -1,5 +1,6 @@
 #!/bin/sh -e
 # Execute commands on a zulip server
+# https://zulip.readthedocs.io/en/latest/production/management-commands.html
 zulipdepl="/home/zulip/deployments/current"
 case $1 in
 	(upgrade)

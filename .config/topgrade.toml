@@ -1,3 +1,4 @@
+display_preamble = false
 # Don't ask for confirmations
 #assume_yes = ["emacs"]
 

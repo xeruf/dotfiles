@@ -1,9 +1,12 @@
 #!/bin/sh -ex
 target="${1:-$PWD}"
 cd $DATA/5*
-tar xf Qobuz-commandes.tar
-mv -v *.jpg Qobuz-commandes/
-mv -v Qobuz-commandes $target/qobuz #$d4/music/Worship/
+mkdir -p qobuz
+cd qobuz
+tar xf ../Qobuz-commandes.tar
+mv -v ../*.jpg . || true
+cd ..
+mv -v qobuz $target/ #$d4/music/Worship/
 rm -i Qobuz-commandes.tar
 cd $target/qobuz
 find -type d -exec sh -c 'test $(ls "{}" | wc -l) -eq 1 && find "{}" -maxdepth 1 -type f | xargs -i% mv -v % .' \;
