@@ -1,5 +1,8 @@
 #!/bin/sh
-git-l
+git-l ||
+	{ test -e $(git rev-parse --git-path rebase-merge) &&
+		printf "\e[31;1mError - aborting rebase!\e[0m\n" >&2 &&
+		git rebase --abort; }
 if git rev-parse @{upstream} >/dev/null 2>&1
   then git push "$@"
   else git push --set-upstream "$@"
