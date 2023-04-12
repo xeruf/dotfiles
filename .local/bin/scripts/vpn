@@ -1,0 +1,2 @@
+#!/bin/sh -e
+tmux new-session -s "$@" "sudo openvpn $@"

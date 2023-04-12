@@ -28,8 +28,9 @@ status() {
 	fi
 }
 
-alias u="$sudo apt update && $sudo apt upgrade"
-alias ur="u && $sudo reboot"
+__u="$sudo apt update && $sudo apt upgrade"
+alias u="$__u"
+alias ur="tmux new-session -s upgrade '$__u && $sudo reboot'"
 
 # Diff recursively
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
