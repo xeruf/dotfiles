@@ -22,6 +22,14 @@ matches:
       Technischer Leiter https://software-challenge.de, deutscher Programmierwettbewerb für Schüler
       CTO der FTT Forensic Discovery GmbH - gesunde IT aus Bayreuth: https://forensicdiscovery.de
       Software Engineering Student @ https://code.berlin
+  - trigger: ";grer"
+    replace: |-
+      Greetings from Bavaria,
+       Janek
+      
+      ---
+      CTO https://forensicdiscovery.de and https://software-challenge.de
+      Software Engineering Student @ https://code.berlin
   - trigger: ";date"
     replace: "{{mydate}}"
     vars:

@@ -611,6 +611,12 @@ Version 2019-11-04 2021-02-16"
           "E" 'org-export-repeat
           )
 
+    (defun org-export-disable-id ()
+      (interactive)
+      (defun my-link-remover (link contents info) contents)
+      (org-link-set-parameters "id" :export 'my-link-remover)
+      )
+
     (setq org-html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://gongzhitaao.org/orgcss/org.css\"/>"
           org-html-head-include-default-style nil
           org-html-htmlize-output-type 'css)
