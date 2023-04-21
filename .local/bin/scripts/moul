@@ -1,34 +1,37 @@
-#!/bin/sh -x
+#!/bin/sh
 # Mount a partition by label or device identifier automatically
 # Includes interactive selection if no argument is given
 set -eo pipefail
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
-	(-v) shift
-		bash -x "$0" "$@";;
-	("") # TODO include size
-		arg=$(
-			{ #for ip in $(sudo nmblookup -S \* | grep '^[0-9]' | cut -d' ' -f1)
-			  #do timeout --kill-after=.1s .1s showmount --no-headers --exports "$ip" 2>/dev/null | sed "s|\([^ ]*\) .*|$ip:\1|"
-			  #done &
-              lsblk --list --noheadings --output name,label,fstype,mountpoint | grep -v LUKS | grep -v '/' | grep ".\+ [^ ]\+"; } | fzf --exit-0 |
-			sed "s/^\([^ ]\+ \+\)\?\([^ ]\+\) \+[^ ]\+ *$/\2/");;
-	(--help) echo "$_help" && exit 0;;
-	(-u) shift
-		for last; do true; done
-		sudo umount --verbose "$@"
-		code=$?
-		sudo rm -df "$last"
-		exit $code;;
-	(*) arg=$1
-		shift;;
+  (-v) shift
+    bash -x "$0" "$@";;
+  ("") # TODO include size
+    arg=$(
+      {
+        #for ip in $(sudo nmblookup -S \* | grep '^[0-9]' | cut -d' ' -f1)
+        #do timeout --kill-after=.1s .1s showmount --no-headers --exports "$ip" 2>/dev/null | sed "s|\([^ ]*\) .*|$ip:\1|"
+        #done &
+        # TODO handle labels with spaces
+        lsblk --list --noheadings --output name,label,fstype,mountpoint | grep -v LUKS | grep -v '/' | grep ".\+ [^ ]\+";
+      } | fzf --exit-0 | sed "s/^\([^ ]\+ \+\)\?\([^ ]\+\) \+[^ ]\+ *$/\2/"
+    );;
+  (--help) echo "$_help" && exit 0;;
+  (-u) shift
+    for last; do true; done
+    sudo umount --verbose "$@"
+    code=$?
+    sudo rm -df "$last"
+    exit $code;;
+  (*) arg=$1
+    shift;;
 esac
 
 # FSTAB: BY LABEL
 if grep --word-regexp "LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory
-	mount -L "$arg" "$@" 2>/dev/null || mount -L "$arg" "$@"
-	exit $?
+  mount -L "$arg" "$@" 2>/dev/null || mount -L "$arg" "$@"
+  exit $?
 fi
 # FSTAB: BY MOUNTPOINT/NAME
 if grep --word-regexp "$arg" /etc/fstab
@@ -39,22 +42,23 @@ fi
 mountpoint="${2:-${MNT:-${XDG_RUNTIME_DIR}/mnt}/$(basename "$arg")}"
 if grep -e "[^\w=/]$mountpoint[^\w/]" /etc/fstab
 then test $# -gt 0 && shift
-	 mount "$mountpoint" "$@"
-	 code=$?
-	 cd $mountpoint
-	 exit $code
+   mount "$mountpoint" "$@"
+   code=$?
+   cd $mountpoint
+   exit $code
 fi
 case "$arg" in
-	(sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$arg";;
-	(/dev/*) partition="$arg";;
-	(*) partition="-L $arg";;
+  (sd*|loop*|nvme*|mm*|md*|dm*|vg*) partition="/dev/$arg";;
+  (/dev/*) partition="$arg";;
+  (*) params="-L"
+        partition="$arg";;
 esac
 shift $(expr 2 \& $# \> 2 \| $#)
 #uid=$(id --user),gid=$(id --group), \
 if ! mountpoint "$mountpoint" 2>/dev/null
 then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
-	sudo mount -vo users,X-mount.mkdir,noatime,umask=003,gid=users,uid=$USER $partition $mountpoint "$@" ||
-		sudo mount -vo users,X-mount.mkdir,noatime $partition $mountpoint "$@"
+  sudo mount -vo users,X-mount.mkdir,noatime,umask=003,gid=users,uid=$USER $params "$partition" "$mountpoint" "$@" ||
+    sudo mount -vo users,X-mount.mkdir,noatime $params "$partition" "$mountpoint" "$@"
 fi
 cd $mountpoint
 exec $SHELL

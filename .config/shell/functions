@@ -504,16 +504,12 @@ else
 	alias f1='find -mindepth 1 -maxdepth 1'
 fi
 
-lowercase() {
-	#$(which perl-rename || echo rename) -iv 'y/A-Z /a-z-/' "$@"
-	find "$@" -exec sh -c 'mv -iv "{}" "$(echo "{}" | tr "A-Z " "a-z-" | sed "s|---|_|;s|\.-|.|")" 2>/dev/null' \;
-}
-
 # TODO replace cp by rsync, automatically use compression for remote transfers
 # rsync directory properly - suffix both dirs with / to act on contents
 alias rcn='rsync -v --recursive --human-readable --links --dry-run'
 rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }
 compdef rcd=rsync
+# TODO do not sync times to FAT
 alias rc='rcs --links --hard-links --times'
 alias rcu='rc --existing --size-only'
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
@@ -571,8 +567,8 @@ compdef mkcd=mkdir
 # Other stuff {{{1
 
 alias unmount=umoul
-# This is a function rather than a script as it potentially needs to cd out
-# if the current directory is the one to unmount
+# This is a function rather than a script as it needs to cd up
+# if the current directory is to be unmounted
 umoul() {
 	local arg
 	local mnt="${MNT:-${XDG_RUNTIME_DIR}/mnt}"
@@ -580,7 +576,7 @@ umoul() {
 	for arg; do true; done
 	case "$arg" in
 	(-a|--all)
-		mountpoints=$(mount | grep "$mnt" | cut -d' ' -f3)
+		mountpoints="$(mount | grep "$mnt" | cut -d' ' -f3)";;
 	("")
 		mountpoints="$(pwd | grep -v /home || echo /)"
 		while test "$mountpoints" != "/"; do
@@ -592,21 +588,23 @@ umoul() {
 				grep --invert-match -e " /[^m][^/]*\(/[^/]*\)\? " -e "/sys" -e "/run/user" -e "/run/docker" -e "/home" |
 				fzf --exit-0 | awk '{print $3}')" ||
 			return $?
+		;;
 	(*)
 		mountpoints="$(test -d "$arg" && realpath "$arg" || echo "$mnt/$arg")"
 		mountpoint "$mountpoints" 2>/dev/null || test -b "$mountpoints" ||
 			mountpoints="$(mount --show-labels | grep "$arg" | cut -d' ' -f3)"
 		test "$mountpoints" || return 1
+		;;
 	esac
-	while true; do
-		case "$PWD" in
-			("$mountpoints"*) popd || builtin cd "$(dirname $mountpoints)";;
-			(*) break;;
-		esac
-	done
 	# pass on all args except last
-	for mountpoint in $mountpoints
-	do moul -u "${@:1:$(((# > 1) ? #-1 : 0))}" "$mountpoint"
+	for mountpoint in $mountpoints; do
+		while true; do
+			case "$PWD" in
+				("$mountpoint"*) popd || builtin cd "$(dirname "$mountpoint")";;
+				(*) break;;
+			esac
+		done
+    	moul -u "${@:1:$(((# > 1) ? #-1 : 0))}" "$mountpoint"
 	done
 }
 
