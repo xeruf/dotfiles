@@ -23,6 +23,7 @@ export TEXMF=""
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
     --offset "${h}pt ${v}pt" --scale "${4:-1}"
 pdfjam $quiet "$1" last "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
+# TODO consider pdftk stamp
 
 timg "$tmp_signed"
 
