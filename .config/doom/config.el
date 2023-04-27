@@ -342,7 +342,8 @@ Version 2019-11-04 2021-02-16"
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
   (push "PERM(e)" (cdr (car org-todo-keywords)))
-  ; #+TODO: IDEA(i!) PROMPT(p!) OUTLINE(o!) DRAFT(t!) | DONE(d!) REVIEWED(r!) ABANDON(a!)
+  ; #+TODO: IDEA(i!) PROMPT(p!) OUTLINE(o!) DRAFT(t!) | REVIEW(r!) DONE(d!) ABANDON(a!)
+  ; highlight review keyword
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
@@ -770,6 +771,7 @@ Version 2019-11-04 2021-02-16"
       :map Info-mode-map
       :desc "Go Home" :n "gu" 'Info-directory
       :desc "Go Home" :n "gU" 'Info-directory
+      :desc "Search next" :n "," 'Info-search-next
       :map thumbs-mode-map
       :n "q"  'thumbs-kill-buffer
       )
@@ -991,6 +993,11 @@ Version 2019-11-04 2021-02-16"
 (use-package! lilypond-mode
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config
+
+    (map! :map rdictcc-buffer-mode-map
+          :leader
+          "hi" 'LilyPond-info)
+  
     (set-file-template! 'LilyPond-mode :mode 'LilyPond-mode)
     (setq LilyPond-pdf-command "xdg-open")
     (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)

@@ -1,0 +1,11 @@
+#!/bin/sh
+# Force Sway Scaling
+shift=1
+scale=1
+case $1 in
+     ("") shift=0;;
+     ([0-9]*) scale=$1;;
+     (col) way-displays -s ARRANGE_ALIGN COLUMN MIDDLE; exit $?;;
+esac
+shift $shift
+way-displays -s SCALE '' $scale "$@" || swaymsg output \* scale $scale

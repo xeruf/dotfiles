@@ -2,6 +2,7 @@ test -n "$PS1" || return 0
 
 test $(id -u) -eq 0 || sudo=sudo
 
+alias jc="$sudo journalctl --boot --unit"
 alias sc="$sudo systemctl"
 alias scs="$sudo systemctl status"
 alias sce="$sudo systemctl enable --now"

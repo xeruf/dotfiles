@@ -1,7 +1,9 @@
 #!/bin/sh -e
 # Flatten folder hierarchy
 # Args: depth
-find -mindepth 2 -maxdepth ${depth:-2} -depth -type d "$@" | while read folder; do
+depth=$(expr 1 \& $# \| 2)
+case $1 in ([0-9]|[0-9][0-9]) depth=$1; shift;; esac
+find "$@" -mindepth $depth -maxdepth $depth -depth -type d | while read folder; do
 	newname="$(echo "$folder" | sed 's|^./||;s|/|_|g')"
 	mv -v "$folder" "$newname"
 	parent="$(dirname "$folder")"
@@ -9,4 +11,4 @@ find -mindepth 2 -maxdepth ${depth:-2} -depth -type d "$@" | while read folder; 
 		rm -d "$parent" &&
 		mv -v "$newname" "$parent"
 done
-find -maxdepth ${depth:-2} -empty -type d -delete
+find -maxdepth $depth -empty -type d -delete

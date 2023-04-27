@@ -1,8 +1,8 @@
-#!/bin/sh
-# TODO set brightness? light -S
-pkill electron
-pkill --ignore-case discord
-pkill signal
-pkill aw-server
-pkill aw-qt
+#!/bin/sh -x
+light -S .01
+pkill --echo electron
+pkill --echo --ignore-case discord
+pkill --echo signal
+pkill --echo aw-server
+pkill --echo aw-qt
 systemctl stop --user syncthing plasma-baloorunner kde-baloo openvpn-client@deltaPeak.service

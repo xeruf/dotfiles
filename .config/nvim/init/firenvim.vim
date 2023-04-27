@@ -18,6 +18,7 @@ let g:firenvim_config = {
     \ },
     \
     \ '.*wiki.*\.org.*':                     { 'priority': 9, 'takeover': 'never', },
+    \ '://wiki\..*':                         { 'priority': 9, 'takeover': 'never', },
     \ '.*openstreetmap\.org.*':              { 'priority': 9, 'takeover': 'once', },
     \ '.*openstreetmap\.de.*':               { 'priority': 9, 'takeover': 'once', },
     \

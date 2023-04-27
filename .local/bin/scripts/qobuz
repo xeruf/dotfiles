@@ -1,6 +1,8 @@
 #!/bin/sh -ex
+# Execute in target directory or with that as parameter
 target="${1:-$PWD}"
-cd $DATA/5*
+archive=$(find $DATA/5* -maxdepth 2 -name Qobuz-commandes.tar)
+cd $(dirname "$archive")
 mkdir -p qobuz
 cd qobuz
 tar xf ../Qobuz-commandes.tar

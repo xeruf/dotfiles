@@ -51,7 +51,7 @@ highlight "s :: recursively remove logs"
 
 highlight "m :: recursively remove mac-files"
 if [[ $1 =~ "m" ]]; then
-	find \( -name '__MACOSX' -o -name '._.Trashes' \) -print -exec rm -r {} +
+	find \( -name '__MACOSX' -o -name '._*' \) -print -exec rm -r {} +
 	find \( -iname '.spotlight*' -o -name 'System Volume Information' -o -name '.fseventsd' \) -print -exec rm -rI {} +
 	find -name '*.DS_Store' -delete
 	echo 'Removed DS Stores'

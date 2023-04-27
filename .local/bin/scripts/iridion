@@ -1,0 +1,6 @@
+#!/bin/sh
+# Upload website to iridion
+# TODO: derive from id
+site=$1
+shift
+scp -r "$@" "iridion:web/$site/public_html$(test "$#" -gt 1 || echo '/index.html')"

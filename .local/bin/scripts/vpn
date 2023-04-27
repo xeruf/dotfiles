@@ -1,2 +1,3 @@
 #!/bin/sh -e
+test -f "$1" || cd "$XDG_DATA_HOME/openvpn"
 tmux new-session -s "$@" "sudo openvpn $@"

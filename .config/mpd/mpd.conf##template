@@ -4,7 +4,6 @@ state_file "~/.local/state/mpd/state"
 pid_file "~/.local/state/mpd/mpd.pid"
 db_file "~/.local/state/mpd/mpd.db"
 
-
 music_directory "{{ env.MUSIC }}"
 playlist_directory "{{ env.MUSIC }}/Playlists"
 playlist_plugin {
