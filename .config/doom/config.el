@@ -72,7 +72,7 @@ Version 2019-11-04 2021-02-16"
 (defun xf/org-journal-current ()
   (interactive)
   (org-journal-open-current-journal-file)
-  (goto-char (point-max))
+  ;(goto-char (point-max))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -923,7 +923,7 @@ Version 2019-11-04 2021-02-16"
 (add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
 
 (add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
+(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
 ;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
 (add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 

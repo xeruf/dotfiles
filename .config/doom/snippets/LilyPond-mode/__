@@ -4,15 +4,17 @@
 \header {
   title = "${1:`(upcase-initials (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`}"
   %%subtitle = ""
-  composer = "Janek Fischer"
+  %%composer = "Janek Fischer"
+  arranger = "Janek Fischer"
 }
-\version "2.22.2"
+\version "2.24.1"
 \score {
 <<
   \time 4/4
 %%% Chords
   \new ChordNames {
     \set chordChanges = ##t
+    \set majorSevenSymbol = \markup { maj7 }
     \chordmode {
       c,,1\p
     }
