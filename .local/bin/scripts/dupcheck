@@ -2,8 +2,8 @@
 # Check the first file against all other ones given and print duplicates.
 # Checks first size then diff.
 # TODO diff initial bytes
-if ! test $# -lt 2
-then echo "Need at least 2 files to compare!" 2>/dev/null
+if test $# -lt 2
+then echo "Need at least 2 files to compare!" >&2
      exit 2
 fi
 target="$1"

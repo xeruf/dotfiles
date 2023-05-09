@@ -1,6 +1,7 @@
 #!/bin/sh -ex
 test "$1" = "-q" && quiet=$1 && shift
-test ! -r "$1" && echo "Usage: sign <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
+case "$1" in ([0-9]) page=$1; shift;; esac
+test ! -r "$1" && echo "Usage: sign [page] <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
 
 signature=$(pass info/signature$(test -n "$5" && echo "-$5") || echo "$5")
 
@@ -22,15 +23,18 @@ fi
 export TEXMF=""
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
     --offset "${h}pt ${v}pt" --scale "${4:-1}"
-pdfjam $quiet "$1" last "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
+pdfjam $quiet "$1" ${page:-last} "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
 # TODO consider pdftk stamp
 
 timg "$tmp_signed"
 
 # https://apple.stackexchange.com/questions/198854/shell-command-to-count-pages-in-a-pdf-other-than-pdftk
-if test "$(pdftk "$1" dump_data | grep Pages | cut -d' ' -f2)" -gt 1
-  then
+if test "$page"
+then pdfjam $quiet "$1" 1-$(expr $page - 1) "$tmp_signed" 1 "$1" $(expr $page + 1)-last --outfile "$result"
+elif test "$(pdftk "$1" dump_data | grep Pages | cut -d' ' -f2)" -gt 1
+then
     pdfjam $quiet "$1" last-1 --outfile "$tmp_reversed"
     pdfjam $quiet "$tmp_reversed" last-2 "$tmp_signed" --outfile "$result"
-  else cp "$tmp_signed" "$result"
+else cp "$tmp_signed" "$result"
 fi
+

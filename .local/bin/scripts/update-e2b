@@ -2,18 +2,32 @@
 # Update an Easy2Boot USB Stick after adding ISOs
 # Call with Linux ISOs to be copied as args
 # Need to be around E2B mountpoint if it is not the default
-if ! dir="$(find . "${MNT:-${XDG_RUNTIME_DIR}/mnt}" -maxdepth 3 -name _ISO -type d | grep .)"
+if ! dir="$(find . "${MNT:-${XDG_RUNTIME_DIR}/mnt}" -maxdepth 3 -name _ISO -type d | grep --max-count 1 .)"
 then echo "Please mount your multiboot stick first!"
      exit 1
 fi
 
-cmd=mv
+cmd=cp
 case $1 in
+     (-upgrade) upgrade=$2; shift 2;;
      (-cp) cmd=cp; shift;;
+     (-mv) cmd=mv; shift;;
 esac
 test $# -eq 0 || $cmd -vi "$@" "$dir/LINUX"
 find "$dir" -type f -iname "*32-*.iso" -exec mv -vi {} {}def32 \;
 find "$dir" -type f -name "*.iso" -exec mv -vi {} {}def64 \;
-drive=$(mount | grep "$(dirname "$dir")" | cut -d' ' -f1)
-sudo umount $drive
-sudo udefrag $drive
+mountdir="$(dirname "$dir")" 
+drive=$(mount | grep "$mountdir" | cut -d' ' -f1)
+sudo umount "$drive"
+if test "$upgrade"; then
+     echo "Do you want to reformat $drive as NTFS? (Ctrl-C to abort)"
+     read
+     mkfs -t ntfs "$drive"
+     ntfslabel "$drive" "E2B"
+     sudo mount "$drive" "$mountdir"
+     unzip "$upgrade" -d "$mountdir"
+     touch -v "$dir/nodelay.txt"
+     cp -v /mnt/nas/media/iso/utilities/*.iso "$dir/UTILITIES"
+else
+     sudo udefrag -m "$drive"
+fi

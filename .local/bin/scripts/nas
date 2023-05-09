@@ -1,0 +1,3 @@
+#!/bin/sh -e
+cd /mnt/nas
+find -mindepth 1 -maxdepth 1 -exec mount {} \;

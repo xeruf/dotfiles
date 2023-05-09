@@ -1,0 +1,2 @@
+#!/bin/sh
+convert -background white -density 500 "$@" "$1.png"

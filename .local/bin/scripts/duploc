@@ -3,13 +3,22 @@
 # which exist elsewhere as listed by locate.
 # Args: [threshold (MB)] <filepaths...>
 # OptDepends: synct (for checking against original filename)
-case $1 in ([0-9]|[0-9][0-9]) threshold=$1; shift;; esac
-find "$@" -size +${threshold:-50}M -type f -exec sh -c "IFS=$'\n'"'
-  filepath="{}"
-  target="$(synct-unarchive "$filepath" || echo "$filepath")"
-  highlight "$filepath"
-  for existing in $(locate -b "$target")
-  do test -n "$(dupcheck "$target" "$existing") &&
-     echo "Duplicate found at $existing"
-     rm -vi "$filepath" && break
+while test $# -gt 0; do
+  case "$1" in
+    ([0-9]|[0-9][0-9]) threshold=$1;;
+    (-n) noscan=$1;;
+    (-v) verbose=$1; set -x;;
+    (*) break;;
+  esac
+  shift
+done
+test "$noscan" || "Updating Locate Database..." && sudo updatedb
+find "$@" -size +${threshold:-50}M -type f -exec sh -c "IFS=$'\n'; verbose='$verbose'"'
+  target="$(synct-unarchive "{}" || echo "{}")"
+  highlight "{}"
+  for existing in $(locate -b "$(basename "$target")")
+  do test "$verbose" && echo "Checking $existing against {}"
+     test -n "$(dupcheck "{}" "$existing")" &&
+     echo "Duplicate found at $existing" &&
+     rm -vi "{}" && break
   done' \;
