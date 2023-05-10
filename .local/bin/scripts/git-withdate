@@ -1,4 +1,4 @@
 #!/bin/sh -e
 # Execute a git command (usually commit) using the AuthorDate of a given committish
-local date=$(git log --pretty=format:%at -1 "$1")
+date=$(git log --pretty=format:%at -1 "$1")
 GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" git "${@:2}"
