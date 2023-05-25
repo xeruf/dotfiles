@@ -1,0 +1,6 @@
+#!/bin/sh
+# Lists the keys for each given song
+for arg
+do echo -n "$arg: "
+   keyfinder-cli "$arg"
+done

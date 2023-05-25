@@ -1,6 +1,6 @@
 #!/bin/sh
 # [M]edia [P]lay
-# Play given files on mpd, playing external files through symlinking and recursively resolving playlists
+# Add matchings songs to mpd queue, playing external files through symlinking and recursively resolving playlists
 # depends: xargs realpath mpc
 # env: MUSIC
 # TODO auto-convert unknown types with ffmpeg to flac rather than linking (wav, opus, ...)
