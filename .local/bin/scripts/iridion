@@ -1,6 +1,9 @@
 #!/bin/sh
 # Upload website to iridion
-# TODO: derive from id
+if test $# -eq 0 
+then echo "$0 site [index.html] [USER]"
+else
 site=$1
 shift
-scp -r "$@" "iridion:web/$site/public_html$(test "$#" -gt 1 || echo '/index.html')"
+scp -r "$@" "iridion:/home/${2:-$USER}/web/$site/public_html$(test "$#" -gt 1 || echo '/index.html')"
+fi

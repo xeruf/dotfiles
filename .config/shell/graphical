@@ -38,7 +38,7 @@ alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-data
 theme_save="$XDG_CACHE_HOME/theme"
 #theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
 theme_default="dark"
-theme() {
+themeswitch() {
 	theme="$1"
 	if test "$2" = "kde"
 	then kcmshell5 kcm_lookandfeel
@@ -72,4 +72,4 @@ theme() {
 }
 export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
-theme $THEME
+themeswitch $THEME

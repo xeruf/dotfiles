@@ -371,6 +371,10 @@ alias fc='fossil commit -v'
 fdf() {
 	fossil diff "$@" | clr
 }
+fuu() {
+    rm .fslckout
+    fossil open *.fossil --keep
+}
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
@@ -456,15 +460,17 @@ updateDeps() {
 		esac
 		shift 2
 	done
-	echo name "'$name'" depth "'$depth'" pattern "'$oldversion'" version "'$version'"
-	find -maxdepth $depth -not \( -name "*forks" -prune \) -type f -name $name | while read f
-	do	highlight $f
-		sed -i "s/\($pattern\)\($oldversion\)/\1${version:-\2}/gw /dev/stdout" $f
-	done
+	echo name "'$name'" depth "'$depth'" pattern "'$oldversion'" version "'$version'" >&2
+	find -maxdepth $depth -not \( -name "*forks" -prune \) -type f -name $name |
+		while read f
+		do	highlight $f
+			sed -i "s/\($pattern\)\($oldversion\)/\1${version:-\2}/gw /dev/stdout" $f
+		done
 }
 alias updateKotlin="updateDeps build.gradle.kts 'kotlin(\"jvm\") version \"' --version"
 alias updateGradle='updateDeps gradle-wrapper.properties "services.gradle.org\/distributions\/gradle-" --version'
 alias updateUtils="updateDeps build.gradle.kts '"'"com.github.Xerus2000.util", ".*", "'" --pattern '[^\"]\+' --version"
+updateKarma() { rpl "karma-runner.github.io/[^/]\+/" "karma-runner.github.io/$1/"; }
 
 # Kill all shell background processes
 alias killbg='kill ${${(v)jobstates##*:*:}%=*}'

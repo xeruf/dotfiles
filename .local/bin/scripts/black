@@ -1,5 +1,7 @@
-#!/bin/sh -e
+#!/bin/sh
 # Suspend screen until enter is pressed
 xset dpms force off
+swaymsg "output * dpms off"
 read
 xset dpms force on
+swaymsg "output * dpms on"
