@@ -15,6 +15,7 @@ status() {
 	free -h
 	df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
 	zfs list -d 0
+	sudo certbot certificates
 	highlight 'Internet'
     #--color=always
 	ip -brief address | grep --color=none -E '^(wl|en|tun|vmbr)'

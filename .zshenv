@@ -95,7 +95,7 @@ export EDITOR="$(
 )"
 
 export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
-export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
+export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__"
@@ -149,3 +149,6 @@ export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
+
+autolight
+#export TZ='Europe/Dublin'

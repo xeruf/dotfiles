@@ -176,7 +176,7 @@ if test "$timg"; then
 	fi
 fi
 
-pager="${PAGER:-'less -RF'}"
+pager="${PAGER:-'less -rF'}"
 # bat: unknown files
 # batplain: files to print without header
 if test "$bat" -o "$batplain"; then
