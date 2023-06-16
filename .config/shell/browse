@@ -54,6 +54,7 @@ cd() {
 		code=$? && test $code -eq 141 || return $code
 	fi
 }
+alias cdr='cd $(git root)'
 
 # LOCATE {{{1
 # TODO no double heading with bat
@@ -74,7 +75,7 @@ alias loca='noglob sudo updatedb -l 0 --prunenames "" --prunefs "tmpfs sysfs deb
 	  sudo chmod +r /var/cache/locate-all.db &&
 	  loci --database /var/cache/locate-all.db'
 hunta() {
-	unbuffer hunt -h "$@" / | less -RF +G
+	unbuffer hunt -H "$@" / | less -RF +G
 }
 
 # ZOXIDE {{{1

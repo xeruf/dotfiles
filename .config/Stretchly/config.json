@@ -1,8 +1,8 @@
 {
 	"microbreakDuration": 30000,
-	"microbreakInterval": 900000,
+	"microbreakInterval": 1200000,
 	"breakDuration": 180000,
-	"breakInterval": 2,
+	"breakInterval": 3,
 	"breakNotification": false,
 	"microbreakNotification": false,
 	"breakNotificationInterval": 30000,
@@ -10,7 +10,7 @@
 	"microbreak": true,
 	"break": true,
 	"microbreakStrictMode": true,
-	"breakStrictMode": true,
+	"breakStrictMode": false,
 	"morningHour": 6,
 	"microbreakPostpone": false,
 	"breakPostpone": true,
@@ -21,9 +21,11 @@
 	"breakPostponesLimit": 3,
 	"breakPostponableDurationPercent": 20,
 	"mainColor": "#633738",
+	"miniBreakColor": "#478484",
 	"transparentMode": false,
 	"opacity": 0.8,
 	"audio": "crystal-glass",
+	"miniBreakAudio": "crystal-glass",
 	"volume": 0.4,
 	"fullscreen": true,
 	"ideas": true,
@@ -461,11 +463,12 @@
 	"screen": "primary",
 	"timeToBreakInTray": false,
 	"currentTimeInBreaks": false,
+	"showTrayIcon": true,
 	"pauseBreaksShortcut": "",
 	"resumeBreaksShortcut": "",
 	"__internal__": {
 		"migrations": {
-			"version": "1.13.1"
+			"version": "1.14.1"
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 test "$1" = "-q" && quiet=$1 && shift
 case "$1" in ([0-9]) page=$1; shift;; esac
 test ! -r "$1" && echo "Usage: sign [page] <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
@@ -20,6 +20,7 @@ if test $# -lt 2; then
   (*\ TU.pdf) v=-260;;
   esac
 fi
+echo "Using offset ${h}x and ${v}y"
 export TEXMF=""
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
     --offset "${h}pt ${v}pt" --scale "${4:-1}"

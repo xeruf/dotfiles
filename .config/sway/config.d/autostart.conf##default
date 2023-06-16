@@ -1,4 +1,8 @@
 assign [app_id="firefox"] workspace 2
+assign [class="sc.gui.final.FinalApp"] workspace 5
+assign [title="JViewer.*"] workspace 5
+assign [class="discord"] workspace 9
+
 exec swaymsg "workspace 2; exec firefox;"
 exec swaymsg "workspace 3; exec kitty;"
 exec swaymsg "workspace 1; exec emacs"

@@ -11,7 +11,7 @@ case "$1" in
 		tldr
 		info
 		man
-		quickref; test-colors; arg-test / arg-notify"
+		quickref; test-colors; arg-test / arg-notify"; exit 2;;
 esac
 
 showinfo() {
@@ -26,7 +26,7 @@ showinfo() {
 cmd="$1"
 case "$cmd" in
 	# TODO extract help in standard format from scripts
-	(hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff) unbuffer "$@" --help | $paginate;;
+	(hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf) unbuffer "$@" --help | $paginate;;
 	(caddy|stretchly|go|fossil|flutter) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && fossil ui "$repo" && exit
 		# TODO view fossil ui in terminal
 		shift

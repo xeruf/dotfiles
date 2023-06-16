@@ -6,7 +6,7 @@
 case "$1" in
   (http*)
     if expr "$1" : ".*:" >/dev/null
-    then echo "$1" | sed "s|.*//\([^/]*\)/\(.*\)|git@\1:\2.git|"
+    then echo "${1%/}" | sed "s|.*//\([^/]*\)/\(.*\)|git@\1:\2.git|"
          exit
     else http=$1 && shift
     fi;;
