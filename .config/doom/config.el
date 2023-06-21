@@ -151,6 +151,7 @@ Version 2019-11-04 2021-02-16"
       lazy-highlight-cleanup nil
       large-file-warning-threshold 40000000)
 
+; TODO auto-trim whitespace unless markdown
 (whitespace-mode 0)
 (auto-correct-mode)
 
@@ -318,10 +319,15 @@ Version 2019-11-04 2021-02-16"
         :desc "High Priority" "pa" (lambda () (interactive) (org-priority "A"))
         :desc "Set ID property" "lI" (lambda () (interactive)
               ;; Check out https://github.com/novoid/dot-emacs/blob/master/config.org#my-id-get-or-generate
+              ; TODO trim trailing dash
               (org-set-property "ID"
                 (let ((heading (org-get-heading t t t t)))
                   (if heading (org-read-property-value "ID" nil (xf/slugify heading)) (file-name-sans-extension (file-name-nondirectory buffer-file-name)))
-                )))
+                ))
+              ; TODO insert current date timestamp
+              ;(or (org-entry-get nil "CREATED") (org-set-property "CREATED" (org-read-date)))
+              ;(or (org-entry-get nil "MODIFIED") (org-set-property "MODIFIED" (org-read-date)))
+              )
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
@@ -342,7 +348,7 @@ Version 2019-11-04 2021-02-16"
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
   (push "PERM(e)" (cdr (car org-todo-keywords)))
-  ; #+TODO: IDEA(i!) PROMPT(p!) OUTLINE(o!) DRAFT(t!) | REVIEW(r!) DONE(d!) ABANDON(a!)
+  ; #+TODO: IDEA(i!) OUTLINE(o!) DRAFT(t!) | REVIEW(r!) DONE(d!) ABANDON(a!)
   ; highlight review keyword
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
@@ -579,7 +585,7 @@ Version 2019-11-04 2021-02-16"
       (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations))
       (when (equal major-mode 'org-mode) (org-mode-restart)))
 
-    (if (file-exists-p org-roam-directory) (xf/auto-org-roam-db-sync-mode))
+    ; FIXME test if still needed (if (file-exists-p org-roam-directory) (xf/auto-org-roam-db-sync-mode))
 
     ;; Node Search
     (setq org-roam-node-display-template

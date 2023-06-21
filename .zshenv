@@ -150,5 +150,6 @@ export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CTEST_PARALLEL_LEVEL=3
 
-autolight
+# TODO move to proper place - is also called when firenvim starts
+#autolight
 #export TZ='Europe/Dublin'

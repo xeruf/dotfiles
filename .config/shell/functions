@@ -329,7 +329,7 @@ sshl() {
 		! [[ "$1" =~ "delta*" ]] &&
 	local pass=pass
 	test "$all" &&
-		$pass scp ~/.bash_aliases "$1:" &&
+		$pass scp -O ~/.bash_aliases "$1:" &&
 		$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if test -n "$pass"
 	then pass ssh "$@"
