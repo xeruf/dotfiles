@@ -55,18 +55,6 @@ git() {
   command git "$@"
 }
 
-# BRANCHES
-# Remove list of tags local & remote
-gitrmtag() {
-  declare -a refs
-  local index=1
-  for tag in $@; do refs[index++]=":refs/tags/$tag"; done
-  git push origin "${refs[@]}" && git tag -d "$@"
-}
-# Rename a tag
-gitretag() {
-  git push origin refs/tags/${1}:refs/tags/${2} :refs/tags/$1 && git tag -d $1
-}
 
 # Testing
 gittestcommit() { touch file$((++i)) && git add 'file*' && git commit -m "Create file$i"; }
