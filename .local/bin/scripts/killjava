@@ -1,0 +1,11 @@
+#!/bin/sh -e
+# Kil all Java processes except IDEA
+# Pass "-9" to force-kill and "-q" to not output what has been killed
+pgrep -f 'java' | while read id
+	do if [[ $(ps --no-headers -o cmd $id) != *"idea"* ]]; then
+		[[ "$@" == "-q" ]] || echo "killing $(ps -p $id -o pid,cmd --width 350 --no-headers)"
+		if [[ "$@" == "-9" ]]
+		then kill -9 $id
+		else kill $id
+		fi
+	fi; done
