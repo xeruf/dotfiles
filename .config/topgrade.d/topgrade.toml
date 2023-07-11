@@ -1,9 +1,14 @@
-display_preamble = false
+# Check topgrade --config-reference
+[misc]
+# Run `sudo -v` to cache credentials at the start of the run; this avoids a
+# blocking password prompt in the middle of a possibly-unattended run.
+pre_sudo = true
+
 # Don't ask for confirmations
 #assume_yes = ["emacs"]
 
 # Disable specific steps - same options as the command line flag
-disable = ["nix", "containers", "config_update"]
+disable = ["nix", "containers", "config_update", "node", "firmware"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
@@ -20,21 +25,6 @@ run_in_tmux = true
 # List of remote machines with Topgrade installed on them
 remote_topgrades = ["tiger"]
 
-# Arguments to pass SSH when upgrading remote systems
-#ssh_arguments = "-o ConnectTimeout=2"
-
-# Path to Topgrade executable on remote machines
-#remote_topgrade_path = ".cargo/bin/topgrade"
-
-# Arguments to pass tmux when pulling Repositories
-#tmux_arguments = "-S /var/tmux.sock"
-
-# Do not set the terminal title
-#set_title = false
-
-# Cleanup temporary or old files
-#cleanup = true
-
 [git]
 max_concurrency = 5
 # Additional git repositories to pull
@@ -47,10 +37,10 @@ repos = [
 #pull_predefined = false
 
 # Arguments to pass Git when pulling Repositories
-arguments = "--rebase --autostash"
+arguments = "--rebase --autostash --recurse-submodules"
 
 [composer]
-#self_update = true
+self_update = false
 
 # Commands to run before anything
 [pre_commands]
@@ -65,7 +55,7 @@ arguments = "--rebase --autostash"
 
 [linux]
 # Arguments to pass yay when updating packages
-yay_arguments = "--nodiffmenu --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm --ignore linux --ignore stretchly-xeruf-git"
+yay_arguments = "--nodiffmenu --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm --ignore linux --ignore stretchly-xeruf-git --overwrite '/usr/lib/node_modules/npm/**'"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"
@@ -90,7 +80,3 @@ use_sudo = true
 [firmware]
 # Offer to update firmware; if false just check for and display available updates
 #upgrade = true
-
-[flatpak]
-# Use sudo for updating the system-wide installation
-#use_sudo = true
