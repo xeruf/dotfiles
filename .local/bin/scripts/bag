@@ -1,5 +1,6 @@
 #!/bin/sh
 # Backup linux system and user files with borg
+# Usage: bag [-n] [--dry-run] [--home] [--root MOUNTED_ROOT]
 root="/"
 args="--progress --stats"
 while test $# -gt 0; do
@@ -7,6 +8,8 @@ while test $# -gt 0; do
     (-n) run="arg-test"; shift;;
     (--dry-run) args="--dry-run --list"; name=test-$(date +%s); shift;;
     (--root) shift; root="$1"; name="$(basename "$(realpath "$root")")"; echo $root $name; shift;;
+    (--home) "$0" home /home -e "sh:$HOME/data/4-*" -e "sh:$HOME/data/5-*" -e "sh:**/.stfolder" -e "sh:**/0-forks" -e "sh:**/.git"
+             return $?;;
     (-*) name="${1#-}"; shift;;
     (*) break;;
   esac

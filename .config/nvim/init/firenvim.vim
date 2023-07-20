@@ -30,6 +30,7 @@ let g:firenvim_config = {
     \ '.*twitter\.com.*':                    { 'priority': 9, 'takeover': 'never', },
     \
     \ '://pve.*':                            { 'priority': 9, 'takeover': 'never', },
+    \ '://46.*':                             { 'priority': 9, 'takeover': 'never', },
     \ '.*:8006/.*':                          { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*calendar\.google\.com.*':           { 'priority': 9, 'takeover': 'empty', },
