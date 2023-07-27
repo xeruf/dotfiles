@@ -1,3 +1,3 @@
-#!/bin/sh -ex
+#!/bin/sh
 # Set exec flag on all files that should be executable
 find -maxdepth 4 -name "*.sh" -o -path '*/githooks/*' "$@" -exec chmod -v +x {} +

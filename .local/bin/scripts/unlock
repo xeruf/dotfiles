@@ -1,0 +1,3 @@
+#!/bin/sh
+# Unlock failed logins for user
+faillock --user ${USER:-$1} --reset

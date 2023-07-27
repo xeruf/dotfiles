@@ -26,15 +26,15 @@ showinfo() {
 cmd="$1"
 case "$cmd" in
 	# TODO extract help in standard format from scripts
-	(hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf) unbuffer "$@" --help | $paginate;;
+	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf) unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
 	(caddy|stretchly|go|fossil|flutter) test "$cmd" = "fossil" -a $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")" && fossil ui "$repo" && exit
 		# TODO view fossil ui in terminal
 		shift
 		"$cmd" help "$@" | $paginate;;
 	# Non-standard help flags
-	(doom) "$@" --help;;
+	(doom) "$@" --help;; # Doom paginates itself
 	(mpw) "$@" -h 2>&1 | $paginate;;
-	(plantuml|java) unbuffer "$@" -help | $paginate;;
+	(spectre|plantuml|java) unbuffer "$@" -help | $paginate;;
 	(rails) { "$@" -H && "$@" --help; } | $paginate;;
 	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
 	(kdeconnect*) shift && kdeconnect-cli --help-all "$@" | $paginate;;

@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# Revives a file that has been deleted from the last known commit.
+# Filename can be given with any amount of complete prefix directories.
+file="$1"
+commit=$(git log --format="%H" -1 -- "*/$file")
+test -z "$commit" && echo "$file not found in history" >&2 && exit 2
+git restore --worktree --source="$commit~" -- $(git diff-tree --no-commit-id --name-only -r $commit | grep "/$file$")

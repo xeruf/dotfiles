@@ -3,11 +3,17 @@ test "$1" = "-q" && quiet=$1 && shift
 case "$1" in ([0-9]) page=$1; shift;; esac
 test ! -r "$1" && echo "Usage: sign [page] <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
 
-signature=$(pass info/signature$(test -n "$5" && echo "-$5") || echo "$5")
-
-# TODO make filenames unique and don't rerun unneccessarily
 tmp_base=/tmp/sign
 mkdir -p $tmp_base
+
+texttopdf() {
+  out="$tmp_base/stamp.pdf"
+  echo "$1" | enscript -B -f Arial12 -o- | ps2pdf - >"$out"
+  echo "$out"
+}
+signature=$(test -f "$5" && echo "$5" || pass info/signature$(test -n "$5" && echo "-$5") || texttopdf "$5")
+
+# TODO make filenames unique and don't rerun unneccessarily
 tmp_signed=$tmp_base/$1_last-signature.pdf
 tmp_reversed=$tmp_base/$1_reverse.pdf
 sig=$tmp_base/signature_offset.pdf

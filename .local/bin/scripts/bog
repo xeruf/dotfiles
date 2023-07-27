@@ -17,7 +17,7 @@ while test $# -gt 0; do
 			borg umount backups
 			rm -d backups
 			exit 0;;
-		(tree) borg list --short "::$2" | tree --fromfile . | less -F
+		(tree) borg list --short $(case $2 in (*::*) echo "$2";; (*) echo "::$2";; esac) | tree --fromfile . | less -F
 			   exit $?;;
 		(-n) run=arg-test; shift;;
 		(*_) prefix=$1; shift;;

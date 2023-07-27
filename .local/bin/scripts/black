@@ -1,5 +1,6 @@
 #!/bin/sh
 # Suspend screen until enter is pressed
+test "$1" && sleep $1
 xset dpms force off
 swaymsg "output * dpms off"
 read

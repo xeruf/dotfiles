@@ -2,6 +2,7 @@
 # https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences/33206814#33206814
 
 print("\\033[XXm")
+print("-- Use Ctrl-V ESC if not using printf")
 
 for i in range(30,37+1):
     print("\033[%dm%d\t\t\033[%dm%d" % (i,i,i+30,i+30));
@@ -22,16 +23,13 @@ print(" ")
 def illustrate(command, *text):
     print("\033[", command, "m\\033[", command, "m - ", *text, sep="", end="\t")
 
-def toggle(command, text):
+def toggle(command, text, add = 20):
     illustrate(command, text, " on")
-    illustrate(command + 20, text, " off\033[0m")
+    illustrate(command + add, text, " off\033[0m")
     print()
-toggle(1, "Bold")
+toggle(1, "Bold", 21)
 toggle(2, "Grey")
 toggle(3, "Italic")
 toggle(4, "Underline")
-#toggle(5, "Bold")
-#toggle(6, "Bold")
 toggle(7, "Highlight")
-#toggle(8, "Bold")
 toggle(9, "Strike")

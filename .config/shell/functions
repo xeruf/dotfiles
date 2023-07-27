@@ -66,6 +66,7 @@ sudos() {
 	sudo "$(which $cmd)" "$@"
 }
 
+# Outputs the resolved alias if it is a simple one-word alias
 resolvealias() {
 	alias "$1" 2>/dev/null | sed -n "s|$1='\?\(noglob \)\?\([-A-z]\+\)'\?\$|\2|p" | grep -m 1 . || echo $1
 }
@@ -148,7 +149,7 @@ edit-shell() {
 # Edit an executable in the PATH
 edit-bin() {
 	local toedit="$(resolvealias "$1")"
-	case "$toedit" in (*\ text*);; (*) toedit="$1";; esac
+	#case "$toedit" in (*\ text*);; (*) toedit="$1";; esac
 	if f="$(which "$toedit" 2>/dev/null)" && test -f "$f"
 	then edit "$f"
 	else edit-shell -f "$toedit"
@@ -474,7 +475,7 @@ alias updateUtils="updateDeps build.gradle.kts '"'"com.github.Xerus2000.util", "
 updateKarma() { rpl "karma-runner.github.io/[^/]\+/" "karma-runner.github.io/$1/"; }
 
 # Kill all shell background processes
-alias killbg='kill ${${(v)jobstates##*:*:}%=*}'
+alias killbg='kill -9 ${${(v)jobstates##*:*:}%=*}'
 
 # Kill all processes that match
 killm() {

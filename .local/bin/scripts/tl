@@ -6,4 +6,4 @@
 # If first arg is a digit, it displaces the default depth of 3
 # Any other arguments (usually pathnames) are passed on to the tree command
 case "$1" in ([0-9]) depth=$1; shift;; esac
-tree -a --dirsfirst --du -h -C -L ${depth:-3} "$@" | ${PAGER:-less} -rF
+tree --dirsfirst --du -h -C -L ${depth:-3} -I node_modules "$@" | ${PAGER:-less} -rF

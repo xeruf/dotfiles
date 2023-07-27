@@ -9,6 +9,9 @@ alias sce="$sudo systemctl enable --now"
 alias sced="$sudo --preserve-env=EDITOR systemctl edit"
 alias scr="$sudo systemctl daemon-reload && $sudo systemctl reload-or-restart"
 
+alias hist='history | less'
+alias m='mv -vi'
+
 highlight() { echo "[4m$1[0m"; }
 status() {
 	highlight 'System'

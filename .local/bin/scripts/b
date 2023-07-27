@@ -11,6 +11,7 @@
 #   video thumbnails via mtn, pdf pages from pdftoppm
 # - text files are displayed through bat
 # Automatically requests elevation through sudo when needed
+# TODO .raw,.iso,.qcow2
 
 set -o pipefail
 
