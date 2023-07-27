@@ -1,5 +1,4 @@
 # See man mpd.conf
-
 state_file "~/.local/state/mpd/state"
 pid_file "~/.local/state/mpd/mpd.pid"
 db_file "~/.local/state/mpd/mpd.db"
@@ -20,3 +19,10 @@ auto_update "yes"
 restore_paused "yes"
 
 follow_outside_symlinks "yes"
+
+
+audio_output {
+    type	"pipewire"
+    name	"Pipewire"
+    command "paplay -f cd 2>/dev/null"
+}

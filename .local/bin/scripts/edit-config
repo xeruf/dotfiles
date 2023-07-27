@@ -23,7 +23,7 @@ touch "$conf_cache"
 
 sel=$(listconf | fzf -1 -0 --tiebreak=end,length --preview '$(test -r {} || echo "sudo") bat --color=always --style=numbers --line-range :200 {}' --query="$1" --history "$conf_cache_dir/searches")
 case "$sel" in
-  ("") exit 1;;
+  ("") exit 2;;
   (/etc/sudoers) sudo visudo;;
   (/etc/fstab) sudoedit "$sel" && sudo findmnt --verify && sudo systemctl daemon-reload;;
                #systemctl daemon-reload && mount -af -o remount;;
@@ -36,5 +36,11 @@ case "$sel" in
   (/etc/samba/smb.conf) sudoedit "$sel" && testparm;;
   (/etc/nftables.conf) sudoedit "$sel" && sudo systemctl restart nftables;;
   (*) edit "$sel";;
+esac
+case "$sel" in
+  (*\#\#template) yadm alt;;
+esac
+case "${sel%\#\#*}" in
+  (*/mpd.conf) systemctl --user restart mpd;;
 esac
 echo "$sel" | cat - "$conf_cache" | head -20 >"$conf_tmp" && mv "$conf_tmp" "$conf_cache"
