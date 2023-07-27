@@ -22,6 +22,7 @@ let g:firenvim_config = {
     \ '.*openstreetmap\.org.*':              { 'priority': 9, 'takeover': 'once', },
     \ '.*openstreetmap\.de.*':               { 'priority': 9, 'takeover': 'once', },
     \
+    \ '.*mail.*':                            { 'priority': 9, 'takeover': 'once', },
     \ '.*church\.tools.*':                   { 'priority': 9, 'takeover': 'empty', },
     \ '.*element\.io.*':                     { 'priority': 9, 'takeover': 'never', },
     \
