@@ -44,6 +44,7 @@ export KREW_ROOT="$XDG_DATA_HOME"/krew
 export CARGO_HOME="$XDG_STATE_HOME"/cargo
 export RUSTUP_HOME="$XDG_STATE_HOME"/rustup
 
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc 
 export NVM_DIR="$XDG_DATA_HOME"/nvm
 export N_PREFIX="$XDG_STATE_HOME"/n
 
