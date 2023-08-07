@@ -2,10 +2,14 @@
 # Add the modification date in front of the filename
 IFS='\n'
 test "$1" = -s && short=true && shift
+test ! -f "$1" && rename=true && name=$1 && shift || rename=false
 for file
 do mv --verbose --interactive "$file" \
 	"$(latest "$file" | head -2 | tail -1 |
-		cut -c$(test "$short" && echo "3,4,6,7,9,10" || echo "-10"))_$(
-	echo "$file" | sed 's/2\?\([0-9]\{2,3\}\)-\([0-9]\{2\}\)\(-[0-9]\{2\}\)\?_\?//')"
+			  cut -c$(test "$short" && echo "3,4,6,7,9,10" || echo "-10"))$(
+		if $rename
+		then echo "$(test "$name" && echo "_$name").${file##*.}"
+		else echo "_$file" | sed 's/^_2\?\([0-9]\{2,3\}\)-\([0-9]\{2\}\)\(-[0-9]\{2\}\)\?_\?/_/'
+		fi)"
 done
 # stat --format %y "$file" | cut -d' ' -f1

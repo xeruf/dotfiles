@@ -1,0 +1,3 @@
+#!/bin/sh -e
+# Rebuild doom from scratch pruning all caches
+rm -I -rf "$DOOMLOCALDIR/straight" && doom sync -u

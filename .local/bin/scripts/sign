@@ -1,4 +1,6 @@
 #!/bin/sh -e
+# Overlay a PDF with another or a text
+# Trims everything beyond the given page number
 test "$1" = "-q" && quiet=$1 && shift
 case "$1" in ([0-9]) page=$1; shift;; esac
 test ! -r "$1" && echo "Usage: sign [page] <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
@@ -14,7 +16,7 @@ texttopdf() {
 signature=$(test -f "$5" && echo "$5" || pass info/signature$(test -n "$5" && echo "-$5") || texttopdf "$5")
 
 # TODO make filenames unique and don't rerun unneccessarily
-tmp_signed=$tmp_base/$1_last-signature.pdf
+tmp_signed=$tmp_base/$1_${page:-last}-signature.pdf
 tmp_reversed=$tmp_base/$1_reverse.pdf
 sig=$tmp_base/signature_offset.pdf
 result="${1%.pdf}_$(basename "${5:-signed}").pdf"
@@ -30,6 +32,7 @@ echo "Using offset ${h}x and ${v}y"
 export TEXMF=""
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
     --offset "${h}pt ${v}pt" --scale "${4:-1}"
+rm "$result"
 pdfjam $quiet "$1" ${page:-last} "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
 # TODO consider pdftk stamp
 
@@ -37,11 +40,10 @@ timg "$tmp_signed"
 
 # https://apple.stackexchange.com/questions/198854/shell-command-to-count-pages-in-a-pdf-other-than-pdftk
 if test "$page"
-then pdfjam $quiet "$1" 1-$(expr $page - 1) "$tmp_signed" 1 "$1" $(expr $page + 1)-last --outfile "$result"
+then test "$page" -gt 1 && pdfjam $quiet "$1" 1-$(expr $page - 1) "$tmp_signed" 1 "$1" $(expr $page + 1)-last --outfile "$result"
 elif test "$(pdftk "$1" dump_data | grep Pages | cut -d' ' -f2)" -gt 1
 then
     pdfjam $quiet "$1" last-1 --outfile "$tmp_reversed"
     pdfjam $quiet "$tmp_reversed" last-2 "$tmp_signed" --outfile "$result"
-else cp "$tmp_signed" "$result"
 fi
-
+test -f "$result" || cp -v "$tmp_signed" "$result"

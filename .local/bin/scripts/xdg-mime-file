@@ -3,7 +3,7 @@
 # ARGS: file [application]
 xdg-mime query default "$(xdg-mime query filetype "$1")"
 if test $# -gt 1; then
-	desktop="$(find /usr/share/applications $XDG_DATA_HOME/applications -name "*$2*" | fzf -0 -1)" &&
+	desktop="$(find /usr/share/applications $XDG_DATA_HOME/applications | fzf -0 -1 --query="$2")" &&
 	xdg-mime default "$desktop" "$(xdg-mime query filetype "$1")" &&
 	echo -n "Updated to: " &&
 	xdg-mime query default "$(xdg-mime query filetype "$1")"
