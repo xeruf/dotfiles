@@ -266,10 +266,11 @@ curlh() {
 unalias u 2>/dev/null # for bash
 u() {
 	# Line below handy for users of netkeeper
-	sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo 'pausing netkeeper for sysupgrade' | netkeeper 30 2>/dev/null
+	#sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo 'pausing netkeeper for sysupgrade' | netkeeper 30 2>/dev/null
 	if command -v pacman >/dev/null; then
 		if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
 		then
+			# TODO or if location changed significantly or very slow
 			if command -v pacman-mirrors >/dev/null
 			then sudo pacman-mirrors --geoip
 			else sudo touch /etc/pacman.d/mirrorlist
@@ -424,7 +425,10 @@ dic() {
 alias dict="rlwrap rdictcc --directory $DICT"
 dict_update() {
 	local dictfile="$DICT/dict.txt"
-	test $# -gt 0 && mv -v $1 "$dictfile"
+	test $# -gt 0 && case "$1" in
+		(*.zip) dir=$(mktemp -d) && unzip "$1" -d "$dir" && mv -v $dir/* "$dictfile" && rm -v "$1";;
+		(*) mv -v "$1" "$dictfile";;
+	esac
 	echo "Reading in $dictfile..."
 	unbuffer rdictcc --directory $DICT -i "$dictfile" | rewrite
 }
@@ -440,7 +444,7 @@ npm-reinstall() {
 alias onkyo='bluetoothctl disconnect 00:09:B0:1D:DC:98 && sleep 1 && bluetoothctl connect 00:09:B0:1D:DC:98'
 
 alias pdfcon='TEXMF="" pdfjam -o $(date +%F).pdf'
-alias pdfwor='TEXMF="" pdfjam -o collections/$(date +%F)_Akkorde.pdf'
+alias pdfwor='TEXMF="" pdfjam -o $(test -d "collections" && echo "collections/")$(date +%F)_Akkorde.pdf'
 
 # Custom tools {{{1
 
