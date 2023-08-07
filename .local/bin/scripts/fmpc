@@ -3,6 +3,6 @@
 # depends: fzy/fzf-tmux mpc
 song_position=$(mpc -f "%position%) %artist% - %title%" playlist |
   #fzy --query="$1" |
-  fzf-tmux --query="$1" --reverse --select-1 --exit-0 |
+  fzf-tmux --query="$1" --reverse --exit-0 |
   sed -n 's/^\([0-9]\+\)).*/\1/p')
 test -n "$song_position" && mpc play $song_position

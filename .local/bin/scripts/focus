@@ -4,15 +4,16 @@
 # env: MUSIC
 # args: either a playlist file name, or a list of terms which all have to match
 # TODO fails on "Alchemy"
-# TODO implement tags
+# TODO implement finding by tags
 PLAYLISTS="${PLAYLISTS:-$MUSIC/Playlists}"
 mpc -q clear
 if test -z "$1"
 then mp -q "$PLAYLISTS/focus.m3u"
 else
+	set -o noglob
 	(find -L $PLAYLISTS -iname "focus-$1.m3u" -print0 | grep --null-data . ||
 		find -L $PLAYLISTS -iname "$1.m3u*" -print0 | grep --null-data . ||
-		find -L $MUSIC $(echo "$@" | sed 's/\w\+/-iname *\0* /g') -prune -exec find {} -size +1M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \; ) |
+		find -L $MUSIC $(echo "$@" | sed "s/\w\+/-iname *\0* /g") -prune -exec find {} -size +1M -type f -not -iregex ".*.\(jpe?g\|png\)" -print0 \; ) |
 		xargs -0 mp -q
 fi
 if test $(mpc playlist | wc -l) -gt 1; then

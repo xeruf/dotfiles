@@ -1,2 +1,4 @@
 #!/bin/sh
-opusenc "$@" "${1%.*}.opus"
+# Convert given file to opus, requires opus-tools or ffmpeg
+opusenc "$@" "${1%.*}.opus" ||
+    ffmpeg -i "$@" "${1%.*}.opus"
