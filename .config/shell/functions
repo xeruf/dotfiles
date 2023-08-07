@@ -263,6 +263,7 @@ curlh() {
 	curl -v --location "$@" >/dev/null
 }
 
+unalias u 2>/dev/null # for bash
 u() {
 	# Line below handy for users of netkeeper
 	sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo 'pausing netkeeper for sysupgrade' | netkeeper 30 2>/dev/null
@@ -331,8 +332,9 @@ sshl() {
 		! [[ "$1" =~ "delta*" ]] &&
 	local pass=pass
 	test "$all" &&
-		$pass scp -O ~/.bash_aliases "$1:" &&
-		$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
+		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "$1*.bash" \) -exec cat {} + | $pass ssh "$1" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
+		echo 'Updated .bash_aliases!'
+		#$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if test -n "$pass"
 	then pass ssh "$@"
 	else

@@ -140,7 +140,7 @@ test "$DISPLAY" || exit 0
 highlight "Desktop Applications"
 
 subhighlight "Application symlinks"
-link .bash_aliases "$HOME/.bashrc"
+link "$XDG_CONFIG_HOME/bash/aliases.bash" "$HOME/.bashrc"
 link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
 link "$XDG_DATA_HOME/.cpan/CPAN/MyConfig.pm" "$XDG_CONFIG_HOME/cpan/MyConfig.pm"
 
