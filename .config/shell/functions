@@ -483,9 +483,9 @@ updateKarma() { rpl "karma-runner.github.io/[^/]\+/" "karma-runner.github.io/$1/
 # Kill all shell background processes
 alias killbg='kill -9 ${${(v)jobstates##*:*:}%=*}'
 
-# Kill all processes that match
+# Kill all processes that match given term
 killm() {
-	ps ax | grep "$1" | grep -v grep | sed 's/\([^ ]\) .*/\1/' |
+	ps ax | grep "\b$1 " | grep '?' | grep -v grep | sed 's/\([^ ]\) .*/\1/' |
 		xargs --no-run-if-empty kill --verbose "${@:2}"
 }
 

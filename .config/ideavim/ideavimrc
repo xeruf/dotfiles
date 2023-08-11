@@ -13,4 +13,4 @@ set multiple-cursors
 set ideajoin
 
 " use IDEA jump history https://youtrack.jetbrains.com/issue/VIM-44
-nnoremap <C-o> :action Back<CR>
+" nnoremap <C-o> :action Back<CR>
