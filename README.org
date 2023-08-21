@@ -1,29 +1,28 @@
 * Dotfiles
 Welcome to Janek's dotfiles,
-thousands of lines of handcraft shell code
-to make the live of a linux sysadmin
-and developer easier!
+thousands of lines of handcrafted shell code
+to make the live of a linux sysadmin and developer easier!
 
 I mainly use Arch Linux,
-currently with the KDE desktop environment with tiling extension
-with the intention of moving a proper tiling WM (Awesome or Sway) soon.
+formerly with the KDE desktop environment with tiling extension,
+on the move to Manjaro Sway.
 
 This config is opinionated,
 but currently deployed on multiple machines
-including some other eager users
-who run Manjaro Sway.
+including some other eager users.
 Thus I am progressively generalising it.
 
 If you are not one of those,
 you can safely skip the following section.
+
 ** Usage
-Here are some basic commands you should remember:
+Here are some basic commands to remember:
 - ~u~ to upgrade everything (works on arch-based systems with topgrade installed and any debian-based system, with safeguards to ensure upgrade stability even on longtime dormant machines)
 - yas  :: interactively install software packages
 - yar  :: interactively uninstall software packages
 - loc  :: quickly find a file on your system, case-insensitive
 - loca :: do a deep search for a file on the whole system, case-insensitive
-- loce :: find a file/directory with exact name match
+- loce :: find a file/directory on your system with exact name match
 - moul :: mount a device interatively (unmount with ~umoul~)
 *** Mounting Manually
 To mount a device,
@@ -31,11 +30,12 @@ first check ~ds~ ([d]isk [s]tats, a prettification of ~lsblk --fs~)
 and find your device,
 then call ~moul~ with the respective name or label,
 e.g. ~moul my-usb~ or ~moul sdc2~.
-This will mount the device and jump to the mounted directory.
+This will mount the device and enter the mounted directory.
 
 As long as you are in the device directory
 you can unmount it simply by calling ~umoul~,
-otherwise provide the argument used above again.
+otherwise provide the argument from above again.
+
 * Overview
 If you are looking to snag some of my handy tools,
 focus on [[./.local/bin/scripts][.local/bin/scripts]] and [[./.config/shell][.config/shell]].
@@ -45,11 +45,11 @@ which in turn use ~zfz~, ~zf~ and ~locz~.
 
 ~ex~, ~m~, ~moul~, ~grpr~ / ~rpl~, ~s~, ~sd~, ~tl~ are also commonly used conveniences.
 
-Below is an overview of the structure
+Below is an overview of the structure.
 ** Home
-I am trying to keep my home clean,
+I try to keep my home clean,
 but some files unfortunately cannot be moved.
-Out of these, only [[.zprofile][.zprofile]] is of interest,
+Out of these, only [[.zshenv][.zshenv]] is of interest,
 it contains lots of mappings to store files according to XDG
 and configuration for ~less~ and ~fzf~.
 ** .config
@@ -59,20 +59,29 @@ and configuration for ~less~ and ~fzf~.
 - ideavim, vifm, nvim :: vi-related tools
 - git, yadm :: version control
 ** .local
-- [[.local/bin/scripts][scripts]] :: lots of useful scripts,
+- [[.local/bin/scripts][bin/scripts]] :: lots of useful scripts,
   most have a short documentation header -
   including many essential git scripts
-* Package Setup (moving to [[https://git.jfischer.org/xeruf/instalee][Instalee]])
+- [[.local/bin/server][bin/server]]-scripts :: a few scripts for use on servers
+
+* Package Setup (moving to [[https://github.com/xeruf/instalee][Instalee]])
 By Size:
 : LC_ALL=C pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
 Copy list of in stalled packages:
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
-- dotfiles :: yadm
-  : yadm clone --bootstrap git@git.jfischer.org:xeruf/dotfiles.git
-  : yadm clone --bootstrap https://git.jfischer.org/xeruf/dotfiles.git
-  Run ~bootstrap~ after starting ZSH
 
-Basics: diffr fzf
+- dotfiles :: yadm
+  : yadm clone --bootstrap https://code.ftt.gmbh/janek/dotfiles.git
+  Run ~yadm bootstrap~ again after starting ZSH to finish initialization.
+
+Basic required packages for scripts: diffr fzf
+** Full Personal Setup
+Manjaro:
+#+begin_src sh
+yay -Syu yadm instalee-full-git
+yadm clone --bootstrap git@code.ftt.gmbh:janek/dotfiles.git
+instalee arch/base
+#+end_src
 ** Applications
 - utilities :: youtube-dl dos2unix rlwrap
 - powertools :: hexedit hexyl [[https://lftp.yar.ru/][lftp]] glances zsh-doc pacman-contrib
@@ -115,7 +124,7 @@ texlive-core texlive-latexextra texlive-most-doc
 context-bin
 : git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs && ${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom -y install
 - mail :: offlineimap mu
-*** [[id:firefox][Firefox]] Addons
+*** Essential [[id:firefox][Firefox]] Addons
 **** Password management
 ***** Pass - the unix password manager
 Store all kinds of secrets in plain text
