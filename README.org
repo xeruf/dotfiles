@@ -79,8 +79,10 @@ Basic required packages for scripts: diffr fzf
 Manjaro:
 #+begin_src sh
 yay -Syu yadm instalee-full-git
-yadm clone --bootstrap git@code.ftt.gmbh:janek/dotfiles.git
+yadm clone --bootstrap https://code.ftt.gmbh/janek/dotfiles
+yadm remote set-url --push origin git@code.ftt.gmbh:janek/dotfiles.git
 instalee arch/base
+sudo systemctl enable --now syncthing@$USER
 #+end_src
 ** Applications
 - utilities :: youtube-dl dos2unix rlwrap

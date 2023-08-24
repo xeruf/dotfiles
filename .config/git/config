@@ -119,6 +119,7 @@
 
 	find = log --patch --all --full-history # Find a filename in all git knows
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
+	refg = log --reflog --graph --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	history = log --patch --follow --find-renames=1 -- # Show the history of the given file
 
 	# diffs
