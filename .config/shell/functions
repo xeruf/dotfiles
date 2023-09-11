@@ -270,7 +270,7 @@ u() {
 	if command -v pacman >/dev/null; then
 		if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
 		then
-			# TODO or if location changed significantly or very slow
+			# TODO also run if location changed significantly or mirror is slow
 			if command -v pacman-mirrors >/dev/null
 			then sudo pacman-mirrors --geoip
 			else sudo touch /etc/pacman.d/mirrorlist
@@ -282,7 +282,7 @@ u() {
 	fi
 	if command -v topgrade >/dev/null
 	then
-	  topgrade --disable node emacs remotes
+	  nice -10 topgrade --disable node emacs remotes
 	  if test -d "$XDG_CONFIG_HOME/emacs"
 	  then
 		  builtin cd $XDG_CONFIG_HOME/emacs
@@ -371,6 +371,7 @@ alias pmd='pandoc -t markdown_strict-raw_html'
 alias clr='diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less -F'
 
 alias f='fossil'
+alias fl='fossil timeline --format "[%d] %h %c <%a>"'
 alias fs='fossil status'
 alias fc='fossil commit -v'
 fdf() {

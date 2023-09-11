@@ -44,7 +44,7 @@ export KREW_ROOT="$XDG_DATA_HOME"/krew
 export CARGO_HOME="$XDG_STATE_HOME"/cargo
 export RUSTUP_HOME="$XDG_STATE_HOME"/rustup
 
-export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc 
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
 export NVM_DIR="$XDG_DATA_HOME"/nvm
 export N_PREFIX="$XDG_STATE_HOME"/n
 
@@ -146,10 +146,12 @@ $($_fzf_latest && echo '--preview-window=60%,border-left --marker=o')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
-## ctest
+## cplusplus - ctest, cmake, ninja
+SPARE_CORES=$(expr $(lscpu --extended | awk '{print $7}' | sort | uniq -c | head -1 | awk '{print $1}') \* 4 / 5)
+export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
+export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
-export CTEST_PARALLEL_LEVEL=3
 
 # TODO move to proper place - is also called when firenvim starts
 #autolight

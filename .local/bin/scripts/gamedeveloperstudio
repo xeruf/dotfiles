@@ -1,0 +1,6 @@
+#!/bin/sh
+# Order images downloaded from gamedeveloperstudio into software-challenge assets
+cd $DATA/1*/software-challenge/assets/illustrations
+mv -v ${@:-$DATA/5*/download/*-*.zip} .
+ex *.zip
+find -name 'info_about_*' -name thankyou.png -delete

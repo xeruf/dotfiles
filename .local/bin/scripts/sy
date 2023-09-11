@@ -13,5 +13,5 @@ case "$1" in
   (init) sudo -E sysyadm init -b main -w /;;
   (*) sudo -E sysyadm "$@";;
 esac
+#sudo chmod +rw /tmp/git -R 2>/dev/null
 sudo chown -R $USER /etc/yadm
-sudo chmod ugo+rw /tmp/git -R 2>/dev/null

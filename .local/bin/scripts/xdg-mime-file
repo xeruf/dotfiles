@@ -1,11 +1,12 @@
 #!/bin/sh -e
 # Use xdg-mime with a file's mime type
 # ARGS: file [application]
-xdg-mime query default "$(xdg-mime query filetype "$1")"
+type="$(xdg-mime query filetype "$1")"
+xdg-mime query default "$type"
 if test $# -gt 1; then
-	desktop="$(find /usr/share/applications $XDG_DATA_HOME/applications | fzf -0 -1 --query="$2")" &&
-	xdg-mime default "$desktop" "$(xdg-mime query filetype "$1")" &&
+	desktop="$(find /usr/share/applications $XDG_DATA_HOME/applications | fzf -0 -1 --query="$2" --preview 'bat --color=always --style=numbers --line-range :200 {}' | xargs -r basename)" &&
+	xdg-mime default "$desktop" "$type" &&
 	echo -n "Updated to: " &&
-	xdg-mime query default "$(xdg-mime query filetype "$1")"
+	xdg-mime query default "$type"
 fi
 # || echo "Cannot find application $2 in /usr/share/applications!"

@@ -1,3 +1,4 @@
 #!/bin/sh -e
-sleep "$@"
+# Put system to sleep after specified number of seconds
+$(which timer || sleep) "${@:-10}"
 systemctl suspend

@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# Reload mpd with appropriate config
+yadm alt
+cd $XDG_CONFIG_HOME/mpd
+mv *template ..
+mv ../*template .
+systemctl --user restart mpd

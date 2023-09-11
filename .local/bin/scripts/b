@@ -26,13 +26,14 @@ case "$OPTION" in
 	(v) set -eo xtrace;
 		export PS4='+\#> ';;
 	(h|?) echo "Usage: $(basename $0) [-$opts] <paths...>" && exit 2;;
+	(--) break;;
 esac
 done
 shift "$(($OPTIND -1))"
 
 checkperm() {
 	checkaccess -r "$@" || elevate=sudo
-	mime="$(test -n "$shifted" || $elevate file --dereference --mime "$@")"
+	mime="$(test -n "$shifted" || $elevate file --dereference --mime -- "$@")"
 }
 fileinfo() {
 	tput setaf 4
@@ -45,8 +46,7 @@ fileinfo() {
 		# TODO do not grep bitrate but extract properly
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
-		$inspect ||
-			$elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/' ||
+		{ ! $inspect && $elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/'; } ||
 			$elevate stat --format "%U:%G %A %s $(
 					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
 						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"
@@ -59,7 +59,7 @@ prefix=/tmp/b
 mkdir -p "$prefix"
 declare -a timg timga bat batplain ls
 for arg; do
-	case "$arg" in (-*) flags="$flags $arg"; continue;; esac
+	test -z "$noflags" && case "$arg" in (--) noflags=true; continue;; (-*) flags="$flags $arg"; continue;; esac
 	checkperm "$arg"
 	if ! $elevate test -e "$arg"
 	then if test -h "$arg"
@@ -70,7 +70,7 @@ for arg; do
 	fi
 	# amount of columns in a grid
 	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
-	tmpfile="$prefix/$(basename "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ' || true)"
+	tmpfile="$prefix/$(basename -- "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ' || true)"
 	mkdir -p "$prefix"
 	case "$mime" in
 	(*\ application/pdf\;*)
@@ -97,7 +97,7 @@ for arg; do
 		suffix=_thumbs.jpg
 		mtn -q -i -t -W -r$(expr 5 - $# \& $# \< 4 \| 1) -D6 -b 0.6 -c $grid -w $(expr $(tput cols) '*' 20) \
 			-O "$prefix" -o "$suffix" "$arg" &&
-		timg -W "$prefix/$(basename "${arg%.*}")$suffix"
+		timg -W "$prefix/$(basename -- "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)
 		timg+=("$arg")
@@ -171,7 +171,7 @@ if test "$timg"; then
 		for img in "${timg[@]}"
 		do case $img in (*.gif) continue;; esac
 			ident="$(identify -ping -precision 3 -format "%wx%h %b %m %[bit-depth]-bit %[colorspace]" "$img")"
-			printf "%11s %-30s	%s\n" "${ident%% *}" "$(basename "$img")" "${ident#* }"
+			printf "%11s %-30s	%s\n" "${ident%% *}" "$(basename -- "$img")" "${ident#* }"
 		done
 		tput sgr0
 	fi
@@ -195,8 +195,8 @@ if test "$bat" -o "$batplain"; then
 		then case $TERM in (*kitty)
 				declare -a timgtxt
 				for file in "${bat[@]}"
-				do txt="$prefix/$(basename "$file").txt"
-					cp "$file" "$txt"
+				do txt="$prefix/$(basename -- "$file").txt"
+					cp -- "$file" "$txt"
 					timgtxt+=("$txt")
 				done
 				timg -V --grid="$(expr 4 \& ${#bat[@]} \> 5 \| ${#bat[@]})" --title="%b" --frames=3 "${timgtxt[@]}" ||
@@ -236,11 +236,11 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 		# TODO listing sometimes doubles as exa prints partial listings while working
 		timeout .6s sh -c "
 			if test '$tree'
-			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags $(printf "'%s' " "${ls[@]:-.}")
+			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags -- $(printf "'%s' " "${ls[@]:-.}")
 			elif which exa 2>/dev/null >&2
-			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags $(printf "'%s' " "${ls[@]:-.}")
-			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags $(printf "'%s' " "${ls[@]:-.}")
+			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags -- $(printf "'%s' " "${ls[@]:-.}")
+			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags -- $(printf "'%s' " "${ls[@]:-.}")
 			fi
-		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags "${ls[@]:-.}"
+		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags -- "${ls[@]:-.}"
 	} | $pager --quit-if-one-screen
 fi

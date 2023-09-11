@@ -12,7 +12,7 @@ fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain
 	# and return a newline-separated list of selected files
 	cut -z -c2- |
-		git fzf-diff --read0 -d' ' --nth=2.. --bind="alt-enter:execute($EDITOR '$(git rev-parse --show-toplevel)/{2..}')" \
+		git fzf-diff --read0 -d' ' --nth=2.. --bind="alt-enter:execute($EDITOR '$(git rev-parse --show-toplevel)/{2..}'),alt-d:execute(git restore --worktree --staged '$(git rev-parse --show-toplevel)/{2..}')" \
 			--preview="test {1} != \? && git diff --color HEAD --unified=4 -- {2..} | $(git config interactive.diffFilter | grep . || echo $PAGER) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
 		cut -c3-
 }
