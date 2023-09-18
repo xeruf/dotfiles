@@ -190,6 +190,7 @@ source_existing() {
 }
 
 source_existing $CONFIG_ZSH/.p10k.zsh # To customize prompt, run `p10k configure` or edit .p10k.zsh.
+source_existing $CONFIG_ZSH/sgpt.zsh
 source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 
 source_existing "$NVM_DIR/nvm.sh"

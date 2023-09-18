@@ -193,3 +193,5 @@
 	path = "~/.config/yadm/gitconfig"
 [safe]
 	directory = /opt/flutter
+[credential]
+	helper = cache --timeout 1000

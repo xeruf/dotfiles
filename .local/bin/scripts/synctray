@@ -1,7 +1,0 @@
-#!/bin/sh -e
-# Install syncthingtray, preventing conflicts
-# Pass -git as argument to install the git version with dependencies
-pacman -Qq | grep '^syncthingtray' | xargs -r yay --noconfirm -R
-suffix=$1
-yay --noconfirm -Syy --nobatchinstall boost c++utilities$suffix qtforkawesome$suffix qtutilities$suffix
-yay --noconfirm -S syncthingtray$suffix

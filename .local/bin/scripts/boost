@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# Install syncthingtray and other things using boost, preventing conflicts
+# Pass -git as argument to install the git version with dependencies
+pacman -Qq | grep -E '^(syncthingtray)' | xargs --no-run-if-empty yay -R --noconfirm
+suffix=$1
+yay --noconfirm -Syy --nobatchinstall --answerdiff none boost c++utilities$suffix qtforkawesome$suffix qtutilities$suffix
+yay --noconfirm -S syncthingtray$suffix guitarix

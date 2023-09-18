@@ -2,6 +2,6 @@
 # xdg-open all given files
 # TODO handle .desktop-files with gtk-launch/dex/kioclient exec, add selector from xdg-mime-file
 while test $# -gt 0; do
-	xdg-open "$1"
+	xdg-open "$(case "$1" in (-*) echo './';; esac)$1"
 	shift
 done

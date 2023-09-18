@@ -1,8 +1,9 @@
 #!/bin/sh -e
-# open info-page, man-page or command help
+# open info-page, man-page or command with help flag
 # depends: unbuffer
 # optdepends: highlight(dotfiles)
 # TODO show tldr page
+# TODO extract help in standard format from scripts
 paginate="${PAGER:-less} +Gg"
 case "$1" in
 	(-d) browse=1; shift;;
@@ -25,13 +26,11 @@ showinfo() {
 
 cmd="$1"
 case "$cmd" in
-	# TODO extract help in standard format from scripts
 	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja) unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
 	(caddy|stretchly|go|flutter)
 		shift
 		"$cmd" help "$@" | $paginate;;
-	# Non-standard help flags
-	(doom) "$@" --help;; # Doom paginates itself
+	(doom|sgpt) "$@" --help;; # Paginates itself
 	(mpw) "$@" -h 2>&1 | $paginate;;
 	(spectre|plantuml|java) unbuffer "$@" -help | $paginate;;
 	(rails) { "$@" -H && "$@" --help; } | $paginate;;

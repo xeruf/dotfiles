@@ -49,7 +49,7 @@ cd() {
 		# TODO test whether still needed with exa
 		command ls --sort=none --quote-name |
 			head -12 |
-			COLUMNS=$(tput cols) xargs $(which exa >/dev/null 2>&1 && echo "exa --list-dirs --icons --reverse" || echo 'ls --format=vertical --literal --classify --directory') --sort=time --color=always |
+			COLUMNS=$(tput cols) xargs $(which exa >/dev/null 2>&1 && echo "exa --list-dirs --icons --reverse" || echo 'ls --format=vertical --literal --classify --directory') --sort=time --color=always -- |
 			head -3
 		code=$? && test $code -eq 141 || return $code
 	fi
