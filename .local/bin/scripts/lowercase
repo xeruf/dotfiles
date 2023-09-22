@@ -2,4 +2,5 @@
 # Lowercase given files
 #perl-rename 'y/A-Z /a-z-/' "$@"
 #$(which perl-rename || echo rename) -iv 'y/A-Z /a-z-/' "$@"
-find "$@" -exec sh -c 'mv -iv "{}" "$(echo "{}" | tr "A-Z " "a-z-" | sed "s|---|_|;s|\.-|.|")" 2>/dev/null' \;
+sedrename "s| |-|;s|---|_|;s|\.-|.|;s|.*|\L\0|g" "$@"
+# find "$@" -exec sh -c 'mv -iv "{}" "$(echo "{}" | tr "A-Z " "a-z-" | sed "s|---|_|;s|\.-|.|")" 2>/dev/null' \;
