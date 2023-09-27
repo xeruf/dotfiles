@@ -22,7 +22,7 @@ case $1 in
   (*|ftt) host=git@code.ftt.gmbh; user=janek;;
 esac
 user=${3:-${user:-$(git config user.name)}}
-repo=${2:-$(basename $PWD)}
+repo=${2:-$(basename $(git root))}
 if test "$http"
 then echo "$http://${host#git*@}/$user/$repo.git"
 else echo "$host:$user/$repo.git"

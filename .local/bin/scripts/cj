@@ -4,7 +4,7 @@
 set -o pipefail
 
 # jq if file is valid json, otherwise show parseable lines with bat
-{ jq --unbuffered '' "$@" ||
+{ jq --unbuffered '.' "$@" ||
 # add echo in case file is missing newline at the end
 { for arg; do echo "FILE: $arg ─────────────────────────────────────────────────────────────────────────────────────────"; cat "$arg"; done; echo; } |
   while read -r line

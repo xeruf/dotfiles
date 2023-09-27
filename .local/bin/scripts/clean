@@ -5,9 +5,10 @@
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
 # TODO .mix - outdated version in socha
-_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .electron .electron-gyp .gradle .gradle-kotlin-dsl .hex .java .kscript .konan .m2 .nix-defexpr .node-gyp .nv .openjfx .parallel .stack .surf .texlive
-             .yarn .node_modules .npm .pnpm-store
-             luametatex-cache luatex-cache
+_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .stack .hex .nix-defexpr .parallel .surf
+             .yarn .node_modules .npm .pnpm-store .node-gyp .nv .electron .electron-gyp
+			 .gradle .gradle-kotlin-dsl .java .kscript .konan .m2 .openjfx
+             .log luametatex-cache luatex-cache .texlive
              .lesshst .python_history .rubberband.wisdom.d .yarnrc)
 
 [[ $1 =~ "." ]] && local=pwd

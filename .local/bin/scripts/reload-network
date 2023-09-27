@@ -1,0 +1,2 @@
+#!/bin/sh -x
+sudo systemctl restart systemd-resolved systemd-networkd NetworkManager

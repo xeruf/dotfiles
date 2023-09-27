@@ -32,7 +32,7 @@ echo "Using offset ${h}x and ${v}y"
 export TEXMF=""
 pdfjam $quiet "$signature" --outfile "$sig" --papersize "{595pt, 842pt}" --noautoscale true \
     --offset "${h}pt ${v}pt" --scale "${4:-1}"
-rm "$result"
+rm -f "$result"
 pdfjam $quiet "$1" ${page:-last} "$sig" --outfile "$tmp_signed" --delta "0 -842pt" --nup "1x2" --fitpaper true
 # TODO consider pdftk stamp
 
