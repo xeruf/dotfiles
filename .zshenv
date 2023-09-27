@@ -94,6 +94,7 @@ export EDITOR="$(
 	else echo $ALTERNATE_EDITOR
 	fi
 )"
+export IHP_EDITOR="$BIN/scripts/emacs-line"
 
 export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
 export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"

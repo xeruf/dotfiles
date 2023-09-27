@@ -1,0 +1,6 @@
+#!/bin/sh
+# https://ihp.digitallyinduced.com/Guide/editors.html#using-ihp-with-emacs
+path="${1%%:*}"
+col="${1##*:}"
+line="${1%:*}"; line="${line##*:}"
+emacsclient -n +"${line}:${col}" "${path}"

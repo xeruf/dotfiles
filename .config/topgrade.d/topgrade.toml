@@ -8,7 +8,7 @@ pre_sudo = true
 #assume_yes = ["emacs"]
 
 # Disable specific steps - same options as the command line flag
-disable = ["nix", "containers", "config_update", "node", "firmware"]
+disable = ["containers", "config_update", "node", "firmware"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]

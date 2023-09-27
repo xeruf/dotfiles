@@ -715,37 +715,37 @@ Version 2019-11-04 2021-02-16"
 ;;; Colors
 
 ; https://www.emacswiki.org/emacs/HexColour
-;;(require 'cl)
-;;(defun hexcolor-luminance (color)
-;;  "Calculate the luminance of a color string (e.g. \"#ffaa00\", \"blue\").
-;;This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
-;;  (let* ((values (x-color-values color))
-;;         (r (car values))
-;;         (g (cadr values))
-;;         (b (caddr values)))
-;;    (floor (+ (* .3 r) (* .59 g) (* .11 b)) 256)))
-;;(defun hexcolor-add-to-font-lock ()
-;;  (interactive)
-;;  (font-lock-add-keywords nil
-;;   `((,(concat "#[0-9a-fA-F]\\{3\\}[0-9a-fA-F]\\{3\\}?\\|"
-;;               (regexp-opt (x-defined-colors) 'words))
-;;      (0 (let ((color (match-string-no-properties 0)))
-;;           (put-text-property
-;;            (match-beginning 0) (match-end 0)
-;;            'face `((:foreground ,(if (> 128.0 (hexcolor-luminance color))
-;;                                       "white" "black"))
-;;                    (:background ,color)))))))))
+(require 'cl)
+(defun hexcolor-luminance (color)
+  "Calculate the luminance of a color string (e.g. \"#ffaa00\", \"blue\").
+This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
+  (let* ((values (x-color-values color))
+         (r (car values))
+         (g (cadr values))
+         (b (caddr values)))
+    (floor (+ (* .3 r) (* .59 g) (* .11 b)) 256)))
+(defun hexcolor-add-to-font-lock ()
+  (interactive)
+  (font-lock-add-keywords nil
+   `((,(concat "#[0-9a-fA-F]\\{3\\}[0-9a-fA-F]\\{3\\}?\\|"
+               (regexp-opt (x-defined-colors) 'words))
+      (0 (let ((color (match-string-no-properties 0)))
+           (put-text-property
+            (match-beginning 0) (match-end 0)
+            'face `((:foreground ,(if (> 128.0 (hexcolor-luminance color))
+                                       "white" "black"))
+                    (:background ,color)))))))))
 
-;;(defvar hexcolor-keywords
-;;  '(("#[abcdef[:digit:]]\\{6\\}"
-;;     (0 (put-text-property (match-beginning 0)
-;;                           (match-end 0)
-;;		    'face (list :background
-;;			        (match-string-no-properties 0)))))))
-;;(defun hexcolor-add-to-font-lock ()
-;;  (font-lock-add-keywords nil hexcolor-keywords))
+(defvar hexcolor-keywords
+  '(("#[abcdef[:digit:]]\\{6\\}"
+     (0 (put-text-property (match-beginning 0)
+                           (match-end 0)
+		    'face (list :background
+			        (match-string-no-properties 0)))))))
+(defun hexcolor-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolor-keywords))
 
-;;(add-hook 'web-mode-hook 'hexcolor-add-to-font-lock)
+(add-hook 'web-mode-hook 'hexcolor-add-to-font-lock)
 
 (after! eshell
   ; https://stackoverflow.com/questions/63469203/eshell-and-color-output
@@ -924,22 +924,22 @@ Version 2019-11-04 2021-02-16"
 
 ;;; File Editing Modes
 
-(setq initial-major-mode 'org-mode)
-(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
-
-(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
-;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
-(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
-
-;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
-;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+;(setq initial-major-mode 'org-mode)
+;(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
+;(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
 ;
-;;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
-;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-
-(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+;(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
+;;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
+;(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
+;
+;;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
+;;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+;;
+;;;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+;;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+;
+;(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
 
 (use-package! web-mode
   :mode "\\.html\\'"
@@ -956,6 +956,26 @@ Version 2019-11-04 2021-02-16"
 ; https://discourse.doomemacs.org/t/disabling-ruby-typeprof/3197/3
 (after! lsp-mode
   (setq lsp-disabled-clients '(typeprof-ls)))
+
+(use-package eglot
+  :config
+  (add-hook 'haskell-mode-hook #'eglot-ensure)
+  ;; Optionally add keybindings to some common functions:
+  :bind ((:map eglot-mode-map
+               ("C-c C-e r" . eglot-rename)
+               ("C-c C-e l" . flymake-show-buffer-diagnostics)
+               ("C-c C-e p" . flymake-show-project-diagnostics)
+               ("C-c C-e C" . eglot-show-workspace-configuration)
+               ("C-c C-e R" . eglot-reconnect)
+               ("C-c C-e S" . eglot-shutdown)
+               ("C-c C-e A" . eglot-shutdown-all)
+               ("C-c C-e a" . eglot-code-actions)
+               ("C-c C-e f" . eglot-format))))
+
+;; Optional: Show/pick completions on tab, sane max height:
+(setq tab-always-indent 'complete
+      completions-max-height 20
+      completion-auto-select 'second-tab)
 
 (use-package! adoc-mode ; Asciidoc, a md alternative
   :mode "\\.adoc\\'"
@@ -1041,6 +1061,12 @@ Version 2019-11-04 2021-02-16"
 (setq auto-revert-interval 2)
 
 (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
+
+;; Customize word-wrap to break at commas
+;; https://emacs.stackexchange.com/questions/19027/how-to-wrap-line-at-some-characters-other-than-space/71342#71342
+(setq-default word-wrap t)
+(setq-default word-wrap-by-category t)
+(modify-category-entry ?, ?|)
 
 (use-package! activity-watch-mode
   :config
