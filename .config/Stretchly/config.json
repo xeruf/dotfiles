@@ -283,8 +283,15 @@
 		},
 		{
 			"data": [
+				"Sports",
+				"Go for a plank or some pull-ups"
+			],
+			"enabled": true
+		},
+		{
+			"data": [
 				"Intention",
-				"Take a break, reflect and review your plans."
+				"Take a break, grab some water. Should you still be working on this?"
 			],
 			"enabled": true
 		}
