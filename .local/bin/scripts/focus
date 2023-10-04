@@ -6,7 +6,7 @@
 # TODO fails on "Alchemy"
 # TODO implement finding by tags
 PLAYLISTS="${PLAYLISTS:-$MUSIC/Playlists}"
-mpc -q clear
+mpc -q clear || mpdr && mpc -q clear
 if test -z "$1"
 then mp -q "$PLAYLISTS/focus.m3u"
 else

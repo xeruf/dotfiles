@@ -1,0 +1,3 @@
+#!/bin/sh
+way-displays -s ARRANGE_ALIGN ROW bottom
+way-displays -s ORDER "$@"

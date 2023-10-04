@@ -142,8 +142,9 @@
 	ap = add -p
 
 	c = commit -v
+	cme = commit -v --edit --message # Commit with message from CLI but edit it
 	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
-	cme = commit -v --edit --message # Commit with message but edit it
+	cap = !git commit --amend --no-edit && git push --force-with-lease
 
 	cp = cherry-pick
 	cpc = cherry-pick --continue
@@ -181,7 +182,6 @@
 	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease
 	luu = !git pull upstream ${1:-$(git curbranch)} && git push --no-verify
 	pf = push --force-with-lease
-	cap = !git commit --amend --no-edit && git push --force-with-lease
 
 	# CLEANUP
 	gcr = !git gc && git repack -a -d
