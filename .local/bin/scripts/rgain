@@ -1,3 +1,6 @@
 #!/bin/sh
 # Recursively add replaygain to the given files or from the current directory
 r128gain $(test -f "$1" || echo '--recursive') --skip-tagged --preserve-times 1 "${@:-.}"
+# rsgain custom --album --skip-existing --tagmode=i
+# Need a find command, call for each album
+# rsgain easy --skip-existing --multithread=${SPARE_CORES:-3} "${@:-.}"

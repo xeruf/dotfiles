@@ -1,7 +1,7 @@
 #!/bin/sh
 # Find config files with fzf, preview and edit them
 # Common config files are automatically checked/reloaded
-alias dedup='awk '"'"'!a[$0]++'"'"
+alias dedup-lines='awk '"'"'!a[$0]++'"'"
 
 listconf() {
   { cat "$conf_cache"
@@ -12,7 +12,7 @@ listconf() {
       \( -name Partitions -o -name mdn -o -name .git -o -name .local -o -name plugged \) -prune -o \
       ! \( -iname "*.markdown" -o -iname "*.md" -o -name "Network Persistent State" -o -iname "*.pem" \) -a \
       -type f -readable -exec grep -lI '' {} + 2>/dev/null
-  } | dedup
+  } | dedup-lines
 }
 
 conf_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/$(basename "$0")"

@@ -5,7 +5,8 @@
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
 # TODO .mix - outdated version in socha
-_clean_home=(.ant .autopsy .bundle .cache .cargo .cpanm .docker .stack .hex .nix-defexpr .parallel .surf
+_clean_home=(.ant .autopsy .bundle .cargo .cpanm .docker .stack .hex .nix-defexpr .parallel .surf
+			 #.cache
              .yarn .node_modules .npm .pnpm-store .node-gyp .nv .electron .electron-gyp
 			 .gradle .gradle-kotlin-dsl .java .kscript .konan .m2 .openjfx
              .log luametatex-cache luatex-cache .texlive

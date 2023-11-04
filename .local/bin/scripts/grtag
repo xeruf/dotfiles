@@ -1,0 +1,6 @@
+#!/bin/sh
+# Rescursively find org-mode and other tags
+tag=$1
+shift
+grep --color=always --line-number --binary-files=without-match --directories=recurse --exclude-dir logseq --ignore-case ":$tag:
+@$tag\b" "$@"

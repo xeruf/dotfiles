@@ -2,4 +2,4 @@
 # Rename files according to a given extended regex sed expression
 sedexpr="$1"
 shift
-find "$@" -exec sh -c 'mv -iv "{}" "$(echo "{}" | sed -E "'$sedexpr'")" 2>/dev/null' \;
+find "$@" -exec sh -c 'mv -iv "{}" "$(echo "{}" | sed -E "'"$sedexpr"'")" 2>/dev/null' \;

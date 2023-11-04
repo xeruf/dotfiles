@@ -1,5 +1,5 @@
 #!/bin/bash
-# Troubleshoot.sh
+# troubleshoot disk issues and log results
 # A more elaborate version of Troubleshoot.sh.
 
 SUCCESS=0
@@ -32,4 +32,5 @@ do
             smartctl -i -A $e >> ${date}_Troubleshoot.log # Run smartctl on all disks
     fi
 done
+
 exit $?   # In this case, exit code = 99, since that is function return.

@@ -1,0 +1,5 @@
+#!/bin/sh -ex
+# Generate a cloud-init hashed password for the given machine and copy it
+passwd=$(mkpasswd --method=SHA-512 --rounds=4096 $(pass mpw -t basic "$@"))
+echo $passwd
+echo $passwd | wl-copy

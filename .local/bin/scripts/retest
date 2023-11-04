@@ -1,5 +1,5 @@
 #!/bin/sh
-# Execute a gradle task (default test) until it fails
+# Execute a gradle task (by default "test") until it fails
 code=0
 case "$1" in ([0-9]*) code=$1; shift;; esac
 

@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Displays the latest files in the given directory or pwd
+# Lists the latest modified files in the given directory or pwd
 test "$1" = "-a" && all=true && shift
 for f in "${@:-$PWD}"
 do test $# -gt 1 && highlight "$f"

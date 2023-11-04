@@ -1,3 +1,4 @@
 #!/bin/sh
 # Set exec flag on all files that should be executable
-find -maxdepth 4 \( -name "*.sh" -o -path '*/githooks/*' \) "$@" -exec chmod -v +x {} +
+case "$1" in ([0-9]) depth=$1; shift;; esac
+find -maxdepth ${depth:-4} \( -name "*.sh" -o -name "*.py" -o -path '*/githooks/*' \) "$@" -exec chmod -v +x {} +

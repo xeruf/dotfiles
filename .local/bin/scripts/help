@@ -26,13 +26,15 @@ showinfo() {
 
 cmd="$1"
 case "$cmd" in
-	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja) unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
+	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja)
+		unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
 	(caddy|stretchly|go|flutter)
 		shift
 		"$cmd" help "$@" | $paginate;;
 	(doom|sgpt) "$@" --help;; # Paginates itself
-	(mpw) "$@" -h 2>&1 | $paginate;;
+	(rsgain) "$@" custom --help;;
 	(spectre|plantuml|java) unbuffer "$@" -help | $paginate;;
+	(mpw) "$@" -h 2>&1 | $paginate;;
 	(rails) { "$@" -H && "$@" --help; } | $paginate;;
 	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
 	(kdeconnect*) shift && kdeconnect-cli --help-all "$@" | $paginate;;
