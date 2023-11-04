@@ -98,6 +98,7 @@ Version 2019-11-04 2021-02-16"
       "C--"     'doom/decrease-font-size
       "C-u"     'evil-scroll-up
       :leader
+      "l"       'link-hint-open-link-at-point
       "u"       'evil-prev-buffer
       "i"       'evil-next-buffer
       "q"       'doom/save-and-kill-buffer
@@ -268,6 +269,7 @@ Version 2019-11-04 2021-02-16"
          ("C-c b" . org-cycle-list-bullet)
          ("C-c ." . org-time-stamp-inactive)
          ("C-c C-." . org-time-stamp)
+         ("C-c C-;" . (lambda () (interactive) (let ((time-stamp-format (concat "[" time-stamp-bare " %a %H:%M]"))) (call-interactively 'org-time-stamp))))
          ("M-C-+" . org-timestamp-up)
          ("M-C--" . org-timestamp-down)
         )
@@ -348,7 +350,7 @@ Version 2019-11-04 2021-02-16"
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
   (push "PERM(e)" (cdr (car org-todo-keywords)))
-  ; #+TODO: IDEA(i!) OUTLINE(o!) DRAFT(t!) | REVIEW(r!) DONE(d!) ABANDON(a!)
+  ; For writings: +TODO: IDEA(i!) OUTLINE(o!) DRAFT(t!) | REVIEW(r!) DONE(d!) ABANDON(a!)
   ; highlight review keyword
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
@@ -771,6 +773,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
       :n "q"  'kill-this-buffer
       :map image-mode-map
       "<tab>" 'other-window
+      :n "D"  'doom/delete-this-file ;Follow by dired-find-file to select next?
       :n "q"  'kill-this-buffer
       :n "+"  'image-increase-size
       :n "-"  'image-decrease-size
@@ -924,7 +927,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
 ;;; File Editing Modes
 
-;(setq initial-major-mode 'org-mode)
+(setq initial-major-mode 'org-mode)
 ;(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
 ;(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
 ;
@@ -1075,11 +1078,6 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
       :on-error (lambda (&rest _) (message "")))
   )
 
-(after! spell-fu
-  (remove-hook 'text-mode-hook #'spell-fu-mode)
-  )
-(setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
-
 (use-package! rdictcc
   :if (locate-library "rdictcc")
   :bind (("C-c t". 'rdictcc-translate-word-at-point)
@@ -1178,15 +1176,20 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
       smtpmail-smtp-service 1025
       smtpmail-stream-type 'ssl))
 
-;(with-eval-after-load "ispell"
-;  (setq ispell-program-name "hunspell")
-;  (setq hunspell-default-dict "en_US")
-;  (setq ispell-dictionary "en_US,de_DE")
-;  ;; ispell-set-spellchecker-params has to be called
-;  ;; before ispell-hunspell-add-multi-dic will work
-;  (ispell-set-spellchecker-params)
-;  (ispell-hunspell-add-multi-dic ispell-dictionary)
-;  )
+(after! spell-fu
+  (remove-hook 'text-mode-hook #'spell-fu-mode)
+  )
+(setq ispell-personal-dictionary (expand-file-name "personal-dictionary" custom-emacs-data-dir))
+
+(with-eval-after-load "ispell"
+  (setq ispell-program-name "hunspell")
+  (setq hunspell-default-dict "en_US")
+  (setq ispell-dictionary "en_US,de_DE")
+  ;; ispell-set-spellchecker-params has to be called
+  ;; before ispell-hunspell-add-multi-dic will work
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic ispell-dictionary)
+  )
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
