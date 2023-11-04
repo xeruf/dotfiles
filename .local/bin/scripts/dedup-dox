@@ -1,0 +1,6 @@
+#!/bin/zsh
+# Deduplicate Documents
+dox=$(realpath $DATA/3-*)
+echo "Hardlinking:"
+dedup --max-depth=9 -c sh:handler=hardlink "$dox" "$@"
+dedup --max-depth=9  "$dox" "$@"

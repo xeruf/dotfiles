@@ -1,0 +1,5 @@
+#!/bin/zsh
+# Deduplicate Images
+img=$(realpath $DATA/4-*/images)
+#find -type f -not -name '*.xmp' | rmlint -k - // pictorials
+dedup --max-depth=9 -k $img $img/[a-z]*/ // $img/pictorials/stockicons/ $img/**/*.xmp "$@"

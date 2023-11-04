@@ -1,0 +1,5 @@
+#!/bin/sh -e
+rmlint --max-depth=5 --keep-hardlinked --rank-by=HpOdlam -o pretty -o sh:/tmp/dedup.sh "$@"
+printf "Enter to confirm, any text to skip (answer does not matter if nothing was printed above this line) "
+read -r answer
+test -n "$answer" || /tmp/dedup.sh -d
