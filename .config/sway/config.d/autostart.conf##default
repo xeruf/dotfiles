@@ -1,7 +1,7 @@
 # assign [app_id="firefox"] workspace 2
 assign [class="sc.gui.final.FinalApp"] workspace 5
 assign [title="JViewer.*"] workspace 5
-assign [class="sc.*"] workspace 6
+assign [class="^sc.*"] workspace 6
 assign [class="discord"] workspace 9
 
 exec swaymsg "workspace 2; exec firefox;"
