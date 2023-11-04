@@ -1,5 +1,14 @@
 # Sensitive data through pass
 matches:
+  - trigger: ";env"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: env
+          shell: bash
+          debug: true
   # {{{1 EMAILS
   - trigger: ";ep"
     replace: "{{output}}"
@@ -7,28 +16,28 @@ matches:
       - name: output
         type: shell
         params:
-          cmd: pass info/email/personal
+          cmd: PASSWORD_STORE_DIR=$HOME/.local/share/pass pass info/email/personal
   - trigger: ";ec"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
-          cmd: pass info/email/church
+          cmd: PASSWORD_STORE_DIR=$HOME/.local/share/pass pass info/email/church
   - trigger: ";eu"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
-          cmd: pass info/email/uni
+          cmd: PASSWORD_STORE_DIR=$HOME/.local/share/pass pass info/email/uni
   - trigger: ";eaur"
     replace: "{{output}}"
     vars:
       - name: output
         type: shell
         params:
-          cmd: pass info/email/aur
+          cmd: PASSWORD_STORE_DIR=$HOME/.local/share/pass pass info/email/aur
   # {{{1 ADDRESS
   - trigger: ";add"
     replace: "{{output}}"
@@ -36,7 +45,7 @@ matches:
       - name: output
         type: shell
         params:
-          cmd: pass info/address
+          cmd: PASSWORD_STORE_DIR=$HOME/.local/share/pass pass info/address
   - triggers:
       - ";adb"
       - ";adt"
@@ -45,7 +54,7 @@ matches:
       - name: output
         type: shell
         params:
-          cmd: pass info/address-bt
+          cmd: PASSWORD_STORE_DIR=$HOME/.local/share/pass pass info/address-bt
   - triggers:
       - ";adw"
       - ";ads"

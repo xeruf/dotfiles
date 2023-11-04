@@ -15,13 +15,14 @@ matches:
        Janek
   - trigger: ";greb"
     replace: |-
-      Grüße aus Bayreuth,
+      Grüße,
        Janek Fischer
      
-      --
+      ---
       Technischer Leiter https://software-challenge.de, deutscher Programmierwettbewerb für Schüler
       CTO der FTT Forensic Discovery GmbH - gesunde IT aus Bayreuth: https://forensicdiscovery.de
       Software Engineering Student @ https://code.berlin
+      Privater Blog: https://barelybuggy.blog
   - trigger: ";grer"
     replace: |-
       Greetings from Bavaria,
