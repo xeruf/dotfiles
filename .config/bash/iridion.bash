@@ -3,19 +3,28 @@ set -o pipefail
 alias localip="ip addr show | grep -E '(ens|eth)' | grep -oP '"'(?<=inet\s)\d+(\.\d+){3}'"' | head -1"
 
 letsencrypt() {
-  (
-    ip=$(localip)
-    IFS=$'\n'
+  if test $# -eq 0
+  then
     for user in $(list users)
-    do for domain in $(hestia v-list-web-domains $user | grep $ip | awk '{print $1}')
-      do #echo "Checking $user $domain" >&2
-        hestia v-list-web-domain-ssl $user $domain | grep -q . && continue
-        hestia v-list-web-domain $user $domain | grep -q REDIRECT && continue
-        #echo "Generating Certificate" >&2
-        hestia v-add-letsencrypt-domain $user $domain $(hestia v-list-web-domain $user $domain | grep ALIAS | tr -s ' ' | cut -d' ' -f2- | tr ' ' ',')
-      done
+    do letsencrypt "$user"
     done
-  )
+  else
+    (
+      ip=$(localip)
+      IFS=$'\n'
+      for user
+      do for domain in $(hestia v-list-web-domains $user | grep $ip | awk '{print $1}')
+         do #echo commented out due to command echoing in hestia alias
+          #echo "Checking $user $domain" >&2
+          hestia v-list-web-domain $user $domain | grep -q REDIRECT && continue
+          hestia v-list-mail-domain-ssl $user $domain | grep -q . || hestia v-add-letsencrypt-domain $user $domain '' yes
+          hestia v-list-web-domain-ssl $user $domain | grep -q . && continue
+          #echo "Generating Certificate" >&2
+          hestia v-add-letsencrypt-domain $user $domain $(hestia v-list-web-domain $user $domain | grep ALIAS | tr -s ' ' | cut -d' ' -f2- | tr ' ' ',')
+        done
+      done
+    )
+  fi
 }
 
 list() {
@@ -40,7 +49,7 @@ hestia() {
   command=$1
   shift
   echo '>' sudo $(which $command) "$@" >&2
-  sudo $(which $command) "$@"
+  sudo timeout 30s $(which $command) "$@"
 }
 
 accessible() {

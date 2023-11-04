@@ -58,7 +58,7 @@ arguments = "--rebase --autostash --recurse-submodules"
 
 [linux]
 # Arguments to pass yay when updating packages
-yay_arguments = "--nodiffmenu --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm --ignore linux --ignore stretchly-xeruf-git --overwrite '/usr/lib/node_modules/npm/**'"
+yay_arguments = "--nodiffmenu --overwrite '/usr/lib/node_modules/npm/**' --overwrite '/usr/lib/*' --ignore android-studio --ignore clion --ignore intellij-idea-ultimate-edition --ignore intellij-idea-ultimate-edition-jre --ignore webstorm --ignore linux --ignore stretchly-xeruf-git"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"

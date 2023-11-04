@@ -100,7 +100,7 @@ export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first 
 export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
-export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__"
+export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
 export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .pyenv -x .local/cache -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
 export DIRS_IGNORE="-x .sync -x .stfolder -x *build -x .git -x .idea -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
 # red stderr
@@ -148,7 +148,7 @@ FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
 ## cplusplus - ctest, cmake, ninja
-SPARE_CORES=$(expr $(lscpu --extended | awk '{print $7}' | sort | uniq -c | head -1 | awk '{print $1}') \* 4 / 5)
+export SPARE_CORES=$(expr $(lscpu --extended | awk '{print $7}' | sort | uniq -c | head -1 | awk '{print $1}') \* 2 / 3)
 export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1

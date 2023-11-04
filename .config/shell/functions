@@ -246,7 +246,7 @@ alias dt='python -c "import time;print(time.asctime(time.localtime()))"'
 # Process
 alias println='printf "\n"'
 alias myip="curl ifconfig.me && println && curl icanhazip.com"
-alias dedup='awk '"'"'!a[$0]++'"'"
+alias dedup-lines='awk '"'"'!a[$0]++'"'"
 alias lar='last | tac'
 alias lst='( last; last -f /var/log/wtmp.1 ) | grep -v "pts/" | tac | less +G'
 alias hedgedoc="tmux kill-session -t hedgedoc; builtin cd '$d4/dev/_forks/hedgedoc' && tmux new-session -s hedgedoc -d 'yarn run dev' \; split-window -h 'nodemon --watch app.js --watch lib --watch locales --watch config.json app.js' \; ls"
@@ -329,11 +329,12 @@ sshl() {
 	ssh -G "$1" | grep --silent "^user root$" &&
 		! [[ "$1" =~ "pve.*" ]] &&
 		! [[ "$1" =~ "encee.*" ]] &&
-		! [[ "$1" =~ ".*fmh.*" ]] &&
+		! [[ "$1" =~ ".*ofc.*" ]] &&
 		! [[ "$1" =~ "delta*" ]] &&
+		! [[ "$1" =~ "tmtgw" ]] &&
 	local pass=pass
 	test "$all" &&
-		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "$1*.bash" \) -exec cat {} + | $pass ssh "$1" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
+		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${1%[0-9a-z]}*.bash" \) -exec cat {} + | $pass ssh "$1" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
 		echo 'Updated .bash_aliases!'
 		#$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if test -n "$pass"
@@ -410,7 +411,7 @@ vrec() {
 alias vrecd="ls $XDG_DATA_HOME/nvim/swap | head -1 | xargs -r -i mv {} /tmp"
 
 # I think this was something about recovering backup files
-unv() { strings $1 | sed 's/5$//' | dedup; }
+unv() { strings $1 | sed 's/5$//' | dedup-lines; }
 
 alias hx='sudo hexedit --maximize --color'
 # Paginated hexyl
@@ -640,4 +641,15 @@ stopswap() {
 	else
 		echo "Not enough free memory!"
 	fi
+}
+
+extrac() {
+	for var; do
+		arg=${var%.lzo}
+		out=$(basename ${arg%.vma})
+		lzop -x $arg.lzo
+		vma.py $arg $out ||
+        vma.py $(basename $arg) $out &&
+		( cd $out && find *.raw -exec qemu-img convert {} -O qcow2 $out-{}.qcow2 \; )
+	done
 }
