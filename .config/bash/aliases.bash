@@ -1,5 +1,7 @@
 test -n "$PS1" || return 0
 
+which pfetch >/dev/null 2>&1 && pfetch
+
 test $(id -u) -eq 0 || sudo=sudo
 
 alias jc="$sudo journalctl --boot --unit"

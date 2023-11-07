@@ -13,11 +13,18 @@ letsencrypt() {
       ip=$(localip)
       IFS=$'\n'
       for user
-      do for domain in $(hestia v-list-web-domains $user | grep $ip | awk '{print $1}')
-         do #echo commented out due to command echoing in hestia alias
+      do
+        for domain in $(hestia v-list-dns-domains $user | tail +3 | awk '{print $1}')
+        do hestia v-add-remote-dns-domain $user $domain
+        done
+        for domain in $(hestia v-list-mail-domains $user | tail +3 | awk '{print $1}')
+        do hestia v-list-mail-domain-ssl $user $domain | grep -q . || hestia v-add-letsencrypt-domain $user $domain '' yes
+        done
+        for domain in $(hestia v-list-web-domains $user | grep $ip | awk '{print $1}')
+        do #echo commented out due to command echoing in hestia alias
           #echo "Checking $user $domain" >&2
           hestia v-list-web-domain $user $domain | grep -q REDIRECT && continue
-          hestia v-list-mail-domain-ssl $user $domain | grep -q . || hestia v-add-letsencrypt-domain $user $domain '' yes
+          #hestia v-list-mail-domain-ssl $user $domain | grep -q . || hestia v-add-letsencrypt-domain $user $domain '' yes
           hestia v-list-web-domain-ssl $user $domain | grep -q . && continue
           #echo "Generating Certificate" >&2
           hestia v-add-letsencrypt-domain $user $domain $(hestia v-list-web-domain $user $domain | grep ALIAS | tr -s ' ' | cut -d' ' -f2- | tr ' ' ',')
@@ -46,10 +53,13 @@ list() {
 
 hestia() {
   test $# -eq 0 && cd "$HESTIA" && return 0
+  test "$1" = "-x" && shift && set -x
   command=$1
   shift
   echo '>' sudo $(which $command) "$@" >&2
-  sudo timeout 30s $(which $command) "$@"
+  export SHELLOPTS
+  sudo --preserve-env=SHELLOPTS timeout 30s $(which $command) "$@"
+  set +x
 }
 
 accessible() {

@@ -329,9 +329,9 @@ sshl() {
 	ssh -G "$1" | grep --silent "^user root$" &&
 		! [[ "$1" =~ "pve.*" ]] &&
 		! [[ "$1" =~ "encee.*" ]] &&
-		! [[ "$1" =~ ".*ofc.*" ]] &&
-		! [[ "$1" =~ "delta*" ]] &&
 		! [[ "$1" =~ "tmtgw" ]] &&
+		! [[ "$1" =~ "delta*" ]] &&
+		! [[ "$1" =~ "nc-*" ]] &&
 	local pass=pass
 	test "$all" &&
 		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${1%[0-9a-z]}*.bash" \) -exec cat {} + | $pass ssh "$1" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
@@ -644,12 +644,13 @@ stopswap() {
 }
 
 extrac() {
+	test "$#" -lt 1 && echo "$0 <archive.vma[.lzo]>..." && return 2
 	for var; do
 		arg=${var%.lzo}
 		out=$(basename ${arg%.vma})
 		lzop -x $arg.lzo
 		vma.py $arg $out ||
         vma.py $(basename $arg) $out &&
-		( cd $out && find *.raw -exec qemu-img convert {} -O qcow2 $out-{}.qcow2 \; )
+		( cd $out && find drive-* -exec qemu-img convert {} -O qcow2 $out-{}.qcow2 \; )
 	done
 }

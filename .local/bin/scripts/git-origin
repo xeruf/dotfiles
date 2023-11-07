@@ -5,8 +5,8 @@ git remote $(case "$(git remote)" in
   (*"$remote"*) echo set-url;;
   (*) echo add;;
 esac) "$remote" "$(git-repo "$@")"
-git remote -v && git fetch
+git remote -v && git fetch --all
 
 git branch --format='%(refname:short)' | while read branch
-do test $(git branch -a | grep $remote/$branch | wc -l) -gt 0 && git branch -u $remote/$branch $branch
+do test $(git branch --all | grep "$remote/$branch" | wc -l) -gt 0 && git branch -u "$remote/$branch" "$branch"
 done
