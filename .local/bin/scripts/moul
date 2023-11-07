@@ -1,6 +1,7 @@
 #!/bin/sh
 # Mount a partition by label or device identifier automatically
 # Includes interactive selection if no argument is given
+# TODO losetup for raw and qcow2, including lvm handling
 set -eo pipefail
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
