@@ -1,0 +1,2 @@
+#!/bin/sh
+find . -maxdepth 2 -name '*.puml' -o -name '*.plantuml' | entr -r plantuml /_

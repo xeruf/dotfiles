@@ -6,4 +6,3 @@ pkill --echo signal
 pkill --echo aw-server
 pkill --echo aw-qt
 systemctl stop --user syncthing plasma-baloorunner kde-baloo
-systemctl stop openvpn-client@deltaPeak.service
