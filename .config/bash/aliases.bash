@@ -14,6 +14,14 @@ alias scr="$sudo systemctl daemon-reload && $sudo systemctl reload-or-restart"
 alias hist='history | less'
 alias m='mv -vi'
 
+# Fast Find
+ff() {
+	name=$1
+	shift
+	$(command -v fd || echo fdfind) --hidden "$name" ||
+	  find "$@" -name "*$name*"
+}
+
 highlight() { echo "[4m$1[0m"; }
 status() {
 	highlight 'System'
