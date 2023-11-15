@@ -67,7 +67,7 @@ and configuration for ~less~ and ~fzf~.
 * Package Setup (moving to [[https://github.com/xeruf/instalee][Instalee]])
 By Size:
 : LC_ALL=C pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
-Copy list of in stalled packages:
+Copy list of installed packages:
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
 
 - dotfiles :: yadm
