@@ -301,7 +301,8 @@ Version 2019-11-04 2021-02-16"
   (map! :map org-mode-map
         :leader
         "\\"    'org-ctrl-c-ctrl-c
-        :desc "Agenda" "oA" (lambda () (interactive) (org-agenda nil "d"))
+        :desc "Agenda" "oa" 'org-agenda
+        :desc "My Agenda" "oA" (lambda () (interactive) (org-agenda nil "d"))
         :localleader
         "C" 'org-clock-in
         "v" 'org-insert-heading
@@ -485,13 +486,15 @@ Version 2019-11-04 2021-02-16"
 (use-package! org-journal
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
   :init
+
     (setq org-journal-file-type 'monthly
           org-journal-file-format "%Y%m.org"
           org-journal-created-property-timestamp-format time-stamp-format
           org-journal-carryover-delete-empty-journal 'always
           org-journal-date-format (concat "[" time-stamp-bare " %3a]")
-          org-journal-time-format "%02H "
+          org-journal-time-format "%02H.%01M "
           )
+
   :config
     ; TODO map njj to open-or-create-entry
 
@@ -773,7 +776,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
       :n "q"  'kill-this-buffer
       :map image-mode-map
       "<tab>" 'other-window
-      :n "D"  'doom/delete-this-file ;Follow by dired-find-file to select next?
+      :n "D"  'doom/delete-this-file ; Follow by dired-find-file to select next?
       :n "q"  'kill-this-buffer
       :n "+"  'image-increase-size
       :n "-"  'image-decrease-size
@@ -814,11 +817,16 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         (call-process "xdg-open" nil 0 nil file)
         (find-file file))))
 
+  ; maybe add +org/close-fold
+  (map! :n "<escape>" (lambda () (interactive) (if (eq major-mode 'org-mode) (condition-case nil (org-up-element) (error (dired-jump))) (dired-jump)))
+        :leader
+        "." 'dired-jump)
+
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
-        :n "l" 'dired-find-file-dwim
-        :n "h" 'dired-up-directory
-        :n "ö" 'evil-ex-search-forward
+        :n "l"   'dired-find-file-dwim
+        :n "h"   'dired-up-directory
+        :n "ö"   'evil-ex-search-forward
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
