@@ -1,0 +1,5 @@
+#!/bin/sh
+lsblk $2
+echo -n "Flash $1?"
+read
+sudo dd if=$1 of=$2 status=progress bs=1M

@@ -3,6 +3,7 @@ light -S .01
 pkill --echo electron
 pkill --echo --ignore-case discord
 pkill --echo signal
+pkill --echo telegram
 pkill --echo aw-server
 pkill --echo aw-qt
 systemctl stop --user syncthing plasma-baloorunner kde-baloo
