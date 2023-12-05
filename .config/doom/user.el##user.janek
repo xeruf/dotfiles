@@ -22,6 +22,7 @@
                              ;(directory-files-recursively (expand-file-name "project/" org-directory) ".org\\'")
                              ;(list (expand-file-name "inbox/"))
                              (list (expand-file-name "agenda/"))
+                             (list (expand-file-name "uni/"))
                             ))
     ))
 

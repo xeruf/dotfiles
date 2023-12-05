@@ -351,7 +351,8 @@ Version 2019-11-04 2021-02-16"
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
   (push "PERM(e)" (cdr (car org-todo-keywords)))
-  ; For writings: +TODO: IDEA(i!) OUTLINE(o!) DRAFT(t!) | REVIEW(r!) DONE(d!) ABANDON(a!)
+  (push '(sequence "IDEA(i!)" "OUTLINE(o!)" "DRAFT(f!)" "|" "REVIEW(v!)" "DONE(d!)" "ABANDON(a!)") org-todo-keywords) ; For Writings
+  (push '(sequence "Loop(l)" "|" "RELOOP(r)") org-todo-keywords)
   ; highlight review keyword
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
