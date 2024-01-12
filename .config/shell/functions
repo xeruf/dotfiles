@@ -85,6 +85,10 @@ xtrace() {
 	set +x
 }
 
+retry() {
+	while ! "$@"; do sleep 2; done
+}
+
 # Shows source for given command, resolving nested aliases
 wh() {
 	local res=$(which "$@" 2>/dev/null || type "$@") || return $?
@@ -306,7 +310,7 @@ dns() {
 	local dig="drill -Q"
 	which drill >/dev/null || dig="dig +short"
 	local server=1.1.1.1
-	# allow changing DNS server with @
+	# TODO allow changing DNS server with @
 	# TODO implement rdns via -x
 	for arg; do
 		local trimmed="${arg##*//}"
@@ -519,7 +523,7 @@ alias rcr='rcs --compress --size-only --times'
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
-alias rdiff='rsync --recursive --progress --delete --links --dry-run'
+alias rdiff='rsync --recursive --checksum --delete --links --dry-run'
 alias rdiffe='rdiff --existing --size-only'
 
 # Swap the names of two files

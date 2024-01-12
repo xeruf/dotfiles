@@ -63,6 +63,9 @@ Plug 'HiPhish/info.vim'
 
 call plug#end()
 
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
+
 " Install plugins automatically after installing plug
 if plug_install
     PlugInstall --sync

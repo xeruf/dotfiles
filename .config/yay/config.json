@@ -28,7 +28,7 @@
 	"sudoloop": true,
 	"timeupdate": false,
 	"devel": false,
-	"cleanAfter": true,
+	"cleanAfter": false,
 	"provides": true,
 	"pgpfetch": true,
 	"upgrademenu": false,
@@ -36,6 +36,6 @@
 	"diffmenu": true,
 	"editmenu": false,
 	"combinedupgrade": true,
-	"useask": false,
+	"useask": true,
 	"batchinstall": false
 }

@@ -30,6 +30,7 @@ yzf() {
 
 # List installable packages into fzf and install selection
 yas() {
+    # TODO also filter by provides field
 	cache_dir="/tmp/yas-$USER"
 	case "$1" in (-y*) rm -rf "$cache_dir"; shift; param=$1;; esac
 	mkdir -p "$cache_dir"

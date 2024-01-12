@@ -32,9 +32,6 @@ mozedit() (
 
 test "$XDG_CURRENT_DESKTOP" = "KDE" || return 0
 
-# Fix errors regarding broken mim database
-alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-database /usr/share/mime'
-
 # Switch theme across system: KDE, Konsole, taskwarrior, bat
 # WIP: Emacs, Mozilla, diffr (git pager)
 theme_save="$XDG_CACHE_HOME/theme"
@@ -75,3 +72,6 @@ themeswitch() {
 export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
 themeswitch $THEME
+
+# Fix errors regarding broken mim database
+alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-database /usr/share/mime'
