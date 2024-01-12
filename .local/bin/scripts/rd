@@ -14,8 +14,10 @@ do
 				continue
 		fi
 
+		# Clean empty files
+		$elevate find -name '.thumbnails' -printf 'Pre-cleaning %p\n' -exec rm -r {} +
+		$elevate find -H "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 3) \( -name '.stfolder' -o -name '.*keep' -o -name '*.py' -o -name 'nodelay.txt' -o -name '.git' -o -name 'tmp' -o -name '.nomedia' -o -name '__init__.py' -o -name '*ignore' -o -name 'instalee' \) \( -type d -o -type f \) -prune -o -empty -printf 'Removing empty %p\n' #-exec rm -d {} +
 		# $elevate find -H "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 4) -type d -empty -name .stfolder -exec rm -div {} \;
-		$elevate find -H "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 3) -not \( -name '.stfolder' -o -name '.*keep' -o -name "*.py" -o -name "nodelay.txt" \) \( -type d -o -type f \) -a -empty -printf 'Removing empty %p\n' -delete
 		test $# -eq 0 && exit $?
 		if test -e "$f"; then
 			echo -n "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&

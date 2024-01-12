@@ -1,0 +1,21 @@
+#!/bin/bash -e
+# Verify the given password hash against a password
+if test "$1"
+then hash="$1"; shift
+else printf "Hash? " && read -r hash
+fi
+while echo "Type password (no echo) " && read -r -s password && test "$password"; do
+param=$(echo "$hash" | cut -d\$ -f3)
+# Check if hash contains parameters
+if test $(echo "$hash" | tr -cd \$ | wc -c) -gt 3
+then salt=$(echo "$hash" | cut -d\$ -f4)
+    salted_hash=$(mkpasswd -m sha-512 --"$param" --salt="$salt" "$password")
+else salted_hash=$(mkpasswd -m sha-512 --salt="$param" "$password")
+fi
+
+# Compare the generated hash with the original hash
+if [[ "$salted_hash" == "$hash" ]]
+then echo ":) Password correct"; break
+else echo "X  Password incorrect"
+fi
+done

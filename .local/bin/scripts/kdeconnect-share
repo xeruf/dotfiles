@@ -2,7 +2,7 @@
 kdeconnect-cli --refresh
 if ! test -f "$1"; then echo "Please specify a file to share" && exit 1; fi
 file="$1"
-device="$(kdeconnect-cli --list-available 2>/dev/null | fzf -0 -1 | cut -d' ' -f3)"
+device="$(kdeconnect-cli --list-available 2>/dev/null | fzf -0 -1 | sed -E 's|.*: ([^ ]*) .*|\1|')"
 test -z "$device" && kdeconnect-cli --list-devices && echo "No device available!" && exit 1
 shift
 kdeconnect-cli "--share=$file" -d "$device" "$@"

@@ -29,12 +29,6 @@ find -L -maxdepth 2 -type l -printf "Removing broken symlink %p\n" -delete 2>/de
 test -d /mnt/data/backups/mobile/ &&
 	mv -v $DATA/4*/backups/mobile/signal-* /mnt/data/backups/mobile/ 2>/dev/null
 
-highlight "y :: recursively remove empty folders and files"
-if [[ $1 =~ "y" ]]; then
-	find -name '.thumbnails' -printf "Pre-cleaning %p\n" -exec rm -r {} +
-	find \( -name ".stfolder" -o -name ".*keep" -o -name ".git" -o -name "tmp" -o -name ".nomedia" -o -name "__init__.py" -o -name "instalee" \) -prune -o -empty -printf "Removing empty %p\n" -exec rm -d {} +
-fi
-
 highlight "e :: remove downloaded emacs packages (rebuild takes minutes!)"
 [[ $1 =~ "e" ]] &&
 	find $DOOMLOCALDIR -maxdepth 1 \( -name straight -o -type f \) -printf "Removing %p\n" -exec rm -rf {} +

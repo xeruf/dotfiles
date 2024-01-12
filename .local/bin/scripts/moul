@@ -28,6 +28,15 @@ case $1 in
     shift;;
 esac
 
+# FILE as loopback device
+if test -f "$arg"
+then set -e
+     loopdevice="$(sudo losetup -f)"
+     sudo losetup -P -v "$loopdevice" "$arg"
+     $0 "$loopdevice"
+     exit $?
+fi
+
 # FSTAB: BY LABEL
 if grep --word-regexp "LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory

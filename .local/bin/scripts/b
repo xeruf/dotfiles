@@ -10,7 +10,7 @@
 # - visual files are displayed with timg
 #   video thumbnails via mtn, pdf pages from pdftoppm
 # - text files are displayed through bat
-# Automatically requests elevation through sudo when needed
+# Usually automatically requests elevation through sudo when needed
 # TODO .raw,.iso,.qcow2
 
 set -o pipefail
@@ -43,10 +43,10 @@ fileinfo() {
 		$elevate file --exclude elf -E "$arg"
 		tput rmso
 		$elevate ssh-keygen -l -f "$arg" 2>/dev/null || true
-		# TODO do not grep bitrate but extract properly
+		# I think this check is here to avoid scrolling text interpreted as video
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
-		{ ! $inspect && $elevate ffprobe -hide_banner "$arg" 2>&1 | grep "bitrate: ....\? " | sed 's/, start:[^,]\+,/,/'; } ||
+		{ ! $inspect && $elevate ffprobe -hide_banner "$arg" 2>&1 | grep -E "bitrate: .{3,5} " | sed 's/, start:[^,]\+,/,/'; } ||
 			$elevate stat --format "%U:%G %A %s $(
 					size="$($elevate unzip -l "$arg" 2>/dev/null | tail -1)" &&
 						echo "(uncompressed $(echo $size | cut -d' ' -f1 | numfmt --to=iec-i --suffix=B))"
@@ -95,6 +95,8 @@ for arg; do
 		timg+=("$tmpfile");;
 	(*\ video/*)
 		suffix=_thumbs.jpg
+		# TODO sometimes duration mismatch for short videos
+		test $(printf "%.0f" $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$arg")) -gt 3 &&
 		mtn -q -i -t -W -r$(expr 5 - $# \& $# \< 4 \| 1) -D6 -b 0.6 -c $grid -w $(expr $(tput cols) '*' 20) \
 			-O "$prefix" -o "$suffix" "$arg" &&
 		timg -W "$prefix/$(basename -- "${arg%.*}")$suffix"
@@ -139,7 +141,7 @@ for arg; do
 				fi
 			esac
 			;;
-		(*:\ SQLite\ *\ database*) highlight "Tables" && sqlite3 "$arg" ".tables";;
+		(*:\ SQLite\ *\ database*) highlight "Tables" && sqlite3 "$arg" ".tables";; # TODO for few tables: SELECT * FROM db LIMIT 3; | cut -c-$col
 		(*:\ data) ;;
 		(*\ key) bat+=("$arg");;
 		(*) bat+=("$arg")
