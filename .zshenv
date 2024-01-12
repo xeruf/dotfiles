@@ -19,6 +19,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
+export_existing STACKSPIN "$DATA/1-projects/stack/stackspin"
 export_existing INSTALEE_HOME "$HOME/projects/instalee" "$DATA/1-projects/1-personal/instalee"
 export_existing VOSK_MODELS "/mnt/data/projects/vosk/models"
  # adjust programs to use xdg
@@ -107,7 +108,7 @@ export DIRS_IGNORE="-x .sync -x .stfolder -x *build -x .git -x .idea -x env -x o
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
 export OSFONTDIR="$XDG_DATA_HOME"/fonts:/usr/share/fonts
-export TEXMF=/usr/share/texmf-dist/texmf-context
+# TODO check context export TEXMF=/usr/share/texmf-dist/texmf-context
 export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 ## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
@@ -157,3 +158,4 @@ export CTEST_OUTPUT_ON_FAILURE=1
 # TODO move to proper place - is also called when firenvim starts
 #autolight
 #export TZ='Europe/Dublin'
+#export TZ='Africa/Nairobi'

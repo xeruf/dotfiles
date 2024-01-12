@@ -1,8 +1,11 @@
-test -z "$DISPLAY" && test "$XDG_VTNR" -lt 1 || return 0
+velero_backup() {
+     #name=$(date +%y%m%d.%h%m) && velero create backup $name --exclude-namespaces velero --wait && velero backup logs $name'
+     name=$(date +%y%m%d.%H%M)
+     velero create backup $name --exclude-namespaces velero --wait
+     velero backup logs $name
+}
 
-export PATH="$PATH:$HOME/.local/bin/server"
-export PROJECTS="$HOME/projects"
-test -d "$MUSIC" || export MUSIC="/srv/funkwhale/data/music/janek"
+export PROJECTS="${PROJECTS:-$HOME/projects}"
 
 ## STACKSPIN
 export STACKSPIN="${STACKSPIN:-$PROJECTS/stackspin}"
@@ -16,10 +19,11 @@ _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 #    Hostname [IP]
 # This is a function so it can change directory.
 stack() {
+    cmdname=${FUNCNAME:-$0}
 	local pod_suffix='-\(0\|[0-f]\+\)'
 	if test $# -lt 1; then
 		builtin cd "$STACKSPIN"
-		echo "Usage: $0 <COMMAND> [args...]"
+		echo "Usage: $cmdname <COMMAND> [args...]"
 		echo "Stackspin commands: select, sso, user, push"
 		echo "Kubepod commands: pod, exec, app, shell, ls, logs, upload"
 		echo "App commands: occ, vikunja"
@@ -36,45 +40,88 @@ stack() {
 		export KUBECONFIG="$CLUSTER_DIR/kube_config_cluster.yml"
 		# Uncomment the line below to always use the main stackspin repo, even when running in a fork.
 		#export GITLAB_CI="true"
-		echo Selected "$_cluster_name" with IP "$_cluster_ip"
+		echo Selected Stackspin cluster "$_cluster_name" with IP "$_cluster_ip"
 		echo "$_cluster_name" >"$_stackspin_cluster_cache"
 		#test "$PWD" = "$HOME" && builtin cd "$STACKSPIN"
+        . $STACKSPIN/env/bin/activate
 		;;
-	(sso) builtin cd "$STACKSPIN"
-		"$0" exec dashboard --container backend -- flask "$@";;
+    (flux)
+        kubectl apply -k "$CLUSTER_DIR"
+        flux reconcile -n flux-system kustomization velero
+        flux get -A kustomizations --no-header | awk -F' ' '{system("flux reconcile -n " $1 " kustomization " $2)}'
+        ;;
+    (edit)
+        app=$1
+        kubectl edit configmap -n flux-system stackspin-$app-kustomization-variables
+        flux reconcile kustomization $app
+        flux reconcile helmrelease -n stackspin-apps $app
+        ;;
+	(sso) "$cmdname" exec dashboard --container backend -- flask "$@";;
 	(users)
 		if test $# -gt 0
 		then for arg
-			do "$0" user show $arg
+			do "$cmdname" user show $arg
 			done
-		else "$0" users $("$0" user list | sed 's|.*<\(.*\)>.*|\1|')
+		else "$cmdname" users $("$cmdname" user list | sed 's|.*<\(.*\)>.*|\1|')
 		fi;;
 	(user|app)
 		if test "$1" = "init"
 		then mail="$2"
 			shift 2
-			"$0" user create "$mail"
-			"$0" user update "$mail" name "$*"
+			"$cmdname" user create "$mail"
+			"$cmdname" user update "$mail" name "$*"
 			echo "Initialized user '$*' with email '$mail'"
-		else "$0" sso cli "$command" "$@"
+		else "$cmdname" sso cli "$command" "$@"
 		fi;;
 	(push)
 		git commit -a "$@"
 		git push &&
 		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))"
 		flux reconcile kustomization -n flux-system "$(basename $(git rev-parse --show-toplevel))";;
+    # Velero
+    (backup)
+        backupname=$(date +%y%m%d.%H%m)
+        velero create backup $backupname --exclude-namespaces velero --wait
+        velero backup logs $backupname;;
+    (restore)
+        test $# -lt 2 && echo "$0 $command <backup> <app>" >&2 && return 1
+        backup=$1; app=$2
+        namespace=${3:-stackspin-apps} # TODO automatically handle stackspout apps
+        restore="${backup}-$app-$(date +%s)"
+        if test "$app" = dashboard
+        then kust=single-sign-on
+             hr="$kust-database"
+             namespace=stackspin
+        else hr="$app"
+        fi
+        flux suspend kustomization ${kust:-$app}
+        flux suspend helmrelease -n $namespace $hr
+        kubectl delete all -n $namespace -l stackspin.net/backupSet=$app
+        kubectl delete secret -n $namespace -l stackspin.net/backupSet=$app
+        kubectl delete configmap -n $namespace -l stackspin.net/backupSet=$app
+        kubectl delete pvc -n $namespace -l stackspin.net/backupSet=$app
+        velero restore create $restore --from-backup=$backup -l stackspin.net/backupSet=$app
+        echo "Waiting a few seconds for $app backup to restore..."
+        sleep 10
+        velero restore describe $restore
+        echo "Press enter if backup is ready to resume flux resources:"
+        read
+        test $app = dashboard && kubectl delete secret -n stackspin hydra && flux reconcile helmrelease -n stackspin hydra
+        flux resume helmrelease -n $namespace $hr
+        flux resume kustomization ${kust:-$app}
+        ;;
 	# KUBE
 	# app clis
-	(occ) "$0" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
+	(occ) "$cmdname" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
 	(vikunja) local pod=${2:-vikunja}
 		case "$1" in
 		(dump|export) cd "$PROJECTS/vikunja"
-			"$0" exec "$pod" -c api -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
+			"$cmdname" exec "$pod" -c api -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
 			;;
-		(restore) "$0" upload "$pod" "$3" -c api
-			"$0" exec "$pod" -c api -it -- ./vikunja restore "$3"
+		(restore) "$cmdname" upload "$pod" "$3" -c api
+			"$cmdname" exec "$pod" -c api -it -- ./vikunja restore "$3"
 			;;
-		(psql) kubectl exec -it -n $("$0" pod "$pod-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.postgresql-password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
+		(psql) kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.postgresql-password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
 		(*) echo "Unknown Subcommand";;
 		esac
 		;;
@@ -86,32 +133,32 @@ stack() {
 			(wordpress) n=wordpress-database;;
 			(*) n=$app-mariadb;;
 		esac
-		"$0" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u $app "$@";;
+		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u $app "$@";;
 	# high-level
 	(shell)
 		container=$1
 		shift
 		test "$1" = "-c" && pod=$2 && shift 2
-		"$0" exec "$container" -c "$pod" -it -- /bin/sh "$@";;
+		"$cmdname" exec "$container" -c "$pod" -it -- /bin/sh "$@";;
 	(ls)
 		if test $# -gt 1 && ! [[ "$2" =~ ".*/.*" ]]
-		then "$0" exec "$1" "$2" "$3" -it -- ls -lAhF --group-directories-first "${@:4}"
-		else for container in $("$0" kube get "$1" pod -o "jsonpath={.spec.containers[*].name}")
+		then "$cmdname" exec "$1" "$2" "$3" -it -- ls -lAhF --group-directories-first "${@:4}"
+		else for container in $("$cmdname" kube get "$1" pod -o "jsonpath={.spec.containers[*].name}")
 			do highlight "Listing content of $container" &&
-				"$0" ls "$1" -c "$container" "${@:2}"
+				"$cmdname" ls "$1" -c "$container" "${@:2}"
 			done
 		fi;;
 	(upload)
-		kubectl cp "$2" -n $("$0" pod "$1$pod_suffix"):$2 "${@:3}"
-		"$0" ls "$1" "${@:3}";;
-	(exec) "$0" kube exec "$@";;
+		kubectl cp "$2" -n $("$cmdname" pod "$1$pod_suffix"):$2 "${@:3}"
+		"$cmdname" ls "$1" "${@:3}";;
+	(exec) "$cmdname" kube exec "$@";;
 	(logs) podname=$1
 		shift
-		"$0" kube logs "$podname" | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
+		"$cmdname" kube logs "$podname" | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
 	# low-level
 	(kube)
 		test $# -gt 1 || { echo "Please provide a command and pod name" >&2 && return 1; }
-		local pods=$("$0" pod "$2$pod_suffix") || { echo "No pod found for $2" >&2 && return 1; }
+		local pods=$("$cmdname" pod "$2$pod_suffix") || { echo "No pod found for $2" >&2 && return 1; }
 		local subcommand=$1
 		shift 2
 		local commands=()
@@ -123,34 +170,53 @@ stack() {
 			test "$subcommand" = get ||
 				highlight "Running $subcommand on $namespacedpod" >&2
 			local IFS=' '
-			kubectl "$subcommand" "$commands[@]" -n $namespacedpod "$@"
+			kubectl "$subcommand" "${commands[@]}" -n $namespacedpod "$@"
 		done;;
 	(pod)
 		test $# -gt 0 && local podname=$1 && shift
 		kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never -- "$podname";;
 	# stackspin bare
-	(*) if which "$0-$command" >/dev/null 2>&1
-		then "$0-$command" "$@"
+	(*) if which "$cmdname-$command" >/dev/null 2>&1
+		then "$cmdname-$command" "$@"
 			return $?
 		fi
 		builtin cd "$STACKSPIN"
 		# Since the install command can also be given bare to install stackspin itself
 		if test "$command" = "install"; then
-			if test $# -gt 0
-			then "./install/install-$1.sh" || ./install/install-app.sh "$@"
-			else
-				/usr/bin/python3 -m pip install --upgrade pip
-				/usr/bin/python3 -m pip install -r requirements.txt
-				python3 -m stackspin "$_cluster_name" "$command"
-			fi
+			case "$1" in
+			([a-z]*)
+                for arg
+                do kubectl exec -n stackspin deploy/dashboard -c backend -- flask cli app install "$arg"
+                done;;
+            (""|-*)
+				python3 -m pip install --upgrade pip
+				python3 -m pip install -r requirements.txt
+				python3 -m stackspin "$@" "$_cluster_name" "$command"
+                cp -nv "install/.flux.env.example" "clusters/$_cluster_name/.flux.env" &&
+                   $EDITOR "clusters/$_cluster_name/.flux.env"
+                cp -nv install/kustomization.yaml $CLUSTER_DIR/
+                kubectl get namespace flux-system 2>/dev/null || kubectl create namespace flux-system
+                kubectl apply -k $CLUSTER_DIR
+                ./install/install-stackspin.sh
+                ;;
+            esac
 		else python3 -m stackspin "$_cluster_name" "$command" "$@"
 		fi;;
 	esac
 }
+
 cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
 
-test "$PWD" = "$HOME" && cde "$PROJECTS/ampache-docker"
+test -z "$DISPLAY" && test "$XDG_VTNR" != 1 || return 0
+# The following runs only on headless machines
+
+which kubectl >/dev/null ||
+	{ kubectl() { sudo k3s kubectl "$@"; } && export -f kubectl; }
+
+export PATH="$PATH:$HOME/.local/bin/server"
+
+test -d "$MUSIC" || export MUSIC="/srv/funkwhale/data/music/janek"
 
 test -f "$HOME/.rvm/scripts/rvm" &&
 	source "$HOME/.rvm/scripts/rvm" && # Load RVM into a shell session *as a function*

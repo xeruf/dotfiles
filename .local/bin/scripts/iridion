@@ -5,5 +5,5 @@ then echo "$0 site [index.html] [USER]"
 else
 site=$1
 shift
-scp -r "$@" "iridion:/home/${2:-$USER}/web/$site/public_html$(test "$#" -gt 1 || echo '/index.html')"
+scp -r "$@" "iridion:/home/${2:-$USER}/web/$site/public_html$(test "$#" -gt 1 || test -d "$1" || echo '/index.html')"
 fi
