@@ -14,12 +14,20 @@ alias scr="$sudo systemctl daemon-reload && $sudo systemctl reload-or-restart"
 alias hist='history | less'
 alias m='mv -vi'
 
+alias nginx-edit="sudo vi /etc/nginx/nginx.conf && nginx -t && sudo systemctl reload nginx"
+
 # Fast Find
 ff() {
 	name=$1
 	shift
 	$(command -v fd || echo fdfind) --hidden "$name" ||
 	  find "$@" -name "*$name*"
+}
+
+xtrace () {
+    set -x
+    "$@"
+    set +x
 }
 
 highlight() { echo "[4m$1[0m"; }
