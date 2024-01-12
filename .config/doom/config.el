@@ -302,7 +302,7 @@ Version 2019-11-04 2021-02-16"
         :leader
         "\\"    'org-ctrl-c-ctrl-c
         :desc "Agenda" "oa" 'org-agenda
-        :desc "My Agenda" "oA" (lambda () (interactive) (org-agenda nil "d"))
+        :desc "My Agenda" "oA" (lambda () (interactive) (let ((org-agenda-tag-filter-preset '("-phys" "-erlangen"))) (org-agenda nil "d")))
         :localleader
         "C" 'org-clock-in
         "v" 'org-insert-heading
@@ -350,10 +350,47 @@ Version 2019-11-04 2021-02-16"
         org-priority-start-cycle-with-default nil)
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
-  (push "PERM(e)" (cdr (car org-todo-keywords)))
-  (push '(sequence "IDEA(i!)" "OUTLINE(o!)" "DRAFT(f!)" "|" "REVIEW(v!)" "DONE(d!)" "ABANDON(a!)") org-todo-keywords) ; For Writings
-  (push '(sequence "Loop(l)" "|" "RELOOP(r)") org-todo-keywords)
   ; highlight review keyword
+  (setq org-todo-keywords
+        '(
+          (sequence
+           "TODO(t)"  ; A task that needs doing & is ready to do
+           "PROJ(p)"  ; A project, which usually contains other tasks
+           "STRT(s)"  ; A task that is in progress
+           "WAIT(w)"  ; Something external is holding up this task
+           "HOLD(h)"  ; This task is paused/on hold because of me
+           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+           "|"
+           "DONE(d)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted, or is no longer applicable
+          (sequence "IDEA(i!)" "OUTLINE(o!)" "DRAFT(f!)" "|" "REVIEW(v!)" "DONE(d!)" "ABANDON(a!)") ; For Writings
+          (sequence
+           "LOOP(l)"
+           "PERM(e)"  ; A task that can always be worked on
+           "|"
+           "RELOOP(d)")
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](S)"   ; Task is in progress
+           "[?](W)"   ; Task is being held up or paused
+           "|"
+           "[X](D)")  ; Task was completed
+          (sequence
+           "|"
+           "OKAY(o)"
+           "YES(y)"
+           "NO(n)"))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("STRT" . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("WAIT" . +org-todo-onhold)
+          ;("REVIEW" . +org-todo-onhold)
+          ("HOLD" . +org-todo-onhold)
+          ("PROJ" . +org-todo-project)
+          ("NO"   . +org-todo-cancel)
+          ("ABANDON" . +org-todo-cancel)
+          ("KILL" . +org-todo-cancel)))
 
   ;; Org startup - https://orgmode.org/manual/In_002dbuffer-Settings.html
   (setq org-startup-folded 'show2levels
@@ -456,12 +493,16 @@ Version 2019-11-04 2021-02-16"
       (if (= pri-value pri-current)
           subtree-end
         nil)))
+
   (setq org-agenda-custom-commands
-        '(("d" "Daily agenda and all TODOs"
-           ((tags "PRIORITY=\"A\""
+        '(("d" "Daily agenda and all TODOs" (
+            (tags "PRIORITY=\"A\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "" ((org-agenda-ndays 1)))
+                   (org-agenda-overriding-header "DO NOW:")))
+            (agenda "" ((org-agenda-start-day nil) (org-agenda-span 4)))
+            (tags "PRIORITY=\"B\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "Important:")))
             (alltodo ""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                      (air-org-skip-subtree-if-priority ?A)
@@ -493,7 +534,7 @@ Version 2019-11-04 2021-02-16"
           org-journal-created-property-timestamp-format time-stamp-format
           org-journal-carryover-delete-empty-journal 'always
           org-journal-date-format (concat "[" time-stamp-bare " %3a]")
-          org-journal-time-format "%02H.%01M "
+          org-journal-time-format "%02H "
           )
 
   :config
@@ -819,7 +860,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         (find-file file))))
 
   ; maybe add +org/close-fold
-  (map! :n "<escape>" (lambda () (interactive) (if (eq major-mode 'org-mode) (condition-case nil (org-up-element) (error (dired-jump))) (dired-jump)))
+  (map! ; what about closing popup buffers first, like debugger-mode :n "<escape>" (lambda () (interactive) (if (eq major-mode 'org-mode) (condition-case nil (org-up-element) (error (dired-jump))) (dired-jump)))
         :leader
         "." 'dired-jump)
 
@@ -937,21 +978,21 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 ;;; File Editing Modes
 
 (setq initial-major-mode 'org-mode)
-;(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
-;(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
-;
-;(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_SHELLS") . sh-mode))
-;;(add-to-list 'auto-mode-alist `(,(getenv "CONFIG_ZSH") . sh-mode))
-;(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
-;
-;;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
-;;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
-;;
-;;;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
-;;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-;
-;(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
+(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
+
+(add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
+(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_SHELLS") "~/.config/shell"). sh-mode))
+(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_ZSH") "~/.config/zsh") . sh-mode))
+(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
+
+;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
+;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+
+(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+
+(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
 
 (use-package! web-mode
   :mode "\\.html\\'"
