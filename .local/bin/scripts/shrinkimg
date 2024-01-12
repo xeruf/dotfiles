@@ -4,16 +4,29 @@
 while true
 	do case $1 in
 		(-h|--help|"") echo "Usage: $0 [-q quality (default 85)] [-o outfile] [xRES] <images...>" && exit 2;;
-		(-o) out="$2"; shift 2;;
-		(-q) quality="$2"; shift 2;;
-		(x*) resolution="$1"; resize="-resize $resolution"; shift;;
+		(-o) out="$2"; shift;;
+		(-q) quality="$2"; shift;;
+		(x*) resolution="$1"; resize="-resize $resolution";;
+		(-v) set -x;;
 		(*) break;;
 	esac
+	shift
 done
-out="${out:-$1${resolution:--shrinked}.jpg}"
-magick "$@" -auto-orient -strip \
-	-interlace Plane -define jpeg:dct-method=float -sampling-factor 4:2:0 -gaussian-blur 0.05 \
-	-quality "${quality:-85}" $resize "$out"
+
+process() {
+	 out=$1
+	 shift
+	 magick "$@" -auto-orient -strip \
+		 -interlace Plane -define jpeg:dct-method=float -sampling-factor 4:2:0 -gaussian-blur 0.05 \
+		 -quality "${quality:-85}" $resize "$out"
+}
+if test -n "$out"
+then process "$out" "$@"
+else
+	for arg
+	do process "${arg}${resolution:--shrinked}.jpeg" "$arg"
+	done
+fi
 printf "Shrinked $1(%s) to $out(%s) - reduced to %s%%\n" \
 	$(stat --format %s "$1" "$out" | numfmt --to=iec-i --suffix=B) \
 	$(stat --format %s "$out" "$1" | sed 'N;s|\n|*100/|' | bc)
