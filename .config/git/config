@@ -111,12 +111,13 @@
 	lg = lgr HEAD @{push}
 	lo = log --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset' --date=human --no-merges
 	lp = log -p --date=local # Like --full-diff
-	my = lo --author "xeru\\|anek"
+	my = lo --author "xeru\\|anek\\|melonion"
 
 	standup = my --since yesterday --all
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = !git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
+	tags = !sh -c "git for-each-ref --color=always --format='%(color:yellow)%(tag)%(color:default)%09 %(subject) %(color:green)(%(taggerdate:format:%Y-%m-%d))' refs/tags | sort -V | column -s $'\t' -t"
 	find = log --patch --all --full-history # Find a filename in all git knows
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	refg = log --reflog --graph --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
