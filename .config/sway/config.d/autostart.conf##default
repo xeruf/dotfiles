@@ -1,17 +1,17 @@
-# assign [app_id="firefox"] workspace 2
-assign [title="JViewer.*"] workspace 5
-assign [class="^sc.*"] workspace 6
-assign [class="sc.gui.final.FinalApp"] workspace 5
+assign [app_id="firefox"] number 2
+assign [title="JViewer.*"] number 5
+assign [class="^sc.*"] number 6
+assign [class="sc.gui.final.FinalApp"] number 5
 
 # Gaming & Communication at the end
-assign [class="zoom"] workspace 7
-assign [class="steam"] workspace 8
-assign [class="DeltaChat"] workspace 8
-assign [class="discord"] workspace 9
-#assign [title="Telegram"] workspace 9
-assign [app_id="org.telegram.desktop"] workspace 9
-assign [class="Signal"] workspace 9
+assign [class="zoom"] number 7
+assign [class="steam"] number 8
+assign [class="DeltaChat"] number 8
+assign [class="discord"] number 9
+#assign [title="Telegram"] number 9
+assign [app_id="org.telegram.desktop" tiling] number 9
+assign [class="Signal"] number 9
 
-exec swaymsg "workspace 2; exec firefox;"
+#exec swaymsg "workspace 2; exec firefox;"
 exec swaymsg "workspace 3; exec kitty;"
 exec swaymsg "workspace 1; exec emacs"
