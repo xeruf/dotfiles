@@ -12,10 +12,9 @@ indent_character: '|'
 journals:
   default: ~/data/2-box/journal/jrnl.txt
   tug: ~/data/2-box/journal/tug.txt
-  nug: ~/data/2-box/journal/nuggets.txt
   intentions: ~/data/2-box/journal/intentions.txt
 linewrap: 99
 tagsymbols: '@'
 template: false
 timeformat: '%Y-%m-%d %a %H:%M'
-version: v2.8.4
+version: v4.1

@@ -171,7 +171,7 @@ setopt pipefail
 # Empower zmv (see ZSHCONTRIB(1))
 alias szmv='sudo zsh -c autoload zmv && zmv'
 autoload zmv
-alias zmv='noglob zmv'
+alias zmv='noglob zmv -v'
 alias zmw='noglob zmv -W'
 alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'

@@ -3,7 +3,7 @@ command -v notify-send >/dev/null &&
 	alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 if which jrnl >/dev/null; then
-	alias j='jrnl'
+	j(){ jrnl "$@" && jrnl-tag; }
 	jn() { jrnl -to today "$@" | less --exit-follow-on-close +F; }
 	alias jnc='jn -contains'
 	alias jne='jrnl --edit'

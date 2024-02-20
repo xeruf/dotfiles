@@ -32,10 +32,11 @@
 	tool = nvim
 	submodule = log
 	context = 2
-	renames = copy
+	renames = true
 	colorMoved = dimmed-zebra
 	colorMovedWS = allow-indentation-change
 [merge]
+	renames = copy
 	tool = nvim
 [mergetool "nvim"]
 	cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
@@ -85,7 +86,7 @@
 	# status
 	s = !git stl && git stb
 	st = stb .
-	stb = status --short --branch --find-renames=.2
+	stb = status --short --branch --find-renames
 	sv = --paginate status -v
 	svv = --paginate status -vv
 
@@ -117,7 +118,7 @@
 	co-authors = !git log | grep -i Co-Authored | awk '!a[$0]++'
 	when = !git for-each-ref --sort=committerdate --format='%(refname:short) * %(authorname) * %(committerdate:relative)' refs/remotes/ # List all branches with their last updates
 
-	tags = !sh -c "git for-each-ref --color=always --format='%(color:yellow)%(tag)%(color:default)%09 %(subject) %(color:green)(%(taggerdate:format:%Y-%m-%d))' refs/tags | sort -V | column -s $'\t' -t"
+	tags = !git for-each-ref --color=always --format='%(color:yellow)%(tag)%(color:default)%09 %(subject) %(color:green)(%(taggerdate:format:%Y-%m-%d))' refs/tags | sort -V | column -s $'\t' -t
 	find = log --patch --all --full-history # Find a filename in all git knows
 	ref = reflog show --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
 	refg = log --reflog --graph --pretty=tformat:'%C(auto)%h%d %s %Cgreen(%cd) %Cblue<%an>%Creset'
