@@ -1,8 +1,8 @@
 velero_backup() {
-     #name=$(date +%y%m%d.%h%m) && velero create backup $name --exclude-namespaces velero --wait && velero backup logs $name'
-     name=$(date +%y%m%d.%H%M)
-     velero create backup $name --exclude-namespaces velero --wait
-     velero backup logs $name
+	#name=$(date +%y%m%d.%h%m) && velero create backup $name --exclude-namespaces velero --wait && velero backup logs $name'
+	name=$(date +%y%m%d.%H%M)
+	velero create backup $name --exclude-namespaces velero --wait
+	velero backup logs $name
 }
 
 export PROJECTS="${PROJECTS:-$HOME/projects}"
@@ -19,10 +19,10 @@ _stackspin_cluster_cache=/var/tmp/stackspin-cluster
 #    Hostname [IP]
 # This is a function so it can change directory.
 stack() {
-    cmdname=${FUNCNAME:-$0}
+	cmdname=${FUNCNAME:-$0}
 	local pod_suffix='-\(0\|[0-f]\+\)'
 	if test $# -lt 1; then
-		builtin cd "$STACKSPIN"
+		builtin cd "$STACKSPIN" || cd /mnt/b/media/backups/servers/stackspin/2310_stackspin
 		echo "Usage: $cmdname <COMMAND> [args...]"
 		echo "Stackspin commands: select, sso, user, push"
 		echo "Kubepod commands: pod, exec, app, shell, ls, logs, upload"
@@ -43,23 +43,18 @@ stack() {
 		echo Selected Stackspin cluster "$_cluster_name" with IP "$_cluster_ip"
 		echo "$_cluster_name" >"$_stackspin_cluster_cache"
 		#test "$PWD" = "$HOME" && builtin cd "$STACKSPIN"
-        . $STACKSPIN/env/bin/activate
+		test -d "$STACKSPIN" && . $STACKSPIN/env/bin/activate
 		;;
-    (flux)
-        kubectl apply -k "$CLUSTER_DIR"
-        flux reconcile -n flux-system kustomization velero
-        flux get -A kustomizations --no-header | awk -F' ' '{system("flux reconcile -n " $1 " kustomization " $2)}'
-        ;;
-    (edit)
-        app=$1
-        kubectl edit configmap -n flux-system stackspin-$app-kustomization-variables
-        flux reconcile kustomization $app
-        flux reconcile helmrelease -n stackspin-apps $app
-        ;;
-	(sso) "$cmdname" exec dashboard --container backend -- flask "$@";;
+	(sso) "$cmdname" exec dashboard-backend -- flask "$@";;
 	(users)
-		if test $# -gt 0
-		then for arg
+		if test "$1" = "delete"
+		then shift
+			for arg
+			do "$cmdname" user delete "$arg"
+			done
+		elif test $# -gt 0
+		then
+			for arg
 			do "$cmdname" user show $arg
 			done
 		else "$cmdname" users $("$cmdname" user list | sed 's|.*<\(.*\)>.*|\1|')
@@ -68,64 +63,138 @@ stack() {
 		if test "$1" = "init"
 		then mail="$2"
 			shift 2
-			"$cmdname" user create "$mail"
-			"$cmdname" user update "$mail" name "$*"
+			"$cmdname" user create "$mail" &&
+			"$cmdname" user update "$mail" name "$*" &&
 			echo "Initialized user '$*' with email '$mail'"
 		else "$cmdname" sso cli "$command" "$@"
 		fi;;
+	(invite) (
+		# Mail invitation to new users
+		export mail=$1
+		export name=${2:-$(echo $mail | sed -E 's/(.*)\.(.*)@.*/\u\1 \u\2/' )}
+		#echo "$mail,$name"
+		stack user init "$mail" "$name"
+		stack-invite
+		);;
 	(push)
-		git commit -a "$@"
+		test -f "$1" && $EDITOR "$1"
+		# Allow force: https://open.greenhost.net/xeruf/stackspout/-/settings/repository#js-protected-branches-settings
+		git commit "$@"
 		git push &&
 		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))"
-		flux reconcile kustomization -n flux-system "$(basename $(git rev-parse --show-toplevel))";;
-    # Velero
-    (backup)
-        backupname=$(date +%y%m%d.%H%m)
-        velero create backup $backupname --exclude-namespaces velero --wait
-        velero backup logs $backupname;;
-    (restore)
-        test $# -lt 2 && echo "$0 $command <backup> <app>" >&2 && return 1
-        backup=$1; app=$2
-        namespace=${3:-stackspin-apps} # TODO automatically handle stackspout apps
-        restore="${backup}-$app-$(date +%s)"
-        if test "$app" = dashboard
-        then kust=single-sign-on
-             hr="$kust-database"
-             namespace=stackspin
-        else hr="$app"
-        fi
-        flux suspend kustomization ${kust:-$app}
-        flux suspend helmrelease -n $namespace $hr
-        kubectl delete all -n $namespace -l stackspin.net/backupSet=$app
-        kubectl delete secret -n $namespace -l stackspin.net/backupSet=$app
-        kubectl delete configmap -n $namespace -l stackspin.net/backupSet=$app
-        kubectl delete pvc -n $namespace -l stackspin.net/backupSet=$app
-        velero restore create $restore --from-backup=$backup -l stackspin.net/backupSet=$app
-        echo "Waiting a few seconds for $app backup to restore..."
-        sleep 10
-        velero restore describe $restore
-        echo "Press enter if backup is ready to resume flux resources:"
-        read
-        test $app = dashboard && kubectl delete secret -n stackspin hydra && flux reconcile helmrelease -n stackspin hydra
-        flux resume helmrelease -n $namespace $hr
-        flux resume kustomization ${kust:-$app}
-        ;;
+		flux reconcile kustomization -n flux-system "$(basename $(git rev-parse --show-toplevel))"
+		;;
+	# FLUX
+	(flux)
+		case "$1" in
+		(env) # Apply changes to .flux.env
+			kubectl apply -k "$CLUSTER_DIR"
+			flux reconcile -n flux-system kustomization velero
+			flux get -A kustomizations --no-header | awk -F' ' '{system("flux reconcile -n " $1 " kustomization " $2)}'
+			;;
+		esac
+		;;
+	(reconcile)
+		app=$1
+		namespace=${2:-stackspout}
+		if flux suspend helmrelease -n $namespace $app
+		then flux resume helmrelease -n $namespace $app
+		else flux suspend helmrelease -n stackspin-apps $app
+			 flux resume helmrelease -n stackspin-apps $app
+		fi
+	    flux suspend kustomization $app
+	    flux resume kustomization $app
+		;;
+	(edit)
+		# Edit the URL for an application
+		app=$1
+		kubectl edit configmap -n flux-system stackspin-$app-kustomization-variables
+		"$0" reconcile $app
+		;;
+	# Velero
+	(restic)
+		(
+		namespace=stackspin
+		case $1 in (-n|--namespace) namespace=$2; shift 2;; esac
+		source $CLUSTER_DIR/.flux.env || exit $?
+		export RESTIC_REPOSITORY="s3:${backup_s3_url}/${backup_s3_bucket}/${backup_s3_prefix}/restic/$namespace"
+		export AWS_ACCESS_KEY_ID="${backup_s3_aws_access_key_id}"
+		export AWS_SECRET_ACCESS_KEY="${backup_s3_aws_secret_access_key}"
+		export RESTIC_PASSWORD="$(kubectl get secret -n velero velero-repo-credentials -o jsonpath='{.data.repository-password}' | base64 -d)"
+		restic "$@"
+		)
+		;;
+	(backup)
+		backupname=$(date +%y%m%d.%H%m)
+		velero create backup $backupname --exclude-namespaces velero --wait
+		velero backup logs $backupname;;
+	(restore)
+		test $# -lt 2 && echo "$0 $command <backup> <app> [namespace]" >&2 && return 1
+		backup=$1; app=$2
+		namespace=${3:-stackspin-apps} # TODO automatically handle stackspout apps
+		restore="${backup}-$app-$(date +%s)"
+		if test "$app" = dashboard
+		then kust=single-sign-on
+			hr="$kust-database"
+			namespace=stackspin
+		else hr="$app"
+			 kust="$app"
+		fi
+		flux suspend kustomization $kust
+		flux suspend helmrelease -n $namespace $hr
+		kubectl delete all -n $namespace -l stackspin.net/backupSet=$app
+		kubectl delete secret -n $namespace -l stackspin.net/backupSet=$app
+		kubectl delete configmap -n $namespace -l stackspin.net/backupSet=$app
+		kubectl delete pvc -n $namespace -l stackspin.net/backupSet=$app
+		velero restore create $restore --from-backup=$backup -l stackspin.net/backupSet=$app
+		echo "Waiting a few seconds for $app backup to restore..."
+		sleep 10
+		velero restore describe $restore
+		echo "Press enter if backup is ready to resume flux resources:"
+		read
+		test $app = dashboard && kubectl delete secret -n stackspin hydra && flux reconcile helmrelease -n stackspin hydra
+		flux resume helmrelease -n $namespace $hr # TODO timeout
+		flux resume kustomization $kust
+		;;
+	(restore-pvc)
+		test $# -lt 1 && echo "$0 $command <app> [dir]" >&2 && return 1
+		local app=$1
+		if test -d "$2"
+		then dir="$2"
+			target=$(ssh "$_cluster_name" find /var/lib/Stackspin/local-storage/ -maxdepth 1 -name "*$app")
+			test -z "$target" && echo "No target found for ${app}" && return 1
+			ssh "$_cluster_name" mv -v "$target" "$target.$(date +%s)"
+			rsync --links --hard-links --times --recursive --info=progress2,remove,symsafe,flist,del --human-readable "$dir/" "$_cluster_name:$target/"
+		else
+			for vol in $(ls -d pvc*$app* | cut -d_ -f3 | sort)
+			do "$cmdname" restore-pvc $vol $(find -maxdepth 1 -name "*$vol")
+			done
+		fi
+		;;
 	# KUBE
 	# app clis
 	(occ) "$cmdname" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
-	(vikunja) local pod=${2:-vikunja}
+	(vikunja*)
+		local pod=$command
 		case "$1" in
 		(dump|export) cd "$PROJECTS/vikunja"
-			"$cmdname" exec "$pod" -c api -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
+			"$cmdname" exec "$pod-api" -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
 			;;
-		(restore) "$cmdname" upload "$pod" "$3" -c api
-			"$cmdname" exec "$pod" -c api -it -- ./vikunja restore "$3"
+		(restore)
+			if ! test -f "$2"
+			then echo "Usage: $0 vikunja[suffix] restore <file>" >&2
+				 return 2
+			fi
+			file=$2
+			"$cmdname" upload "$pod-api" "$file"
+			"$cmdname" exec "$pod-api" -it -- ./vikunja restore "$file"
 			;;
-		(psql) kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.postgresql-password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
-		(*) echo "Unknown Subcommand";;
+		(psql) kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
+		(*) echo "Unknown $command subcommand";;
 		esac
 		;;
-	(maria) app=$1
+	(maria)
+		app=$1
 		pw="$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d 2>/dev/null ||
 			kubectl get secret -n flux-system stackspin-$app-variables --template "{{.data.${app}_mariadb_password}}" | base64 -d)"
 		case $app in
@@ -133,7 +202,13 @@ stack() {
 			(wordpress) n=wordpress-database;;
 			(*) n=$app-mariadb;;
 		esac
-		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u $app "$@";;
+		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u $app "$@"
+		;;
+	(mariar)
+		name="$1-mariadb"
+		shift
+		"$cmdname" exec "$name" -it -- env "MYSQL_PWD=$(kubectl get secret -n $(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | grep --color=never -- "$name") -o jsonpath='{.data.mariadb-root-password}' | base64 -d)" mysql -u root "$@"
+		;;
 	# high-level
 	(shell)
 		container=$1
@@ -174,7 +249,12 @@ stack() {
 		done;;
 	(pod)
 		test $# -gt 0 && local podname=$1 && shift
-		kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never -- "$podname";;
+		if ! kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never -- "$podname"
+		then code=$?
+			echo "No pod found for $podname" >&2
+			return $code
+		fi
+		;;
 	# stackspin bare
 	(*) if which "$cmdname-$command" >/dev/null 2>&1
 		then "$cmdname-$command" "$@"
@@ -185,21 +265,21 @@ stack() {
 		if test "$command" = "install"; then
 			case "$1" in
 			([a-z]*)
-                for arg
-                do kubectl exec -n stackspin deploy/dashboard -c backend -- flask cli app install "$arg"
-                done;;
-            (""|-*)
+				for arg
+				do kubectl exec -n stackspin deploy/dashboard -c backend -- flask cli app install "$arg"
+				done;;
+			(""|-*)
 				python3 -m pip install --upgrade pip
 				python3 -m pip install -r requirements.txt
 				python3 -m stackspin "$@" "$_cluster_name" "$command"
-                cp -nv "install/.flux.env.example" "clusters/$_cluster_name/.flux.env" &&
-                   $EDITOR "clusters/$_cluster_name/.flux.env"
-                cp -nv install/kustomization.yaml $CLUSTER_DIR/
-                kubectl get namespace flux-system 2>/dev/null || kubectl create namespace flux-system
-                kubectl apply -k $CLUSTER_DIR
-                ./install/install-stackspin.sh
-                ;;
-            esac
+				cp -nv "install/.flux.env.example" "clusters/$_cluster_name/.flux.env" &&
+					$EDITOR "clusters/$_cluster_name/.flux.env"
+				cp -nv install/kustomization.yaml $CLUSTER_DIR/
+				kubectl get namespace flux-system 2>/dev/null || kubectl create namespace flux-system
+				kubectl apply -k $CLUSTER_DIR
+				./install/install-stackspin.sh
+				;;
+			esac
 		else python3 -m stackspin "$_cluster_name" "$command" "$@"
 		fi;;
 	esac

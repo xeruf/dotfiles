@@ -1,0 +1,21 @@
+#!/bin/sh -e
+# Emulate helm repo adding for easy command copy-pasting
+cd "$STACKSPIN/../stackspout"
+cmd=$1
+shift
+case "$cmd" in
+(install) true;;
+(repo) shift;;
+(*) echo 'Unknown command!'>&2 && exit 2;;
+esac
+name=$1
+url=$2
+
+echo "apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: $name
+  namespace: flux-system
+spec:
+  interval: 60m
+  url: $url" | tee "infrastructure/sources/$name.yaml"

@@ -1,0 +1,5 @@
+#!/bin/sh
+#for app in wordpress nextcloud velero vikunja ninja
+#do stack user setrole
+#done
+pass business/ftt/invite | envsubst | ssh nc-iridion sudo sendmail -v "$mail"

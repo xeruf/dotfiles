@@ -1,0 +1,266 @@
+#!/bin/sh -e
+if test $# -lt 1; then
+  echo "You should be in the root apps folder."
+  echo "Usage: $0 <app> [subdomain] [repo] [namespace]"
+  exit 1
+fi
+
+app=$1
+subdomain=${2:-$app}
+repo=${3:-$app}
+namespace=${4:-stackspout}
+
+cat <<EOF >>"$subdomain-kustomization.yaml"
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: add-${subdomain}
+  namespace: flux-system
+spec:
+  interval: 10m
+  prune: true
+  path: ./apps/${subdomain}
+  sourceRef:
+    kind: GitRepository
+    name: ${namespace}
+EOF
+
+if test "$(basename "$PWD")" != "${subdomain}"
+then mkdir -p "${subdomain}"
+     cd "${subdomain}"
+fi
+
+# Values
+
+cat <<EOF >>"$app-kustomization.yaml"
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: ${app}
+  namespace: flux-system
+spec:
+  interval: 5m
+  retryInterval: 2m
+  timeout: 10m
+  wait: true
+  prune: true
+  path: ./apps/${subdomain}/${app}
+  sourceRef:
+    kind: GitRepository
+    name: ${namespace}
+  dependsOn:
+    - name: flux
+    - name: local-path-provisioner
+    - name: ${app}-secrets
+    - name: nginx
+    - name: single-sign-on
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: stackspin-cluster-variables
+      - kind: ConfigMap
+        name: stackspin-${app}-kustomization-variables
+      - kind: Secret
+        name: stackspin-${app}-variables
+      # OIDC
+      - kind: Secret
+        name: stackspin-${app}-oauth-variables
+      - kind: ConfigMap
+        name: stackspin-single-sign-on-kustomization-variables
+EOF
+
+if mkdir "$app"
+then
+cat <<EOF >"$app/$app-oauth-client.yaml"
+apiVersion: hydra.ory.sh/v1alpha1
+kind: OAuth2Client
+metadata:
+  name: $app-oauth-client
+  # Has to live in the same namespace as the stackspin-$app-oauth-variables secret
+  namespace: flux-system
+spec:
+  # TODO copied from wekan: https://github.com/wekan/wekan/wiki/Keycloak
+  grantTypes:
+    - authorization_code
+    - refresh_token
+    - client_credentials
+    - implicit
+  responseTypes:
+    - id_token
+    - code
+  scope: "openid profile email stackspin_roles"
+  secretName: stackspin-$app-oauth-variables
+  #redirectUris:
+  #  - https://\${${app}_domain}/oauth/openid/
+  #tokenEndpointAuthMethod: client_secret_post
+EOF
+cat <<EOF >"$app/$app-release.yaml"
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: $app
+  namespace: $namespace
+spec:
+  releaseName: $app
+  chart:
+    spec:
+      chart: $app
+      version: 1.0 # TODO
+      sourceRef:
+        kind: HelmRepository
+        name: $repo
+        namespace: flux-system
+  interval: 5m
+  valuesFrom:
+    - kind: ConfigMap
+      name: stackspin-$app-values
+      optional: false
+    # Allow overriding values by ConfigMap or Secret
+    - kind: ConfigMap
+      name: stackspin-$app-override
+      optional: true
+    - kind: Secret
+      name: stackspin-$app-override
+      optional: true
+EOF
+cat <<EOF >"$app/$app-values-configmap.yaml"
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stackspin-$app-values
+  namespace: $namespace
+data:
+  values.yaml: |
+    # TODO verify structure matches chart
+    commonLabels:
+      stackspin.net/backupSet: "${app}"
+    podLabels:
+      stackspin.net/backupSet: "${app}"
+    # TODO Configure PVC for data & database including backup labels
+    podAnnotations:
+      backup.velero.io/backup-volumes: "data"
+    persistence:
+      enabled: true
+      existingClaim: "${app}-data"
+
+    ingress:
+      enabled: true
+      # Elaborate style
+      annotations:
+        kubernetes.io/tls-acme: "true"
+      hosts:
+        - host: "\${${app}_domain}"
+          paths:
+             - path: /
+               pathType: Prefix
+      tls:
+        - secretName: $app-tls
+          hosts:
+            - "\${${app}_domain}"
+      # Bitnami style
+      hostname: "\${${app}_domain}"
+      tls: true
+      certManager: true
+    # TODO Adjust $app Mailing config
+    #    mailer:
+    #      enabled: "\${outgoing_mail_enabled}"
+    #      host: "\${outgoing_mail_smtp_host}"
+    #      port: "\${outgoing_mail_smtp_port}"
+    #      username: "\${outgoing_mail_smtp_user}"
+    #      password: "\${outgoing_mail_smtp_password}"
+    #      fromemail: "\${outgoing_mail_from_address}"
+    # TODO Adjust $app OpenID Connect Single Sign-On Configuration
+    #    - name: Stackspin
+    #      key: "\${client_id}"
+    #      secret: "\${client_secret}"
+    #      issuer: "https://\${hydra_domain}"
+    #      autoDiscoverUrl: 'https://\${hydra_domain}/.well-known/openid-configuration'
+EOF
+cat <<EOF >"$app/$app-pvc.yaml"
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: $app-data
+  namespace: $namespace
+  labels:
+    stackspin.net/backupSet: "$app"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+EOF
+fi
+
+# Secrets
+
+cat <<EOF >>"$app-secrets-kustomization.yaml"
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: ${app}-secrets
+  namespace: flux-system
+spec:
+  interval: 5m
+  timeout: 4m
+  wait: true
+  prune: true
+  path: ./apps/${subdomain}/${app}-secrets
+  sourceRef:
+    kind: GitRepository
+    name: ${namespace}
+  dependsOn:
+    - name: flux
+    - name: secrets-controller
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: stackspin-cluster-variables
+EOF
+if mkdir "$app-secrets"
+then
+cat <<EOF >"$app-secrets/$app-kustomization-variables.yaml"
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stackspin-$app-kustomization-variables
+  namespace: flux-system
+data:
+  ${app}_domain: ${subdomain}.\${domain}
+EOF
+cat <<EOF >>"$app-secrets/$app-variables.yaml"
+---
+apiVersion: secretgenerator.mittwald.de/v1alpha1
+kind: StringSecret
+metadata:
+  name: stackspin-$app-variables
+  namespace: flux-system
+spec:
+  fields:
+  - fieldname: password
+EOF
+cat <<EOF >"$app-secrets/$app-oauth-secret.yaml"
+---
+apiVersion: secretgenerator.mittwald.de/v1alpha1
+kind: StringSecret
+metadata:
+  name: stackspin-$app-oauth-variables
+  namespace: flux-system
+spec:
+  data:
+    client_id: $app
+  fields:
+  - fieldName: client_secret
+    length: "32"
+EOF
+fi
+
+../generate-kustomizations.sh .
+echo "TODO: Obtain chart version, check configmap, adjust secrets" >&2
+exec $SHELL
