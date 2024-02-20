@@ -982,8 +982,8 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
 
 (add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_SHELLS") "~/.config/shell"). sh-mode))
-(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_ZSH") "~/.config/zsh") . sh-mode))
+(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_SHELLS") "\\.config/shell"). sh-mode))
+(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_ZSH") "\\.config/zsh") . sh-mode))
 (add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 
 ;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
