@@ -1,0 +1,21 @@
+#!/bin/bash -e
+# Source: https://serverfault.com/questions/285256/how-to-unban-an-ip-properly-with-fail2ban/1023005#1023005
+test $# -eq 0 && sudo fail2ban-client status && exit 0
+echo "Jails where $1 is locked up:"
+JAILS=`fail2ban-client status | grep "Jail list" | sed -E 's/^[^:]+:[ \t]+//' | sed 's/,//g'`
+for JAIL in $JAILS
+do
+  currentjail=`fail2ban-client status $JAIL | grep -B 8 $1 | grep Status | awk '{printf $5}'`
+  if [[ ${#currentjail} -gt a ]] ; then
+        echo $currentjail
+  fi
+done
+echo
+echo "To unban $1 use the following commands:"
+for JAIL in $JAILS
+do
+  currentjail=`fail2ban-client status $JAIL | grep -B 8 $1 | grep Status | awk '{printf $5}'`
+  if [[ ${#currentjail} -gt a ]] ; then
+        echo "fail2ban-client set $currentjail unbanip $1"
+   fi
+done

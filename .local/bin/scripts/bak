@@ -2,7 +2,6 @@
 # Rename a file with a backup suffix or revert it
 # Add -a to act on multiple files,
 # otherwise the second arg is used as suffix rather than the default "bak".
-# TODO no sudo for symlinks
 if test "$1" = "-a"; then
 	shift
 	for arg; do "$0" "$arg"; done

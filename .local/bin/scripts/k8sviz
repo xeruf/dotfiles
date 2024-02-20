@@ -1,0 +1,8 @@
+#!/bin/sh -e
+ns=${1:-stackspin}
+case "$1" in
+("") /opt/k8sviz/k8sviz.sh --help;;
+(-*) /opt/k8sviz/k8sviz.sh "$@";;
+(*)  set -x
+     /opt/k8sviz/k8sviz.sh --kubeconfig $KUBECONFIG --namespace "$ns" -t png -o "$(date +%y%m%d)_$ns.png";;
+esac

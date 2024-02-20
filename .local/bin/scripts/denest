@@ -1,6 +1,7 @@
 #!/bin/sh -e
-# Flatten folder hierarchy
-# Args: depth
+# Flatten folder hierarchies
+# Moves subfolders up one layer, replacing the slash by underscore unless the parent folder has the same name.
+# Args: depth of leaf folders to move up
 depth=$(expr 1 \& $# \| 2)
 case $1 in ([0-9]|[0-9][0-9]) depth=$1; shift;; esac
 find "$@" -mindepth $depth -maxdepth $depth -depth -type d | while read folder; do

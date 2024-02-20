@@ -1,7 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # Mount a partition by label or device identifier automatically
 # Includes interactive selection if no argument is given
-# TODO losetup for raw and qcow2, including lvm handling
 set -eo pipefail
 _help="$0 <device> [mountpoint] [options...]"
 case $1 in
@@ -30,11 +29,13 @@ esac
 
 # FILE as loopback device
 if test -f "$arg"
-then set -e
-     loopdevice="$(sudo losetup -f)"
-     sudo losetup -P -v "$loopdevice" "$arg"
-     $0 "$loopdevice"
-     exit $?
+then loopdevice="$(sudo losetup -f)"
+     if sudo losetup -P -v "$loopdevice" "$arg"
+     then $0 "$loopdevice" ||
+          { sudo vgchange -ay &&
+          sudo pvs | grep "$loopdevice" | awk '{print $2}' | xargs -I% find /dev/% -mindepth 1 -exec sudo sh -c 'dir=/mnt/$(echo "{}" | sed "s|/dev/||;s|/|-|g") && mkdir -vp "$dir" && mount {} "$dir"' \; ; }
+          exit $?
+     fi
 fi
 
 # FSTAB: BY LABEL

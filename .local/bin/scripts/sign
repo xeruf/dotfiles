@@ -3,7 +3,8 @@
 # Trims everything beyond the given page number
 test "$1" = "-q" && quiet=$1 && shift
 case "$1" in ([0-9]) page=$1; shift;; esac
-test ! -r "$1" && echo "Usage: sign [page] <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]" && exit 1
+test $# -lt 2 && echo "Usage: sign [page] <document.pdf> [hoffset (-160) [voffset (-310) [scale [signature-image]]]]"
+test ! -r "$1" && exit 1
 
 tmp_base=/tmp/sign
 mkdir -p $tmp_base

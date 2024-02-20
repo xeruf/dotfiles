@@ -1,9 +1,6 @@
 #!/bin/sh
-# set given repository as upstream or add as a new remote
-# ARGS:
-# - user/org
-# - repo
-# - remote name
+# Set given repository as upstream or add as a new remote
+test $# -lt 1 && echo "$0 <user> [repo] [remote-name]" && exit 1
 if test "$3"
 then
   name="$3"
@@ -12,5 +9,5 @@ else
   git remote get-url upstream >/dev/null 2>&1 && name="$1" || name="upstream"
 fi
 origin="$(git remote get-url origin)"
-git remote add -f $name "$(echo $origin | cut -d':' -f1):$1/${2:-$(echo $origin | cut -d'/' -f2)}"
+git remote add -f "$name" "$(echo $origin | cut -d':' -f1):$1/${2:-$(echo $origin | cut -d'/' -f2)}"
 git remote -v
