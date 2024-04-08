@@ -2,4 +2,4 @@
 #for app in wordpress nextcloud velero vikunja ninja
 #do stack user setrole
 #done
-pass business/ftt/invite | envsubst | ssh nc-iridion sudo sendmail -v "$mail"
+pass business/ftt/invite"$1" | envsubst | ssh nc-iridion sudo sendmail -v "$mail"

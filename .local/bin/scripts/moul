@@ -72,4 +72,5 @@ then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
     sudo mount -vo users,X-mount.mkdir,noatime $params "$partition" "$mountpoint" "$@"
 fi
 cd $mountpoint
+df -x tmpfs -x devtmpfs -x squashfs --human-readable
 exec $SHELL

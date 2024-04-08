@@ -20,7 +20,7 @@ case $host in
   (hub|github) host=git@github.com;;
   (lab) host=git@gitlab.com;;
   (jf)  host=gitea@git.jfischer.org;;
-  (ftt|"") host=git@code.ftt.gmbh; user=janek;;
+  (ftt|"") host=git@forge.ftt.gmbh; user=janek;;
 esac
 user=${3:-${user:-$(git config user.name)}}
 repo=${2:-$(basename $(git root))}

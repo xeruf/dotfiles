@@ -1,0 +1,6 @@
+#!/bin/sh -e
+# MPC add file to queue
+for arg
+do  fullpath=$(realpath "$arg")
+    mpc insert "${fullpath/$MUSIC\//}"
+done

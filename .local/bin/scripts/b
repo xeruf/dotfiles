@@ -32,7 +32,7 @@ shift "$(($OPTIND -1))"
 
 checkperm() {
 	checkaccess -r "$@" || elevate=sudo
-	mime="$(test -n "$shifted" || $elevate file --dereference --mime -- "$@")"
+	mime="$(test -n "$shifted" || $elevate file --dereference --mime-type -- "$@")"
 }
 fileinfo() {
 	tput setaf 4
@@ -79,7 +79,7 @@ for arg; do
 	tmpfile="$prefix/$(basename -- "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ' || true)"
 	mkdir -p "$prefix"
 	case "$mime" in
-	(*\ application/pdf\;*)
+	(*\ application/pdf)
 		grid=$(expr $(tput cols) \* $# / $(tput lines))
 		grid=$(expr 3 \& $grid \< 3 \| $grid)
 		#limit=$(expr $grid \& \( $grid \> 3 \| $# \> 1 \) \| $grid '*' 2)
@@ -101,6 +101,7 @@ for arg; do
 		timg+=("$tmpfile");;
 	# TODO .raw .img
 	(*/x-iso*|*/x-qemu-disk*) fdisk -l "$arg";;
+	(*/vnd.android.package-archive) aapt dump badging "$arg" | grep package | cut -d' ' -f2-;;
 	(*\ video/*)
 		suffix=_thumbs.jpg
 		! $inspect &&
@@ -113,7 +114,7 @@ for arg; do
 	(*\ image/*)
 		timg+=("$arg")
 		which identify >/dev/null && continue;;
-	(*\ inode/directory\;*)
+	(*\ inode/directory)
 		ls+=("$arg")
 		test -L "$arg" || continue
 		;;

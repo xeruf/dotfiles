@@ -26,6 +26,6 @@ fi
 if test "$command"; then
 	echo "Generated through $command"
 	$(test $(tput cols) -gt 120 && echo "diff --color=always --side-by-side" || echo "diff-color") \
-		--report-identical-files --label="${files[0]}" --label="${files[1]}" <($command "${files[0]}") <($command "${files[1]}")
+		--ignore-case --report-identical-files --label="${files[0]}" --label="${files[1]}" <($command "${files[0]}") <($command "${files[1]}")
 fi
 } | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen

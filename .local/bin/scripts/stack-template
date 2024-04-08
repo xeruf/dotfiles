@@ -243,7 +243,7 @@ metadata:
   namespace: flux-system
 spec:
   fields:
-  - fieldname: password
+  - fieldName: password
 EOF
 cat <<EOF >"$app-secrets/$app-oauth-secret.yaml"
 ---

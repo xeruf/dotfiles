@@ -2,7 +2,7 @@
 # Find terms in jrnl files and turn them into tags
 # Check with jrnl --tags
 if test $# -eq 0
-then $0 sleep nap health tech read dev phone Zinc run bike tour laptop computer PC CB piano faith journal
+then $0 sleep uni work nap health tech read girl dev phone Zinc run bike tour laptop computer PC CB piano faith journal Catherine Franklin Kerstin Henri Katja
 else
   for arg
   do rpl "\(^\|[^@]\)\b$arg\b" "\1@$arg" $JOURNAL/*.txt 2>/dev/null
