@@ -44,3 +44,5 @@ x-scheme-handler/tg=telegram.desktop;
 video/mp4=vlc.desktop;
 text/calendar=emacsclient.desktop;
 video/x-m4v=vlc.desktop
+text/vcard=emacs.desktop
+text/plain=emacs.desktop

@@ -729,6 +729,9 @@ Version 2019-11-04 2021-02-16"
     (add-to-list 'org-export-filter-headline-functions
                  'org/ensure-latex-clearpage)
 
+    ; https://tex.stackexchange.com/questions/50747/options-for-appearance-of-links-in-hyperref/50754#50754
+    (add-to-list 'org-latex-default-packages-alist "\\PassOptionsToPackage{colorlinks=true,urlcolor=blue,allcolors=blue}{hyperref}")
+
     ;;(setq org-latex-toc-command "\\tableofcontents*\n\n")
     (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
           org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))

@@ -98,7 +98,7 @@
 	b = branch -vv
 	ba = b -a
 
-	main = !cat "$(git rev-parse --git-path refs/remotes/origin/HEAD)" | cut -d'/' -f4
+	main = !git rev-parse --abbrev-ref origin/HEAD | cut -d'/' -f2
 	curbranch = symbolic-ref --short HEAD
 	upstream = !git rev-parse --abbrev-ref --symbolic-full-name @{upstream} || git rev-parse --abbrev-ref --symbolic-full-name @{push} || echo origin/$(git curbranch)
 

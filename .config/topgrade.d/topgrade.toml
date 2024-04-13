@@ -40,7 +40,7 @@ repos = [
 #pull_predefined = false
 
 # Arguments to pass Git when pulling Repositories
-pull_arguments = "--rebase --autostash --recurse-submodules"
+#pull_arguments = "--rebase --autostash --recurse-submodules"
 
 [composer]
 #self_update = false

@@ -5,7 +5,8 @@
 
 
 # Arrange displays in a ROW (default, left to right) or a COLUMN (top to bottom)
-ARRANGE: COLUMN
+#ARRANGE: COLUMN
+ARRANGE: ROW
 
 # Align ROWs at the TOP (default), MIDDLE or BOTTOM
 # Align COLUMNs at the LEFT (default), MIDDLE or RIGHT
@@ -17,11 +18,11 @@ ALIGN: MIDDLE
 ORDER:
   - 'C24F390'
   - 'LOEWE'
-  - 'DP-4'
+  - 'DP-4' # left port
   - 'VFV'
+  - 'BOE' #internal
   - 'DP-3'
-  - 'DP-1'
-  - 'BOE'
+  - 'DP-1' # right port
 
 # The default is to scale each display by DPI.
 # This may be disabled and scale 1 will be used, unless a SCALE has been specified.
