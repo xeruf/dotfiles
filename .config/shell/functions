@@ -238,7 +238,7 @@ alias v='edit'
 alias st='synct'
 command -v dtrx >/dev/null && alias ex='dtrx'
 alias expr='noglob expr'
-alias get='noglob ='
+alias calc='noglob ='
 alias bi='b .*ignore*'
 
 # Shortcuts
@@ -265,6 +265,7 @@ del() {
 	m "$@" $trash
 }
 
+alias get='curlie --location'
 curlh() {
 	curl -v --location "$@" >/dev/null
 }

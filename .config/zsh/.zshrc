@@ -159,10 +159,10 @@ setopt hist_save_no_dups
 setopt hist_reduce_blanks
 unsetopt hist_ignore_space
 zshaddhistory() {
-  [[ $1 != netkeeper* ]] && [[ $1 != killm* ]] && [[ $1 !=  "stretchly reset" ]]
+	[[ $1 != netkeeper* ]] && [[ $1 != killm* ]] && [[ $1 !=  "stretchly reset" ]]
 }
 
-setopt sh_word_split
+setopt sh_word_split # https://github.com/zsh-users/zsh-history-substring-search/issues/154
 setopt extended_glob
 unsetopt case_glob
 

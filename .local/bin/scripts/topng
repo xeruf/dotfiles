@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 # Convert given file to PNG
 pdftoppm -png "$@" >"$1.png" ||
     convert -background white -alpha off -density 500 "$@" "$1.png"

@@ -16,8 +16,8 @@ sudo hdparm -MWAgt "$disk"
 if test $# -eq 0
 then highlight "[1mWrite Test"
 	sync
-	# This prevents predictions by using random, but since that is too slow we have to copy a previously created file
 	count=100$(test $(df --output="avail" . | tail -1) -gt 999999 && echo 0 || true)
+	# This prevents predictions by using random, but since that is too slow we have to copy a previously created file
 	highlight "Preparing random bits:" &&
 		sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=$count &&
 		highlight "Copying random bits:" &&

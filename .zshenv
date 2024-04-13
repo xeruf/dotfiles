@@ -8,7 +8,7 @@ export_existing() {
 export_existing DATA $HOME/daten $HOME/data
 export MUSIC="$DATA/4-media/music"
 
-export BORG_REPO='/mnt/backup/borg'
+export BORG_REPO='admin@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
 export BORG_PASSCOMMAND='pass service/device/borg/backup'
 
 # xdg
@@ -102,8 +102,8 @@ export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(t
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
-export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .pyenv -x .local/cache -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
-export DIRS_IGNORE="-x .sync -x .stfolder -x *build -x .git -x .idea -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
+export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .pyenv -x .local/cache -x .config/DeltaChat -x .config/discord -x .config/Slack -x .config/syncthing -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
+export DIRS_IGNORE="-x .archive -x .sync -x .stfolder -x *build -x .git -x .idea -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
@@ -159,3 +159,5 @@ export CTEST_OUTPUT_ON_FAILURE=1
 #autolight
 #export TZ='Europe/Dublin'
 #export TZ='Africa/Nairobi'
+
+export CONTEST_NETWORK=lan-restricted-dev

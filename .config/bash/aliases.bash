@@ -51,6 +51,14 @@ status() {
 	fi
 }
 
+disks() {
+	{
+	sudo df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
+	sudo blkid
+	sudo fdisk -l
+	} | less
+}
+
 __u="$sudo apt update && $sudo apt upgrade"
 alias u="$__u"
 alias ur="tmux new-session -s upgrade '$__u && $sudo reboot'"

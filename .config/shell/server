@@ -41,8 +41,10 @@ stack() {
 		# Uncomment the line below to always use the main stackspin repo, even when running in a fork.
 		#export GITLAB_CI="true"
 		echo Selected Stackspin cluster "$_cluster_name" with IP "$_cluster_ip"
-		echo "$_cluster_name" >"$_stackspin_cluster_cache"
+		echo "$_cluster_name" >"$_stackspin_cluster_cache" || true
 		#test "$PWD" = "$HOME" && builtin cd "$STACKSPIN"
+		;;
+	(activate)
 		test -d "$STACKSPIN" && . $STACKSPIN/env/bin/activate
 		;;
 	(sso) "$cmdname" exec dashboard-backend -- flask "$@";;
@@ -74,7 +76,7 @@ stack() {
 		export name=${2:-$(echo $mail | sed -E 's/(.*)\.(.*)@.*/\u\1 \u\2/' )}
 		#echo "$mail,$name"
 		stack user init "$mail" "$name"
-		stack-invite
+		stack-invite "$3"
 		);;
 	(push)
 		test -f "$1" && $EDITOR "$1"
@@ -174,11 +176,13 @@ stack() {
 	# KUBE
 	# app clis
 	(occ) "$cmdname" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
+	(zulip) "$cmdname" exec zulip -- su zulip -c "/home/zulip/deployments/current/manage.py $*";;
 	(vikunja*)
 		local pod=$command
 		case "$1" in
 		(dump|export) cd "$PROJECTS/vikunja"
-			"$cmdname" exec "$pod-api" -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
+			"$cmdname" exec "$pod-api" -- \
+				sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
 			;;
 		(restore)
 			if ! test -f "$2"
@@ -189,13 +193,36 @@ stack() {
 			"$cmdname" upload "$pod-api" "$file"
 			"$cmdname" exec "$pod-api" -it -- ./vikunja restore "$file"
 			;;
-		(psql) kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
+		(psql)
+			kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- \
+				sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
 		(*) echo "Unknown $command subcommand";;
 		esac
 		;;
+	(psql)
+		local app=$1
+		shift
+		case "$1" in
+		(restore)
+			shift
+			file=$1
+			db=${2:-$app}
+			"$cmdname" upload "$app-postgresql" "$file"
+            "$cmdname" psql "$app" exec createdb "$db"
+			stack psql "$app" "$db" -f \
+				$(kubectl describe pod -n $(stack pod "$app-postgresql") | grep "from data" | awk '{print $1}')/$file
+		    ;;
+		(exec) command="$2"
+		    shift 2
+		    kubectl exec -it -n $("$cmdname" pod "$app-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $app-postgresql -o jsonpath='{.data.password}' | base64 --decode) $command -h localhost -U $app -p 5432 $*"
+		    ;;
+		(*)
+            "$cmdname" psql "$app" exec psql "$@"
+			;;
+		esac;;
 	(maria)
-		app=$1
-		pw="$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d 2>/dev/null ||
+		local app=$1
+		local pw="$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d 2>/dev/null ||
 			kubectl get secret -n flux-system stackspin-$app-variables --template "{{.data.${app}_mariadb_password}}" | base64 -d)"
 		case $app in
 			(nextcloud) n=nc-mariadb;;
@@ -211,7 +238,7 @@ stack() {
 		;;
 	# high-level
 	(shell)
-		container=$1
+		local container=$1
 		shift
 		test "$1" = "-c" && pod=$2 && shift 2
 		"$cmdname" exec "$container" -c "$pod" -it -- /bin/sh "$@";;
@@ -240,13 +267,13 @@ stack() {
 		for arg
 		do case "$arg" in (-*) break;; (*) commands+="$arg"; shift;; esac
 		done
-		local IFS=$'\n'
-		for namespacedpod in $pods; do
+		namespacedpod="$pods"
+		#while IFS= read -r namespacedpod; do
 			test "$subcommand" = get ||
 				highlight "Running $subcommand on $namespacedpod" >&2
-			local IFS=' '
 			kubectl "$subcommand" "${commands[@]}" -n $namespacedpod "$@"
-		done;;
+		#done <<< "$pods"
+		;;
 	(pod)
 		test $# -gt 0 && local podname=$1 && shift
 		if ! kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never -- "$podname"
@@ -277,6 +304,10 @@ stack() {
 				cp -nv install/kustomization.yaml $CLUSTER_DIR/
 				kubectl get namespace flux-system 2>/dev/null || kubectl create namespace flux-system
 				kubectl apply -k $CLUSTER_DIR
+
+				ssh "root@${_cluster_name}" mkdir /etc/nftables.d
+				ssh "root@${_cluster_name}" echo 'tcp dport { 2222 } counter accept' | tee /etc/nftables.d/ssh.nft
+
 				./install/install-stackspin.sh
 				;;
 			esac

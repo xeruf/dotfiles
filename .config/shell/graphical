@@ -4,8 +4,9 @@ command -v notify-send >/dev/null &&
 
 if which jrnl >/dev/null; then
 	j(){ jrnl "$@" && jrnl-tag; }
-	jn() { jrnl -to today "$@" | less --exit-follow-on-close +F; }
-	alias jnc='jn -contains'
+	jna() { jrnl -to today "$@" | less --exit-follow-on-close +F; }
+	alias jn='jna -n 99'
+	alias jnc='jna -contains'
 	alias jne='jrnl --edit'
 fi
 
