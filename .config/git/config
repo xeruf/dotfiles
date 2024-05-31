@@ -185,6 +185,7 @@
 	ruu = !git fetch upstream && git reset --keep upstream/${1:-$(git curbranch)} && git push --no-verify --force-with-lease
 	luu = !git pull upstream ${1:-$(git curbranch)} && git push --no-verify
 	pf = push --force-with-lease
+	pu = push --set-upstream
 
 	# CLEANUP
 	gcr = !git gc && git repack -a -d

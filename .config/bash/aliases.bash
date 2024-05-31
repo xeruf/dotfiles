@@ -2,6 +2,12 @@ test -n "$PS1" || return 0
 
 which pfetch >/dev/null 2>&1 && pfetch
 
+ds() {
+	df -B1M -x tmpfs -x devtmpfs -x squashfs |
+	  awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}'
+}
+ds
+
 test $(id -u) -eq 0 || sudo=sudo
 
 alias jc="$sudo journalctl --boot --unit"

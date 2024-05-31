@@ -72,6 +72,7 @@ stack() {
 		fi;;
 	(invite) (
 		# Mail invitation to new users
+		test $# -gt 0 || { printf "stack invite MAIL [NAME] [TEMPLATE]\nName can be omitted if mail is firstname.lastname@domain\n"; exit 2 };
 		export mail=$1
 		export name=${2:-$(echo $mail | sed -E 's/(.*)\.(.*)@.*/\u\1 \u\2/' )}
 		#echo "$mail,$name"
@@ -83,6 +84,7 @@ stack() {
 		# Allow force: https://open.greenhost.net/xeruf/stackspout/-/settings/repository#js-protected-branches-settings
 		git commit "$@"
 		git push &&
+		git push greenhost && # FIXME remove
 		flux reconcile source git -n flux-system "$(basename $(git rev-parse --show-toplevel))"
 		flux reconcile kustomization -n flux-system "$(basename $(git rev-parse --show-toplevel))"
 		;;
@@ -237,6 +239,9 @@ stack() {
 		"$cmdname" exec "$name" -it -- env "MYSQL_PWD=$(kubectl get secret -n $(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | grep --color=never -- "$name") -o jsonpath='{.data.mariadb-root-password}' | base64 -d)" mysql -u root "$@"
 		;;
 	# high-level
+	(list)
+		flux get all | grep "$1"
+		kubectl get all -A | grep "$1";;
 	(shell)
 		local container=$1
 		shift
@@ -288,6 +293,7 @@ stack() {
 			return $?
 		fi
 		builtin cd "$STACKSPIN"
+		stack activate
 		# Since the install command can also be given bare to install stackspin itself
 		if test "$command" = "install"; then
 			case "$1" in

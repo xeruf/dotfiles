@@ -91,12 +91,12 @@ formatin() {
 
 # Normalize the given filename
 formatsong() {
-	echo "$1" | sed -e '# First Entry for Qobuz folders
-		/^[A-z0-9_-]\+$/{s|_| |g;s|-|/|g};
+	# Qobuz folders /^[A-z0-9_-]\+$/{s|_| |g;s|-|/|g};
+	echo "$1" | sed -e '
 		s/\b\(ft\|Ft\|Feat\|featuring\)\([ .]\)/feat\2/;
 		s/\bfeat /feat. /;
 		s/)(/) (/g;
-		s/ [[(]\(Free Download\|Original Mix\|Original\|Full Stream\|NCS Release\)[])]//i;
+		s/ [[(]\(None\|Free Download\|Original Mix\|Original\|Full Stream\|NCS Release\)[])]//i;
 		s/ (\(Acoustic\|Live|.* Remix\))/ [\1]/i;
 		s/ \[\(feat.*\)\]/ (\1)/i;
 		s/^\([A-z]\+\) The \([^-]\+\)$/\1, the \2/g;
