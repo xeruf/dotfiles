@@ -4,6 +4,6 @@ git-l ||
 		printf "\e[31;1mError - aborting rebase!\e[0m\n" >&2 &&
 		git rebase --abort; }
 if git rev-parse @{upstream} >/dev/null 2>&1
-  then git push "$@"
-  else git push --set-upstream "$@"
+then git push --recurse-submodules=on-demand "$@"
+else git push --set-upstream "$@"
 fi

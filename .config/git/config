@@ -26,6 +26,7 @@
 	defaultBranch = main
 [push]
 	default = current # Automatically push to branch with matching name
+	recurseSubmodules = on-demand
 
 # Editor
 [diff]
