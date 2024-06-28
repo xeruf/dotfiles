@@ -1,0 +1,4 @@
+[core]
+	pager = diffr --colors refine-added:none:background:0x88,0xff,0x88:bold --colors added:none:background:0xaa,0xdd,0xaa --colors refine-removed:none:background:0xff,0x99,0x99:bold --colors removed:none:background:0xdd,0xaa,0xaa | less --RAW-CONTROL-CHARS --quit-on-intr
+[interactive]
+	diffFilter = diffr --colors refine-added:none:background:0x88,0xff,0x88:bold --colors added:none:background:0xaa,0xdd,0xaa --colors refine-removed:none:background:0xff,0x99,0x99:bold --colors removed:none:background:0xdd,0xaa,0xaa
