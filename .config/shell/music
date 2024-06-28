@@ -64,6 +64,25 @@ addalbum() {
 	unset IFS
 }
 
+
+updatemusic() {
+	for dir in $(find "$MUSIC" -mindepth 1 -maxdepth 1 -type d -name "[A-Z]*")
+	do builtin cd "$dir"
+	   find -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | while read dir
+       do target="$(echo ${dir} | tr -d ' ')"
+		  find -maxdepth 1 \( -name "$dir" -o -iname "$(echo ${target} | sed 's/\([a-z]\)\([A-Z][a-z]\)/\1*\2/g')*" \) -not -name "$target" -exec mv -nv {} $target/ \;
+       done
+	done
+	cd "$MUSIC"
+	find -mindepth 4 -type d -not -path '*/Hip-Hop/*' -not -path '*/Movies/*' -not -path '*/LeagueOfLegends/*' -exec sh -c 'mv -vn "{}" "$(echo "{}" | cut -d/ -f2-3)/"' \; -prune
+	find -mindepth 4 -type d -exec sh -c 'test $(find "{}" -type f | grep -vE "(.jpe?g|.png)" | wc -l) -eq 1 && name="$(ls "{}" | grep -vE "(.jpe?g|.png)")" && mv -vi "{}/$name" "$(dirname "{}")/$(echo "$name" | sed "s|^01 ||")" && rm -rv "{}"' \; -prune
+	# TODO delete folders with only images: find -type d -exec sh -c 'test $(find "{}" -type f | grep -vE "(.jpe?g|.png)" | wc -l) -eq 0 && rm -r "{}"' \; -prune
+	find -empty -delete
+	formatsongs
+	printf "=== DONE RENAMING ===\n\n"
+	beet import -AC "$MUSIC"
+}
+
 formatsongs() {
 	(
 	find -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | formatin
@@ -99,7 +118,6 @@ formatsong() {
 		s/ [[(]\(None\|Free Download\|Original Mix\|Original\|Full Stream\|NCS Release\)[])]//i;
 		s/ (\(Acoustic\|Live|.* Remix\))/ [\1]/i;
 		s/ \[\(feat.*\)\]/ (\1)/i;
-		s/^\([A-z]\+\) The \([^-]\+\)$/\1, the \2/g;
 		s/ \(\..\{2,4\}\)$/\1/;
 		s/---/ - /;
 		s/-LLS\././;
@@ -108,4 +126,5 @@ formatsong() {
 		s/ \././g;
 		s/  / /g;
 		s/\(\w\)+\(\w\)/\1 \2/g' -
+		#s/^\([A-z]\+\) The \([^-]\+\)$/\1, the \2/g;
 }
