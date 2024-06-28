@@ -7,7 +7,7 @@
 MPD_CONF=${XDG_CONFIG_HOME:-$HOME/.config}/mpd/mpd.conf
 MUSIC="${MUSIC:-$(cat $MPD_CONF | grep music_directory | cut -d'"' -f2 | sed "s|~|$HOME|")}"
 PLAYLISTS="$(cat $MPD_CONF | grep playlist_directory | cut -d'"' -f2 | sed "s|~|$HOME|" || echo "$MUSIC/Playlists")"
-LINKS="$MUSIC/links"
+LINKS="$MUSIC/.links"
 if test "$1" = "-r"
 then shift
 	test "$1" = "-v" && verbose=-v && set -x && shift

@@ -5,3 +5,8 @@ cd $XDG_CONFIG_HOME/mpd
 mv *template ..
 mv ../*template .
 systemctl --user restart mpd
+# https://mpd.readthedocs.io/en/latest/user.html#cross-fading
+mpc crossfade 4
+mpc mixrampdelay 1
+mpc mixrampdb -17
+#mpc mixramp_analyzer "yes"
