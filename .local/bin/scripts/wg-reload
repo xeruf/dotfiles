@@ -1,3 +1,5 @@
-#!/bin/sh -x
+#!/bin/bash -x
 # wg-quick reload interface
-wg syncconf "$@" <(wg-quick strip "$@")
+# needs to be run with superuser permissions
+wg syncconf "$@" <(wg-quick strip "$@") ||
+    ip -br a

@@ -89,11 +89,14 @@ if [[ $1 =~ "o" ]]; then
 	fi
 
 	sudo rm -rf "$XDG_DATA_HOME/baloo"
-	docker image prune
+	# https://www.cyberciti.biz/faq/delete-remove-orphaned-unused-packages-arch-linux-pacman-command/
+	which pacman &>/dev/null &&
+		pacman -Qqdt | sudo pacman -Rsu -
 	which yay &>/dev/null &&
 		yay -Sc --noconfirm
 	nix-collect-garbage -d 2>/dev/null &&
 		nix-store --optimize
+	docker image prune
 fi
 
 df --output="source,avail" -h $(test -n "$local" && echo ".") "$dir"

@@ -26,7 +26,7 @@ showinfo() {
 
 cmd="$1"
 case "$cmd" in
-	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja)
+	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja|qobuz-dl|beet)
 		unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
 	(sqlcmd) sqlcmd -?;;
 	(exa) "$0" eza;;

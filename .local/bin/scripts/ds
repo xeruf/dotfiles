@@ -2,7 +2,8 @@
 # [d]isk [s]ize usage and partition overview
 # For an accurate usage percentage add "f" as argument which uses "df"
 if test "$1" = "f"
-  then df -B1M -x tmpfs -x devtmpfs -x squashfs | awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=strtonum($5); printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}'
+  then df -B1M -x tmpfs -x devtmpfs -x squashfs -x overlay |
+      awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 99) ? a : (u > 97) ? b : (u > 94) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}'
   else
     test "$(lsblk --version | cut -d. -f2)" -ge 37 && width="--width" && cols=$(tput cols) && outcols="s"
     IFS="\n"

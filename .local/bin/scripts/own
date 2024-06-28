@@ -6,3 +6,4 @@ case "$1" in
 	(-*) u="${1#-}"; shift; break;;
 esac
 sudo chown -R --preserve-root "$u:$u" "${@:-.}"
+#sudo chmod u+w . -R

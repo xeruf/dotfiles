@@ -2,9 +2,9 @@
 # Find terms in jrnl files and turn them into tags
 # Check with jrnl --tags
 if test $# -eq 0
-then $0 sleep uni nap cry health tech read girl dev phone Zinc run bike tour laptop computer PC piano faith journal CB Claudia Catherine Franklin Kerstin Henri Katja Erlangen Bayreuth Berlin ICF
+then $0 sleep lens uni nap cry health tech read girl dev phone Zinc bike tour laptop computer PC piano faith CB Claudia Franklin Kerstin Henri Katja Erlangen Bayreuth Berlin ICF Joan
 else
   for arg
-  do rpl "\(^\|[^@]\)\b$arg\b" "\1@$arg" $JOURNAL/*.txt 2>/dev/null
+  do rpl "\(^\|[^@/]\)\b$arg\b" "\1@$arg" $JOURNAL/*.txt 2>/dev/null
   done
 fi
