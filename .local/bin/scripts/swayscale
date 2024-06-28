@@ -8,4 +8,5 @@ case $1 in
      (col) way-displays -s ARRANGE_ALIGN COLUMN MIDDLE; exit $?;;
 esac
 shift $shift
-way-displays -s SCALE '' $scale "$@" || swaymsg output \* scale $scale
+way-displays -s SCALE '' $scale "$@" ||
+     swaymsg output \* scale $scale
