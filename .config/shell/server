@@ -63,7 +63,8 @@ stack() {
 		fi;;
 	(user|app)
 		if test "$1" = "init"
-		then mail="$2"
+		then test $# -gt 2 || { echo "$0 $command $1 MAIL NAME"; return 2; }
+			mail="$2"
 			shift 2
 			"$cmdname" user create "$mail" &&
 			"$cmdname" user update "$mail" name "$*" &&
@@ -72,7 +73,7 @@ stack() {
 		fi;;
 	(invite) (
 		# Mail invitation to new users
-		test $# -gt 0 || { printf "stack invite MAIL [NAME] [TEMPLATE]\nName can be omitted if mail is firstname.lastname@domain\n"; exit 2 };
+		test $# -gt 0 || { printf "$0 $command MAIL [NAME] [TEMPLATE]\nName can be omitted if mail is firstname.lastname@domain\n"; return 2; };
 		export mail=$1
 		export name=${2:-$(echo $mail | sed -E 's/(.*)\.(.*)@.*/\u\1 \u\2/' )}
 		#echo "$mail,$name"
@@ -120,7 +121,7 @@ stack() {
 		(
 		namespace=stackspin
 		case $1 in (-n|--namespace) namespace=$2; shift 2;; esac
-		source $CLUSTER_DIR/.flux.env || exit $?
+		source $CLUSTER_DIR/.flux.env || return $?
 		export RESTIC_REPOSITORY="s3:${backup_s3_url}/${backup_s3_bucket}/${backup_s3_prefix}/restic/$namespace"
 		export AWS_ACCESS_KEY_ID="${backup_s3_aws_access_key_id}"
 		export AWS_SECRET_ACCESS_KEY="${backup_s3_aws_secret_access_key}"
@@ -133,7 +134,12 @@ stack() {
 		velero create backup $backupname --exclude-namespaces velero --wait
 		velero backup logs $backupname;;
 	(restore)
-		test $# -lt 2 && echo "$0 $command <backup> <app> [namespace]" >&2 && return 1
+		if test $# -lt 2
+		then echo "$0 $command <backup> <app> [namespace]"
+			 echo "Recent Backups:"
+			 velero backup get | grep Completed | awk '{print $5 "\t" $1}' | sort -r | head -9
+			 return 1
+		fi
 		backup=$1; app=$2
 		namespace=${3:-stackspin-apps} # TODO automatically handle stackspout apps
 		restore="${backup}-$app-$(date +%s)"
@@ -153,10 +159,15 @@ stack() {
 		velero restore create $restore --from-backup=$backup -l stackspin.net/backupSet=$app
 		echo "Waiting a few seconds for $app backup to restore..."
 		sleep 10
-		velero restore describe $restore
-		echo "Press enter if backup is ready to resume flux resources:"
-		read
-		test $app = dashboard && kubectl delete secret -n stackspin hydra && flux reconcile helmrelease -n stackspin hydra
+		local readresult
+		while test -z "$readresult"
+		do velero restore describe $restore
+		   echo "Press enter to check again, any text if backup is ready to resume flux resources:"
+		   read readresult
+		done
+		test $app = dashboard &&
+			kubectl delete secret -n stackspin hydra &&
+			flux reconcile helmrelease -n stackspin hydra
 		flux resume helmrelease -n $namespace $hr # TODO timeout
 		flux resume kustomization $kust
 		;;
@@ -198,7 +209,7 @@ stack() {
 		(psql)
 			kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- \
 				sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $pod-postgresql -o jsonpath='{.data.password}' | base64 --decode) psql -h localhost -U vikunja -p 5432 vikunja";;
-		(*) echo "Unknown $command subcommand";;
+		(*) echo "Unknown $command subcommand: dump, restore, psql";;
 		esac
 		;;
 	(psql)
@@ -236,7 +247,8 @@ stack() {
 	(mariar)
 		name="$1-mariadb"
 		shift
-		"$cmdname" exec "$name" -it -- env "MYSQL_PWD=$(kubectl get secret -n $(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | grep --color=never -- "$name") -o jsonpath='{.data.mariadb-root-password}' | base64 -d)" mysql -u root "$@"
+		pod="$(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | grep --color=never -- "$name")" &&
+		"$cmdname" exec "$name" -it -- env "MYSQL_PWD=$(kubectl get secret -n $pod -o jsonpath='{.data.mariadb-root-password}' | base64 -d)" mysql -u root "$@"
 		;;
 	# high-level
 	(list)
@@ -261,7 +273,7 @@ stack() {
 	(exec) "$cmdname" kube exec "$@";;
 	(logs) podname=$1
 		shift
-		"$cmdname" kube logs "$podname" | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
+		"$cmdname" kube logs "$podname" -f | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
 	# low-level
 	(kube)
 		test $# -gt 1 || { echo "Please provide a command and pod name" >&2 && return 1; }
