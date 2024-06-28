@@ -8,7 +8,7 @@ let g:firenvim_config = {
       \ 'cmdline': 'firenvim',
       \ 'priority': 0,
       \ 'selector': 'textarea:not([readonly]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]):not([title="Replace"]):not([title="Search"]):not([name="message"]),
-        \ div[role="textbox"]:not([aria-label="Search"]):not([class="ProseMirror"]), div[class="CodeMirror"]',
+        \ div[role="textbox"]:not([aria-label="Search"]):not([class="cm-content"]):not([class="ProseMirror"]), div[class="CodeMirror"]',
       \ 'takeover': 'always',
     \ },
     \ '.*com.*': {

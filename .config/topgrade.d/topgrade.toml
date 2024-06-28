@@ -58,7 +58,7 @@ repos = [
 
 [linux]
 # Arguments to pass yay when updating packages
-yay_arguments = "--diffmenu=false --overwrite /usr/lib/node_modules/node-gyp/**,/usr/lib/node_modules/npm/**,/usr/lib/** --ignore linux,zoom,qt*,zulip*,webcord*,brave*,*openjfx,android-studio*,clion*,intellij-idea-*,webstorm*,stretchly-xeruf-git"
+yay_arguments = "--diffmenu=false --overwrite /usr/lib/node_modules/node-gyp/**,/usr/lib/node_modules/npm/**,/usr/lib/** --ignore linux,zoom,qt*,zulip*,webcord*,brave*,*openjfx,android-studio*,clion*,intellij-idea-*,webstorm*,texlive-full"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"
