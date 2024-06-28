@@ -1,0 +1,19 @@
+# library: "/home/janek/.local/share/beets/library.db"
+directory:  "/home/janek/data/4-media/music"
+plugins: lyrics replaygain fetchart embedart duplicates smartplaylist mpdupdate convert web inline info edit badfiles fuzzy
+replaygain:
+    backend: ffmpeg
+duplicate:
+    path: yes
+    strict: yes
+    tiebreak:
+    - items: [bitrate, track]
+paths:
+    default: $genre/$albumartist/$album/$track $title
+    comp: $genre/$album%aunique{}/$title
+    singleton: $genre/$artist/$title
+    albumtype:soundtrack: Soundtracks/$album/$track $title
+lyrics:
+    auto: true
+    sources: genius lrclib
+    synced: yes
