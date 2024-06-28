@@ -578,7 +578,8 @@ Version 2019-11-04 2021-02-16"
   ;:after org-mode
   :defer 3
   :init
-    (setq company-minimum-prefix-length 1
+    (setq company-minimum-prefix-length 2
+          company-tooltip-limit 9
           company-dabbrev-ignore-case 't
           completion-ignore-case 't)
   :config
