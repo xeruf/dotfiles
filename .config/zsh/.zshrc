@@ -1,6 +1,6 @@
 GITSTATUS_LOG_LEVEL=DEBUG
 # Commands
-if test "$PWD" = "$HOME" && test "$0" !=  "$SHELL"; then
+if test "$PWD" = "$HOME" && test "$0" != "$SHELL"; then
 	neofetch --config $XDG_CONFIG_HOME/neofetch/config-$(test -z "$DISPLAY" && test "$XDG_VTNR" -eq 1 && echo short || echo server).conf
 	timew | head -3
 fi 2>/dev/null || return 0
@@ -52,43 +52,43 @@ source $ZSH/oh-my-zsh.sh
 ## Functions
 
 tab_list_files() {
-  if [[ $#BUFFER == 0 ]]; then
-    BUFFER="ls "
-    CURSOR=3
-    zle list-choices
-    zle backward-kill-word
-  elif [[ $BUFFER =~ ^[[:space:]][[:space:]].*$ ]]; then
-    BUFFER="./"
-    CURSOR=2
-    zle list-choices
-    [ -z ${TAB_LIST_FILES_PREFIX+x} ] && BUFFER="  " CURSOR=2
-  elif [[ $BUFFER =~ ^[[:space:]]*$ ]]; then
-    BUFFER="cd "
-    CURSOR=3
-    zle list-choices
-    [ -z ${TAB_LIST_FILES_PREFIX+x} ] && BUFFER=" " CURSOR=1
-  else
-    BUFFER_=$BUFFER
-    CURSOR_=$CURSOR
-    zle expand-or-complete || zle expand-or-complete || {
-      BUFFER="ls "
-      CURSOR=3
-      zle list-choices
-      BUFFER=$BUFFER_
-      CURSOR=$CURSOR_
-    }
-  fi
+	if [[ $#BUFFER == 0 ]]; then
+		BUFFER="ls "
+		CURSOR=3
+		zle list-choices
+		zle backward-kill-word
+	elif [[ $BUFFER =~ ^[[:space:]][[:space:]].*$ ]]; then
+		BUFFER="./"
+		CURSOR=2
+		zle list-choices
+		[ -z ${TAB_LIST_FILES_PREFIX+x} ] && BUFFER="	" CURSOR=2
+	elif [[ $BUFFER =~ ^[[:space:]]*$ ]]; then
+		BUFFER="cd "
+		CURSOR=3
+		zle list-choices
+		[ -z ${TAB_LIST_FILES_PREFIX+x} ] && BUFFER=" " CURSOR=1
+	else
+		BUFFER_=$BUFFER
+		CURSOR_=$CURSOR
+		zle expand-or-complete || zle expand-or-complete || {
+			BUFFER="ls "
+			CURSOR=3
+			zle list-choices
+			BUFFER=$BUFFER_
+			CURSOR=$CURSOR_
+		}
+	fi
 }
 zle -N tab_list_files
 bindkey '^I' tab_list_files
 
 fancy-ctrl-z() {
-  if [[ $#BUFFER -eq 0 ]]; then
-    bg
-    zle redisplay
-  else
-    zle push-input
-  fi
+	if [[ $#BUFFER -eq 0 ]]; then
+		bg
+		zle redisplay
+	else
+		zle push-input
+	fi
 }
 zle -N fancy-ctrl-z
 bindkey '^z' fancy-ctrl-z
@@ -159,7 +159,7 @@ setopt hist_save_no_dups
 setopt hist_reduce_blanks
 unsetopt hist_ignore_space
 zshaddhistory() {
-	[[ $1 != netkeeper* ]] && [[ $1 != killm* ]] && [[ $1 !=  "stretchly reset" ]]
+	[[ $1 != netkeeper* ]] && [[ $1 != killm* ]] && [[ $1 != "stretchly reset" ]]
 }
 
 setopt sh_word_split # https://github.com/zsh-users/zsh-history-substring-search/issues/154
@@ -189,8 +189,13 @@ source_existing() {
 	done
 }
 
-source_existing $CONFIG_ZSH/.p10k.zsh # To customize prompt, run `p10k configure` or edit .p10k.zsh.
-source_existing $CONFIG_ZSH/sgpt.zsh
+ # To customize p10k prompt, run `p10k configure` or edit .p10k.zsh.
+source $CONFIG_ZSH/.p10k.zsh
+source $CONFIG_ZSH/aichat.zsh
+for file in $(find "$CONFIG_ZSH" -name '*.zsh')
+do #echo "sourcing $file"
+   #	. $file
+done
 source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 
 source_existing "$NVM_DIR/nvm.sh"
@@ -205,3 +210,4 @@ source_existing $HOME/.nix-profile/etc/profile.d/nix.sh
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 
 true
+l
