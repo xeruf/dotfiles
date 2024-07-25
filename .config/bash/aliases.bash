@@ -39,24 +39,31 @@ xtrace () {
     set +x
 }
 
-highlight() { echo "[4m$1[0m"; }
+highlight() { echo; echo "[4m$1[0m"; }
 status() {
 	highlight 'System'
-	free -h
 	df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
-	zfs list -d 0
-	sudo certbot certificates
+	zfs list -d 0 2>/dev/null
+	free -h
+	sudo certbot certificates 2>/dev/null
+
 	highlight 'Internet'
     #--color=always
 	ip -brief address | grep --color=none -E '^(wl|en|tun|vmbr)'
 	ip route
 	echo -n 'IPv4: ' && timeout 3s ping example.com -A -c 3 -w 3 -q -4
 	echo -n 'IPv6: ' && timeout 3s ping example.com -A -c 3 -w 3 -q -6
+
 	highlight 'Programs'
-	tmux ls
-	$sudo systemctl --no-pager list-units --failed || service --status-all
-	if type docker >/dev/null
-	then $sudo docker ps || $sudo systemctl status docker
+	tmux ls 2>/dev/null
+	$sudo systemctl --no-pager list-units --failed --no-legend || service --status-all
+	echo '== WEBSERVER'
+	{ sudo lsof -i :443 || sudo lsof -i :80; } | head -4
+	echo
+	if type docker &>/dev/null
+	then
+	  echo '== DOCKER'
+	  $sudo docker ps || $sudo systemctl status docker
 	fi
 }
 
@@ -66,6 +73,9 @@ disks() {
 	sudo blkid
 	sudo fdisk -l
 	} | less
+}
+scandisks() {
+	for host in /sys/class/scsi_host/*; do echo "- - -" | sudo tee $host/scan; ls /dev/sd* ; done
 }
 
 __u="$sudo apt update && $sudo apt upgrade"
@@ -121,8 +131,8 @@ shopt -oq posix || src /etc/bash_completion
 
 # Fancy prompt
 PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]"
-PS1="$PS1 \`if [ \$? = 0 ]; then echo -e '\[\033[01;32m\]:)';"
-PS1="$PS1 else echo -e '\[\033[01;31m\]' \$?; fi\`\[\033[00m\]"
+PS1="$PS1 \`exitcode=\${?}; if test \$exitcode = 0; then printf '\[\033[01;32m\] :)';"
+PS1="$PS1 else printf '\[\033[01;31m\]%3d' \$exitcode; fi\`\[\033[00m\]"
 ;;
 (*zsh) setopt sh_word_split;;
 esac
@@ -130,4 +140,4 @@ esac
 src /usr/share/git/completion/git-prompt.sh && PS1="$PS1\$(__git_ps1 \" (%s)\")"
 src $HOME/.config/shell/functions
 
-PS1="$PS1 \$ "
+PS1="$PS1 \`test \$UID = 0 && printf '#' || printf '$'\` "
