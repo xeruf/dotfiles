@@ -148,7 +148,7 @@
 	cme = commit -v --edit --message # Commit with message from CLI but edit it
 	cad = !git diff-tree --no-commit-id --name-only -r HEAD | git commit -v --amend --pathspec-from-file=- # Amend commit with all already changed files
 	cap = !git commit --amend --no-edit && git push --force-with-lease
-	journal = !git -C $DATA commit -v $DATA/2-box/journal*
+	journal = !command git -C $DATA commit -v $DATA/2-box/journal*
 
 	cp = cherry-pick
 	cpc = cherry-pick --continue

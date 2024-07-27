@@ -1,0 +1,4 @@
+#!/bin/sh -ex
+# Configure git prepare-commit-msg hook that prefixes common path of changed files
+git config core.hooksPath .git/hooks
+ln -st .git/hooks $XDG_CONFIG_HOME/git/prepare-commit-msg

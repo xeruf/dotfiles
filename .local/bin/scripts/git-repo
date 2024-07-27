@@ -16,11 +16,10 @@ case "$1" in
 esac
 host=$1
 case $host in
-  (socha) user=software-challenge; host=git@github.com;;
-  (hub|github) host=git@github.com;;
-  (lab) host=git@gitlab.com;;
-  (jf)  host=gitea@git.jfischer.org;;
-  (ftt|"") host=git@forge.ftt.gmbh; user=janek;;
+  (socha) user=software-challenge; host=github.com;;
+  (hub|github) host=github.com;;
+  (lab) host=gitlab.com;;
+  (ftt|"") host=forge.ftt.gmbh; user=janek;;
 esac
 user=${3:-${user:-$(git config user.name)}}
 repo=${2:-$(basename $(git root))}

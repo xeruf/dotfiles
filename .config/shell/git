@@ -37,8 +37,7 @@ gcn() {
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
 git() {
   case "$1" in
-    (config) ;;
-    (clone) ;;
+    (config|clone|journal) ;;
     (*) case "$PWD" in
       ($HOME|$XDG_CONFIG_HOME|$LAST_YADM)
         yadm "$@"
