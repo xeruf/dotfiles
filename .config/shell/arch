@@ -45,7 +45,7 @@ yas() {
 	)
 	if test -n "$pkg"
 		then echo "Installing $pkg..."
-			cmd="yay -Sy --batchinstall --rebuildtree $pkg"
+			cmd="yay -Sy --batchinstall --rebuildall $pkg"
 			print -s "$cmd"
 			eval "$cmd"
 			rehash

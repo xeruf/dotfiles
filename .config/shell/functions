@@ -289,12 +289,12 @@ u() {
 	fi
 	if command -v topgrade >/dev/null
 	then
-	  nice -10 topgrade --disable node emacs remotes
+	  nice -10 topgrade --disable node emacs remotes rustup nix
 	  if test -d "$XDG_CONFIG_HOME/emacs"
 	  then
 		  builtin cd $XDG_CONFIG_HOME/emacs
 		  git pull --rebase
-		  if ! true | doom sync -u
+		  if ! true | doom --force upgrade
 		  then echo "Rebuild doom from scratch?"
 			  read result
 			  test "$result" = "y" && rm -rf "$DOOMLOCALDIR/straight" && doom sync -u
@@ -342,8 +342,9 @@ sshl() {
 		! [[ "$1" =~ "nc-*" ]] &&
 		! [[ "$1" =~ "ddns*" ]] &&
 	local pass=pass
+	local target=${1%[0-9a-z]}
 	test "$all" &&
-		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${1%[0-9a-z]}*.bash" \) -exec cat {} + | $pass ssh "$@" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
+		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${target#nc-}*.bash" \) -exec cat {} + | $pass ssh "$@" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
 		echo 'Updated .bash_aliases!'
 		#$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if test -n "$pass"
@@ -507,8 +508,11 @@ which exa >/dev/null &&
 	alias ll='l --long --git --all'
 
 if which fd >/dev/null 2>&1
-then fn() { $(command -v fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; } # [F]ind [n]o ignore
-	alias ff="noglob fn --color=always " # [F]ind [F]ile
+then
+	# [F]ind [n]o ignore
+	fn() { $(command -v fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
+	# [F]ind [F]ile
+	alias ff="noglob fn --color=always "
 	compdef ff=fd
 	compdef fn=fd
 else

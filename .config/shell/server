@@ -45,7 +45,24 @@ stack() {
 		#test "$PWD" = "$HOME" && builtin cd "$STACKSPIN"
 		;;
 	(activate)
-		test -d "$STACKSPIN" && . $STACKSPIN/env/bin/activate
+		test -d "$STACKSPIN" && . "$STACKSPIN/env/bin/activate"
+		;;
+	(setup) # https://docs.stackspin.net/en/latest/installation/install_cli.html
+		cd "$STACKSPIN" &&
+		python3 -m venv env &&
+		"$0" activate
+		;;
+	(override)
+		cd "$STACKSPIN/../stackspout/overrides"
+		name=stackspin-$1-override
+		echo "apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: stackspin-apps
+  name: $name
+data:
+  values.yaml: |" >"$name.yaml"
+		$EDITOR "$name.yaml"
 		;;
 	(sso) "$cmdname" exec dashboard-backend -- flask "$@";;
 	(users)
@@ -130,9 +147,13 @@ stack() {
 		)
 		;;
 	(backup)
+		if test $# -gt 0
+		then velero "$@"
+		else
 		backupname=$(date +%y%m%d.%H%m)
 		velero create backup $backupname --exclude-namespaces velero --wait
-		velero backup logs $backupname;;
+		velero backup logs $backupname
+		fi;;
 	(restore)
 		if test $# -lt 2
 		then echo "$0 $command <backup> <app> [namespace]"
@@ -189,7 +210,7 @@ stack() {
 	# KUBE
 	# app clis
 	(occ) "$cmdname" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
-	(zulip) "$cmdname" exec zulip -- su zulip -c "/home/zulip/deployments/current/manage.py $*";;
+	(zulip) "$cmdname" exec zulip -- su zulip -c "/home/zulip/deployments/current/scripts/$* || /home/zulip/deployments/current/manage.py $*";;
 	(vikunja*)
 		local pod=$command
 		case "$1" in
@@ -271,7 +292,8 @@ stack() {
 		kubectl cp "$2" -n $("$cmdname" pod "$1$pod_suffix"):$2 "${@:3}"
 		"$cmdname" ls "$1" "${@:3}";;
 	(exec) "$cmdname" kube exec "$@";;
-	(logs) podname=$1
+	(logs) test $# -gt 0 || { echo "$0 $command <pod> [lnav-args...]"; return; }
+		podname="$1"
 		shift
 		"$cmdname" kube logs "$podname" -f | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
 	# low-level
@@ -299,6 +321,11 @@ stack() {
 			return $code
 		fi
 		;;
+	(clean-pods)
+		kubectl get pods --all-namespaces --no-headers |
+			egrep -iv 'PodInitializing|Running|ContainerCreating|Terminating' |
+			awk '{print "--namespace=" $1 " " $2}' |
+			xargs -L 1 kubectl delete pod;;
 	# stackspin bare
 	(*) if which "$cmdname-$command" >/dev/null 2>&1
 		then "$cmdname-$command" "$@"

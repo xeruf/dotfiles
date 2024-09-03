@@ -31,10 +31,10 @@ mozedit() (
 	cat "$tmpfile2" | sed "$2" | lz4 -l | dd bs=1 skip=8 seek=12 of="$file" conv=notrunc
 )
 
-test "$XDG_CURRENT_DESKTOP" = "KDE" || return 0
-
-# Switch theme across system: KDE, Konsole, taskwarrior, bat
-# WIP: Emacs, Mozilla, diffr (git pager)
+# Switch theme across system: KDE, Konsole, taskwarrior, bat, diffr (git pager)
+# WIP: Emacs, Mozilla
+# TODO terminal tool themer https://www.linuxjournal.com/content/revolutionizing-command-line-interface-dynamic-themes
+# TODO bluetuith
 theme_save="$XDG_CACHE_HOME/theme"
 #theme_default="$(d=$(date +%H) && test $d -gt 7 && test $d -lt 19 && echo light || echo dark)"
 theme_default="dark"
@@ -44,35 +44,47 @@ themeswitch() {
 	then kcmshell5 kcm_lookandfeel
 	elif test "$theme" != "$THEME" -a "$2" != "q"
 	then kcmshell5 kcm_lookandfeel &
-		# TODO theme diffr rather than disabling it
-		bak $XDG_CONFIG_HOME/git/diffr
 		emacsclient -e "(toggle-theme \"$theme\")"
 	fi
-	# TODO kitty
 	export THEME="$theme"
 	echo "$theme">"$theme_save"
 
+	diffr="$XDG_CONFIG_HOME/git/diffr"
+	ln -srf "$diffr-$theme" "$diffr"
+
 	#mozfile=$(find $HOME/.mozilla/firefox/ -maxdepth 2 -name addonStartup.json.lz4 | grep ".test")
+	kitty="$XDG_CONFIG_HOME/kitty/theme.conf"
 	case "$theme" in
 		(light)
+			alias ai='aichat --light-theme'
 			# LESS_TERMCAP_DEBUG=true man man
 			export LESS_TERMCAP_md=$'\e[1;34m'	# bold blue
 			export BAT_THEME="OneHalfLight"
-			konsoleprofile colors="Light"
+			#konsoleprofile colors="Light"
+			ln -srf "$(dirname "$kitty")/theme-light.conf" "$kitty"
 			#sed -i 's/#\(include.*\/light-256.theme\)/\1/' "$XDG_CONFIG_HOME/task/taskrc"
 			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/'
 			;;
 		(dark)
+			alias ai=aichat
 			export BAT_THEME="OneHalfDark"
-			konsoleprofile colors="Breeze"
+			#konsoleprofile colors="Breeze"
+			rm -f "$kitty"
 			#sed -i 's/^include.*light-256.theme/#\0/' "$XDG_CONFIG_HOME/task/taskrc"
 			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/'
 			;;
 	esac
+	pkill --signal SIGUSR1 kitty
 }
 export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
 themeswitch $THEME
+alias ts='themeswitch'
+
+alias ky='ai --role swahili'
+alias en='ai --role en'
+
+test "$XDG_CURRENT_DESKTOP" = "KDE" || return 0
 
 # Fix errors regarding broken mim database
 alias fixmime='sudo rm /usr/share/mime/packages/kde.xml && sudo update-mime-database /usr/share/mime'
