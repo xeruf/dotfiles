@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 # Clones a fork and sets a corresponding upstream
 # ARGS
 # - repo name (omit if setting upstream in existing repo)
@@ -14,8 +14,12 @@ then repo="$(basename "$PWD")"
 	git remote remove upstream 2>/dev/null || true
 else test $# -eq 0 && echo "Usage: $0 <repo (omit if in repo)> <upstream owner> [own user] [host]" && exit 2
 	repo="$1" && shift
-	if test "$#" -eq 0
-	then git-get "$repo"
+	if test $# -eq 0
+	then
+		git-get "$repo"
+		cd "$(basename "$repo")"
+		git-fork "$repo"
+		exit $?
 	else
 		test -d "$d1" && cd "$d1/0-forks"
 		if ! git-get "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}"
@@ -26,6 +30,8 @@ else test $# -eq 0 && echo "Usage: $0 <repo (omit if in repo)> <upstream owner> 
 	cd "$(basename "$(expr "$4" \| "$repo")")"
 fi
 user="${1:-$repo}"
-git-upstream "$user"
-#git remote add upstream "$(git-repo "${3:-github.com}" "$repo" "$user")"
+case "$user" in
+(http*) git remote add upstream "$user";;
+(*) git-upstream "$user";;
+esac
 exec $SHELL
