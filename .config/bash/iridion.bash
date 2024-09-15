@@ -1,7 +1,7 @@
 set -o pipefail
 
 alias localip="ip addr show | grep -E '(ens|eth)' | grep -oP '"'(?<=inet\s)\d+(\.\d+){3}'"' | head -1"
-ip=$(localip)
+ip=`localip`
 
 logs() {
   if test $# -eq 0
@@ -64,6 +64,7 @@ letsencrypt() {
           hestia v-list-web-domain-ssl $user $domain | grep . >/dev/null && continue
           #echo "Generating Certificate" >&2
           hestia v-add-letsencrypt-domain $user $domain $(hestia v-list-web-domain $user $domain | grep ALIAS | tr -s ' ' | cut -d' ' -f2- | tr ' ' ',')
+          echo "$domain: ${?}"
         done
         echo "Waiting an hour to not trigger letsencrypt rate limits..."
         time=0
