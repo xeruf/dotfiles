@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+# Extract the email address from the mailto link
+mailto_link="$1"
+email_address="${mailto_link#mailto:}"
+
+# Copy the extracted email address to the clipboard
+echo -n "$email_address" | xclip -selection clipboard
+
+# Optional: Notify the user
+notify-send "Email address copied to clipboard" "$email_address"
+
+# Optional: Log the copied email addresses for debugging
+echo "Copied email address: $email_address" >> ~/mailto_log.txt

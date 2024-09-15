@@ -154,6 +154,7 @@ export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
+export CARGO_BUILD_JOBS=${SPARE_CORES}
 
 # TODO move to proper place - is also called when firenvim starts
 #autolight

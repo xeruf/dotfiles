@@ -11,18 +11,20 @@ highlight() { echo "[4m$1[0m"; }
 
 highlight "Checking SMART with hdparm"
 # Needs sudo for read test
-sudo hdparm -MWAgt "$disk"
+sudo hdparm -MWAgt "$disk" || true
 
 if test $# -eq 0
 then highlight "[1mWrite Test"
 	sync
-	count=100$(test $(df --output="avail" . | tail -1) -gt 999999 && echo 0 || true)
-	# This prevents predictions by using random, but since that is too slow we have to copy a previously created file
-	highlight "Preparing random bits:" &&
-		sudo dd status=progress if=/dev/random of=/var/tmp/tempfile bs=1M count=$count &&
+	count=3000$(test $(df --output="avail" . | tail -1) -gt 999999 && echo 0 || true)
+	tempfile=/var/tmp/.$count
+	# Prevent deduplication/predictions by using random rather than zero, but since that is too slow we have to copy a previously created file
+	test -s $tempfile ||
+		( highlight "Preparing random bits:" &&
+		sudo dd status=progress if=/dev/urandom of=$tempfile bs=1M count=$count ) &&
 		highlight "Copying random bits:" &&
-		sudo dd status=progress if=/var/tmp/tempfile of=tempfile bs=1M count=$count
+		sudo dd status=progress if=$tempfile of=.$count bs=1M count=$count
 	highlight "Copying zero bits:" &&
-		sudo dd status=progress if=/dev/zero of=tempfile bs=1M count=$count
-	sudo rm tempfile
+		sudo dd status=progress if=/dev/zero of=.$count bs=1M count=$count
+	sudo rm .$count
 fi

@@ -272,9 +272,10 @@ curlh() {
 
 unalias u 2>/dev/null # for bash
 u() {
-	# Line below handy for users of netkeeper
+	# Line below handy for users of netkeeper internet blocker
 	#sudo nft list ruleset | grep -q outall && echo "Suspending netkeeper" >&2 | echo 'pausing netkeeper for sysupgrade' | netkeeper 30 2>/dev/null
 	if command -v pacman >/dev/null; then
+		sudo find /var/lib/pacman/db.lck -mmin +600 -delete 2>/dev/null && echo 'Deleted stale pacman db.lock'
 		if test "$(stat /etc/pacman.d/mirrorlist --printf=%y | cut -d'-' -f1-2)" != "$(date +%Y-%m)"
 		then
 			# TODO also run if location changed significantly or mirror is slow

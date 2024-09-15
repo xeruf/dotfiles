@@ -1,0 +1,8 @@
+#!/bin/sh -e
+cd "$DATA/1-projects/software-challenge/capper/gui/src/main/resources/hui/"
+rm -- *
+mv "$DATA/5-incubator/download"/hui_*.zip .
+unzip -- *.zip
+mv -- */* .
+git add .
+exec $SHELL

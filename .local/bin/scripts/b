@@ -50,6 +50,7 @@ fileinfo() {
 		# I think this check is here to avoid scrolling text interpreted as video
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
+		# Omit short videos: test $(printf "%.0f" $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$file")) -gt 4
 		# Print media infos over file infos when <2G
 		if ! { test "$size" -lt 2000000000 && $elevate ffprobe -hide_banner "$arg" 2>&1 | grep -E "bitrate: .{3,5} " | sed 's/, start:[^,]\+,/,/'; } || $inspect
 		then $elevate stat --format "%U:%G %A %s $(

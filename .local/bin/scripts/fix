@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fix odd processes getting stuck
+systemctl --user restart espanso &
+mpdr

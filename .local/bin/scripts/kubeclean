@@ -1,0 +1,6 @@
+#!/bin/sh -e
+# Cleanup Inactive and Broken Pods
+kubectl get pods --all-namespaces --no-headers |
+    egrep -iv 'PodInitializing|Running|ContainerCreating|Terminating' |
+    awk '{print "--namespace=" $1 " " $2}' |
+    xargs -L 1 kubectl delete pod

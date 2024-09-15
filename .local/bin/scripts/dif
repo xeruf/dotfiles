@@ -16,10 +16,10 @@ if ! test "$command"; then
 	(*sqlite*) sqldiff --summary "${files[@]}" | grep -v '0 changes, 0 inserts, 0 deletes';; # TODO syntax highlighting for INSERT/UPDATE/DELETE
 	(text/*)
 		# Use wiked-diff only for text <100KB
-		if test 100000 -gt "$(stat --format=%s "${files[@]}" | paste -s -d'+' | bc)"
-		then wiked-diff "${files[@]}"
-		else diff --color=always --unified=1 --report-identical-files "${files[@]}"
-		fi;;
+		test 100000 -gt "$(stat --format=%s "${files[@]}" | paste -s -d'+' | bc)" &&
+			wiked-diff "${files[@]}" ||
+				diff --color=always --unified=1 --report-identical-files "${files[@]}"
+		;;
 	(*) diff-color --report-identical-files "${files[@]}";;
 	esac
 fi
