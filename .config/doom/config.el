@@ -696,7 +696,7 @@ Version 2019-11-04 2021-02-16"
     (setq org-export-with-tags nil
           org-export-with-tasks 'done
           org-export-with-todo-keywords nil
-          ;org-export-with-toc nil
+          org-export-with-toc nil
           org-export-with-section-numbers nil
           org-export-with-broken-links 't
           org-ascii-text-width 999
@@ -737,7 +737,8 @@ Version 2019-11-04 2021-02-16"
     (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
           org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
           org-latex-src-block-backend 'minted
-          org-latex-default-class "article4")
+          org-latex-default-class "article4"
+         org-latex-hyperref-template "\\hypersetup{\n pdfauthor={%a},\n pdftitle={%t},\n pdfkeywords={%k},pdfsubject={%d},\n pdfcreator={%c},\n pdflang={%L},\n colorlinks=true,\n urlcolor=blue,\n citecolor=green,\n linktocpage}\n")
     (add-to-list 'org-latex-classes
          '("article4" "\\documentclass{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
             ("\\section{%s}" . "\\section*{%s}")
@@ -1244,6 +1245,10 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (ispell-set-spellchecker-params)
   (ispell-hunspell-add-multi-dic ispell-dictionary)
   )
+
+; uncomment this to exit loading the config prematurely
+;(with-current-buffer " *load*"
+;  (goto-char (point-max)))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;

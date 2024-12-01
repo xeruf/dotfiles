@@ -26,7 +26,7 @@ showinfo() {
 
 cmd="$1"
 case "$cmd" in
-	(fwupdmgr|hunt|rdoc|gh|chordpro|bat|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja|qobuz-dl|beet)
+	(fwupdmgr|hunt|rdoc|gh|chordpro|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja|qobuz-dl|beet)
 		unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
 	(sqlcmd) sqlcmd -?;;
 	(exa) "$0" eza;;
@@ -37,6 +37,7 @@ case "$cmd" in
 	(rsgain) "$@" custom --help;;
 	(spectre|plantuml|java) unbuffer "$@" -help | $paginate;;
 	(mpw) "$@" -h 2>&1 | $paginate;;
+	(bat) { unbuffer "$@" --help && printf "\n\nLANGUAGES:\n" && "$@" --list-languages --color always; } | $paginate;;
 	(rails) { "$@" -H && "$@" --help; } | $paginate;;
 	(vlc) shift && unbuffer vlc --full-help "$@" | $paginate;;
 	(kdeconnect*) shift && kdeconnect-cli --help-all "$@" | $paginate;;

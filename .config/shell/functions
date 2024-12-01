@@ -382,6 +382,7 @@ alias pmd='pandoc -t markdown_strict-raw_html'
 
 alias clr='diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less -F'
 
+# Fossil
 alias f='fossil'
 alias fl='fossil timeline --format "[%d] %h %c <%a>"'
 alias fs='fossil status'
@@ -392,6 +393,20 @@ fdf() {
 fuu() {
     rm .fslckout
     fossil open *.fossil --keep
+}
+# Like git log -p
+flp() {
+    case "$1" in
+    (""|-*) true;;
+    (*) filepath="$1"; shift;;
+    esac
+    local prev
+    fossil timeline --format=%H -p "$filepath" "$@" | head -n -1 | while read -r revision; do
+        test -n "$revision" || continue
+        test -z "$prev" || fossil diff --from "$revision" --to "$prev" "$filepath"
+        printf "\033[7m%-${COLUMNS}s\033[27m" "   Rev:$revision" | sed 's/ /─/g'
+        prev="$revision"
+    done | bat --plain --language diff
 }
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
