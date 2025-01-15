@@ -1,24 +1,19 @@
-export AUDIO="$DATA/audio"
-MUSIC_RAW="$AUDIO/songs/_raw"
+# See also scripts/pl
 
-alias scbra='scpr zebra "/srv/funkwhale/data/music${PWD/$MUSIC}"'
-
+# Finds common music files in the current directory, optionally taking a regex
 findsongs() {
 	find -regextype posix-extended -maxdepth 1 -type f \
 		-iregex "${1:-.*\.(mp3|flac|wav|m4a)}" -printf "%P\n"
 }
 
-addtopl() {
-	pl=$1
-	shift
-	playlists=$MUSIC/Playlists
-	realpath --relative-to $playlists "$@" | tee -a $playlists/$pl*
-}
-
 addmix() {
+	AUDIO="$DATA/audio"
 	mv -v "$1.cue" "$AUDIO/recordings/cues"
 	addsong "$1.flac" Mixes
 }
+
+# Used to keep music directory small, pretty much obsolete now
+MUSIC_RAW="$d4/songs/_raw"
 
 addsong() {
 	test "$1" = "-q" && shift && quick="true"
@@ -41,6 +36,7 @@ addsong() {
 	test ! "$PWD" -ef "$MUSIC_RAW/$2" && mv -v "$raw.flac" "$MUSIC_RAW/$2" && (test "$isflac" || rm -v "$1")
 }
 
+# Execute inside an album folder with the desired target path
 addalbum() {
 	mkdir -p "$MUSIC/$1"
 	mkdir -p "$MUSIC_RAW/$1"
@@ -86,8 +82,10 @@ updatemusic() {
 formatsongs() {
 	(
 	find -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | formatin
-	find "$@" "$PWD" -type d | while read d;
+	find "${@:-$PWD}" -type d | while read d;
 		do builtin cd "$d" && findsongs | formatin
+		   test $(find -maxdepth 1 -name '01 *' | wc -l) -gt 1 -a $(find -maxdepth 1 -name '02 *' | wc -l) -eq 0 &&
+		     zmv -W '01 *' '*'
 		done
 	)
 	# fd --no-ignore-vcs --type f --extension opus --exec opusdec --quiet "{}" "{.}.wav" \; ".*" "$@"

@@ -5,7 +5,7 @@
 # args: either a playlist file name, or a list of terms which all have to match
 # TODO fails on "Alchemy"
 # TODO implement finding by tags
-PLAYLISTS="${PLAYLISTS:-$MUSIC/Playlists}"
+PLAYLISTS="${PLAYLISTS:-$MUSIC/playlists}"
 mpc -q clear || mpdr
 if test -z "$1"
 then mp -q "$PLAYLISTS/focus.m3u"

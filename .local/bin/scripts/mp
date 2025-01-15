@@ -4,9 +4,15 @@
 # depends: xargs realpath mpc
 # env: MUSIC
 # TODO auto-convert unknown types with ffmpeg to flac rather than linking (wav, opus, ...)
+if test $# -eq 0
+then echo "Usage: $0 [files...]"
+	 mpdr
+	 mpc play
+	 exit 0
+fi
 MPD_CONF=${XDG_CONFIG_HOME:-$HOME/.config}/mpd/mpd.conf
 MUSIC="${MUSIC:-$(cat $MPD_CONF | grep music_directory | cut -d'"' -f2 | sed "s|~|$HOME|")}"
-PLAYLISTS="$(cat $MPD_CONF | grep playlist_directory | cut -d'"' -f2 | sed "s|~|$HOME|" || echo "$MUSIC/Playlists")"
+PLAYLISTS="$(cat $MPD_CONF | grep playlist_directory | cut -d'"' -f2 | sed "s|~|$HOME|" || echo "$MUSIC/playlists")"
 LINKS="$MUSIC/.links"
 if test "$1" = "-r"
 then shift
@@ -16,7 +22,7 @@ then shift
 	do
 		matchname="$(basename -- "$arg" | sed 's|\(\[.*\)\]|\\\1\\]|;s|\?|\\?|')"
 		filepath="$({ find "$(dirname -- "$arg")" -maxdepth 1 -name "$matchname" -exec realpath {} + ||
-			find "$(dirname -- "$arg")" "$MUSIC/$(dirname -- "$arg")" "$MUSIC/Playlists/$(dirname -- "$arg")" -maxdepth 1 \
+			find "$(dirname -- "$arg")" "$MUSIC/$(dirname -- "$arg")" "$PLAYLISTS/$(dirname -- "$arg")" -maxdepth 1 \
 				-name "$matchname*" -exec realpath {} +; } 2>/dev/null)"
 		test -n "$verbose" && echo "Scanning path '$filepath' $(
 			test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
