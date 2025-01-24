@@ -1,0 +1,1 @@
+convert different ways of __INPUT__ to emoji
