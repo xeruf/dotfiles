@@ -1,7 +1,7 @@
 set -o pipefail
 
 alias localip="ip addr show | grep -E '(ens|eth)' | grep -oP '"'(?<=inet\s)\d+(\.\d+){3}'"' | head -1"
-ip=`localip`
+IP=$(localip)
 
 logs() {
   if test $# -eq 0
@@ -15,6 +15,23 @@ logs() {
   fi
 }
 
+hestia() {
+  test $# -eq 0 && cd "$HESTIA" && return 0
+  test "$1" = "-x" && shift && set -x
+  command=$1
+  shift
+  echo '>' sudo "$(which $command)" "$@" >&2
+  export SHELLOPTS
+  sudo --preserve-env=SHELLOPTS timeout 30s $(which $command) "$@"
+  set +x
+}
+
+accessible() {
+  dir=/home/*/web/$1/public_html
+  sudo chmod -v 755 $dir
+  sudo chown -v :sudo $dir
+}
+
 monitor() {
   file=gatus.yaml
   echo 'customer-endpoint: &customer
@@ -24,7 +41,7 @@ monitor() {
 endpoints:' >$file
   for user in $(list users)
   do group="$(hestia v-list-user $user | head -3 | cut -d':' -f2 | tr -s ' ' | sed 'N;s/\n/:/;N;s/\n / (/;s/$/)/')"
-    for domain in $(hestia v-list-web-domains $user | grep "$ip" | awk '{print $1}')
+    for domain in $(hestia v-list-web-domains $user | grep "$IP" | awk '{print $1}')
     do echo '- name: "'$domain'"
   <<: *customer
   group: "'$group'"
@@ -56,7 +73,7 @@ letsencrypt() {
         for domain in $(hestia v-list-mail-domains $user | tail +3 | awk '{print $1}')
         do hestia v-list-mail-domain-ssl $user $domain | grep -q . || hestia v-add-letsencrypt-domain $user $domain '' yes
         done
-        for domain in $(hestia v-list-web-domains $user | grep "$ip" | awk '{print $1}')
+        for domain in $(hestia v-list-web-domains $user | grep "$IP" | awk '{print $1}')
         do #echo commented out due to command echoing in hestia alias
           #echo "Checking $user $domain" >&2
           hestia v-list-web-domain $user $domain | grep -q REDIRECT && continue
@@ -64,7 +81,7 @@ letsencrypt() {
           hestia v-list-web-domain-ssl $user $domain | grep . >/dev/null && continue
           #echo "Generating Certificate" >&2
           hestia v-add-letsencrypt-domain $user $domain $(hestia v-list-web-domain $user $domain | grep ALIAS | tr -s ' ' | cut -d' ' -f2- | tr ' ' ',')
-          echo "$domain: ${?}"
+          echo "$domain status code: ${?}"
         done
         echo "Waiting an hour to not trigger letsencrypt rate limits..."
         time=0
@@ -95,19 +112,61 @@ list() {
   fi
 }
 
-hestia() {
-  test $# -eq 0 && cd "$HESTIA" && return 0
-  test "$1" = "-x" && shift && set -x
-  command=$1
-  shift
-  echo '>' sudo "$(which $command)" "$@" >&2
-  export SHELLOPTS
-  sudo --preserve-env=SHELLOPTS timeout 30s $(which $command) "$@"
-  set +x
+domain() {
+  if test $# -eq 0
+  then while read -r domain
+       do test -n "$domain" || break
+          domain "$domain"
+       done
+       return $?
+  fi
+  echo
+  for domain; do
+    domain=$(echo "$domain" | rev | cut -d. -f-2 | rev)
+
+    date=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/')
+    datec=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
+    contact=$(grep ",$domain," domains.csv | cut -d, -f3 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f25)
+    renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
+    iddomain="$(idn2 "$domain")"
+    echo "$(timeout .3s dig +short NS "$iddomain" | sort | head -1 | grep . || echo "	")	$(timeout .3s dig +short A "$iddomain" | head -1 | grep . || echo "	")	${date:-C$datec}	${renew:-	}	$domain	$contact"
+  done
 }
 
-accessible() {
-  dir=/home/*/web/$1/public_html
-  sudo chmod -v 755 $dir
-  sudo chown -v :sudo $dir
+domains() {
+  set -o pipefail
+  sudo $HESTIA/bin/v-list-users | tail +3 | grep -v ssh- | while read user
+    do
+      name="$($HESTIA/bin/v-list-user $(echo "$user" | cut -d\  -f1) | grep 'FULL NAME:' | cut -d: -f2)"
+      if test -t 1
+      then echo "$user" | awk '{print "[4m"$3"	"$1"	'"$(echo $name)"'[0m"}'
+      else echo "$user" | awk '{print "\n"$3"	"$1"	'"$(echo $name)"'"}' | tr '[a-z]' '[A-Z]'
+      fi
+      sudo $HESTIA/bin/v-list-dns-domains $(echo "$user" | cut -d\  -f1) | tail +3 | while read domain
+      do  domain="${domain%% *}"
+          if test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1
+          then #echo "Ignoring invalid DNS-Domain $domain" >&2
+               continue
+          fi
+          domain "$domain"
+      done
+    done
+
+  echo
+  if test -t 1
+  then echo "[4mVAUTRON[0m"
+  else echo "VAUTRON"
+  fi
+  for domain in $(cut -d, -f2 domains.csv)
+  do domain "$domain"
+  done
+
+  echo
+  if test -t 1
+  then echo "[4mAUTODNS[0m"
+  else echo "AUTODNS"
+  fi
+  for domain in $(cut -d, -f2 portfolio_domains_2025-01-13.csv)
+  do domain "$domain"
+  done
 }

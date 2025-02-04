@@ -9,7 +9,8 @@ ds() {
 	  grep -v '\b/[^/ ]*/[^/]*/[^/]*$' |
 	  awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}';
 }
-ds
+export -f ds
+timeout 1s bash -c ds
 
 test $(id -u) -eq 0 || sudo=sudo
 
@@ -34,6 +35,7 @@ ff() {
 }
 
 xtrace () {
+    trap 'set +x' INT
     set -x
     "$@"
     set +x
@@ -82,6 +84,7 @@ __u="$sudo apt update && $sudo apt upgrade"
 alias u="$__u"
 alias ur="tmux new-session -s upgrade '$__u && $sudo reboot'"
 
+alias dif='diff --color=always --side-by-side --report-identical-files'
 # Diff recursively
 difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-CHARS --quit-on-intr --quit-if-one-screen; }
 # Copy recursively with rsync
