@@ -1,5 +1,8 @@
 #!/bin/sh -e
 # Add file to mpd queue
+if test $# -eq 0
+then mpc --format "%album% %track% > %artist% - %title% (%genre% aus %date%)" current
+fi
 for arg
 do  fullpath=$(realpath "$arg")
     mpc insert "${fullpath/$MUSIC\//}"

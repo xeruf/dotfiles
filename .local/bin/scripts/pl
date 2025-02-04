@@ -5,6 +5,7 @@
 test $# -gt 0 && command=$1 && shift
 test "$1" = '-v' && verbose='true' && shift || verbose='false'
 ! test -d "$MUSIC" && echo "No music directory!" && exit 1
+playlists="$MUSIC/playlists"
 case $command in
   (update)
     for pl; do
@@ -19,7 +20,18 @@ case $command in
         done | tee $pl
       echo "Backup of $pl saved to $bak" >&2
     done;;
-  (edit) ${EDITOR:-nano} $(find $MUSIC/Playlists -iname "$1\.*" | grep . || find $MUSIC/Playlists -iname "$1*");;
+  (edit) ${EDITOR:-nano} $(find "$playlists" -iname "$1\.*" | grep . || find "$playlists" -iname "$1*");;
+  (add) # Add current mpc song or given songs to playlist
+    pl=$1
+    shift
+    playlist="$playlists/$pl"*
+    test -e "$playlist" || { playlist="$playlists/$pl.m3u8" && touch "$playlist"; }
+    if test $# -gt 0
+    then realpath --relative-to $playlists "$@"
+    else mpc current -f "../%file%"
+    fi | tee -a $playlist
+    echo "...added to $playlist"
+    ;;
   (make)
     if test $1 = d
     then shift && i=1; while test $i -le ${1:-9}; do $0 make "${2:-Ω}$i" "empty$i"; ((i++)); done

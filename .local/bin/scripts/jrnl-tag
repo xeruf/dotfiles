@@ -5,8 +5,8 @@ if test $# -eq 0
 then
   set -x
   $0 sleep uni nap cry tech read dev phone bike tour laptop computer piano faith health lens Zinc \
-    girl CB Claudia Kerstin Turi Taura \
-    Erlangen Bayreuth Berlin ICF
+    girl CB Claudia Turi Taura \
+    Erlangen Bayreuth Berlin
   true $?
 else
   for arg

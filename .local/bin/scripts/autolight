@@ -2,6 +2,15 @@
 # Automatically set screen brightness based on time of day.
 # OLD: value=$(expr 100 - $(expr 13 - $(date +%H) | tr -d -) \* 5)
 # S Function: echo "(c($(date +%H) / 4 - 3) + 1) * 50" | bc -l
-value=$(echo "l=(100 - 1.5 * ( 11 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
-light -S $value
-{ date && echo $value; } >>/var/log/autolight
+# summertime: value=$(echo "l=(100 - 1.5 * ( 11 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
+value=$(echo "l=(100 - 3 * ( 12 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
+if test "$1" != "-n"; then
+   light -S $value
+   inputmodule-control led-matrix --brightness $(echo $value / 5 + 2 | bc)
+   if ! test -w /var/log/autolight
+   then
+	   sudo chown :$(id -g) /var/log
+	   sudo chmod g+w /var/log
+   fi
+fi
+printf "Set Light Level %4.1f at %s\n" "$value" "$(date)" | tee -a /var/log/autolight

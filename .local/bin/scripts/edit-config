@@ -10,7 +10,7 @@ listconf() {
     find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc /var/lib/postgres /var/lib/pleroma/static/instance \
       -maxdepth 4 -follow \
       \( -name Partitions -o -name mdn -o -name .git -o -name .local -o -name plugged \) -prune -o \
-      ! \( -iname "*.markdown" -o -iname "*.md" -o -name "Network Persistent State" -o -iname "*.pem" \) -a \
+      ! \( -iname "*.markdown" -o -name "Network Persistent State" -o -iname "*.pem" \) -a \
       -type f -readable -exec grep -lI '' {} + 2>/dev/null
   } | dedup-lines
 }

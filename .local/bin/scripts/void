@@ -1,7 +1,8 @@
 #!/bin/sh
-temp=$(mktemp)
+#temp=$(mktemp)
 target=$(pass app/voidcat)
 for arg; do
+extension=$(echo "$arg" | sed 's/.*\.//')
 echo "Uploading $arg"
 { curl --progress-bar -X POST \
   -H "V-Content-Type: $(file --mime-type -b $1)" \
@@ -9,6 +10,6 @@ echo "Uploading $arg"
   -H "V-Filename: $arg" \
   -H "Authorization: Bearer $(echo "$target" | head -1)" \
   --data-binary @$arg \
-  $(echo "$target" | tail -1); echo; } | tee -a $temp
+  $(echo "$target" | tail -1); echo; } | sed "s/\$/.$extension/"
 done
-test $# -gt 1 && echo && cat $temp | sed 's|http:|https:|'
+#test $# -gt 1 && echo && #sed 's|http:|https:|' "$temp"

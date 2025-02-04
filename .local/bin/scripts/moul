@@ -14,15 +14,22 @@ case $1 in
         #done &
         # TODO handle labels with spaces
         lsblk --list --noheadings --output name,label,fstype,mountpoint | grep -v LUKS | grep -v '/' | grep ".\+ [^ ]\+";
+        awk '$1 !~ /^#/ && NF>=2 {print $2}' /etc/fstab | while read fstab_mount; do
+            if ! grep -qs " $fstab_mount " /proc/mounts; then
+                echo "$fstab_mount"
+            fi
+        done;
       } | fzf --exit-0 | sed "s/^\([^ ]\+ \+\)\?\([^ ]\+\) \+[^ ]\+ *$/\2/"
     );;
   (--help) echo "$_help" && exit 0;;
   (-u) shift
     for last; do true; done
     sudo umount --verbose "$@"
-    code=$?
-    sudo rm -df "$last"
-    exit $code;;
+    exit $?
+    #code=$?
+    #sudo rm -df "$last"
+    #exit $code
+    ;;
   (*) arg=$1
     shift;;
 esac
@@ -39,13 +46,13 @@ then loopdevice="$(sudo losetup -f)"
 fi
 
 # FSTAB: BY LABEL
-if grep --word-regexp "LABEL=$arg" /etc/fstab
+if grep --word-regexp "^LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory
   mount -L "$arg" "$@" 2>/dev/null || mount -L "$arg" "$@"
   exit $?
 fi
-# FSTAB: BY MOUNTPOINT/NAME
-if grep --word-regexp "$arg" /etc/fstab
+# FSTAB: BY MOUNTPOINT/NAME - does not find by UUID
+if sudo findmnt --fstab | grep --word-regexp "$arg"
 then mount "$arg" "$@"; exit $?
 fi
 

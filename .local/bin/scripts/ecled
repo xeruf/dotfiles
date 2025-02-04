@@ -1,0 +1,12 @@
+#!/bin/sh -e
+# Make controlling framework leds from framework more accessible
+case $# in
+(0)
+  for led in $(sudo ectool led '' query 2>&1 | tail -1 | cut -d: -f2)
+  do
+    highlight $led
+    sudo ectool led $led query
+  done;;
+(1) sudo ectool led "$@" query;;
+(*) sudo ectool led "$@";;
+esac

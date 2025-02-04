@@ -4,17 +4,19 @@ d5=$DATA/5-*
 dow=$d5/download
 
 # Internal Duplicates
-rmlint --rank-by=Olam -o pretty -o sh:/tmp/dow.sh $dow/*.*
+script1=/tmp/dedup-download_$(date +%s)_internal.sh
+rmlint --rank-by=Olam -o pretty -o sh:$script1 $dow/*.*
 printf "Enter to confirm, any text to skip (answer does not matter if nothing is printed above this). "
 read -r answer
-test -n "$answer" || /tmp/dow.sh -d
+test -n "$answer" || $script1 -d
 
 # Songs
 mv -v -- $dow/*.mp3 $dow/*.flac $dow/*.wav $MUSIC/
 mv -v -- $dow/*.iso $DATA/4-*/flash/
 
 # Data-dir duplicates
-rmlint --keep-all-tagged --max-depth=5 --rank-by=Odlam -o pretty -o sh:/tmp/dow.sh $d5 // $DATA/1-* $DATA/2-* $DATA/3-* $DATA/4-*
+script2=/tmp/dedup-download_$(date +%s)_data.sh
+rmlint --keep-all-tagged --max-depth=5 --rank-by=Odlam -o pretty -o sh:$script2 $d5 // $DATA/1-* $DATA/2-* $DATA/3-* $DATA/4-*
 printf "Enter to confirm, any text to skip (answer does not matter if nothing is printed above this). "
 read -r answer
-test -n "$answer" || /tmp/dow.sh -d
+test -n "$answer" || $script2 -d

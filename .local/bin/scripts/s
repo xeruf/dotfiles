@@ -4,6 +4,7 @@
 export chars=$(expr $(tput cols) - 60)
 case "$1" in (+*) size=${1#+}G; depth=2; shift;; esac
 case "$1" in ([0-9]) depth=$1; shift;; esac
-(du --max-depth "${depth:-1}" -xhat ${size:-50M} "$@" | sort -h | grep -v "^0") |
+du="du --max-depth '${depth:-1}' -xha"
+($du -t ${size:-50M} "$@" | sort -h | grep -v "^0") |
   while read line; do echo "$(tput smso)$line$(tput rmso) $(pacman -Qqo $(echo $line | awk '{print $2}') 2>/dev/null | paste -s -d',' | sed "s/\(.\{${chars}\}\).*/\1.../")"; done || #| column -t ||
-  (du --max-depth "${depth:-1}" -xha "$@" | sort -h | tail)
+  ($du "$@" | sort -h | tail)

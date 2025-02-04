@@ -43,10 +43,6 @@ fileinfo() {
 		tput rmso
 
 		size=$(stat --format=%s "$arg")
-		# Check if SSH key (<10KB then read)
-		if test "$size" -lt 10000
-		then $elevate ssh-keygen -l -f "$arg" 2>/dev/null
-		fi
 		# I think this check is here to avoid scrolling text interpreted as video
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
 		#echo $probe | grep -v -e '00:00:00.04' -e 'ansi' &&
@@ -59,7 +55,12 @@ fileinfo() {
 				) - birth %.10w mod %.10y" "$arg" | numfmt --field=3 --to=iec-i --padding=6 --suffix=B
 		fi
 	done
+	# Check if SSH key (<10KB then read)
+	if test "${size:-99999}" -lt 10000
+	then $elevate ssh-keygen -l -f "$arg" 2>/dev/null || true
+	fi
 	tput sgr0
+	pacman -Qo "$arg" 2>/dev/null || true
 }
 
 prefix=/tmp/b
@@ -77,7 +78,7 @@ for arg; do
 	fi
 	# amount of items to display per line in a grid for two lines max
 	grid=$(expr $(tput cols) / \( 25 - \( $# / 2 \) \& $# \< 30 \| 5 \))
-	tmpfile="$prefix/$(basename -- "$arg")_$(dd "if=$arg" bs=512 count=10 2>/dev/null | md5sum | tr -d ' ' || true)"
+	tmpfile="$prefix/$(basename -- "$arg")_$(dd "if=$arg" bs=1M count=16 2>/dev/null | md5sum | cut -d ' ' -f1 || true)"
 	mkdir -p "$prefix"
 	case "$mime" in
 	(*\ application/pdf)
@@ -108,8 +109,13 @@ for arg; do
 		! $inspect &&
 		# TODO sometimes duration mismatch for short videos
 		test $(printf "%.0f" $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$arg")) -gt 3 &&
-		mtn -q -i -t -W -r$(expr 5 - $# \& $# \< 4 \| 1) -D6 -b 0.6 -c $grid -w $(expr $(tput cols) '*' 20) \
-			-O "$prefix" -o "$suffix" "$arg" &&
+		{ mtn -q -i -t \
+			-D6 -b 0.6 \
+		    -r$(expr 5 - $# \& $# \< 4 \| 1) -c $grid -w $(expr $(tput cols) '*' 20) \
+			-W -O "$prefix" -o "$suffix" "$arg" ||
+			mtn -q -i -t \
+				-W -O "$prefix" -o "$suffix" "$arg"
+			} &&
 		timg -W "$prefix/$(basename -- "${arg%.*}")$suffix"
 		;;
 	(*\ image/*)
@@ -154,7 +160,8 @@ for arg; do
 			;;
 		(*:\ SQLite\ *\ database*) highlight "Tables" && sqlite3 "$arg" ".tables";; # TODO for few tables: SELECT * FROM db LIMIT 3; | cut -c-$col
 		(*:\ data) ;;
-		(*\ key) bat+=("$arg");;
+		(*\ key) bat+=("$arg")
+				 continue;;
 		(*) bat+=("$arg")
 			timga+=("$arg")
 			continue
@@ -245,15 +252,16 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	checkperm .
 	# Alternative: find -exec ls -dl {} +
 	{
-		# TODO handle single quotes in filenames
-		# TODO listing sometimes doubles as exa prints partial listings while working
-		timeout .6s sh -c "
-			if test '$tree'
-			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags -- $(printf "'%s' " "${ls[@]:-.}")
+		# Below issues are fixed by disabling timeout, maybe an alternative can be found to prevent hanging on huge dirs
+		# handle single quotes in filenames
+		# listing sometimes doubles as exa prints partial listings while working
+		#timeout .6s sh -c "
+			if test -n "$tree"
+			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags -- "${ls[@]:-.}"
 			elif which exa 2>/dev/null >&2
-			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags -- $(printf "'%s' " "${ls[@]:-.}")
-			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags -- $(printf "'%s' " "${ls[@]:-.}")
+			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags -- "${ls[@]:-.}"
+			else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags -- "${ls[@]:-.}"
 			fi
-		" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags -- "${ls[@]:-.}"
+		#" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags -- "${ls[@]:-.}"
 	} | $pager --quit-if-one-screen
 fi

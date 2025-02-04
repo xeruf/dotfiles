@@ -1,5 +1,5 @@
 #!/bin/sh
-# View song metadata using ffprobe
+# View media metadata using ffprobe
 # Accepts filenames from args or stdin (one file per line)
 # TODO only print header when interactive
 if test "$#" -eq 0
@@ -7,5 +7,7 @@ then cat
 else printf '%s\n' "$@"
 fi | while read f; do
   highlight "$f"
-  find "$f" -type f -exec ffprobe -loglevel 20 -print_format default=noprint_wrappers=1 -show_format -pretty {} \;
+  find "$f" -type f -exec ffprobe -hide_banner \
+    -loglevel $(expr 34 - $#) -print_format default=noprint_wrappers=1 -show_format -pretty {} \;
+    # loglevel: from 32 shows stream details (steps of 8), so only for small groups
 done | less

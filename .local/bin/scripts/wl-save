@@ -1,5 +1,5 @@
 #!/bin/sh -e
 # Save wl clipboard image with last copied url
-file="$(date +%y%m%d-%H%M%S)_$(cliphist list | grep https:// | head -1 | rev | cut -d/ -f1 | rev).png"
+file="$(date +%y%m%d-%H%M%S)_$(cliphist list | grep --max-count 1 https:// | sed 's|/$||' | rev | cut -d/ -f1 | rev).png"
 wl-paste >"$file"
 b "$file"

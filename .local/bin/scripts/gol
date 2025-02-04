@@ -1,0 +1,58 @@
+#!/bin/bash -e
+# Run Game of Life on the Framework 16 matrix with the given input string
+CFG="${XDG_CONFIG_HOME}/fwledmatrix/combos"
+mkdir -p "$(dirname "$CFG")"
+
+alphabet=({A..Z} = + '!' '.' ':') # -
+case "$1" in
+(--iter)
+  # Iterate over all combinations
+  for l1 in "${alphabet[@]}" ""; do
+    for l2 in "${alphabet[@]}" ""; do
+      for l3 in "${alphabet[@]}" ""; do
+        for l4 in "${alphabet[@]}" ""; do
+          for l5 in "${alphabet[@]}" ""; do
+            combination="${l1}${l2}${l3}${l4}${l5}"
+            echo "$combination"
+            gol "$combination"
+          done
+        done
+      done
+    done
+  done
+  ;;
+(--random)
+  # Function to generate a random combination
+  generate_random_combination() {
+    local combination=""
+    for _ in {1..5}; do
+      # Select a random letter from the alphabet
+      random_letter=${alphabet[$RANDOM % ${#alphabet[@]}]}
+      combination+="$random_letter"
+    done
+    echo "$combination"
+  }
+  while true
+  do gol "$(generate_random_combination)"
+  done
+  ;;
+(""|--known)
+  while true
+  do gol "$(shuf -n 1 "$CFG")"
+  done
+  ;;
+(*)
+  inputmodule-control led-matrix --stop-game
+  string="$(echo "$@" | tr 'a-z' 'A-Z')"
+  echo "Running '$string'"
+  inputmodule-control led-matrix --string "$string"
+  sleep 1
+  inputmodule-control led-matrix --start-game game-of-life --game-param current-matrix
+  while ! read -r -t 30 game_continue
+  do inputmodule-control led-matrix --sleeping false
+  done
+  if test -n "$game_continue"
+  then echo "$string" >>"$CFG"
+  fi
+  ;;
+esac

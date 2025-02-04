@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Suspend screen until enter is pressed
+# Suspend screen until enter is pressed or interrupted
 test "$1" && sleep $1
 dpms() {
   if test $XDG_SESSION_TYPE = wayland
@@ -9,5 +9,6 @@ dpms() {
 }
 dpms off
 trap 'dpms on' INT
-sleep 99999
+sleep 3
+read _
 dpms on

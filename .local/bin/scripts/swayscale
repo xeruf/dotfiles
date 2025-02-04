@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -ex
 # Force Sway Scaling
 shift=1
 scale=1

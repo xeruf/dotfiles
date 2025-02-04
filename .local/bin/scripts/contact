@@ -1,0 +1,23 @@
+#!/bin/sh -e
+# Process raw contact data into a vcard and save it to nextcloud
+echo "Finish input with Ctrl-D" >&2
+inputfile=/tmp/aichat-contact
+cat >"$inputfile"
+
+while test "$accept" != "y"
+do printf "\nProcessing...\n" >&2
+   vcard="$(aichat --role carddav <"$inputfile")"
+   echo "$vcard"
+   printf "Accept? ([y]es/[n]o/[c]ancel) " >&2
+   read -r accept
+   test "$accept" != "c" || exit $?
+done
+uid=$(echo "$vcard" | grep UID | grep --only-matching '[-0-9a-fx]\{36\}')
+echo
+
+ncfields=$(pass show service/nextcloud)
+ncfield() {
+    echo "$ncfields" | head -$1 | tail -1
+}
+echo "$vcard" | curl -o /tmp/contact -w "HTTP Response Code from $(ncfield 3): %{http_code}\n" -u $(ncfield 2):$(ncfield 1) "$(ncfield 3)/remote.php/dav/addressbooks/users/$(ncfield 2)/${1:-contacts}/$uid.vcf" -X PUT -H 'Depth: 0' -H 'Content-Type: text/vcard; charset=utf-8;' -H 'DNT: 1' --data-binary @-
+cat /tmp/contact

@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Type in NoVNC - from clipboard or interactively with german layout
+# Type in NoVNC with X tools - from clipboard or interactively with german layout
 xdotool search --onlyvisible --classname Navigator windowactivate # Activate Firefox
 if test $# -gt 0
 then

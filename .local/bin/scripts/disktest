@@ -22,8 +22,10 @@ then highlight "[1mWrite Test"
 	test -s $tempfile ||
 		( highlight "Preparing random bits:" &&
 		sudo dd status=progress if=/dev/urandom of=$tempfile bs=1M count=$count ) &&
+		sha1sum $tempfile
 		highlight "Copying random bits:" &&
 		sudo dd status=progress if=$tempfile of=.$count bs=1M count=$count
+		sha1sum .$count
 	highlight "Copying zero bits:" &&
 		sudo dd status=progress if=/dev/zero of=.$count bs=1M count=$count
 	sudo rm .$count

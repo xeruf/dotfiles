@@ -10,8 +10,8 @@ case "$1" in
     sudo mkdir -p /etc/yadm
     sudo chown -R $USER /etc/yadm
     sysyadm clone -w / gitea@git.jfischer.org:xeruf/etc.git --bootstrap;;
-  (init) sudo -E sysyadm init -b main -w /;;
-  (*) sudo -E sysyadm "$@";;
+  (init) sudo "$(which sysyadm)" init -b main -w /;;
+  (*) sudo --preserve-env=PATH,XDG_CONFIG_HOME "$(which sysyadm)" "$@";;
 esac
 #sudo chmod +rw /tmp/git -R 2>/dev/null
 sudo chown -R $USER /etc/yadm
