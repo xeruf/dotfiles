@@ -1,3 +1,6 @@
 #!/bin/sh -e
 # Toggle NordVPN
-nordvpn status | grep --color=never Disconnected && nordvpn connect de || nordvpn disconnect; nordvpn status
+if test $# -gt 0
+then nordvpn connect "$@"
+else nordvpn status | grep --color=never Disconnected && nordvpn connect de || nordvpn disconnect; nordvpn status
+fi

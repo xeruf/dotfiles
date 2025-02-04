@@ -1,3 +1,29 @@
 #!/bin/sh -e
 test -f "$1" || cd "$XDG_DATA_HOME/openvpn"
-tmux new-session -s "$@" "sudo openvpn $@ || read"
+case "$1" in
+    ("") tmux new-session -s "vpn" "tmux ls; $SHELL";;
+    (forti)
+        if ip route | grep -q ppp0
+        then echo "Device ppp0 already in use!"
+        else sudo tmux new-session -s "$1" '
+            set -x
+            route="$(ip route | grep default | sort | head -1)"
+            # Start openfortivpn in the background
+            openfortivpn &
+            VPN_PID=$!
+            # Wait a little for the VPN to establish the connection
+            sleep 5
+# TODO Loop
+            # Delete the default route set by openfortivpn (ppp0)
+            ip route del default dev ppp0
+            # Add the default route via the local network
+            eval "ip route add $route"
+            ip route add 134.245.0.0/16 dev ppp0;
+            ip route
+            wait $VPN_PID
+            echo "VPN has disconnected."
+        '
+        fi
+        ;;
+    (*) tmux new-session -s "$@" "sudo openvpn $@ || read";;
+esac
