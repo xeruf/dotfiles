@@ -8,6 +8,7 @@ assign [class="zoom"] number 7
 assign [class="steam"] number 8
 assign [class="DeltaChat"] number 8
 assign [class="discord"] number 9
+assign [class="Slack"] number 9
 #assign [title="Telegram"] number 9
 assign [app_id="org.telegram.desktop" tiling] number 9
 assign [class="Signal"] number 9
