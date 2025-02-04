@@ -4,10 +4,3 @@ input * {
 	xkb_numlock enabled
 	xkb_options caps:escape_shifted_capslock
 }
-input "type:touchpad" {
-	tap enabled
-	natural_scroll disabled
-	accel_profile adaptive
-	dwt disabled
-	pointer_accel 0.4 # set mouse sensitivity (between -1 and 1)
-}
