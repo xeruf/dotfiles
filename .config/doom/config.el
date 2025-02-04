@@ -663,6 +663,7 @@ Version 2019-11-04 2021-02-16"
           "E" 'org-export-repeat
           :desc "Save and Export" "be" (lambda () (interactive) (basic-save-buffer) (org-export-repeat))
           :localleader
+          ":" 'org-babel-mark-block
           "E" 'org-export-repeat
           )
 
@@ -696,7 +697,7 @@ Version 2019-11-04 2021-02-16"
     (setq org-export-with-tags nil
           org-export-with-tasks 'done
           org-export-with-todo-keywords nil
-          org-export-with-toc nil
+          ; only apply to tex, not html: org-export-with-toc nil
           org-export-with-section-numbers nil
           org-export-with-broken-links 't
           org-ascii-text-width 999
@@ -1061,11 +1062,11 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
   )
 
-(use-package vc-fossil
-  ;; Keep from loading unnecessarily at startup.
-  :defer t
-  ;; This allows VC to load vc-fossil when needed.
-  :init (add-to-list 'vc-handled-backends 'Fossil))
+;(use-package vc-fossil
+;  ;; Keep from loading unnecessarily at startup.
+;  :defer t
+;  ;; This allows VC to load vc-fossil when needed.
+;  :init (add-to-list 'vc-handled-backends 'Fossil))
 
 (use-package! chordpro-mode
   :mode ("\\.cho\\'" . chordpro-mode)

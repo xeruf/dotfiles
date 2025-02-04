@@ -41,26 +41,22 @@
 (setq straight-host-usernames '((github . "xeruf")))
 
 ;;; Multimedia & Integration
-(package! emms)
-(package! exiftool)
-(package! elpher)
+;(package! emms)
+;(package! exiftool)
+;(package! elpher)
 (package! activity-watch-mode :recipe (:fork t)) ; eagle eyes
 
 (package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
 (package! recompile-on-save)
 
-(package! vc-fossil)
+;(package! vc-fossil)
 
 ;;; Prettification
 (package! dired+)
 (package! xterm-color)
-(package! rainbow-mode)
+(package! rainbow-mode) ;  Colorize color names in buffers 
 
 ;;; ORG
-(unpin! org-journal)
-
-(package! org :pin "ca873f7")
-
 (package! websocket)
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
@@ -94,6 +90,8 @@
 (package! web-mode)
 
 (package! ess)
+
+(package! helm-dash)
 
 ;; https://www.emacswiki.org/emacs/CsvMode
 (package! csv-mode)

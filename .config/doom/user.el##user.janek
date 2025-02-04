@@ -26,10 +26,19 @@
                             ))
     ))
 
+(defun list-non-hidden-directories (directory)
+  "List all non-hidden subdirectories in DIRECTORY and return them as a list."
+  (let ((dir-list (directory-files directory t))
+        (directories '()))
+    (dolist (file dir-list directories)
+      (when (and (file-directory-p file)                   ; Check if it's a directory
+                 (not (string-prefix-p "." (file-name-nondirectory file))))  ; Check if it's not hidden
+        (setq directories (cons file directories))))))
+
 (use-package! recentf
   :config
-    (add-to-list 'recentf-exclude "writing\\/tug")
     (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (add-to-list 'recentf-list (expand-file-name "5-incubator/downloads/" user-data-dir))
+    (add-to-list 'recentf-list (expand-file-name "5-incubator/download/" user-data-dir))
+    (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
     (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
   )
