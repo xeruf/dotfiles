@@ -41,4 +41,5 @@
     (add-to-list 'recentf-list (expand-file-name "5-incubator/download/" user-data-dir))
     (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
     (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
+    (recentf-cleanup)
   )

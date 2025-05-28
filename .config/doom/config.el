@@ -1247,6 +1247,18 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (ispell-hunspell-add-multi-dic ispell-dictionary)
   )
 
+(defun ediff-compare-region-clipboard (begin end)
+  (interactive "r")
+  (save-excursion
+    (let ((selected-region (buffer-substring begin end))
+          (clipboard-buffer (get-buffer-create "*ediff-clipboard*"))
+          (region-buffer (get-buffer-create "*ediff-region*")))
+      (with-current-buffer clipboard-buffer
+        (insert (car kill-ring)))
+      (with-current-buffer region-buffer
+        (insert selected-region))
+      (ediff-buffers clipboard-buffer region-buffer))))
+
 ; uncomment this to exit loading the config prematurely
 ;(with-current-buffer " *load*"
 ;  (goto-char (point-max)))
