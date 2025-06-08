@@ -8,7 +8,7 @@ pre_sudo = true
 #assume_yes = ["emacs"]
 
 # Disable specific steps - same options as the command line flag
-disable = ["containers", "config_update", "node", "firmware"]
+disable = ["containers", "config_update", "poetry", "auto_cpufreq"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
@@ -58,7 +58,8 @@ repos = [
 
 [linux]
 # Arguments to pass yay when updating packages
-yay_arguments = "--diffmenu=false --overwrite /usr/lib/node_modules/node-gyp/**,/usr/lib/node_modules/npm/**,/usr/lib/** --ignore linux,zoom,qt*,zulip*,webcord*,brave*,*openjfx,android-studio*,clion*,intellij-idea-*,webstorm*,texlive-full"
+#qt*,
+yay_arguments = "--diffmenu=false --overwrite /usr/lib/node_modules/node-gyp/**,/usr/lib/node_modules/npm/**,/usr/lib/**,/usr/include/** --ignore ggml-git,bitmask-vpn,linux,zoom,zulip*,webcord*,brave*,android-studio*,clion*,intellij-idea-*,webstorm*,rubymine*,rustrover*,slack*,texlive-full,jdk,*openjfx,invoiceninja*"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"
@@ -82,4 +83,4 @@ use_sudo = true
 
 [firmware]
 # Offer to update firmware; if false just check for and display available updates
-#upgrade = true
+upgrade = true

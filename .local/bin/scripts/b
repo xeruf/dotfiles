@@ -99,7 +99,7 @@ for arg; do
 		timg+=("${tmpfile%.*}.png");;
 	(*/x-xcf*)
 		echo Converting "$arg"
-		convert -flatten "$arg" png:"$tmpfile"
+		magick -flatten "$arg" png:"$tmpfile"
 		timg+=("$tmpfile");;
 	# TODO .raw .img
 	(*/x-iso*|*/x-qemu-disk*) fdisk -l "$arg";;

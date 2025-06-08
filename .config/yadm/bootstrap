@@ -17,9 +17,9 @@ subhighlight "password-free reboot"
 echo "$USER ALL = NOPASSWD: /usr/bin/halt, /usr/bin/shutdown, /usr/bin/reboot, /usr/bin/poweroff, /bin/reboot, /bin/shutdown. /usr/bin/umount" |
 	sudo tee /etc/sudoers.d/shutdown
 
-highlight "Set default user in tty1,2,3"
+highlight "Set default user in tty1-4"
 agetty="$(sudo which agetty)" &&
-	sudo mkdir -p /etc/systemd/system/getty@tty{1,2,3}.service.d &&
+	sudo mkdir -p /etc/systemd/system/getty@tty{1,2,3,4}.service.d &&
 	echo "[Service]
 Restart=Never
 ExecStart=

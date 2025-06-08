@@ -76,8 +76,8 @@ shift $(expr 2 \& $# \> 2 \| $#)
 if ! mountpoint "$mountpoint" 2>/dev/null
 then mp="/run/media/$USER/$arg" && test -e "$mp" && mountpoint="$mp"
   sudo mount -vo users,X-mount.mkdir,noatime,umask=003,gid=users,uid=$USER $params "$partition" "$mountpoint" "$@" ||
-    sudo mount -vo users,X-mount.mkdir,noatime $params "$partition" "$mountpoint" "$@"
+    sudo mount -vo users,X-mount.mkdir,noatime,exec $params "$partition" "$mountpoint" "$@"
 fi
-cd $mountpoint
+cd "$mountpoint"
 df -x tmpfs -x devtmpfs -x squashfs --human-readable
 exec $SHELL

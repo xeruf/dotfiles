@@ -1,0 +1,44 @@
+default-timeout=8000
+sort=-time
+history=1
+max-history=20
+
+width=400
+height=200
+padding=10
+margin=10
+
+anchor=bottom-right
+layer=overlay
+background-color=#141a1b88
+text-color=#ffffffcc
+
+border-size=3
+border-color=#88c0d0
+border-radius=15
+
+#font=monospace 14
+font=16
+icons=1
+icon-location=right
+max-icon-size=64
+
+[urgency=low]
+border-color=#cccccc
+
+[urgency=normal]
+border-color=#d08770
+
+[urgency=high]
+border-color=#bf616a
+text-color=#ffffffff
+default-timeout=0
+
+[category=mpd]
+default-timeout=2000
+group-by=category
+
+[mode=do-not-disturb urgency=low]
+invisible=1
+[mode=do-not-disturb urgency=normal]
+invisible=1

@@ -1,8 +1,16 @@
 #!/bin/sh -e
 # Lists the latest modified files in the given directory or pwd
-test "$1" = "-a" && all=true && shift
+# up to a depth of 4
+count=5
+case "$1" in
+(-a) all=true; shift;;
+(--) shift;;
+(-*) args="$1 $2"; shift 2;;
+([0-9]) count=$(expr $1 \* 10); shift;;
+esac
+
 for f in "${@:-$PWD}"
-do test $# -gt 1 && highlight "$f"
-	find "$f" -maxdepth 4 -type f -printf '%.16T+ %P\n' |
-	sort -r | $(test "$all" && echo "less" || echo "head")
+do test $# -gt 1 && { highlight "$f" || echo "$f"; }
+	find "$f" -maxdepth 4 $args -printf '%.16T+ %P\n' |
+	sort -r | $(test "$all" && echo "less" || echo "head -$count")
 done

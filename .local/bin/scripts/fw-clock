@@ -4,5 +4,5 @@
 tmux new-session -d -s ledmatrix \; \
     send-keys 'retry inputmodule-control led-matrix --clock' C-m \; \
     split-window -v \; \
-    send-keys "while test $(expr 12 - $(date +%H) | tr -d -) -lt 4; do inputmodule-control led-matrix --breathing; done
-              autolight" C-m
+    send-keys 'while test $(expr 12 - $(date +%H) | tr -d -) -lt 4; do inputmodule-control led-matrix --breathing; done
+              autolight' C-m

@@ -1,6 +1,6 @@
 # Pop up a message, for long running commands
 command -v notify-send >/dev/null &&
-	alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+	alias alert='notify-send --urgency=normal -i "$([ $? = 0 ] && echo terminal || echo error)" "$(echo "$history[$HISTCMD]" | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 if which jrnl >/dev/null; then
 	j(){ jrnl "$@" && jrnl-tag; }
@@ -56,7 +56,7 @@ themeswitch() {
 	kitty="$XDG_CONFIG_HOME/kitty/theme.conf"
 	case "$theme" in
 		(light)
-			alias ai='aichat --light-theme'
+			alias aichat='aichat --light-theme'
 			# LESS_TERMCAP_DEBUG=true man man
 			export LESS_TERMCAP_md=$'\e[1;34m'	# bold blue
 			export BAT_THEME="OneHalfLight"
@@ -66,7 +66,7 @@ themeswitch() {
 			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/'
 			;;
 		(dark)
-			alias ai=aichat
+			alias aichat='aichat'
 			export BAT_THEME="OneHalfDark"
 			#konsoleprofile colors="Breeze"
 			rm -f "$kitty"
@@ -80,9 +80,6 @@ export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
 themeswitch $THEME
 alias ts='themeswitch'
-
-alias ky='ai --role swahili'
-alias en='ai --role en'
 
 test "$XDG_CURRENT_DESKTOP" = "KDE" || return 0
 

@@ -1,0 +1,8 @@
+pcm.!default {
+  type pulse
+  fallback "sysdefault"
+  hint.description "PulseAudio Sound Server"
+}
+ctl.!default {
+  type pulse
+}

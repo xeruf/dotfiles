@@ -17,3 +17,12 @@ lyrics:
     auto: true
     sources: genius lrclib
     synced: yes
+playlist:
+    relative_to: library
+    playlist_dir: "/home/janek/data/4-media/music/Playlists"
+smartplaylist:
+    relative_to: "/home/janek/data/4-media/music"
+    playlist_dir: "/home/janek/data/4-media/music/Playlists"
+    playlists:
+        - name: besomorph.m3u
+          query: 'besomorph'

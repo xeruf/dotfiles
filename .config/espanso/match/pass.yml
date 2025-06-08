@@ -9,6 +9,7 @@ matches:
           cmd: env
           shell: bash
           debug: true
+
   # {{{1 EMAILS
   - trigger: ";ep"
     replace: "{{output}}"
@@ -148,8 +149,16 @@ matches:
         type: shell
         params:
           cmd: pass info/banking/dkb | head -1
+
   # {{{1 EXTRAS
   # TODO turn into emacs template
+  - trigger: ";gref"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: pass business/ftt/signature
   - trigger: ";sigo"
     replace: |-
       #+ATTR_ORG: :width 200

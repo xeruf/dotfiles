@@ -23,6 +23,7 @@
 	"mainColor": "#633738",
 	"miniBreakColor": "#478484",
 	"transparentMode": false,
+	"blurredBackground": false,
 	"opacity": 0.8,
 	"audio": "crystal-glass",
 	"miniBreakAudio": "crystal-glass",
@@ -467,6 +468,11 @@
 	"appExclusionsCheckInterval": 1000,
 	"pauseForSuspendOrLock": true,
 	"pauseBreaksToggleShortcut": "",
+	"pauseBreaksFor30MinutesShortcut": "",
+	"pauseBreaksFor1HourShortcut": "",
+	"pauseBreaksFor2HoursShortcut": "",
+	"pauseBreaksFor5HoursShortcut": "",
+	"pauseBreaksUntilMorningShortcut": "",
 	"screen": "primary",
 	"timeToBreakInTray": false,
 	"currentTimeInBreaks": false,
@@ -475,11 +481,12 @@
 	"skipToNextMiniBreakShortcut": "",
 	"skipToNextLongBreakShortcut": "",
 	"resetBreaksShortcut": "",
+	"showTrayMenuInStrictMode": false,
 	"pauseBreaksShortcut": "",
 	"resumeBreaksShortcut": "",
 	"__internal__": {
 		"migrations": {
-			"version": "1.15.1"
+			"version": "1.17.2"
 		}
 	}
 }

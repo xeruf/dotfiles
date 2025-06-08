@@ -3,7 +3,7 @@
 if test "$ZSH_NAME" = "zsh"
 then
 	alias -g ___='"$(eval "$(fc -ln -1)" | tail -n 1)"'
-	alias -g B="| xargs bat"
+	alias -g XB="| xargs bat"
 	alias -g G="| grp"
 	alias -g X="| xargs -d '\n' -L 1"
 	alias -g X1="| xargs -d '\n' -n 1"
@@ -53,6 +53,12 @@ unalias diff 2>/dev/null
 # Alias on some systems?
 unalias rd 2>/dev/null
 
+alias ai='aichat --session'
+alias ky='aichat --role swahili'
+alias en='aichat --role en'
+alias aish='aichat --role shell --session'
+alias write='aichat --role write --save-session --session'
+
 # System help {{{1
 
 compdef tldr=man
@@ -86,7 +92,9 @@ xtrace() {
 }
 
 retry() {
-	while ! "$@"; do sleep 2; done
+	duration=2
+	case "$1" in ([0-9]|[0-9][0-9]) duration=$1; shift;; esac
+	while ! "$@"; do sleep $duration; done
 }
 
 # Shows source for given command, resolving nested aliases
@@ -290,7 +298,7 @@ u() {
 	fi
 	if command -v topgrade >/dev/null
 	then
-	  nice -10 topgrade --disable node emacs remotes rustup nix
+	  nice -15 topgrade --disable node emacs remotes rustup nix
 	  if test -d "$XDG_CONFIG_HOME/emacs"
 	  then
 		  builtin cd $XDG_CONFIG_HOME/emacs
@@ -312,12 +320,13 @@ u() {
 # Networking
 alias rdns='drill -x'
 dns() {
-	local dig="drill -Q"
-	which drill >/dev/null || dig="dig +short"
+	local dig='drill -Q'
+	which drill >/dev/null || dig='dig +short'
 	local server=1.1.1.1
-	# TODO allow changing DNS server with @
+	case "$*" in (*@*) server="${*##*@}";; esac
 	# TODO implement rdns via -x
 	for arg; do
+		case "$arg" in (@*) return;; esac
 		local trimmed="${arg##*//}"
 		local cut="${trimmed%%/*}"
 		if which host >/dev/null 2>&1
@@ -328,6 +337,7 @@ dns() {
 		fi
 	done
 }
+
 alias sshk="$(case $TERM in (*-kitty) echo 'TERM=xterm-256color kitty +kitten';; esac) ssh"
 sshl() {
 	test "$1" = "-a" && shift && local all=true
@@ -383,9 +393,9 @@ alias pmd='pandoc -t markdown_strict-raw_html'
 alias clr='diffr --colors refine-added:none:background:0x33,0x66,0x33:bold --colors added:none:background:0x33,0x44,0x33 --colors refine-removed:none:background:0x66,0x33,0x33:bold --colors removed:none:background:0x44,0x33,0x33 | less -F'
 
 # Fossil
-alias f='fossil'
+alias fs='fossil'
 alias fl='fossil timeline --format "[%d] %h %c <%a>"'
-alias fs='fossil status'
+alias ft='fossil status'
 alias fc='fossil commit -v'
 fdf() {
 	fossil diff "$@" | clr
@@ -526,10 +536,11 @@ which exa >/dev/null &&
 if which fd >/dev/null 2>&1
 then
 	# [F]ind [n]o ignore
-	fn() { $(command -v fd || echo fdfind) --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
+	fn() { $(command -v fd || echo fdfind) -E env --hidden --no-ignore-vcs --one-file-system "$@" | less -F; }
 	# [F]ind [F]ile
-	alias ff="noglob fn --color=always "
-	compdef ff=fd
+	alias f="noglob fn --color=always "
+	alias ff=f
+	compdef f=fd
 	compdef fn=fd
 else
 	alias ff='find -not -path "*.sync*" -and -not \( -name daten -prune \) -iname'
@@ -542,13 +553,15 @@ alias rcn='rsync -v --recursive --human-readable --links --dry-run'
 rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }
 compdef rcd=rsync
 # TODO do not sync times to FAT
-alias rc='rcs --links --hard-links --times'
+alias rc='rcs --safe-links --hard-links --times'
 alias rcu='rc --existing --size-only'
 alias rcr='rcs --compress --size-only --times'
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
-alias rdiff='rsync --recursive --checksum --delete --links --dry-run'
+# https://unix.stackexchange.com/questions/57305/rsync-compare-directories/177946
+# You need to add a / at the end of source but NOT target: rsync -avnc $SOURCE/ $TARGET 
+alias rdiff='rsync --info=name --recursive --checksum --delete --links --dry-run'
 alias rdiffe='rdiff --existing --size-only'
 
 # Swap the names of two files
@@ -633,7 +646,7 @@ umoul() {
 	for mountpoint in $mountpoints; do
 		while true; do
 			case "$PWD" in
-				("$mountpoint"*) popd || builtin cd "$(dirname "$mountpoint")";;
+				("$mountpoint"*) popd 2>/dev/null || builtin cd "$(dirname "$mountpoint")";;
 				(*) break;;
 			esac
 		done

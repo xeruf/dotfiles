@@ -8,10 +8,10 @@ alias yau='sudo systemctl start --show-transaction reflector && noglob yay'
 alias yays='noglob yay -Sy --needed --noprovides'
 alias yayr='noglob yay -R --cascade --recursive'
 
-_yayre_params="-S --rebuild --noprovides --nodiffmenu --noconfirm"
+_yayre_params="-S --rebuild --answerdiff NotInstalled --noconfirm"
 # Reinstall given packages with all dependencies - https://www.reddit.com/r/archlinux/comments/33cety
 yayre() {
-	yay $(echo $_yayre_params) --asdeps $(yay -Si "$@" | grep Depends | cut -d':' -f2) &&
+	yay $(echo $_yayre_params) --asdeps $(COLUMNS=1 yay -Si "$@" | grep Depends | cut -d':' -f2) &&
 		yay $(echo $_yayre_params) "$@"
 }
 
@@ -21,7 +21,7 @@ yzf() {
 	shift
 	sed "s/ /\t/g" |
 		fzf --nth=$pos --multi --history="${FZF_HISTDIR:-$XDG_STATE_HOME/fzf}/history-yzf$pos" \
-			--preview-window=60%,border-left \
+			--preview-window=60%,border-left,wrap \
 			--bind="alt-bspace:clear-query,double-click:execute(xdg-open 'https://archlinux.org/packages/{$pos}'),alt-enter:execute(xdg-open 'https://aur.archlinux.org/packages?K={$pos}&SB=p&SO=d&PP=100')" \
 			 "$@" | cut -f$pos | xargs
 }
@@ -45,7 +45,7 @@ yas() {
 	)
 	if test -n "$pkg"
 		then echo "Installing $pkg..."
-			cmd="yay -S --batchinstall --rebuildall $pkg"
+			cmd="yay -S --batchinstall --rebuildall --rebuildtree --rebuild $pkg"
 			print -s $cmd
 			eval "$cmd"
 			rehash

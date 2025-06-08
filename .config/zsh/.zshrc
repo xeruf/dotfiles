@@ -201,6 +201,7 @@ source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 source_existing "$NVM_DIR/nvm.sh"
 source_existing "$NVM_DIR/bash_completion"
 
+source_existing /opt/asdf-vm/asdf.sh
 source_existing $XDG_CONFIG_HOME/broot/launcher/bash/br
 
 which zoxide >/dev/null &&

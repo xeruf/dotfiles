@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='18463'>
-  <tag key='cache.capabilities1637351842' value='1660595298'/>
-  <tag key='cache.motd.html' value='1660595299'/>
-  <tag key='cache.motd.html.java' value='11.0.16'/>
+<preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='18822'>
+  <tag key='cache.capabilities1637351842' value='1704276020'/>
+  <tag key='cache.motd.html' value='1703185778'/>
+  <tag key='cache.motd.html.java' value='1.8.0_392'/>
   <tag key='cache.motd.html.lang' value='En:'/>
-  <tag key='cache.motd.html.version' value='18463'/>
+  <tag key='cache.motd.html.version' value='18822'/>
   <tag key='changeset.lastHeight' value='0'/>
   <tag key='changesetdialog.lastHeight' value='0'/>
   <tag key='commandstack.lastHeight' value='0'/>
@@ -12,8 +12,22 @@
   <tag key='conflict.minimized' value='true'/>
   <tag key='conflict.visible' value='true'/>
   <tag key='download.osm.notes' value='true'/>
+  <list key='download.places.history'>
+    <entry value='mombasa'/>
+    <entry value='kerugoya'/>
+    <entry value='longonot'/>
+    <entry value='Ponta do Sol'/>
+    <entry value='Ponte do Sol'/>
+    <entry value='Funchal'/>
+    <entry value='Madeira'/>
+    <entry value='Nablus'/>
+  </list>
   <tag key='expert' value='true'/>
   <list key='file-open.history'>
+    <entry value='/home/janek/data/4-media/osm/KENYA.osm'/>
+    <entry value='/home/janek/data/4-media/osm/PT-madeira.osm'/>
+    <entry value='/home/janek/data/4-media/osm/BAV-bayreuth.osm'/>
+    <entry value='/home/janek/data/4-media/osm/IS.osm'/>
     <entry value='/home/janek/data/4-media/osm/MV-Ruegen.osm'/>
     <entry value='/home/janek/data/4-media/osm/BY-bayreuth.osm'/>
     <entry value='/home/janek/data/2-standards/osm/BY-bayreuth.osm'/>
@@ -25,16 +39,12 @@
     <entry value='/home/janek/data/2-standards/osm/SN-saxony.jos'/>
     <entry value='/home/janek/data/2-standards/osm/SN-vogtland.osm'/>
     <entry value='/home/janek/data/2-standards/osm/tracks/rec/2021-07-31_06-40_Sat_Hof-Auerbach.gpx'/>
-    <entry value='/home/janek/data/2-standards/osm/BY-forchheim.osm'/>
-    <entry value='/home/janek/data/2-standards/osm/BY-siegritz.osm'/>
-    <entry value='/home/janek/data/2-standards/osm/BY-siegritz.osn'/>
-    <entry value='/home/janek/data/2-standards/osm/haeusling.osm'/>
   </list>
   <tag key='filter.lastHeight' value='0'/>
   <tag key='geoimage.docked' value='false'/>
   <tag key='geoimage.geometry' value='x=690,y=413,width=540,height=249'/>
   <tag key='geoimage.lastHeight' value='200'/>
-  <tag key='gui.geometry' value='x=0,y=-5,width=960,height=1085'/>
+  <tag key='gui.geometry' value='x=0,y=30,width=2256,height=1474'/>
   <tag key='gui.maximized' value='true'/>
   <maps key='imagery.entries'>
     <map>
@@ -108,27 +118,8 @@
       <tag key='category' value='photo'/>
     </map>
     <map>
-      <tag key='max-zoom' value='22'/>
-      <tag key='noTileChecksums' value='{&quot;MD5&quot;:[&quot;08d6916814b216570e5241732c41d5e5&quot;]}'/>
-      <tag key='valid-georeference' value='true'/>
-      <tag key='transparent' value='true'/>
-      <tag key='minimumTileExpire' value='3600'/>
-      <tag key='name' value='Maxar Premium Imagery'/>
-      <tag key='id' value='Maxar-Premium'/>
-      <tag key='type' value='tms'/>
-      <tag key='url' value='https://services.digitalglobe.com/earthservice/tmsaccess/tms/1.0.0/DigitalGlobe:ImageryTileService@EPSG:3857@jpg/{zoom}/{x}/{-y}.jpg?connectId={apikey}'/>
-      <tag key='attribution-text' value='Terms &amp; Feedback'/>
-      <tag key='attribution-url' value='https://wiki.openstreetmap.org/wiki/DigitalGlobe'/>
-      <tag key='cookies' value=''/>
-      <tag key='icon' value='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAFVBMVEX9sBz3qx3GjiO6hyWZcyo+PDY6OjcXiwAvAAAA50lEQVR42s2TwQ3CMAxFv5kgBwZAFRuUBYrUCUiyQbv/CMT0W64bOHBrTlGeXvxtJVh/LJwXLKVUOyi6N/AchjtJHtrewHIDZN7AC8Cl7gCu9Sug0oNEpQGJhlDpr6ISwDoJEqtEkPV4U/I4jg/vfAJApbRlQBVhsDArKhbMABUGO4LFgkVAhVUcxCo9SKzSXyVUDHiLQiXG1VhUYoO6kivwsAIP5kMUPUxUCHwgPmQCPUgic06fC6/+rjgOZji8EpkZIgDW1CEjgqQCG41XqaDK0VCByg7YN7A94/Kz2Gr7eorv/Bd4A5pJU8mYQ1uTAAAAAElFTkSuQmCC'/>
-      <tag key='description' value='Maxar Premium is a mosaic composed of Maxar basemap with select regions filled with +Vivid or custom area of interest imagery, 50cm resolution or better, and refreshed more frequently with ongoing updates.'/>
-      <tag key='customHttpHeaders' value='{}'/>
-      <tag key='category' value='photo'/>
-    </map>
-    <map>
       <tag key='max-zoom' value='19'/>
       <tag key='valid-georeference' value='true'/>
-      <tag key='modTileFeatures' value='true'/>
       <tag key='transparent' value='true'/>
       <tag key='minimumTileExpire' value='3600'/>
       <tag key='name' value='OpenStreetMap Carto (Standard)'/>
@@ -149,15 +140,14 @@
     <entry value='EsriWorldImagery'/>
     <entry value='EsriWorldImageryClarity'/>
     <entry value='Mapbox'/>
-    <entry value='Maxar-Premium'/>
     <entry value='standard'/>
   </list>
   <maps key='imagery.offsetbookmarks'>
   </maps>
   <tag key='iodb.modify.toolbar' value='false'/>
-  <tag key='josm.version' value='18463'/>
+  <tag key='josm.version' value='18822'/>
   <tag key='lastDirectory' value='/home/janek/data/4-media/osm'/>
-  <tag key='layerlist.lastHeight' value='138'/>
+  <tag key='layerlist.lastHeight' value='226'/>
   <tag key='mappaint.renderer-class-name' value='org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer'/>
   <list key='mappaint.style.known-defaults'>
     <entry value='resource://styles/standard/elemstyles.mapcss'/>
@@ -166,6 +156,8 @@
   <tag key='mapstyle.lastHeight' value='0'/>
   <tag key='message.delete_relations' value='false'/>
   <tag key='message.delete_relations.value' value='0'/>
+  <tag key='message.overwriteAddKey' value='false'/>
+  <tag key='message.overwriteAddKey.value' value='1'/>
   <tag key='minimap.lastHeight' value='0'/>
   <list key='mirror./home/janek/.cache/JOSM/images.https://josm.openstreetmap.de/browser/trunk/resources/images/cancel.svg?format_raw'>
     <entry value='1623789870975'/>
@@ -179,13 +171,21 @@
     <entry value='1623789870903'/>
     <entry value='/home/janek/.cache/JOSM/images/mirror_https___josm.openstreetmap.de_browser_trunk_resources_images_ok.svg_format_raw'/>
   </list>
+  <list key='mirror./home/janek/.cache/JOSM/images.https://map.valentim.org/favicon.png'>
+    <entry value='1699812707933'/>
+    <entry value='/home/janek/.cache/JOSM/images/mirror_https___map.valentim.org_favicon.png'/>
+  </list>
   <list key='mirror./home/janek/.local/cache/JOSM/images.https://geoportal.bayern.de/bayernatlas/favicon/favicon-32x32.png'>
     <entry value='1633952469206'/>
     <entry value='/home/janek/.local/cache/JOSM/images/mirror_https___geoportal.bayern.de_bayernatlas_favicon_favicon-32x32.png'/>
   </list>
+  <list key='mirror./home/janek/.local/cache/JOSM/images.https://israelhiking.osm.org.il/content/favicons/favicon.ico'>
+    <entry value='1674922283434'/>
+    <entry value='/home/janek/.local/cache/JOSM/images/mirror_https___israelhiking.osm.org.il_content_favicons_favicon.ico'/>
+  </list>
   <list key='mirror.https://josm.openstreetmap.de/maps'>
-    <entry value='1660595302989'/>
-    <entry value='/home/janek/.local/cache/JOSM/mirror_https___josm.openstreetmap.de_maps'/>
+    <entry value='1703185930408'/>
+    <entry value='/home/janek/.cache/JOSM/mirror_https___josm.openstreetmap.de_maps'/>
   </list>
   <list key='mirror.https://josm.openstreetmap.de/presets'>
     <entry value='1635460787084'/>
@@ -196,76 +196,56 @@
     <entry value='/home/janek/.local/cache/JOSM/mirror_https___josm.openstreetmap.de_proj_BETA2007.gsb'/>
   </list>
   <list key='mirror.https://josm.openstreetmap.de/remote/geofabrik-index-v1-nogeom.json'>
-    <entry value='1660595299798'/>
-    <entry value='/home/janek/.local/cache/JOSM/mirror_https___josm.openstreetmap.de_remote_geofabrik-index-v1-nogeom.json'/>
+    <entry value='1703185778624'/>
+    <entry value='/home/janek/.cache/JOSM/mirror_https___josm.openstreetmap.de_remote_geofabrik-index-v1-nogeom.json'/>
   </list>
   <list key='mirror.https://josm.openstreetmap.de/tested'>
     <entry value='1633952185297'/>
     <entry value='/home/janek/.local/cache/JOSM/mirror_https___josm.openstreetmap.de_tested'/>
   </list>
-  <tag key='notes/note_open.lastHeight' value='187'/>
+  <tag key='notes/note_open.lastHeight' value='275'/>
   <tag key='notes/note_open.visible' value='true'/>
   <tag key='oauth.access-token.key' value='YGtDqRUspIjinRFJwYJhzSDbOWSHeCfJRYsstgtu'/>
   <tag key='oauth.access-token.secret' value='DqACmTu5PcW1k94TrGZIF4XaPqbUy2SMxPTyjcEa'/>
-  <tag key='org.openstreetmap.josm.actions.OpenLocationAction.geometry' value='x=778,y=425,width=363,height=225'/>
+  <tag key='oauth.use-for-all-requests' value='false'/>
+  <tag key='org.openstreetmap.josm.actions.OpenLocationAction.geometry' value='x=382,y=278,width=363,height=225'/>
   <tag key='org.openstreetmap.josm.gui.NoteInputDialog.geometry' value='x=760,y=387,width=400,height=300'/>
-  <tag key='org.openstreetmap.josm.gui.dialogs.properties.TagEditHelper$AddTagsDialog.geometry' value='x=746,y=441,width=918,height=470'/>
-  <tag key='org.openstreetmap.josm.gui.dialogs.properties.TagEditHelper$EditTagDialog.geometry' value='x=814,y=428,width=801,height=212'/>
-  <tag key='org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.geometry' value='x=610,y=212,width=700,height=650'/>
-  <tag key='org.openstreetmap.josm.gui.download.DownloadDialog.geometry' value='x=460,y=233,width=1000,height=600'/>
+  <tag key='org.openstreetmap.josm.gui.dialogs.properties.TagEditHelper$AddTagsDialog.geometry' value='x=669,y=556,width=918,height=421'/>
+  <tag key='org.openstreetmap.josm.gui.dialogs.properties.TagEditHelper$EditTagDialog.geometry' value='x=727,y=685,width=801,height=163'/>
+  <tag key='org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.geometry' value='x=778,y=442,width=700,height=650'/>
+  <tag key='org.openstreetmap.josm.gui.download.DownloadDialog.geometry' value='x=623,y=467,width=1010,height=600'/>
   <tag key='org.openstreetmap.josm.gui.help.HelpBrowser.geometry' value='x=0,y=-13,width=960,height=1093'/>
-  <tag key='org.openstreetmap.josm.gui.io.UploadDialog.geometry' value='x=386,y=330,width=800,height=600'/>
+  <tag key='org.openstreetmap.josm.gui.io.UploadDialog.geometry' value='x=728,y=467,width=800,height=600'/>
   <tag key='org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard.geometry' value='x=590,y=314,width=739,height=438'/>
-  <tag key='org.openstreetmap.josm.gui.preferences.PreferenceDialog.geometry' value='x=357,y=99,width=1001,height=811'/>
-  <tag key='osm-download.bounds' value='54.5625077;13.1588745;54.6770072;13.3950806'/>
+  <tag key='org.openstreetmap.josm.gui.preferences.PreferenceDialog.geometry' value='x=627,y=391,width=1001,height=752'/>
+  <tag key='osm-download.bounds' value='-4.0256428;39.7270551;-3.9959636;39.7456188'/>
+  <tag key='osm-server.auth-method' value='oauth'/>
+  <tag key='osm-server.upload-strategy' value='singlerequest'/>
   <tag key='plugin.continuos_download.max_area' value='0.004'/>
   <tag key='plugin.continuos_download.max_areas' value='2'/>
-  <tag key='pluginmanager.lastupdate' value='1658813943390'/>
-  <tag key='pluginmanager.version' value='18463'/>
+  <tag key='pluginmanager.lastupdate' value='1703185770809'/>
+  <tag key='pluginmanager.time-based-update.policy' value='always'/>
+  <tag key='pluginmanager.version' value='18822'/>
   <tag key='pluginmanager.version-based-update.policy' value='always'/>
   <list key='plugins'>
+    <entry value='FastDraw'/>
     <entry value='auto_tools'/>
+    <entry value='buildings_tools'/>
+    <entry value='changeset-viewer'/>
+    <entry value='continuosDownload'/>
     <entry value='imagery_offset_db'/>
     <entry value='jts'/>
-    <entry value='changeset-viewer'/>
-    <entry value='turnlanes'/>
-    <entry value='FastDraw'/>
-    <entry value='continuosDownload'/>
-    <entry value='utilsplugin2'/>
+    <entry value='libphonenumber'/>
     <entry value='openvisible'/>
+    <entry value='phonenumber'/>
+    <entry value='turnlanes'/>
     <entry value='undelete'/>
-    <entry value='buildings_tools'/>
+    <entry value='utilsplugin2'/>
     <entry value='wikipedia'/>
   </list>
   <tag key='preferences.reset.draw.rawgps.lines' value='true'/>
-  <tag key='progressdialog.size' value='229'/>
+  <tag key='progressdialog.size' value='385'/>
   <list key='properties.recent-tags'>
-    <entry value='man_made'/>
-    <entry value='watermill'/>
-    <entry value='disused'/>
-    <entry value='yes'/>
-    <entry value='watermill:disused'/>
-    <entry value='yes'/>
-    <entry value='description'/>
-    <entry value='einstige Wasserversorgung Siegritz'/>
-    <entry value='year_of_construction'/>
-    <entry value='1871'/>
-    <entry value='start_date'/>
-    <entry value='1871'/>
-    <entry value='note'/>
-    <entry value='naturbelassen, ggf. Bäume im Weg'/>
-    <entry value='height'/>
-    <entry value='8'/>
-    <entry value='source:height'/>
-    <entry value='survey'/>
-    <entry value='height'/>
-    <entry value='5'/>
-    <entry value='fixme'/>
-    <entry value='5'/>
-    <entry value='fixme'/>
-    <entry value='continue'/>
-    <entry value='incline'/>
-    <entry value='up'/>
     <entry value='steepness'/>
     <entry value='steep'/>
     <entry value='barrier'/>
@@ -278,8 +258,6 @@
     <entry value='lounger'/>
     <entry value='drinking_water'/>
     <entry value='yes'/>
-    <entry value='highway'/>
-    <entry value='track'/>
     <entry value='bicycle'/>
     <entry value='no'/>
     <entry value='url'/>
@@ -300,14 +278,43 @@
     <entry value='footway'/>
     <entry value='access'/>
     <entry value='yes'/>
+    <entry value='facebook'/>
+    <entry value='https://www.facebook.com/wardnablusrestaurant/'/>
+    <entry value='facebook'/>
+    <entry value='https://www.facebook.com/wardelshamcafe/'/>
+    <entry value='sac_scale'/>
+    <entry value='demanding_alpine_hiking'/>
+    <entry value='trail_visibility'/>
+    <entry value='bad'/>
+    <entry value='note'/>
+    <entry value='There was supposedly a staircase downwards here, but everything is overgrown, no way'/>
+    <entry value='note'/>
+    <entry value='Roughly drawn from memory'/>
+    <entry value='sac_scale'/>
+    <entry value='demanding_mountain_hiking'/>
+    <entry value='note'/>
+    <entry value='Roughly drawn from memory. There is a refreshing natural waterfall along the way'/>
+    <entry value='surface'/>
+    <entry value='grass'/>
+    <entry value='highway'/>
+    <entry value='track'/>
+    <entry value='highway'/>
+    <entry value='tertiary'/>
+    <entry value='smoothness'/>
+    <entry value='bad'/>
+    <entry value='smoothness'/>
+    <entry value='intermediate'/>
+    <entry value='surface'/>
+    <entry value='asphalt'/>
   </list>
-  <tag key='propertiesdialog.lastHeight' value='188'/>
+  <tag key='propertiesdialog.lastHeight' value='276'/>
   <tag key='relationlist.lastHeight' value='0'/>
   <tag key='relationlist.visible' value='false'/>
   <list key='search.history'>
+    <entry value='R Hinter der Kirche 13a'/>
     <entry value='R modified'/>
   </list>
-  <tag key='selectionlist.lastHeight' value='188'/>
+  <tag key='selectionlist.lastHeight' value='276'/>
   <list key='shortcut.entry.core:movedown'>
     <entry value='Move objects down'/>
     <entry value='40'/>
@@ -389,9 +396,9 @@
     <entry value='false'/>
     <entry value='true'/>
   </list>
-  <tag key='simplify-way.max-error' value='2.0'/>
-  <tag key='sourcetag.value' value='local_knowledge'/>
-  <tag key='toggleDialogs.width' value='712'/>
+  <tag key='simplify-way.max-error' value='1.0'/>
+  <tag key='sourcetag.value' value='maxar'/>
+  <tag key='toggleDialogs.width' value='379'/>
   <list key='toolbar'>
     <entry value='open'/>
     <entry value='save'/>
@@ -428,11 +435,20 @@
   </list>
   <tag key='turnlanes.png.lastHeight' value='0'/>
   <list key='upload.comment.history'>
+    <entry value='Mombasa Roads simplification'/>
+    <entry value='Mombasa Road qualities'/>
+    <entry value=''/>
+    <entry value='Kerugoyah street checks'/>
+    <entry value='Gase Förster'/>
+    <entry value='nablus: cafe alsham'/>
     <entry value='Edit Kreptitzer paths'/>
   </list>
-  <tag key='upload.comment.last-used' value='1660600244'/>
+  <tag key='upload.comment.last-used' value='1704732893'/>
   <list key='upload.source.history'>
     <entry value='survey'/>
+    <entry value='Notes'/>
+    <entry value=''/>
+    <entry value='https://www.11880.com/branchenbuch/bayreuth/252211874B26425827/foerster-werner.html'/>
   </list>
   <tag key='upload.source.obtainautomatically' value='true'/>
   <tag key='userlist.lastHeight' value='0'/>
@@ -451,7 +467,7 @@
     <entry value='Browse element [demo, =Ctrl-Shift-I]'/>
     <entry value='https://www.openstreetmap.org/{#type}/{#id}'/>
   </list>
-  <tag key='validator.lastHeight' value='188'/>
+  <tag key='validator.lastHeight' value='276'/>
   <list key='validator.skip'>
   </list>
   <list key='validator.skipBeforeUpload'>

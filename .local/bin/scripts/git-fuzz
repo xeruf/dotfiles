@@ -6,7 +6,7 @@
 # TODO fix broken alt-enter not opening editor --bind='alt-enter:change-prompt(hi>)'
 
 # using bash because of pipefail
-set -eo pipefail
+set -exo pipefail
 
 fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain
@@ -27,6 +27,7 @@ case "$1" in
 			grep -zv '^\\w ' | fzfpipe |
 			xargs -rd '\n' -L 1 git -c advice.addEmptyPathspec=false add --verbose "$@";;
 	(*)	git status -z --porcelain --no-renames $wd |
+			grep -vzE '\.config/(audacity|puddletag|Stretchly|falkTX|JOSM)/' | # this is specific for my yadm
 			sed -z 's/^\\(\\w\\) / \\1/' | fzfpipe >"$prefix/files"
 			cat "$prefix/files" | xargs -rd '\n' ls -fd 2>/dev/null >"$prefix/files-existing" || true
 			git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file="$prefix/files-existing"

@@ -7,6 +7,7 @@ case "$1" in
         then printf "Device ppp0 already in use - press Enter to kill"
              read -r _
              sudo killall openfortivpn
+             sleep 3
         fi
         sudo tmux new-session -s "$1" '
             set -x

@@ -165,6 +165,25 @@ data:
       hostname: "\${${app}_domain}"
       tls: true
       certManager: true
+
+    # TODO if using postgresql
+    #postgresql:
+    #  enabled: true
+    #  commonLabels:
+    #    stackspin.net/backupSet: "${app}"
+    #  global:
+    #    postgresql:
+    #      auth:
+    #        database: ${app}
+    #        username: ${app}
+    #        password: "${postgresql_password}"
+    #        postgresPassword: "${postgresql_admin_password}"
+    #  primary:
+    #    persistence:
+    #      existingClaim: vikunja-postgres
+    #    podAnnotations:
+    #      backup.velero.io/backup-volumes: "data"
+
     # TODO Adjust $app Mailing config
     #    mailer:
     #      enabled: "\${outgoing_mail_enabled}"
@@ -173,6 +192,7 @@ data:
     #      username: "\${outgoing_mail_smtp_user}"
     #      password: "\${outgoing_mail_smtp_password}"
     #      fromemail: "\${outgoing_mail_from_address}"
+
     # TODO Adjust $app OpenID Connect Single Sign-On Configuration
     #    - name: Stackspin
     #      key: "\${client_id}"
@@ -245,7 +265,9 @@ metadata:
   namespace: flux-system
 spec:
   fields:
-  - fieldName: password
+  # TODO if using postgresql
+  - fieldName: postgresql_password
+  - fieldName: postgresql_postgres_password
 EOF
 cat <<EOF >"$app-secrets/$app-oauth-secret.yaml"
 ---

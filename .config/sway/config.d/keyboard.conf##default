@@ -2,5 +2,10 @@ input * {
 	xkb_layout eu,de,us
 	xkb_variant basic,nodeadkeys,euro
 	xkb_numlock enabled
-	xkb_options caps:escape_shifted_capslock
+	#xkb_options caps:escape_shifted_capslock
+
+	repeat_delay 300
+	repeat_rate 50
+	repeat_rate 0
+	repeat_rate 30
 }
