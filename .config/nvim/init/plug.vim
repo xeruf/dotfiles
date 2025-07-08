@@ -55,7 +55,9 @@ Plug 'mhinz/vim-signify'               " VCS info on the left
 Plug 'tpope/vim-fugitive'               " Difftool usage
 Plug 'xeruf/vim-fossil'
 Plug 'austintraver/vim-jrnl'
-Plug 'weinshec/vim-dictcc' " TODO do not hang without internet
+if has('python3')
+  Plug 'weinshec/vim-dictcc' " TODO do not hang without internet
+endif
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'mipmip/vim-scimark'              " Edit markdown tables with sc-im
 Plug 'alx741/vinfo'

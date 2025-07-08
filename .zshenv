@@ -102,7 +102,7 @@ export EDITOR="$(
 export IHP_EDITOR="$BIN/scripts/emacs-line"
 
 export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
-export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
+export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '\d\+' | head -1) -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
@@ -142,7 +142,7 @@ ctrl-alt-h:backward-kill-word
 $($_fzf_latest && echo "shift-down:preview-half-page-down,shift-up:preview-half-page-up
 alt-j:preview-half-page-down,alt-k:preview-half-page-up
 alt-shift-down:preview-down,alt-shift-up:preview-up,esc:close")
-" | xargs -I% echo -n "%," | head -c-1)
+" | sed '/./!d' | paste -s -d, -)
 #alt-r:preview(bat {}),
 export FZF_HISTDIR="$XDG_STATE_HOME/fzf"
 mkdir -p "$XDG_STATE_HOME/fzf"
@@ -152,8 +152,15 @@ $($_fzf_latest && echo '--preview-window=60%,border-left --marker=o')"
 FD_BASE="fd --hidden --color=always --no-ignore-vcs"
 export FZF_DEFAULT_COMMAND="$FD_BASE --type file"
 export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
+
+# Calculate spare cores as two thirds of the efficiency cores
+case "$(uname)" in
+(Darwin) efficiency_cores=$(sysctl -n hw.perflevel1.physicalcpu);;
+(*) efficiency_cores=$(lscpu --extended | awk '{print $7}' | sort | uniq -c | head -1 | awk '{print $1}');;
+esac
+export SPARE_CORES=$(expr $efficiency_cores \* 2 / 3)
+
 ## cplusplus - ctest, cmake, ninja
-export SPARE_CORES=$(expr $(lscpu --extended | awk '{print $7}' | sort | uniq -c | head -1 | awk '{print $1}') \* 2 / 3)
 export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1

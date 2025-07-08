@@ -429,8 +429,8 @@ cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
 
 
-test -z "$DISPLAY" && test "$XDG_VTNR" != 1 || return 0
-# The following runs only on headless machines
+# Run following code only on headless machines
+test -z "$DISPLAY" && test "$XDG_VTNR" != 1 && ! pgrep -qx "SystemUIServer" || return 0
 
 which kubectl >/dev/null ||
 	{ kubectl() { sudo k3s kubectl "$@"; } && export -f kubectl; }

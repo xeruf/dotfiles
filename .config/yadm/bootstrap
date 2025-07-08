@@ -61,6 +61,7 @@ template "$XDG_CONFIG_HOME/MuseScore/MuseScore3.template.ini"
 
 if command -v nvim >/dev/null 2>&1; then
   echo "Updating NeoVim Plugins"
+  # TODO pynvim?
   nvim '+PlugClean!' '+PlugUpgrade' '+PlugUpdate' '+qall'
 fi
 

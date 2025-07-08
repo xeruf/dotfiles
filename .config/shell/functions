@@ -529,9 +529,12 @@ killm() {
 
 # Files {{{1
 
-which exa >/dev/null &&
-	alias l='exa --icons --group-directories-first' &&
-	alias ll='l --long --git --all'
+if which exa >/dev/null
+then alias l='exa --group-directories-first --icons'
+	  alias ll='l --long --git --all'
+else alias l='ls -F'
+	  alias ll='l -lAh'
+fi
 
 if which fd >/dev/null 2>&1
 then
@@ -669,6 +672,7 @@ function zipdiff() {
 # SWAP
 alias memstat='free -h | awk '"'"'NR==2 {printf "Free memory:\t %s/%s\t(%d%)\n",$7,$2,$7*100/$2} NR==3 {if($2 != "0B") printf "Used swap:\t%s/%s\t(%d%)\n",$3,$2,$2*100/$3}'"'"
 
+# Force all swapped memory to live memory by deallocating it
 stopswap() {
 	memstat
 	swap_used=$(cat /proc/meminfo | grep SwapFree | awk '{print $2}')
@@ -685,6 +689,7 @@ stopswap() {
 	fi
 }
 
+# Extrace proxmox vma archive
 extrac() {
 	test "$#" -lt 1 && echo "$0 <archive.vma[.lzo]>..." && return 2
 	for var; do

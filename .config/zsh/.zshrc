@@ -26,7 +26,6 @@ HYPHEN_INSENSITIVE="true" # - and _ interchangeable
 COMPLETION_WAITING_DOTS="true" # Dots while waiting for completion
 DISABLE_UNTRACKED_FILES_DIRTY="true" # DOn't mark untracked files as dirty - speeds up status check
 
-
 # Plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
@@ -45,9 +44,11 @@ ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION" # Cache completions
 DISABLE_UPDATE_PROMPT=true
 ZSH_DISABLE_COMPFIX=true
 
-# For fresh systems
-test -d "$ZSH" || source $HOME/.zshenv
-source $ZSH/oh-my-zsh.sh
+# Fallback for fresh systems
+if test -d "$ZSH" 
+then source $ZSH/oh-my-zsh.sh
+else source $HOME/.zshenv
+fi
 
 ## Functions
 
@@ -177,6 +178,12 @@ alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zsy='noglob zmv -Ls'
 
+
+test -d /opt/homebrew && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+autoload -Uz compinit
+compinit
+
 for file in $CONFIG_SHELLS/*
 do source $file
 done
@@ -210,5 +217,4 @@ which zoxide >/dev/null &&
 source_existing $HOME/.nix-profile/etc/profile.d/nix.sh
 which direnv >/dev/null && eval "$(direnv hook zsh)"
 
-true
 l
