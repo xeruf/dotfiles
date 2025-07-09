@@ -86,15 +86,16 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 BIN="$HOME/.local/bin"
-ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin | head -1)"
+test -d "$XDG_DATA_HOME/gem/ruby" &&
+	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1)"
 export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:$ruby_bins:$HOME/.rvm/bin"
 export ALTERNATE_EDITOR="$(
-	if which nvim >/dev/null
+	if command -v nvim >/dev/null
 	then echo nvim
 	else echo vi
 	fi)"
 export EDITOR="$(
-	if which emacs >/dev/null
+	if command -v emacs >/dev/null
 	then echo $BIN/scripts/emacstty
 	else echo $ALTERNATE_EDITOR
 	fi

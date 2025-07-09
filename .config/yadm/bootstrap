@@ -2,9 +2,98 @@ SECTION() { printf "\n[1m[4m$1[0m\n"; }
 highlight() { printf "[1m[3m$1[0m\n"; }
 subhighlight() { printf "[3m$1[0m\n"; }
 
+link() {
+	test -e "$2" -o -h "$2" || $($HOME/.local/bin/scripts/checkaccess -w "$2" || echo sudo) ln -sv "$@"
+}
+
+# So that bootstrapping works right after cloning with the correct env variables
 source "$HOME/.zshenv"
 
-SECTION "System"
+SECTION "Dotfiles Preparation"
+
+highlight "Remove conflicting Manjaro Sway Dotfiles"
+rmexist() {
+	for arg
+	do test -e "$arg" && echo -n "$arg: " && rm -vrI "$arg"
+	done
+}
+rmexist "$XDG_CONFIG_HOME/nvim/init.lua" "$HOME/.emacs.d/"
+
+highlight 'Resolve Home Symlinks'
+touch $HOME/.local/state/wget-hsts
+mkdir -p "$XDG_CONFIG_HOME/audacity"
+find $HOME -maxdepth 1 -type l -exec file {} + |
+	grep '.local/share' | grep broken |
+	sed 's/.* //' | xargs -r mkdir -p
+
+highlight 'Other Application Symlinks'
+link "$XDG_CONFIG_HOME/bash/aliases.bash" "$HOME/.bashrc"
+link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
+link "$XDG_DATA_HOME/.cpan/CPAN/MyConfig.pm" "$XDG_CONFIG_HOME/cpan/MyConfig.pm"
+link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
+
+#template() {
+#	local dir=$(dirname "$1")
+#	local file=${1/.template}
+#	test -d "$dir" && ! test -f "$file" &&
+#		cp -iv "$1" "$file"
+#}
+#template "$XDG_CONFIG_HOME/doom/user.template.el"
+#template "$XDG_CONFIG_HOME/MuseScore/MuseScore3.template.ini"
+# TODO JOSM
+# TODO audacity
+# TODO puddletag
+
+SECTION 'Application Setup'
+
+highlight "CLI Applications"
+
+# TODO update repo users, replace slow omz
+# checkout https://starship.rs/ over p10k
+subhighlight "Zsh"
+test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
+mkdir -p "$(dirname $ZSH)"
+oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" -a -d "$oldzsh" && mv -vn $oldzsh $ZSH
+cloneshallow() {
+	url=https://github.com/$2/$1.git
+	dir="${3:-$ZSH/plugins/$1}"
+	mkdir -p "$(dirname $dir)"
+	if test -d "$dir"
+	then git -C "$dir" remote set-url origin $url
+	else git clone --depth=1 $url "$dir"
+	fi
+}
+cloneshallow oh-my-zsh                  robbyrussell       "$ZSH"
+cloneshallow powerlevel10k              romkatv            "$ZSH/themes/powerlevel10k"
+cloneshallow fast-syntax-highlighting   zdharma-continuum
+cloneshallow zsh-autosuggestions        zsh-users
+cloneshallow zsh-vim-mode               softmoth
+case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh|'');; (*) chsh -s $(which zsh);; esac
+
+if command -v nvim >/dev/null 2>&1; then
+  subhighlight "Updating NeoVim Plugins"
+  # TODO pynvim?
+  nvim '+PlugClean!' '+PlugUpgrade' '+PlugUpdate' '+qall'
+fi
+
+subhighlight "Setup kakoune plugin loader"
+cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
+# TODO kakoune research: quit doc buffer, multi cursor, work on line
+
+subhighlight 'Doom Emacs'
+doom sync
+
+case $(uname) in (Darwin) exit 0;; esac
+# LINUX SPECIFIC
+
+link python /usr/bin/python3
+# TODO don't link these prematurely, can lead to installation conflicts
+# may try /usr/local/bin
+# Don't think this is needed anymore though
+link fdfind /usr/bin/fd
+link batcat /usr/bin/bat
+
+SECTION "Linux System (/etc)"
 
 highlight "Sudoers defaults"
 echo 'Defaults	editor=/usr/bin/nvim
@@ -26,101 +115,15 @@ ExecStart=
 ExecStart=-$agetty --skip-login --login-options $USER %I" |
 	sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf /etc/systemd/system/getty@tty2.service.d/override.conf /etc/systemd/system/getty@tty3.service.d/override.conf
 
-highlight "Sysyadm setup"
+highlight "Sysyadm Setup"
 if test -d "/etc/yadm/repo.git/"
 then sy l
 else echo "" | sy clone
 fi
 
-SECTION "Software"
-
-highlight "Cleanup Manjaro Sway Dotfiles"
-rmexist() {
-	for arg
-	do test -e "$arg" && echo -n "$arg: " && rm -rI "$arg"
-	done
-}
-rmexist "$XDG_CONFIG_HOME/nvim/init.lua" "$HOME/.emacs.d/"
-
-highlight "MPD"
-mkdir "${XDG_STATE_HOME}/mpd"
-sudo systemctl enable --now mpd
-mpc update
-
-template() {
-	local dir=$(dirname "$1")
-	local file=${1/.template}
-	test -d "$dir" && ! test -f "$file" &&
-		cp -iv "$1" "$file"
-}
-template "$XDG_CONFIG_HOME/doom/user.template.el"
-template "$XDG_CONFIG_HOME/MuseScore/MuseScore3.template.ini"
-# TODO JOSM
-# TODO audacity
-# TODO puddletag
-
-if command -v nvim >/dev/null 2>&1; then
-  echo "Updating NeoVim Plugins"
-  # TODO pynvim?
-  nvim '+PlugClean!' '+PlugUpgrade' '+PlugUpdate' '+qall'
-fi
-
-link() {
-	test -e "$2" -o -h "$2" || $($HOME/.local/bin/scripts/checkaccess -w "$2" || echo sudo) ln -sv "$@"
-}
-
-mkdir -p "$XDG_CONFIG_HOME/audacity"
-find $HOME -maxdepth 1 -type l -exec file {} + |
-	grep '.local/share' | grep broken |
-	sed 's/.* //' | xargs -r mkdir -p
-
-link python /usr/bin/python3
-# TODO don't link these prematurely, might lead to installation conflicts
-link fdfind /usr/bin/fd
-link batcat /usr/bin/bat
-
-highlight "SSH Permissions"
-chmod og= $HOME/.ssh -R
-test -d "$HOME/.ssh/keys" && chmod a+r $HOME/.ssh/keys/*.pub
-_ovpn="$XDG_DATA_HOME/openvpn"
-test -d "$_ovpn" &&
-	sudo rm -vdf /etc/openvpn/client &&
-	sudo ln -vsf "$_ovpn" /etc/openvpn/client &&
-	sudo chmod -vR ugo-rwx,ug+rX,u+w "$_ovpn" &&
-	sudo chown -vR janek:openvpn "$_ovpn"
-
-highlight "Cron"
-sudo systemctl enable --now cronie
-if test -d "/etc/rsyslog.d"; then
-	echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
-	hasService=$(which service 2>/dev/null)
-	test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
-	test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
-fi
-
-highlight "Zsh"
-test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
-mkdir -p "$(dirname $ZSH)"
-oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" -a -d "$oldzsh" && mv -vn $oldzsh $ZSH
-cloneshallow() {
-	url=https://github.com/$2/$1.git
-	dir="${3:-$ZSH/plugins/$1}"
-	mkdir -p "$(dirname $dir)"
-	if test -d "$dir"
-	then git -C "$dir" remote set-url origin $url
-	else git clone --depth=1 $url "$dir"
-	fi
-}
-cloneshallow oh-my-zsh                  robbyrussell       "$ZSH"
-cloneshallow powerlevel10k              romkatv            "$ZSH/themes/powerlevel10k"
-cloneshallow fast-syntax-highlighting   zdharma-continuum
-cloneshallow zsh-autosuggestions        zsh-users
-cloneshallow zsh-vim-mode               softmoth
-case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh);; (*) chsh -s $(which zsh);; esac
-
-highlight "Arch"
+highlight "Arch Pacman"
 if test -f /etc/pacman.conf; then
-# TODO adjust makepkg.conf to at least half of processor count
+	# TODO adjust makepkg.conf to at least half of processor count - see SPARE_CORES
 	subhighlight "Pacman"
 	sudo sed -i 's/#Parallel/Parallel/;s/#Color/Color/;s/#UseSyslog/UseSyslog/' /etc/pacman.conf
 	sudo sed -i "$(grep -n "\[multilib\]" /etc/pacman.conf | cut -d':' -f1),+1 s/# *//" /etc/pacman.conf
@@ -137,15 +140,41 @@ if test -f /etc/pacman.conf; then
 	fi
 fi
 
+SECTION 'Linux Services'
+
+highlight "Cron"
+sudo systemctl enable --now cronie
+if test -d "/etc/rsyslog.d"; then
+	echo 'cron.*				/var/log/cron.log' | sudo tee /etc/rsyslog.d/60-cron.conf
+	hasService=$(which service 2>/dev/null)
+	test "$hasService" && sudo service rsyslog restart || sudo systemctl restart rsyslog
+	test "$hasService" && sudo service cron reload || sudo systemctl reload cronie
+fi
+
+highlight "SSH Permissions"
+chmod og= $HOME/.ssh -R
+test -d "$HOME/.ssh/keys" && chmod a+r $HOME/.ssh/keys/*.pub
+
+_ovpn="$XDG_DATA_HOME/openvpn"
+test -d "$_ovpn" &&
+	highlight 'OpenVPN Permissions'
+	sudo rm -vdf /etc/openvpn/client &&
+	sudo ln -vsf "$_ovpn" /etc/openvpn/client &&
+	sudo chmod -vR ugo-rwx,ug+rX,u+w "$_ovpn" &&
+	sudo chown -vR janek:openvpn "$_ovpn"
+
 test "$DISPLAY" || exit 0
+
+SECTION "Linux App Setup"
+
+#dasht-docsets-install haskell rails_4 >/dev/null
+
+subhighlight "Enable MPD"
+mkdir "${XDG_STATE_HOME}/mpd"
+sudo systemctl enable --now mpd
+mpc update
+
 highlight "Desktop Applications"
-
-subhighlight "Application symlinks"
-link "$XDG_CONFIG_HOME/bash/aliases.bash" "$HOME/.bashrc"
-link "$HOME/.ssh/config" "$XDG_CONFIG_HOME/ssh"
-link "$XDG_DATA_HOME/.cpan/CPAN/MyConfig.pm" "$XDG_CONFIG_HOME/cpan/MyConfig.pm"
-
-link "$XDG_STATE_HOME/gradle/gradle.properties" "$XDG_CONFIG_HOME/gradle.properties"
 link "$XDG_DATA_HOME/applications/signal-tray.desktop" "$XDG_CONFIG_HOME/autostart/"
 link "/usr/share/applications/stretchly.desktop" "$XDG_CONFIG_HOME/autostart/"
 mx="$HOME/.mixxx"
@@ -153,9 +182,3 @@ if ! test -d "$mx"
 then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* $XDG_CONFIG_HOME/mixxx/*
 fi
 
-subhighlight "Setup kakoune plugin loader"
-cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
-
-touch $HOME/.local/state/wget-hsts
-
-dasht-docsets-install haskell rails_4 >/dev/null

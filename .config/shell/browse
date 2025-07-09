@@ -40,6 +40,7 @@ cd() {
 		dir=$(fd --no-ignore --glob "$1*" "$DATA" "$MNT" --maxdepth 2 --type d --max-results 1 2>/dev/null)
 		test -n "$dir" && cd "$dir"
 	else
+		local LS=$(which gls 2>/dev/null || ls)
 		builtin cd "$@" &&
 		# we have to use two ls commands here, since:
 		# - a single ls command hangs on multi-column formats when combined with color
@@ -47,9 +48,9 @@ cd() {
 		#   column --fillrows --output-width $(expr $COLUMNS + 20)
 		#   pr -4 -l1 -W $COLUMNS -S"  "
 		# TODO test whether still needed with exa
-		command ls --sort=none --quote-name |
+		command $LS --sort=none --quote-name |
 			head -12 |
-			COLUMNS=$(tput cols) xargs $(which exa >/dev/null 2>&1 && echo "exa --list-dirs --icons --reverse" || echo 'ls --format=vertical --literal --classify --directory') --sort=time --color=always -- |
+			COLUMNS=$(tput cols) xargs $(which exa >/dev/null 2>&1 && echo "exa --list-dirs --icons --reverse" || echo "$LS --format=vertical --literal --classify --directory") --sort=time --color=always -- |
 			head -3
 		code=$? && test $code -eq 141 || return $code
 	fi

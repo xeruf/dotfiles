@@ -65,7 +65,7 @@ and configuration for ~less~ and ~fzf~.
 - [[.local/bin/server][bin/server]]-scripts :: a few scripts for use on servers
 
 * Package Setup (moving to [[https://github.com/xeruf/instalee][Instalee]])
-By Size:
+List installed arch packages sorted by size:
 : LC_ALL=C pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
 Copy list of installed packages:
 : pacman -Qe | cut -d\  -f1 | xclip -selection clipboard
@@ -75,6 +75,14 @@ Copy list of installed packages:
   Run ~yadm bootstrap~ again after starting ZSH to finish initialization.
 
 Basic required packages for scripts: diffr fzf
+
+Bootstrapping Steps (tbd):
+- Linking of some bins (debian?)
+- Desktop Applications
+- Linux system config
+
+TODO: Mac EDITOR env is overridden
+
 ** Full Personal Setup
 Manjaro:
 #+begin_src sh

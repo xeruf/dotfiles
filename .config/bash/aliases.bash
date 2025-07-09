@@ -2,16 +2,17 @@ test -n "$PS1" || return 0
 
 which pfetch >/dev/null 2>&1 && pfetch
 
-alias myip='curl -4 ifconfig.me && printf "\n" && curl -6 ifconfig.me'
+alias myip='curl -4 ifconfig.me && printf "\n" && curl -6 ifconfig.me && printf "\n"'
 
 ds() {
 	df -B1M -x tmpfs -x devtmpfs -x squashfs -x overlay "$@" |
-	  grep -v '\b/[^/ ]*/[^/]*/[^/]*$' | # needed for NAS to hide overly long submounts
-	  awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}' |
-	  column -t
+		grep -v '\b/[^/ ]*/[^/]*/[^/]*$' | # needed for NAS to hide overly long submounts
+		awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}' |
+		column -t
 }
-export -f ds
-timeout 1s bash -c ds
+which timeout 2>/dev/null &&
+	export -f ds &&
+	timeout 1s bash -c ds
 
 test $(id -u) -eq 0 || sudo=sudo
 
@@ -78,6 +79,7 @@ status() {
 	fi
 }
 
+# Find and list disks
 alldisks() {
 	{
 	sudo df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
@@ -99,12 +101,12 @@ difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-C
 # Copy recursively with rsync
 alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links --hard-links --times'
 
-export LESS="--RAW-CONTROL-CHARS --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | head -1 | cut -f2 -d' ') -ge 590 && echo --incsearch)"
+export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '\d\+' | head -1) -ge 590 && echo --incsearch)"
 
 # ls aliases
 
 export LS_OPTIONS='--human-readable --si --group-directories-first --dereference-command-line'
-eval "$(dircolors)"
+which dircolors 2>/dev/null && eval "$(dircolors)"
 alias ls='ls --color=auto'
 alias ll='ls $LS_OPTIONS --file-type -l'
 alias la='ll --all'
@@ -135,7 +137,7 @@ alias mv='mv -i'
 
 src() { test -f "$1" && source "$1"; }
 
-case $(readlink /proc/$$/exe) in (*bash)
+case $(readlink /proc/$$/exe) in (*bash|"")
 bind '"\ek":history-search-backward'
 bind '"\ej":history-search-forward'
 
@@ -143,8 +145,8 @@ shopt -oq posix || src /etc/bash_completion
 
 # Fancy prompt
 PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]"
-PS1="$PS1 \`exitcode=\${?}; if test \$exitcode = 0; then printf '\[\033[01;32m\] :)';"
-PS1="$PS1 else printf '\[\033[01;31m\]%3d' \$exitcode; fi\`\[\033[00m\]"
+PS1="${PS1} \`exitcode=\${?}; if test \$exitcode = 0; then printf '\[\033[01;32m\] :)';"
+PS1="${PS1} else printf '\[\033[01;31m\]%3d' \$exitcode; fi\`\[\033[00m\]"
 ;;
 (*zsh) setopt sh_word_split;;
 esac
@@ -152,4 +154,4 @@ esac
 src /usr/share/git/completion/git-prompt.sh && PS1="$PS1\$(__git_ps1 \" (%s)\")"
 src $HOME/.config/shell/functions
 
-PS1="$PS1 \`test \$UID = 0 && printf '#' || printf '$'\` "
+PS1="${PS1} \`test \$UID = 0 && printf '#' || printf '$'\` "

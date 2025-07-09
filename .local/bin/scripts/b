@@ -260,7 +260,7 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags -- "${ls[@]:-.}"
 			elif which exa 2>/dev/null >&2
 			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags -- "${ls[@]:-.}"
-			else ls -lGhFa $flags -- "${ls[@]:-.}"
+			else ls --color=always -lhFa $flags -- "${ls[@]:-.}"
 			# replaced for wider compatibility: else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags -- "${ls[@]:-.}"
 			fi
 		#" || $elevate ls $(test $# -gt ${#ls[@]} && echo "-d") --color=always --human-readable --si --dereference-command-line --all --sort=none $flags -- "${ls[@]:-.}"

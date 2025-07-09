@@ -529,8 +529,8 @@ killm() {
 
 # Files {{{1
 
-if which exa >/dev/null
-then alias l='exa --group-directories-first --icons'
+if which eza >/dev/null
+then alias l='eza --group-directories-first --icons'
 	  alias ll='l --long --git --all'
 else alias l='ls -F'
 	  alias ll='l -lAh'
@@ -563,7 +563,7 @@ alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-r
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
 # https://unix.stackexchange.com/questions/57305/rsync-compare-directories/177946
-# You need to add a / at the end of source but NOT target: rsync -avnc $SOURCE/ $TARGET 
+# You need to add a / at the end of source but NOT target: rsync -avnc $SOURCE/ $TARGET
 alias rdiff='rsync --info=name --recursive --checksum --delete --links --dry-run'
 alias rdiffe='rdiff --existing --size-only'
 

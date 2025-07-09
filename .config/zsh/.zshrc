@@ -5,12 +5,14 @@ if test "$PWD" = "$HOME" && test "$0" != "$SHELL"; then
 	timew | head -3
 fi 2>/dev/null || return 0
 
+ls -F --color=always
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-#fi
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 DEFAULT_USER=$USER
 
@@ -45,7 +47,7 @@ DISABLE_UPDATE_PROMPT=true
 ZSH_DISABLE_COMPFIX=true
 
 # Fallback for fresh systems
-if test -d "$ZSH" 
+if test -d "$ZSH"
 then source $ZSH/oh-my-zsh.sh
 else source $HOME/.zshenv
 fi
@@ -216,5 +218,3 @@ which zoxide >/dev/null &&
 
 source_existing $HOME/.nix-profile/etc/profile.d/nix.sh
 which direnv >/dev/null && eval "$(direnv hook zsh)"
-
-l
