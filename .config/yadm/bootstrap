@@ -9,12 +9,14 @@ link() {
 # So that bootstrapping works right after cloning with the correct env variables
 source "$HOME/.zshenv"
 
+# TODO: Setup instalee
+
 SECTION "Dotfiles Preparation"
 
 highlight "Remove conflicting Manjaro Sway Dotfiles"
 rmexist() {
 	for arg
-	do test -e "$arg" && echo -n "$arg: " && rm -vrI "$arg"
+	do test -e "$arg" && printf "$arg: " && rm -vrI "$arg"
 	done
 }
 rmexist "$XDG_CONFIG_HOME/nvim/init.lua" "$HOME/.emacs.d/"
@@ -80,8 +82,9 @@ subhighlight "Setup kakoune plugin loader"
 cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
 # TODO kakoune research: quit doc buffer, multi cursor, work on line
 
+# TODO first brew install - insert brew bundle? instalee migration from bundle?
 subhighlight 'Doom Emacs'
-doom sync
+git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs && ${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom install
 
 case $(uname) in (Darwin) exit 0;; esac
 # LINUX SPECIFIC
