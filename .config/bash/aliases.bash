@@ -10,9 +10,8 @@ ds() {
 		awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}' |
 		column -t
 }
-which timeout 2>/dev/null &&
-	export -f ds &&
-	timeout 1s bash -c ds
+export -f ds &&
+	timeout 1s bash -c ds 2>/dev/null
 
 test $(id -u) -eq 0 || sudo=sudo
 
@@ -101,21 +100,23 @@ difr() { diff --color=always --unified=1 --recursive "$@" | less --RAW-CONTROL-C
 # Copy recursively with rsync
 alias rc='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable --links --hard-links --times'
 
-export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '\d\+' | head -1) -ge 590 && echo --incsearch)"
+# duplicates section in .zshenv - TODO unify
+export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
 
 # ls aliases
 
 export LS_OPTIONS='--human-readable --si --group-directories-first --dereference-command-line'
-which dircolors 2>/dev/null && eval "$(dircolors)"
+command -v dircolors >/dev/null && eval "$(dircolors)"
 alias ls='ls --color=auto'
 alias ll='ls $LS_OPTIONS --file-type -l'
 alias la='ll --all'
-alias l='ls $LS_OPTIONS --color=always --almost-all'
+alias l='ls $LS_OPTIONS --file-type --color=always --almost-all'
 
 which bat >/dev/null 2>&1 || alias bat="$(which batcat >/dev/null 2>&1 && echo batcat || echo less -FX)"
 b() { test -d "${1:-.}" && l "$@" || bat "$@"; }
 
-alias v="$(which nvim >/dev/null 2>&1 && echo nvim || echo ${EDITOR:-vi})"
+export EDITOR=${EDITOR:-$(which kak || which nvim || which vi)}
+alias v="$(which kak || which nvim || echo ${EDITOR:-vi})"
 alias h=man
 
 # Grep aliases

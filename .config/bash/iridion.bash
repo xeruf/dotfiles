@@ -106,22 +106,30 @@ list() {
   type="$1"
   shift
   if test $# -eq 0 && echo $type | grep -q -- '-domains$'
-  then for user in $(list users)
-       do if test -t 1
-          then echo "[4m$user[0m" && list "$type" "$user"
-          else list "$type" "$user" | sed "s|^|$user |"
-          fi
-       done
-  else if test -t 1
-         then sudo "$HESTIA/bin/v-list-$type" "$@" | column -t
-         else sudo "$HESTIA/bin/v-list-$type" "$@" | tail +3 | $(if test $type = users; then echo "grep -v yes"; else echo cat; fi) | awk '{print $1}'
+  then # list domains for each user if no user specified
+    for user in $(list users)
+    do if test -t 1
+       then echo "[4m$user[0m" && list "$type" "$user"
+       else list "$type" "$user" | sed "s|^|$user |"
        fi
+    done
+  else
+    case "$type" in
+      (*s) if test -t 1
+             then sudo "$HESTIA/bin/v-list-$type" "$@" | column -t
+             else sudo "$HESTIA/bin/v-list-$type" "$@" | tail +3 |
+                 $(if test "$type" = users; then echo "grep -v yes"; else echo cat; fi) | # only list non-suspended users
+                 awk '{print $1}' 
+           fi;;
+      (*) sudo "$HESTIA/bin/v-list-$type" "$@";;
+    esac
   fi
 }
 
 
 ## BILLING scripts for InvoiceNinja
 
+# Invoice for an Iridion customer
 invoice() {
   local prefixes='^(d|dp|xe)'
   if test $# -eq 0
@@ -145,6 +153,7 @@ invoice() {
   local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
 
   echo "Client Name,Invoice Number,Item Quantity,Item Cost,Item Notes,Item Product,Item Discount"
+  echo "Kunde - Name,Rechnung - Nummer,Artikel - Menge,Artikel - Kosten,Artikel - Notizen,Artikel - Rabatt"
   local prefix="$name,DR$(date +%y%m)-$userid,"
   for domain
   do invoiceline "$domain" "$prefix"
@@ -171,6 +180,7 @@ invoiceline() {
   echo "${prefix}2,7,$domain (${date:-${datec:-$(date '+%d.%m.%Y')}} - $(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')),.de-Domain,0"
 }
 
+# Find info on a domain from registrars
 domain() {
   if test $# -eq 0
   then while read -r domain
@@ -206,6 +216,7 @@ domain() {
   done
 }
 
+# Find domains for the user and list basic information
 userdomains() {
   user="$1"
   shift
@@ -240,7 +251,7 @@ userdomains() {
     done | tee "$outfile"
   #CONTACT: for contact in "${!contacts[@]}"; do echo "C $contact"; done
 
-  if test $# -eq 0 
+  if test $# -eq 0
   then
     contacts="$outfile-contacts"
     cat "$outfile" | rev | cut -d\	 -f1 | rev | sort | uniq | grep . > "$contacts"
@@ -254,7 +265,7 @@ userdomains() {
 # Domains of all users plus list from all providers as of last export
 # If arg is provided, only from that domain contact
 domains() {
-  if test $# -gt 0 
+  if test $# -gt 0
   then grep --no-filename "$@" ./portfolio_domains_2025-01-13.csv ./domains.csv |
          cut -d, -f$(case "$1" in (-*) echo '2-3';; (*) echo '1-3,25';; esac) |
          sort | column -s, -t
