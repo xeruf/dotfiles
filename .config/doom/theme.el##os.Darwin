@@ -20,6 +20,11 @@
 ;; `load-theme' function. This is the default:
 
 (setq doom-theme (if (equal (getenv "THEME") "light") 'doom-opera-light 'doom-one)
-      doom-font (font-spec :family "monospace" :size 16 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sans" :size 16)
+      doom-font (font-spec :family "Jetbrains Mono" :size 12 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "Toppan Bunkyu Mincho" :size 12)
       )
+
+; Verdana and Helvetica are too crammed
+; Georgia is decent
+; Toppan Bunkyu Mincho not too bad
+; Gotu very airy but very shuffly in org mode
