@@ -1,0 +1,9 @@
+@import "/usr/share/sway/templates/waybar/style.css";
+
+#custom-scratchpad,
+#custom-menu,
+#workspaces button.focused,
+#clock {
+    background-color: #aaa;
+    /** background-color: @theme_selected_bg_color; */
+}
