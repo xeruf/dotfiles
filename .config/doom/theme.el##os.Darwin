@@ -27,4 +27,13 @@
 ; Verdana and Helvetica are too crammed
 ; Georgia is decent
 ; Toppan Bunkyu Mincho not too bad
-; Gotu very airy but very shuffly in org mode
+; Gotu very airy but shuffly in org mode
+
+;(use-package pdf-tools
+; :ensure t
+; :defer 5
+; :config
+; (setenv "PKG_CONFIG_PATH" "/opt/homebrew/Cellar/pkgconf/2.5.1/lib/pkgconfig:/usr/local/Cellar/poppler/25.07.0/lib/pkgconfig")
+; (pdf-tools-install)
+; (custom-set-variables
+;  '(pdf-tools-handle-upgrades t)))

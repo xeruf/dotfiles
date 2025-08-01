@@ -592,7 +592,7 @@ Version 2019-11-04 2021-02-16"
 
     (setq org-roam-db-update-on-save nil
           org-roam-extract-new-file-path "${slug}.org"
-          +org-roam-auto-backlinks-buffer t)
+          +org-roam-auto-backlinks-buffer nil) ; TODO t)
     (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
     (setq xf/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
@@ -735,26 +735,27 @@ Version 2019-11-04 2021-02-16"
     (add-to-list 'org-latex-default-packages-alist "\\PassOptionsToPackage{colorlinks=true,urlcolor=blue,allcolors=blue}{hyperref}")
 
     ;;(setq org-latex-toc-command "\\tableofcontents*\n\n")
-    (setq org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+    (setq ;org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
           org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
           org-latex-src-block-backend 'minted
           org-latex-default-class "article4"
          org-latex-hyperref-template "\\hypersetup{\n pdfauthor={%a},\n pdftitle={%t},\n pdfkeywords={%k},pdfsubject={%d},\n pdfcreator={%c},\n pdflang={%L},\n colorlinks=true,\n urlcolor=blue,\n citecolor=green,\n linktocpage}\n")
     (add-to-list 'org-latex-classes
-         '("article4" "\\documentclass{article} \\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
+         '("article4" "\\documentclass{article}\n\\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
             ("\\section{%s}" . "\\section*{%s}")
             ("\\subsection{%s}" . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
             ("\\paragraph{%s}" . "\\paragraph*{%s}")
             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
     (add-to-list 'org-latex-classes
-         '("shortreport" "\\documentclass[oneside]{memoir} \\chapterstyle{article}"
+         '("shortreport" "\\documentclass[oneside]{memoir}\n\\chapterstyle{article}"
             ("\\chapter{%s}" . "\\chapter*{%s}")
             ("\\section{%s}" . "\\section*{%s}")
             ("\\subsection{%s}" . "\\subsection*{%s}")
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
             ("\\paragraph{%s}" . "\\paragraph*{%s}")
             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
     )
 
 ;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
