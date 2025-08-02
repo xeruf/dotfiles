@@ -104,7 +104,7 @@ export EDITOR="$(
 export IHP_EDITOR="$BIN/scripts/emacs-line"
 
 export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
-export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '\d\+' | head -1) -ge 590 && echo --incsearch)"
+export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"

@@ -40,7 +40,7 @@ cd() {
 		dir=$(fd --no-ignore --glob "$1*" "$DATA" "$MNT" --maxdepth 2 --type d --max-results 1 2>/dev/null)
 		test -n "$dir" && cd "$dir"
 	else
-		local LS=$(which gls 2>/dev/null || ls)
+		local LS=$(command -v gls 2>/dev/null || echo ls)
 		builtin cd "$@" &&
 		# we have to use two ls commands here, since:
 		# - a single ls command hangs on multi-column formats when combined with color
