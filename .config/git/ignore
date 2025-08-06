@@ -1,3 +1,37 @@
+# macOS
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# General
+*.log
+npm-debug.log*
+.vscode/
+*.pyc
+
+# Templates
+*.example
+
+# Logs
+*.log
+*.log.*
+*.bak
+*~
+
+# Build
+.idea/**/gradle.xml
+.idea/**/libraries
+.gradle/
+build/
+out/
+
+cache/
+*_build/
+cmake*build*/
+__pycache__/
+node_modules/
+
+
 # IDEA
 ## User-specific files
 .idea/**/workspace.xml
@@ -25,25 +59,3 @@
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
-
-# Build
-.idea/**/gradle.xml
-.idea/**/libraries
-.gradle/
-build/
-out/
-
-cache/
-*_build/
-cmake*build*/
-__pycache__/
-node_modules/
-
-# Templates
-*.example
-
-# Logs
-*.log
-*.log.*
-*.bak
-*~
