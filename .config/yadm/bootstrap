@@ -58,7 +58,7 @@ mkdir -p "$(dirname $ZSH)"
 oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" -a -d "$oldzsh" && mv -vn $oldzsh $ZSH
 cloneshallow() {
 	url=https://github.com/$2/$1.git
-	dir="${3:-$ZSH/plugins/$1}"
+	dir="${3:-$ZSH/custom/plugins/$1}"
 	mkdir -p "$(dirname $dir)"
 	if test -d "$dir"
 	then git -C "$dir" remote set-url origin $url
@@ -70,6 +70,7 @@ cloneshallow powerlevel10k              romkatv            "$ZSH/themes/powerlev
 cloneshallow fast-syntax-highlighting   zdharma-continuum
 cloneshallow zsh-autosuggestions        zsh-users
 cloneshallow zsh-vim-mode               softmoth
+cloneshallow zsh-history-filter         MichaelAquilina
 case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh|'');; (*) chsh -s $(which zsh);; esac
 
 if command -v nvim >/dev/null 2>&1; then

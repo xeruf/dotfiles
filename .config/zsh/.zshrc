@@ -38,7 +38,12 @@ plugins=(
 	fast-syntax-highlighting
 	zsh-vim-mode
 	history-substring-search
+	zsh-history-filter
 )
+
+zsh_filter_tug=(dHVn c2V4 cG9ybg== cGFuaw==)
+for i in {1..${#zsh_filter_tug[@]}}; do HISTORY_FILTER_EXCLUDE[i]=$(printf %s "${zsh_filter_tug[i]}" | base64 -d); done
+HISTORY_FILTER_EXCLUDE+=()
 
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
 fpath=($fpath "$CONFIG_ZSH/completion") # Custom completions
@@ -198,12 +203,11 @@ source_existing() {
 	done
 }
 
- # To customize p10k prompt, run `p10k configure` or edit .p10k.zsh.
+#  To customize p10k prompt, run `p10k configure` or edit .p10k.zsh.
 source $CONFIG_ZSH/.p10k.zsh
 source $CONFIG_ZSH/aichat.zsh
 for file in $(find "$CONFIG_ZSH" -name '*.zsh')
-do #echo "sourcing $file"
-   #	. $file
+do #echo "sourcing $file" #	. $file
 done
 source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 
