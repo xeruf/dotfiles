@@ -3,10 +3,9 @@
 # If the first arg is "add", files are staged rather than committed.
 # All remaining args are passed to the last git command (add or commit).
 # TODO fix broken prep-commit-msg hook when there is no unifying path
-# TODO fix broken alt-enter not opening editor --bind='alt-enter:change-prompt(hi>)'
 
 # using bash because of pipefail
-set -exo pipefail
+set -eo pipefail
 
 fzfpipe() {
 	# Take nul-separated input from git-status short/porcelain
