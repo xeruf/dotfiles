@@ -556,9 +556,9 @@ alias rcn='rsync -v --recursive --human-readable --links --dry-run'
 rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }
 compdef rcd=rsync
 # TODO do not sync times to FAT
-alias rc='rcs --safe-links --hard-links --times'
-alias rcu='rc --existing --size-only'
-alias rcr='rcs --compress --size-only --times'
+alias rc='rcs --safe-links --hard-links --times' 
+alias rcu='rc --existing --size-only' # Only update files
+alias rcr='rcs --partial --verbose --compress --size-only --times' # Compressed
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'

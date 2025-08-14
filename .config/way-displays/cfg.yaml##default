@@ -41,6 +41,8 @@ SCALE:
     SCALE: 2
   - NAME_DESC: 'LG Ultra' # Home 4k
     SCALE: 2
+  - NAME_DESC: 'GIGA-BYTE' # Home BIG
+    SCALE: 1.5
   #- NAME_DESC: 'BOE' # Framework internal
   #  SCALE: 2
 
