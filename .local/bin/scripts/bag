@@ -1,10 +1,10 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 # Backup linux system and user files with borg
 # Usage: bag [-n] [--dry-run] [--home] [--root MOUNTED_ROOT]
 root="/"
 args="--progress --stats"
 # TODO proper ssh handling with local root access
-case $BORG_REPO in (*:*) run=borg;; esac
+# case $BORG_REPO in (*:*) run=borg;; esac
 while test $# -gt 0; do
   case "$1" in
     (-n) run="arg-test"; shift;;
@@ -21,7 +21,7 @@ name="::$(test -n "$name" && echo "$name" || cat /etc/hostname)_${1:-system}_$(d
 echo "Backing up as $name"
 # TODO ignore electron caches
 ${run:-sudo --preserve-env=BORG_REPO BORG_PASSPHRASE="$($BORG_PASSCOMMAND)" borg} create --exclude-caches $args \
-  $(echo $DIRS_IGNORE_SAFE -x .snapshot-2411 -x .snapshot -x .snapshots -x 'software-challenge/**/build' -x state/emacs -x state/go -x .local/lib -x .cpan -x *cache -x $HOME/.gem |
+  $(echo $DIRS_IGNORE_SAFE -x .snapshot-2411 -x .snapshot -x .snapshots -x 'software-challenge/**/build' -x state/emacs -x state/go -x .local/lib -x .cpan -x *cache -x .gem |
     sed 's|-x \([^ ]\+\)|-e sh:**/\1|g') \
   "$name" $(test $# -eq 0 && echo etc $HOME root || test $# -eq 1 && echo $1) "${@:2}"  2>&1
 test -n "$run" || sudo chown -R $USER:$USER "$BORG_REPO"

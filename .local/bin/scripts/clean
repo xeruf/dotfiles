@@ -62,7 +62,7 @@ if [[ $1 =~ "d" ]]; then
 		-print -exec rm $i -r {} + -prune
 	echo -n "  " && highlight "build directories"
 	find \( -name ".git" -o -path "*/mixxx/build" -o -name "app" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
-		-prune -o -name "build" -type d \
+		-prune -o \( -name "build" -o -name "target" \) -type d \
 		-print -exec rm -rI {} + -prune
 	# TODO consider gitignore / use git clean
 fi

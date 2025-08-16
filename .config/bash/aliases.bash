@@ -6,7 +6,7 @@ alias myip='curl -4 ifconfig.me && printf "\n" && curl -6 ifconfig.me && printf 
 
 ds() {
 	df -B1M -x tmpfs -x devtmpfs -x squashfs -x overlay "$@" |
-		grep -v '\b/[^/ ]*/[^/]*/[^/]*$' | # needed for NAS to hide overly long submounts
+		{ test "$(df | wc -l)" -gt 100 && grep -v '\b/[^/ ]*/[^/]*/[^/]*$' || cat; } | # needed for NAS to hide overly long submounts
 		awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}' |
 		column -t
 }
