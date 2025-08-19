@@ -5,41 +5,4 @@
 (setq user-full-name "Janek"
       user-mail-address "27jf@pm.me")
 
-(setq git-commit-summary-max-length 70)
-
-(let ((box (expand-file-name "2-box/" user-data-dir)))
-  (if (file-exists-p box)
-      (setq org-directory box
-            org-roam-directory org-directory
-            ))
-  )
-(setq org-attach-id-dir (expand-file-name "3-dox/attach" user-data-dir))
-(if (and org-directory (file-exists-p org-directory))
-    (progn
-      (if (file-equal-p command-line-default-directory "~")
-          (setq default-directory org-directory))
-      (setq org-agenda-files (append
-                             ;(directory-files-recursively (expand-file-name "project/" org-directory) ".org\\'")
-                             ;(list (expand-file-name "inbox/"))
-                             (list (expand-file-name "agenda/"))
-                             (directory-files-recursively (expand-file-name "uni/" org-directory) ".org\\'")
-                            ))
-    ))
-
-(defun list-non-hidden-directories (directory)
-  "List all non-hidden subdirectories in DIRECTORY and return them as a list."
-  (let ((dir-list (directory-files directory t))
-        (directories '()))
-    (dolist (file dir-list directories)
-      (when (and (file-directory-p file)                   ; Check if it's a directory
-                 (not (string-prefix-p "." (file-name-nondirectory file))))  ; Check if it's not hidden
-        (setq directories (cons file directories))))))
-
-(use-package! recentf
-  :config
-    (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (add-to-list 'recentf-list (expand-file-name "5-incubator/download/" user-data-dir))
-    (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
-    (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
-    (recentf-cleanup)
-  )
+(setq org-attach-id-dir (expand-file-name "nextcloud/3-dox/attach" user-data-dir))

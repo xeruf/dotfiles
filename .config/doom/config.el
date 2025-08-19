@@ -225,18 +225,55 @@ Version 2019-11-04 2021-02-16"
 
 ;;;; Directory configuration
 
-(defvar user-data-dir (if (file-exists-p "~/data/") "~/data" "/home/data") "Location of the main user data")
+(defvar user-data-dir (if (file-exists-p "~/IT/data/") "~/IT/data" "~/data") "Location of encrypted data disk")
 
 (load! "./user.el" nil t)
 (load! "./local.el" nil t)
 (load! "./theme.el" nil t)
 
 (setq backup-directory-alist (list (cons "." (concat doom-cache-dir "backup/")))
-      custom-emacs-data-dir (expand-file-name "data" doom-private-dir))
+      custom-emacs-data-dir (expand-file-name "data" doom-user-dir))
+
+(let ((box (expand-file-name "2-box/" user-data-dir)))
+  (if (file-exists-p box)
+      (setq org-directory box
+            org-roam-directory org-directory
+            ))
+  )
+(if (and org-directory (file-exists-p org-directory))
+    (progn
+      (if (file-equal-p command-line-default-directory "~")
+          (setq default-directory org-directory))
+      (setq org-agenda-files (append
+                             (list (expand-file-name "agenda/"))
+                             ;(list (expand-file-name "inbox/"))
+                             ;(directory-files-recursively (expand-file-name "project/" org-directory) ".org\\'")
+                            ))
+    ))
+
+(defun list-non-hidden-directories (directory)
+  "List all non-hidden subdirectories in DIRECTORY and return them as a list."
+  (let ((dir-list (directory-files directory t))
+        (directories '()))
+    (dolist (file dir-list directories)
+      (when (and (file-directory-p file)                   ; Check if it's a directory
+                 (not (string-prefix-p "." (file-name-nondirectory file))))  ; Check if it's not hidden
+        (setq directories (cons file directories))))))
+
+(use-package! recentf
+  :config
+    (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
+    (add-to-list 'recentf-list (expand-file-name "5-incubator/download/" user-data-dir))
+    (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
+    (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
+    (recentf-cleanup)
+  )
 
 (use-package! projectile
   :init
-    (projectile-add-known-project (expand-file-name "4-media/" user-data-dir))
+    (projectile-add-known-project doom-user-dir)
+    (let ((media-dir (expand-file-name "4-media/" user-data-dir)))
+      (if (file-exists-p media-dir) (projectile-add-known-project media-dir))
     (after! org
       (projectile-add-known-project org-directory)
       (projectile-register-project-type 'org '(".orgids"))
@@ -245,7 +282,11 @@ Version 2019-11-04 2021-02-16"
     :config
       (add-to-list 'projectile-project-root-files "README.org")
       (add-to-list 'projectile-project-root-files ".orgids")
-  )
+      (add-to-list 'projectile-project-root-files ".gitignore")
+  ))
+
+
+;;;; Miscellaneous Config
 
 (setq time-stamp-bare "%Y-%m-%d"
       time-stamp-format (concat "[" time-stamp-bare "]"))
@@ -570,7 +611,7 @@ Version 2019-11-04 2021-02-16"
       (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
 
     ;(if (file-exists-p org-journal-dir) (xf/survey-mode))
-    ; TODO journal at start (call-interactively 'org-journal-new-entry)
+    ; open journal at launch (call-interactively 'org-journal-new-entry)
   )
 
 ;; FIXME can I combine defer and after?
@@ -1167,7 +1208,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (use-package! magit
   :defer t
   :config
-    (setq git-commit-summary-max-length 60
+    (setq git-commit-summary-max-length 70
           magit-clone-set-remote.pushDefault 't
           magit-clone-default-directory (expand-file-name "1-projects" user-data-dir)
           magit-blame--style (car magit-blame-styles))
