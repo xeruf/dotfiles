@@ -58,9 +58,9 @@ cd() {
 alias cdr='cd $(git root)'
 
 # LOCATE {{{1
-# TODO no double heading with bat
+# Select and show file / folder from list
 alias fselect='fzf -0 -1 --reverse --height=40% --keep-right |
-	  while read f; do test -d "$f" && cd "$f" || { highlight "$f" && print -s b \"$f\" && b "$f"; }; done';
+	  while read f; do test -d "$f" && cd "$f" || { print -s b "\"$f\"" && b "$f"; }; done';
 loci() {
 	locate --all --ignore-case --basename --existing "$@" |
 		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') |
