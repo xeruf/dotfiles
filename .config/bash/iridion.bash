@@ -149,20 +149,30 @@ invoice() {
   for username in "$userid" "dp$userid" "xe$userid"
   do userinfo="$(hestia v-list-user "$username")" && break
   done
-  local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2)
+  local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | sed 's/^ *//')
   local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
 
-  echo "Client Name,Invoice Number,Item Quantity,Item Cost,Item Notes,Item Product,Item Discount"
-  echo "Kunde - Name,Rechnung - Nummer,Artikel - Menge,Artikel - Kosten,Artikel - Notizen,Artikel - Rabatt"
-  local prefix="$name,DR$(date +%y%m)-$userid,"
+  echo "Client Name;Invoice Number;Item Quantity;Item Cost;Item Notes;Item Product;Item Discount"
+  #echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
+  local prefix="$name;DR$(date +%y%m)-$userid;"
   for domain
   do invoiceline "$domain" "$prefix"
   done
   for domain in $(list dns-domains "$username")
   do invoiceline "$domain" "$prefix"
   done
-  echo "${prefix}12,9,Januar 2025 - Dezember 2025,Webpaket $package,20"
-  # TODO recurring, batch
+
+  if test -n "$package"
+  then 
+    local price
+    case "$package" in
+      (alpha) price=4,5;;
+      (beta) price=9;;
+      (gamma) price=18;;
+    esac
+    echo "${prefix}12;$price;Januar 2025 - Dezember 2025;Webpaket $package;20"
+  fi
+  # TODO recurring + batch
 }
 
 increment_day() {
@@ -173,11 +183,27 @@ invoiceline() {
   local domain=$1
   local prefix=$2
 
-  date=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/' | increment_day)
-  datec=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
-  renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
+  local date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/' | increment_day)
+  local date_created=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
+  local renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
+
+  local date_billed_fut=$(date -d "$(echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}') +2 year -1 day" '+%d.%m.%Y')
+  local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
+  local date_fut="${date_billed_fut}$(test "$renew_fut" = "$date_billed_fut" || echo " [${renew_fut}]")"
   
-  echo "${prefix}2,7,$domain (${date:-${datec:-$(date '+%d.%m.%Y')}} - $(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')),.de-Domain,0"
+  local price
+  local suffix=${domain#*.}
+  case "$suffix" in
+    (de) price='7,85';;
+    (eu) price='13,85';;
+    (net|name|org|com|at|it|ch|us|cc) price='19,85';;
+    (me|nl|nexus) price='28,82';;
+    (blog) price='48,84';;
+    (online|house|group|digital) price='58,85';;
+    (coach) price='98,89';;
+  esac
+
+  echo "${prefix}2;$price;$domain (${date_billed:-${date_created:-$(date '+%d.%m.%Y')}} - ${date_fut});.$suffix-Domain;0"
 }
 
 # Find info on a domain from registrars
@@ -196,8 +222,8 @@ domain() {
   for domain; do
     domain=$(echo "$domain" | rev | cut -d. -f-2 | rev)
 
-    date=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/')
-    datec=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
+    date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/')
+    date_created=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
     contact=$(grep ",$domain," domains.csv | cut -d, -f3 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f25)
     renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
     iddomain="$(idn2 "$domain")"
@@ -211,8 +237,8 @@ domain() {
     if test "$color" || test -t 1
     then styling="[${style}m [0m"
     fi
-    printf "%s${dns:-	}	${dnsa:-	}	${date:-C$datec}	${renew:-	}	$domain	$contact%s\n" $styling
-    #echo "[${style}m${dns:-	}	$(timeout .3s dig +short A "$iddomain" | head -1 | grep . || echo "	")	${date:-C$datec}	${renew:-	}	$domain	$contact[0m"
+    printf "%s${dns:-	}	${dnsa:-	}	${date_billed:-C$date_created}	${renew:-	}	$domain	$contact%s\n" $styling
+    #echo "[${style}m${dns:-	}	$(timeout .3s dig +short A "$iddomain" | head -1 | grep . || echo "	")	${date_billed:-C$date_created}	${renew:-	}	$domain	$contact[0m"
   done
 }
 
