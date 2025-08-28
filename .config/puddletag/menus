@@ -1,6 +1,6 @@
 {
   "info": {
-    "version": "30"
+    "version": "33"
   }, 
   "shortcuts": {
     "__dirpath/album/track": "Alt+Meta+1"
@@ -17,7 +17,6 @@
       "&Play", 
       "separator", 
       "&Delete", 
-      "Delete &Without Confirmation", 
       "separator", 
       "&Refresh", 
       "Refresh &Selected", 
