@@ -5,12 +5,12 @@
 
 
 # Arrange displays in a ROW (default, left to right) or a COLUMN (top to bottom)
-#ARRANGE: COLUMN
-ARRANGE: ROW
+ARRANGE: COLUMN
 
 # Align ROWs at the TOP (default), MIDDLE or BOTTOM
 # Align COLUMNs at the LEFT (default), MIDDLE or RIGHT
-ALIGN: MIDDLE
+#ALIGN: MIDDLE
+#ALIGN: BOTTOM
 
 
 # The default ORDER is simply the order in which the displays are discovered.
@@ -20,8 +20,9 @@ ORDER:
   - 'LOEWE'
   - 'DP-4' # left port
   - 'VFV'
-  - 'BOE' #internal
   - 'DP-3'
+  - 'DP-2' # right port adapter
+  - 'BOE' #internal
   - 'DP-1' # right port
 
 # The default is to scale each display by DPI.
@@ -38,6 +39,8 @@ SCALE:
     SCALE: 1
   - NAME_DESC: 'LOEWE' # CODE Big
     SCALE: 2
+  - NAME_DESC: 'LG Ultra' # Home 4k
+    SCALE: 2
   #- NAME_DESC: 'BOE' # Framework internal
   #  SCALE: 2
 
@@ -46,15 +49,15 @@ SCALE:
 # for a possible workaround.
 MODE:
     # Resolution and refresh
-    #- NAME_DESC: HDMI-A-1
-    #  WIDTH: 1920
-    #  HEIGHT: 1080
-    #  HZ: 60
+    - NAME_DESC: BOE
+      WIDTH: 2560
+      HEIGHT: 1600
+      HZ: 60.002
 
-    # Resolution with highest refresh
-    #- NAME_DESC: 'monitor description'
-    #  WIDTH: 2560
-    #  HEIGHT: 1440
+    - NAME_DESC: '5K'
+      WIDTH: 3440
+      HEIGHT: 1440
+      HZ: 30
 
     # Highest available
     #- NAME_DESC: DP-2
@@ -66,10 +69,11 @@ MODE:
 
 
 # One of: ERROR, WARNING, INFO (default), DEBUG
-LOG_THRESHOLD: INFO
-
+LOG_THRESHOLD: DEBUG
 
 # Disable the specified displays.
-DISABLED:
-  #- "eDP-1"
+#DISABLED:
+#  - "eDP-1"
 
+#VRR_OFF:
+#  - DP-4
