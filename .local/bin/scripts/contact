@@ -1,19 +1,23 @@
 #!/bin/sh -e
 # Process raw contact data into a vcard and save it to nextcloud
 echo "Finish input with Ctrl-D" >&2
-inputfile=/tmp/aichat-contact
+inputfile=/tmp/aichat-contact-$(date +%s)
 cat >"$inputfile"
 
 while test "$accept" != "y"
 do printf "\nProcessing...\n" >&2
    vcard="$(aichat --role carddav <"$inputfile")"
    echo "$vcard"
-   printf "Accept? ([y]es/[n]o/[c]ancel) " >&2
+   printf 'Accept? ([y]es/[n]o/[a]mend/[c]ancel) ' >&2
    read -r accept
-   test "$accept" != "c" || exit $?
+   test "$accept" != 'c' || exit $?
+   test "$accept" = 'a' && cat >>"$inputfile"
 done
-uid=$(echo "$vcard" | grep UID | grep --only-matching '[-0-9a-fx]\{36\}')
 echo
+
+uid=$(echo "$vcard" | grep UID | grep --only-matching '[-0-9a-fx]\{36\}')
+dir="$XDG_DATA_HOME/contacts"
+test -d "$dir" && echo "$vcard">"$dir/$uid.vcf"
 
 ncfields=$(pass show service/nextcloud)
 ncfield() {

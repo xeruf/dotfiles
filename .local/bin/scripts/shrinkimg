@@ -8,6 +8,7 @@ while true
 		(-q) quality="$2"; shift;;
 		(x*) resolution="$1"; resize="-resize $resolution";;
 		(-v) set -x;;
+		(-png) format=png;;
 		(*) break;;
 	esac
 	shift
@@ -24,7 +25,7 @@ if test -n "$out"
 then process "$out" "$@"
 else
 	for arg
-	do process "${arg}${resolution:--shrinked}.jpeg" "$arg"
+	do process "${arg}${resolution:--shrinked}.${format:-jpeg}" "$arg"
 	done
 fi
 printf "Shrinked $1(%s) to $out(%s) - reduced to %s%%\n" \

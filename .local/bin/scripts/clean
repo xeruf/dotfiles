@@ -5,8 +5,8 @@
 typeset -A _clean_map
 _clean_map=([h]=$XDG_CACHE_HOME [t]=/var/tmp [l]=/var/log [v]=/var/cache)
 # TODO .mix - outdated version in socha
-_clean_home=(.ant .autopsy .bundle .cargo .cpanm .docker .stack .hex .nix-defexpr .parallel .surf .pub-cache
-			 #.cache
+_clean_home=(.ant .autopsy .bundle .cpanm .docker .stack .hex .nix-defexpr .parallel .surf .pub-cache
+			 #.cache .cargo
              .yarn .node_modules .npm .pnpm-store .node-gyp .nv .electron .electron-gyp
 			 .gradle .gradle-kotlin-dsl .java .kscript .konan .m2 .openjfx
              .log luametatex-cache luatex-cache .texlive
@@ -78,7 +78,7 @@ highlight "c :: clean electron caches"
 
 highlight "o :: optimize space extensively"
 if [[ $1 =~ "o" ]]; then
-	sudo find /root/.cache $XDG_CACHE_HOME /var/cache /var/log /var/tmp -not -name CACHEDIR.TAG -mindepth 1 -maxdepth 2 -atime +2 -exec rm -r {} + -prune
+	sudo find /root/.cache $XDG_CACHE_HOME /var/cache /var/log /var/tmp -mindepth 1 -maxdepth 2 -not -name CACHEDIR.TAG -atime +9 -exec rm -r {} + -prune
 
 	if test -f "/var/log/apt/history.log"; then
 		aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
@@ -90,8 +90,9 @@ if [[ $1 =~ "o" ]]; then
 
 	sudo rm -rf "$XDG_DATA_HOME/baloo"
 	# https://www.cyberciti.biz/faq/delete-remove-orphaned-unused-packages-arch-linux-pacman-command/
-	which pacman &>/dev/null &&
-		pacman -Qqdt | sudo pacman -Rsu -
+	# Does not work anymore
+	#which pacman &>/dev/null &&
+	#	pacman -Qqdt | sudo pacman -Rsu -
 	which yay &>/dev/null &&
 		yay -Sc --noconfirm
 	nix-collect-garbage -d 2>/dev/null &&

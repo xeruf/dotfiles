@@ -1,0 +1,4 @@
+#!/bin/sh -e
+# Restart Swaylock from TTY
+pkill swaylock
+WAYLAND_DISPLAY=wayland-1 swaylock
