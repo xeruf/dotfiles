@@ -10,9 +10,8 @@ encrypt: false
 highlight: true
 indent_character: '|'
 journals:
-  default: ~/data/2-box/journal/jrnl.txt
-  tug: ~/data/2-box/journal/tug.txt
-  intentions: ~/data/2-box/journal/intentions.txt
+  default: ~/data/2-box/journal/jrnl.jrnl
+  nug: ~/data/2-box/journal/nug.jrnl
 linewrap: 99
 tagsymbols: '@'
 template: false

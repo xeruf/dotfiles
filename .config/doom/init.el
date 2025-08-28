@@ -34,7 +34,6 @@
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       ;;hydra
        indent-guides     ; highlighted indent columns
        ligatures         ; ligatures and symbols to make your code pretty again
        minimap           ; show a map of the code on the side
@@ -86,7 +85,7 @@
 
        :tools
        ;;ansible
-       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       debugger
        direnv
        docker
        editorconfig      ; let someone else argue about tabs vs spaces
@@ -99,8 +98,6 @@
        make              ; run make tasks from Emacs
        pass              ; password manager for nerds
        pdf               ; pdf enhancements
-       ;;prodigy         ; FIXME managing external services & code builders
-       ;;rgb             ; creating color strings
        ;;taskrunner      ; taskrunner for all your projects
        ;;terraform       ; infrastructure as code
        ;;tmux            ; an API for interacting with tmux

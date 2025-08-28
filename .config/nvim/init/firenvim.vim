@@ -21,6 +21,7 @@ let g:firenvim_config = {
     \ '://wiki\..*':                         { 'priority': 9, 'takeover': 'never', },
     \ '.*openstreetmap\.org.*':              { 'priority': 9, 'takeover': 'once', },
     \ '.*openstreetmap\.de.*':               { 'priority': 9, 'takeover': 'once', },
+    \ '.*leonardo\.ai.*':                    { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*mail.*':                            { 'priority': 9, 'takeover': 'once', },
     \ '.*church\.tools.*':                   { 'priority': 9, 'takeover': 'empty', },
@@ -39,6 +40,7 @@ let g:firenvim_config = {
     \ '.*contacts\.google\.com.*':           { 'priority': 9, 'takeover': 'never', },
     \ '.*cloud\.atomtoast\.xyz.*':           { 'priority': 9, 'takeover': 'never', },
     \ '://notion\.so.*':                     { 'priority': 9, 'takeover': 'never', },
+    \ '://www.notion\.so.*':                     { 'priority': 9, 'takeover': 'never', },
     \ '://bbb\..*':                          { 'priority': 9, 'takeover': 'never', },
     \ '://bigbluebutton.*':                  { 'priority': 9, 'takeover': 'never', },
     \ '://dhall-lang.org.*':                 { 'priority': 9, 'takeover': 'never', },
