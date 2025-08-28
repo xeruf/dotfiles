@@ -5,9 +5,10 @@ which pfetch >/dev/null 2>&1 && pfetch
 alias myip='curl -4 ifconfig.me && printf "\n" && curl -6 ifconfig.me'
 
 ds() {
-	df -B1M -x tmpfs -x devtmpfs -x squashfs -x overlay |
-	  grep -v '\b/[^/ ]*/[^/]*/[^/]*$' |
-	  awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}';
+	df -B1M -x tmpfs -x devtmpfs -x squashfs -x overlay "$@" |
+	  grep -v '\b/[^/ ]*/[^/]*/[^/]*$' | # needed for NAS to hide overly long submounts
+	  awk -v a="\033[31m" -v b="\033[33m" -v c="\033[35m" -v n="\033[0m" 'NR==1 {printf "%-20s %6s %7s %9s %s\n",$1,$5,$3,$4,$6} NR>1 {u=$5; printf (u > 98) ? a : (u > 96) ? b : (u > 90) ? c : ""; printf "%-20s %6s %6.1fG %8.1fG %s\n",$1,$5,$3/1024,$4/1024,$6; printf n}' |
+	  column -t
 }
 export -f ds
 timeout 1s bash -c ds
@@ -44,10 +45,12 @@ xtrace () {
 highlight() { echo; echo "[4m$1[0m"; }
 status() {
 	highlight 'System'
-	df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
+	ds -T
+	#df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
 	zfs list -d 0 2>/dev/null
 	free -h
-	sudo certbot certificates 2>/dev/null
+	$sudo certbot certificates 2>/dev/null
+	test $? -eq 1 && local sudo=""
 
 	highlight 'Internet'
     #--color=always
@@ -61,15 +64,21 @@ status() {
 	$sudo systemctl --no-pager list-units --failed --no-legend || service --status-all
 	echo '== WEBSERVER'
 	{ sudo lsof -i :443 || sudo lsof -i :80; } | head -4
+	sudo lsof -i :22
 	echo
 	if type docker &>/dev/null
 	then
 	  echo '== DOCKER'
-	  $sudo docker ps || $sudo systemctl status docker
+	  $sudo docker ps -n 6 || $sudo systemctl status docker
+	fi
+	if type kubectl &>/dev/null
+	then
+	  echo '== KUBERNETES NODE'
+	  sudo -E kubectl get nodes -o wide
 	fi
 }
 
-disks() {
+alldisks() {
 	{
 	sudo df -h -T --exclude-type=tmpfs --exclude-type=devtmpfs --exclude-type=squashfs --exclude-type=overlay
 	sudo blkid
