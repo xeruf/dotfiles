@@ -8,7 +8,7 @@ export_existing() {
 export_existing DATA $HOME/daten $HOME/data
 export MUSIC="$DATA/4-media/music"
 
-export BORG_REPO='admin@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
+export BORG_REPO='janek@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
 export BORG_PASSCOMMAND='pass service/device/borg/backup'
 
 # xdg
@@ -40,6 +40,7 @@ export WINEPREFIX="$XDG_DATA_HOME"/wine
 
  ## Development tools
 export GOPATH="$XDG_STATE_HOME"/go
+export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
 export KREW_ROOT="$XDG_DATA_HOME"/krew
 
 export CARGO_HOME="$XDG_STATE_HOME"/cargo
@@ -63,6 +64,8 @@ export RBENV_ROOT="$XDG_STATE_HOME"/rbenv
 
 export R_LIBS="$XDG_STATE_HOME"/R/lib
 
+export FVM_CACHE_PATH="$XDG_DATA_HOME"/fvm
+
  # Java & Android
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GRADLE_USER_HOME="$XDG_STATE_HOME"/gradle
@@ -83,7 +86,8 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 
 # environment
 BIN="$HOME/.local/bin"
-export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:$XDG_DATA_HOME/gem/ruby/3.0.0/bin:$HOME/.rvm/bin"
+ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin | head -1)"
+export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:$ruby_bins:$HOME/.rvm/bin"
 export ALTERNATE_EDITOR="$(
 	if which nvim >/dev/null
 	then echo nvim
@@ -103,7 +107,7 @@ export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(t
  # -x 'System Volume Information'
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
 export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .dtrash -x .pyenv -x .local/cache -x .config/DeltaChat -x .config/discord -x .config/Slack -x .config/syncthing -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
-export DIRS_IGNORE="-x .archive -x .sync -x .stfolder -x *build -x .git -x .idea -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
+export DIRS_IGNORE="-x .archive -x .sync -x .stfolder -x *build -x .git -x .idea* -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
@@ -159,6 +163,6 @@ export CARGO_BUILD_JOBS=${SPARE_CORES}
 # TODO move to proper place - is also called when firenvim starts
 #autolight
 #export TZ='Europe/Dublin'
-export TZ='Africa/Nairobi'
+#export TZ='Africa/Nairobi'
 
 export CONTEST_NETWORK=lan-restricted-dev
