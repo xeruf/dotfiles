@@ -46,11 +46,12 @@ stack() {
 		;;
 	(activate)
 		test -d "$STACKSPIN" && . "$STACKSPIN/env/bin/activate"
+		test $# -gt 0 && "$cmdname" select "$@"
 		;;
 	(setup) # https://docs.stackspin.net/en/latest/installation/install_cli.html
 		cd "$STACKSPIN" &&
 		python3 -m venv env &&
-		"$0" activate
+		"$cmdname" activate
 		;;
 	(override)
 		cd "$STACKSPIN/../stackspout/overrides"
@@ -80,7 +81,7 @@ data:
 		fi;;
 	(user|app)
 		if test "$1" = "init"
-		then test $# -gt 2 || { echo "$0 $command $1 MAIL NAME"; return 2; }
+		then test $# -gt 2 || { echo "Usage: $cmdname $command $1 MAIL NAME"; return 2; }
 			mail="$2"
 			shift 2
 			"$cmdname" user create "$mail" &&
@@ -90,7 +91,7 @@ data:
 		fi;;
 	(invite) (
 		# Mail invitation to new users
-		test $# -gt 0 || { printf "$0 $command MAIL [NAME] [TEMPLATE]\nName can be omitted if mail is firstname.lastname@domain\n"; return 2; };
+		test $# -gt 0 || { printf "Usage: $cmdname $command MAIL [NAME] [TEMPLATE]\nName can be omitted if mail is firstname.lastname@domain\n"; return 2; };
 		export mail=$1
 		export name=${2:-$(echo $mail | sed -E 's/(.*)\.(.*)@.*/\u\1 \u\2/' )}
 		#echo "$mail,$name"
@@ -117,21 +118,22 @@ data:
 		esac
 		;;
 	(reconcile)
-		app=$1
-		namespace=${2:-stackspout}
-		if flux suspend helmrelease -n $namespace $app
-		then flux resume helmrelease -n $namespace $app
-		else flux suspend helmrelease -n stackspin-apps $app
-			 flux resume helmrelease -n stackspin-apps $app
+		local app=$1
+		local namespace=${2:-stackspout}
+		shift $(expr $# \& $# \< 2 \| 2)
+		if flux suspend helmrelease -n $namespace $app "$@"
+		then flux resume helmrelease -n $namespace $app "$@"
+		else flux suspend helmrelease -n stackspin-apps $app "$@"
+			 flux resume helmrelease -n stackspin-apps $app "$@"
 		fi
-	    flux suspend kustomization $app
-	    flux resume kustomization $app
+	    flux suspend kustomization $app "$@"
+	    flux resume kustomization $app "$@"
 		;;
 	(edit)
 		# Edit the URL for an application
-		app=$1
+		local app=$1
 		kubectl edit configmap -n flux-system stackspin-$app-kustomization-variables
-		"$0" reconcile $app
+		"$cmdname" reconcile $app
 		;;
 	# Velero
 	(restic)
@@ -150,20 +152,20 @@ data:
 		if test $# -gt 0
 		then velero "$@"
 		else
-		backupname=$(date +%y%m%d.%H%m)
+		local backupname=$(date +%y%m%d.%H%m)
 		velero create backup $backupname --exclude-namespaces velero --wait
 		velero backup logs $backupname
 		fi;;
 	(restore)
 		if test $# -lt 2
-		then echo "$0 $command <backup> <app> [namespace]"
-			 echo "Recent Backups:"
+		then echo "Usage: $cmdname $command <backup> <app> [namespace]"
+			 echo "Recent Completed Backups:"
 			 velero backup get | grep Completed | awk '{print $5 "\t" $1}' | sort -r | head -9
 			 return 1
 		fi
-		backup=$1; app=$2
-		namespace=${3:-stackspin-apps} # TODO automatically handle stackspout apps
-		restore="${backup}-$app-$(date +%s)"
+		local backup=$1; app=$2
+		local namespace=${3:-stackspin-apps} # TODO automatically handle stackspout apps
+		local restore="${backup}-$app-$(date +%s)"
 		if test "$app" = dashboard
 		then kust=single-sign-on
 			hr="$kust-database"
@@ -173,12 +175,17 @@ data:
 		fi
 		flux suspend kustomization $kust
 		flux suspend helmrelease -n $namespace $hr
+		(
+		test $# -gt 3 && shift 3 || shift $#
+		set -e
 		kubectl delete all -n $namespace -l stackspin.net/backupSet=$app
 		kubectl delete secret -n $namespace -l stackspin.net/backupSet=$app
 		kubectl delete configmap -n $namespace -l stackspin.net/backupSet=$app
 		kubectl delete pvc -n $namespace -l stackspin.net/backupSet=$app
-		velero restore create $restore --from-backup=$backup -l stackspin.net/backupSet=$app
-		echo "Waiting a few seconds for $app backup to restore..."
+		echo "Creating $app velero restore..."
+		velero restore create "$restore" --from-backup=$backup --selector stackspin.net/backupSet=$app --existing-resource-policy update "$@"
+		velero restore create "$restore-secrets" --from-backup=$backup --include-resources Secret --selector kustomize.toolkit.fluxcd.io/name=$app-secrets --existing-resource-policy update
+		echo "Waiting a few seconds for $app backup restore to start..."
 		sleep 10
 		local readresult
 		while test -z "$readresult"
@@ -187,13 +194,16 @@ data:
 		   read readresult
 		done
 		test $app = dashboard &&
+			"$cmdname" mariar stackspin-database hydra -e 'DELETE FROM hydra_client;' &&
 			kubectl delete secret -n stackspin hydra &&
 			flux reconcile helmrelease -n stackspin hydra
+		)
 		flux resume helmrelease -n $namespace $hr # TODO timeout
 		flux resume kustomization $kust
 		;;
 	(restore-pvc)
-		test $# -lt 1 && echo "$0 $command <app> [dir]" >&2 && return 1
+		# Restore PVC for app from local directory
+		test $# -lt 1 && echo "Usage: $cmdname $command <app> [dir]" >&2 && return 1
 		local app=$1
 		if test -d "$2"
 		then dir="$2"
@@ -209,23 +219,38 @@ data:
 		;;
 	# KUBE
 	# app clis
+	(nc-apps)
+		"$cmdname" reconcile nextcloud stackspin-apps --timeout 2m
+		kubectl get -n stackspin-apps configmap nc-setup-apps -o jsonpath='{.data.setup-apps\.sh}' | kubectl exec -i -n $(kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep nextcloud) -- /bin/bash
+		;;
 	(occ) "$cmdname" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
 	(zulip) "$cmdname" exec zulip -- su zulip -c "/home/zulip/deployments/current/scripts/$* || /home/zulip/deployments/current/manage.py $*";;
 	(vikunja*)
 		local pod=$command
+		poddir="$(basename "$CLUSTER_DIR"):$(kubectl describe pv -n stackspout | grep _$pod-files | awk '{print $2}')"
 		case "$1" in
 		(dump|export) cd "$PROJECTS/vikunja"
-			"$cmdname" exec "$pod-api" -- \
-				sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$pod-dump_$(date +%F).zip"
+			filename="$pod-dump_$(date +%F).zip"
+			if ! "$cmdname" exec "$pod-api" -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$filename"
+			then "$cmdname" exec "$pod" -- ./vikunja dump -p /app/vikunja/files &&
+				scp "$poddir/*.zip" "$filename"
+			fi &&
+			(
+				cur="$PWD/${filename}"
+				cd "$(mktemp -d --suffix=_$filename)"
+				unzip "$cur"
+				zip "${cur}_noconfig.zip" VERSION .env database/*
+			)
 			;;
 		(restore)
-			if ! test -f "$2"
-			then echo "Usage: $0 vikunja[suffix] restore <file>" >&2
-				 return 2
-			fi
 			file=$2
-			"$cmdname" upload "$pod-api" "$file"
-			"$cmdname" exec "$pod-api" -it -- ./vikunja restore "$file"
+			if ! test -f "$file"
+			then echo "Usage: $cmdname vikunja[suffix] restore <file>" >&2
+			else
+				scp "$file" "$poddir/"
+				#"$cmdname" upload "$pod" "$file"
+			fi
+			"$cmdname" exec "$pod" -it -- ./vikunja restore "/app/vikunja/files/$(basename $file)"
 			;;
 		(psql)
 			kubectl exec -it -n $("$cmdname" pod "$pod-postgresql") -- \
@@ -248,7 +273,8 @@ data:
 		    ;;
 		(exec) command="$2"
 		    shift 2
-		    kubectl exec -it -n $("$cmdname" pod "$app-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $app-postgresql -o jsonpath='{.data.password}' | base64 --decode) $command -h localhost -U $app -p 5432 $*"
+			echo '\\du+ (users)   \\l (databases, then \\c DATABASE)   \\dt (tables, then \\d+ TABLE)'
+		    kubectl exec -it -n $("$cmdname" pod "$app-postgresql") -- sh -c "PGPASSWORD=$(kubectl get secret --namespace stackspout $app-postgresql -o jsonpath='{.data.password}' | base64 --decode) $command -h localhost -U $(echo $app | cut -d- -f1) -p 5432 $*"
 		    ;;
 		(*)
             "$cmdname" psql "$app" exec psql "$@"
@@ -263,23 +289,42 @@ data:
 			(wordpress) n=wordpress-database;;
 			(*) n=$app-mariadb;;
 		esac
-		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u $app "$@"
+		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u "$app" "$@"
 		;;
 	(mariar)
-		name="$1-mariadb"
+		local app="$1"
 		shift
-		pod="$(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | grep --color=never -- "$name")" &&
-		"$cmdname" exec "$name" -it -- env "MYSQL_PWD=$(kubectl get secret -n $pod -o jsonpath='{.data.mariadb-root-password}' | base64 -d)" mysql -u root "$@"
+		kubesecret="$(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | command grep -- " $app")" ||
+			{ echo "Cannot find database pod"; return 2; }
+		local db=${kubesecret##*-}
+		local databasepod="$app-$db"
+		local mysql_pwd="$(kubectl get secret -n $kubesecret -o "jsonpath={.data.${db}-root-password}" | base64 -d)"
+		local execline="$cmdname exec $databasepod -it -- env MYSQL_PWD=$mysql_pwd"
+		if test "$1" = dump
+		then
+			dumpfile="$(date +%y%m%d)_${databasepod}"
+			echo "Dumping into $dumpfile..."
+			$execline mysqldump --extended-insert=FALSE -u root --all-databases >"${dumpfile}.sql"
+			$execline mysqldump --no-data -u root --all-databases >"${dumpfile}_schema.sql"
+		else echo "MySQL Reference --- SHOW databases; USE <db>; SHOW tables; DESC <table>;"
+			$execline mysql --silent -u root "${@:-${app%-database}}"
+		fi
 		;;
 	# high-level
+	(all)
+		case $1 in (-*);; (*) args="-A -l stackspin.net/backupSet=$1";; esac
+		kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get -o custom-columns=KIND:.kind,NS:.metadata.namespace,NAME:.metadata.name,AGE:.metadata.creationTimestamp --no-headers ${args:-$@}
+		;;
 	(list)
-		flux get all | grep "$1"
-		kubectl get all -A | grep "$1";;
+		flux get all | grep --color=never "$1"
+		kubectl get all -A --no-headers | grep --color=never "$1"
+		;;
 	(shell)
 		local container=$1
 		shift
 		test "$1" = "-c" && pod=$2 && shift 2
-		"$cmdname" exec "$container" -c "$pod" -it -- /bin/sh "$@";;
+		"$cmdname" exec "$container" -c "$pod" -it -- /bin/sh "$@"
+		;;
 	(ls)
 		if test $# -gt 1 && ! [[ "$2" =~ ".*/.*" ]]
 		then "$cmdname" exec "$1" "$2" "$3" -it -- ls -lAhF --group-directories-first "${@:4}"
@@ -292,33 +337,44 @@ data:
 		kubectl cp "$2" -n $("$cmdname" pod "$1$pod_suffix"):$2 "${@:3}"
 		"$cmdname" ls "$1" "${@:3}";;
 	(exec) "$cmdname" kube exec "$@";;
-	(logs) test $# -gt 0 || { echo "$0 $command <pod> [lnav-args...]"; return; }
-		podname="$1"
+	(logs) test $# -gt 0 || { echo "$cmdname $command <pod> [lnav-args...]"; return; }
+		podname="$1" || return $?
 		shift
-		"$cmdname" kube logs "$podname" -f | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@";;
+		"$cmdname" kube logs "$podname" -f | $(command which ${LOGPAGER:-lnav} || { which bat >/dev/null && echo "bat --number -l toml" } || echo 'less -RF') "$@" ||
+			kubectl describe pod -n $("$cmdname" pod "$podname" --field-selector='')
+		;;
 	# low-level
 	(kube)
-		test $# -gt 1 || { echo "Please provide a command and pod name" >&2 && return 1; }
-		local pods=$("$cmdname" pod "$2$pod_suffix") || { echo "No pod found for $2" >&2 && return 1; }
+		test $# -gt 1 || { echo "Please provide a command and pod name" >&2; return 1; }
+		local pods="$("$cmdname" pod "$2$pod_suffix")"
+		test -n "$pods" || return $?
 		local subcommand=$1
 		shift 2
 		local commands=()
 		for arg
 		do case "$arg" in (-*) break;; (*) commands+="$arg"; shift;; esac
 		done
-		namespacedpod="$pods"
-		#while IFS= read -r namespacedpod; do
+		if test $(echo "$pods" | wc -l) -gt 1
+		then
+			for namespacedpod in "${(f)pods}"
+			do  test "$subcommand" = get ||
+					highlight "Running $subcommand on $namespacedpod" >&2
+				kubectl "$subcommand" "${commands[@]}" -n $namespacedpod "$@"
+			done
+		else
+			namespacedpod="$pods"
 			test "$subcommand" = get ||
 				highlight "Running $subcommand on $namespacedpod" >&2
 			kubectl "$subcommand" "${commands[@]}" -n $namespacedpod "$@"
-		#done <<< "$pods"
+		fi
 		;;
 	(pod)
 		test $# -gt 0 && local podname=$1 && shift
 		if ! kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep --color=never -- "$podname"
-		then code=$?
-			echo "No pod found for $podname" >&2
-			return $code
+		then
+			code=$?
+			echo "No running pod found for $podname" >&2
+			return $(expr $code \| 1)
 		fi
 		;;
 	(clean-pods)
@@ -327,6 +383,13 @@ data:
 			awk '{print "--namespace=" $1 " " $2}' |
 			xargs -L 1 kubectl delete pod;;
 	# stackspin bare
+	(upgrade)
+		"$cmdname" backup
+		git switch v2
+		git pull upstream v2
+		git push
+		flux resume source git stackspin
+		;;
 	(*) if which "$cmdname-$command" >/dev/null 2>&1
 		then "$cmdname-$command" "$@"
 			return $?
@@ -338,12 +401,12 @@ data:
 			case "$1" in
 			([a-z]*)
 				for arg
-				do kubectl exec -n stackspin deploy/dashboard -c backend -- flask cli app install "$arg"
+				do kubectl exec -n stackspin deploy/dashboard-backend -- flask cli app install "$arg"
 				done;;
 			(""|-*)
-				python3 -m pip install --upgrade pip
-				python3 -m pip install -r requirements.txt
-				python3 -m stackspin "$@" "$_cluster_name" "$command"
+				python -m pip install --upgrade pip
+				python -m pip install -r requirements.txt
+				python -m stackspin "$@" "${_cluster_name}" "$command"
 				cp -nv "install/.flux.env.example" "clusters/$_cluster_name/.flux.env" &&
 					$EDITOR "clusters/$_cluster_name/.flux.env"
 				cp -nv install/kustomization.yaml $CLUSTER_DIR/
@@ -351,7 +414,8 @@ data:
 				kubectl apply -k $CLUSTER_DIR
 
 				ssh "root@${_cluster_name}" mkdir /etc/nftables.d
-				ssh "root@${_cluster_name}" echo 'tcp dport { 2222 } counter accept' | tee /etc/nftables.d/ssh.nft
+				ssh "root@${_cluster_name}" "echo 'tcp dport { 2222 } counter accept' | tee /etc/nftables.d/ssh.nft"
+				ssh "root@${_cluster_name}" "echo 'udp dport { 22222 } counter accept' | tee /etc/nftables.d/mosh.nft"
 
 				./install/install-stackspin.sh
 				;;
@@ -364,6 +428,7 @@ data:
 cat "$_stackspin_cluster_cache" 2>/dev/null |
 	while read cluster; do stack select "$cluster"; done
 
+
 test -z "$DISPLAY" && test "$XDG_VTNR" != 1 || return 0
 # The following runs only on headless machines
 
@@ -371,8 +436,6 @@ which kubectl >/dev/null ||
 	{ kubectl() { sudo k3s kubectl "$@"; } && export -f kubectl; }
 
 export PATH="$PATH:$HOME/.local/bin/server"
-
-test -d "$MUSIC" || export MUSIC="/srv/funkwhale/data/music/janek"
 
 test -f "$HOME/.rvm/scripts/rvm" &&
 	source "$HOME/.rvm/scripts/rvm" && # Load RVM into a shell session *as a function*
