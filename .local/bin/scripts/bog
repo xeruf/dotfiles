@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 # Simple backup with borg
 if test $# -eq 0
 then echo "To backup: bog [prefix_] folder"
@@ -7,7 +7,7 @@ then echo "To backup: bog [prefix_] folder"
 fi
 while test $# -gt 0; do
 	case "$1" in
-		(mount) moul backup >/dev/null 2>&1
+		(mount) #moul backup >/dev/null 2>&1
 			cd /mnt/backup
 			mkdir -p backups
 			borg mount borg backups

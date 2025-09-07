@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/sh -e
 # Put system to sleep after specified number of seconds
 # If used in a pipe, put a command into /tmp/save to override
-mpc pause || mpdr
+mpc pause || mpdr || true
 $(which timer || sleep) "${@:-30}"
 # TODO delay in case I happen to still be on PC - use idle?
 $(cat /tmp/save 2>/dev/null) || systemctl suspend

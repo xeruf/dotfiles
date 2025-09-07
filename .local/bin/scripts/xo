@@ -4,6 +4,7 @@
 while test $# -gt 0; do
 	case $1 in
 		(*.epub) okular "$1" &;;
+		(*.html) xdg-open "$(realpath "$1")";;
 		(*) xdg-open "$(case "$1" in (-*) echo './';; esac)$1";;
 	esac
 	shift
