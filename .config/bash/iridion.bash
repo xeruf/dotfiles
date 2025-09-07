@@ -8,10 +8,12 @@ goto() {
   cd "$dir"
 }
 
+# logs for specific domain or current dir
 logs() {
   if test $# -eq 0
   then
-    lnav $(pwd | cut -d '/' -f1-5)/{logs,document_errors}
+    lnav $(pwd | cut -d '/' -f1-5)/{logs,document_errors} ||
+      echo 'Provide domain name to find logs!'
   else
     for site in $(find /home -maxdepth 3 -name "*$1*")
     do cd $site
@@ -119,7 +121,7 @@ list() {
              then sudo "$HESTIA/bin/v-list-$type" "$@" | column -t
              else sudo "$HESTIA/bin/v-list-$type" "$@" | tail +3 |
                  $(if test "$type" = users; then echo "grep -v yes"; else echo cat; fi) | # only list non-suspended users
-                 awk '{print $1}' 
+                 awk '{print $1}'
            fi;;
       (*) sudo "$HESTIA/bin/v-list-$type" "$@";;
     esac
@@ -163,7 +165,7 @@ invoice() {
   done
 
   if test -n "$package"
-  then 
+  then
     local price
     case "$package" in
       (alpha) price=4,5;;
@@ -207,11 +209,12 @@ invoiceline() {
 }
 
 # Find info on a domain from registrars
-domain() {
+domaininfo() {
   if test $# -eq 0
-  then while read -r domain
+  then echo 'Provide domains as args or via stdin, reading from stdin...' >&2
+       while read -r domain
        do test -n "$domain" || break
-          domain "$domain"
+          $FUNCNAME "$domain"
        done
        return $?
   fi
@@ -257,7 +260,7 @@ userdomains() {
   if test $# -gt 0
   then
     for domain
-    do test "$domain" && domain "$domain"
+    do test "$domain" && domaininfo "$domain"
     done
     color="--color"
   fi
@@ -269,7 +272,7 @@ userdomains() {
         then #echo "Ignoring invalid DNS-Domain $domain" >&2
              continue
         fi
-        domain $color "$domain"
+        domaininfo $color "$domain"
         #CONTACT: contact=$(grep ",$domain," domains.csv | cut -d, -f3 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f25)
         #CONTACT: if test -n "$contact" && [[ -z "${contacts["$contact"]}" ]]
         #CONTACT: then contacts["$contact"]="$contact"
@@ -308,7 +311,7 @@ domains() {
   else echo "VAUTRON"
   fi
   for domain in $(cut -d, -f2 domains.csv)
-  do domain "$domain"
+  do domaininfo "$domain"
   done
 
   echo
@@ -317,6 +320,6 @@ domains() {
   else echo "AUTODNS"
   fi
   for domain in $(cut -d, -f2 portfolio_domains_2025-01-13.csv)
-  do domain "$domain"
+  do domaininfo "$domain"
   done
 }
