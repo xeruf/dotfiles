@@ -289,7 +289,9 @@ Version 2019-11-04 2021-02-16"
 ;;;; Miscellaneous Config
 
 (setq time-stamp-bare "%Y-%m-%d"
-      time-stamp-format (concat "[" time-stamp-bare "]"))
+      time-stamp-format (concat "[" time-stamp-bare "]")
+      time-stamp-full (concat "[" time-stamp-bare " %a %H:%M]")
+      )
 ;; Automatically add modified stamp - https://github.com/org-roam/org-roam/issues/1935#issuecomment-968047007
 (use-package! time-stamp
   :init (setq time-stamp-start "modified:[	 ]+\\\\?"
@@ -310,7 +312,7 @@ Version 2019-11-04 2021-02-16"
          ("C-c b" . org-cycle-list-bullet)
          ("C-c ." . org-time-stamp-inactive)
          ("C-c C-." . org-time-stamp)
-         ("C-c C-;" . (lambda () (interactive) (let ((time-stamp-format (concat "[" time-stamp-bare " %a %H:%M]"))) (call-interactively 'org-time-stamp))))
+         ("C-c C-;" . (lambda () (interactive) (let ((time-stamp-format time-stamp-full)) (call-interactively 'org-time-stamp))))
          ("M-C-+" . org-timestamp-up)
          ("M-C--" . org-timestamp-down)
         )
@@ -363,14 +365,13 @@ Version 2019-11-04 2021-02-16"
         :desc "High Priority" "pa" (lambda () (interactive) (org-priority "A"))
         :desc "Set ID property" "lI" (lambda () (interactive)
               ;; Check out https://github.com/novoid/dot-emacs/blob/master/config.org#my-id-get-or-generate
-              ; TODO trim trailing dash
+              ; TODO trim trailing dash if there are symbols at the end
               (org-set-property "ID"
                 (let ((heading (org-get-heading t t t t)))
                   (if heading (org-read-property-value "ID" nil (xf/slugify heading)) (file-name-sans-extension (file-name-nondirectory buffer-file-name)))
                 ))
-              ; TODO insert current date timestamp
-              ;(or (org-entry-get nil "CREATED") (org-set-property "CREATED" (org-read-date)))
-              ;(or (org-entry-get nil "MODIFIED") (org-set-property "MODIFIED" (org-read-date)))
+              (or (org-entry-get nil "CREATED") (org-set-property "CREATED" (format-time-string time-stamp-full)))
+              (or (org-entry-get nil "MODIFIED") (org-set-property "MODIFIED" (format-time-string time-stamp-full)))
               )
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
