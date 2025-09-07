@@ -16,8 +16,12 @@ ARRANGE: COLUMN
 # The default ORDER is simply the order in which the displays are discovered.
 # Define your own.
 ORDER:
+  # Bayreuth screens
+  - '000269C4'
+  - '00008795'
+  # Others
   - 'C24F390'
-  - 'LOEWE'
+  - 'LOEWE' # CODE Big
   - 'DP-4' # left port
   - 'VFV'
   - 'DP-3'
@@ -39,12 +43,16 @@ SCALE:
     SCALE: 1
   - NAME_DESC: 'LOEWE' # CODE Big
     SCALE: 2
+  - NAME_DESC: 'GIGA-BYTE' # Home Big
+    SCALE: 1.5
   - NAME_DESC: 'LG Ultra' # Home 4k
     SCALE: 2
   - NAME_DESC: 'GIGA-BYTE' # Home BIG
     SCALE: 1.5
   #- NAME_DESC: 'BOE' # Framework internal
   #  SCALE: 2
+  - NAME_DESC: 'BOE' # Framework internal
+    SCALE: 1
 
 # Override the preferred mode.
 # WARNING: this may result in an unusable display. See https://github.com/alex-courtis/way-displays#known-issues-with-workarounds
@@ -64,6 +72,12 @@ MODE:
     # Highest available
     #- NAME_DESC: DP-2
     #  MAX: TRUE
+
+# Rotate or translate the display.
+# 90, 180, 270, FLIPPED, FLIPPED-90, FLIPPED-180, FLIPPED-270
+TRANSFORM:
+   - NAME_DESC: '000269C4'
+     TRANSFORM: 270
 
 # Laptop displays usually start with eDP e.g. eDP-1. This may be overridden if
 # your laptop is different.

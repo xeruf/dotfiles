@@ -8,7 +8,7 @@ pre_sudo = true
 #assume_yes = ["emacs"]
 
 # Disable specific steps - same options as the command line flag
-disable = ["containers", "config_update", "poetry", "auto_cpufreq"]
+disable = ["containers", "config_update", "poetry", "auto_cpufreq", "flatpak", "firmware"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
@@ -59,7 +59,7 @@ repos = [
 [linux]
 # Arguments to pass yay when updating packages
 #qt*,
-yay_arguments = "--diffmenu=false --overwrite /usr/lib/node_modules/node-gyp/**,/usr/lib/node_modules/npm/**,/usr/lib/**,/usr/include/** --ignore ggml-git,bitmask-vpn,linux,zoom,zulip*,webcord*,brave*,android-studio*,clion*,intellij-idea-*,webstorm*,rubymine*,rustrover*,slack*,texlive-full,jdk,*openjfx,invoiceninja*"
+yay_arguments = "--diffmenu=false --overwrite /usr/lib/node_modules/node-gyp/**,/usr/lib/node_modules/npm/**,/usr/lib/**,/usr/include/** --ignore ggml-git,bitmask-vpn,linux,zoom,zulip*,webcord*,android-studio*,clion*,intellij-idea-*,webstorm*,rubymine*,rustrover*,slack*,texlive-full,jdk,*openjfx,invoiceninja*"
 #trizen_arguments = "--devel"
 #enable_tlmgr = true
 #emerge_sync_flags = "-q"

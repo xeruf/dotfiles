@@ -21,18 +21,17 @@ let g:firenvim_config = {
     \ '://wiki\..*':                         { 'priority': 9, 'takeover': 'never', },
     \ '.*openstreetmap\.org.*':              { 'priority': 9, 'takeover': 'once', },
     \ '.*openstreetmap\.de.*':               { 'priority': 9, 'takeover': 'once', },
-    \ '.*leonardo\.ai.*':                    { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*mail.*':                            { 'priority': 9, 'takeover': 'once', },
     \ '.*church\.tools.*':                   { 'priority': 9, 'takeover': 'empty', },
     \ '.*element\.io.*':                     { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*discord\.com.*':                    { 'priority': 9, 'takeover': 'never', },
-    \ '://chat\..*':                         { 'priority': 9, 'takeover': 'never', },
     \ '.*twitter\.com.*':                    { 'priority': 9, 'takeover': 'never', },
+    \ '://chat\..*':                         { 'priority': 9, 'takeover': 'never', },
+    \ '.*leonardo\.ai.*':                    { 'priority': 9, 'takeover': 'never', },
+    \ '.*perplexity\.ai.*':                    { 'priority': 9, 'takeover': 'never', },
     \
-    \ '://pve.*':                            { 'priority': 9, 'takeover': 'never', },
-    \ '://46.*':                             { 'priority': 9, 'takeover': 'never', },
     \ '.*:8006/.*':                          { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*calendar\.google\.com.*':           { 'priority': 9, 'takeover': 'empty', },
