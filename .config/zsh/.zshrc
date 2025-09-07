@@ -41,7 +41,7 @@ plugins=(
 	zsh-history-filter
 )
 
-zsh_filter_tug=(dHVn c2V4 cG9ybg cGFuaw bnVkZQ ZGFtc2Vs Z2lybA)
+zsh_filter_tug=(dHVn c2V4 cG9ybg cGFuaw bnVkZQ ZGFtc2Vs Z2lybA Ym91bmQK)
 for i in {1..${#zsh_filter_tug[@]}}; do HISTORY_FILTER_EXCLUDE[i]=$(printf %s "${zsh_filter_tug[i]}" | base64 -d); done
 HISTORY_FILTER_EXCLUDE+=()
 # After adjustment: rewrite_history

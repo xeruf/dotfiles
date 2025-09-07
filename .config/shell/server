@@ -219,7 +219,7 @@ data:
 		;;
 	# KUBE
 	# app clis
-	(nc-apps)
+	(nc-apps) # run nc-setup-apps job manually
 		"$cmdname" reconcile nextcloud stackspin-apps --timeout 2m
 		kubectl get -n stackspin-apps configmap nc-setup-apps -o jsonpath='{.data.setup-apps\.sh}' | kubectl exec -i -n $(kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep nextcloud) -- /bin/bash
 		;;
@@ -258,7 +258,7 @@ data:
 		(*) echo "Unknown $command subcommand: dump, restore, psql";;
 		esac
 		;;
-	(psql)
+	(psql) # Vikunja, Zulip
 		local app=$1
 		shift
 		case "$1" in
@@ -280,13 +280,14 @@ data:
             "$cmdname" psql "$app" exec psql "$@"
 			;;
 		esac;;
-	(maria)
+	(maria) # single-sign-on
 		local app=$1
 		local pw="$(kubectl get secret -n flux-system stackspin-$app-variables --template '{{.data.mariadb_password}}' | base64 -d 2>/dev/null ||
 			kubectl get secret -n flux-system stackspin-$app-variables --template "{{.data.${app}_mariadb_password}}" | base64 -d)"
 		case $app in
 			(nextcloud) n=nc-mariadb;;
 			(wordpress) n=wordpress-database;;
+			(dashboard|sso|stackspin) n=stackspin-database-mysql;;
 			(*) n=$app-mariadb;;
 		esac
 		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u "$app" "$@"
@@ -294,7 +295,7 @@ data:
 	(mariar)
 		local app="$1"
 		shift
-		kubesecret="$(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | command grep -- " $app")" ||
+		kubesecret="$(kubectl get secret --all-namespaces -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers | command grep -- " ${1:-$app}")" ||
 			{ echo "Cannot find database pod"; return 2; }
 		local db=${kubesecret##*-}
 		local databasepod="$app-$db"
@@ -430,7 +431,7 @@ cat "$_stackspin_cluster_cache" 2>/dev/null |
 
 
 # Run following code only on headless machines
-test -z "$DISPLAY" && test "$XDG_VTNR" != 1 && ! pgrep -qx "SystemUIServer" || return 0
+test -z "$DISPLAY" && test "$XDG_VTNR" != 1 && ! pgrep -x "SystemUIServer" >/dev/null || return 0
 
 which kubectl >/dev/null ||
 	{ kubectl() { sudo k3s kubectl "$@"; } && export -f kubectl; }
