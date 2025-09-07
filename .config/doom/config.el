@@ -263,8 +263,11 @@ Version 2019-11-04 2021-02-16"
 (use-package! recentf
   :config
     (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (add-to-list 'recentf-list (expand-file-name "5-incubator/download/" user-data-dir))
-    (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
+    (setq recentf-list (append (list-non-hidden-directories user-data-dir)
+                               recentf-list
+                               (list-non-hidden-directories (expand-file-name "5-incubator/" user-data-dir))
+                               )
+          )
     (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
     (recentf-cleanup)
   )
@@ -1034,6 +1037,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_SHELLS") "\\.config/shell"). sh-mode))
 (add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_ZSH") "\\.config/zsh") . sh-mode))
 (add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
+(add-to-list 'auto-mode-alist `("\\.config/yadm/bootstrap" . sh-mode))
 
 ;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 ;(add-hook 'twee-chapbook-mode-hook 'twee-mode)

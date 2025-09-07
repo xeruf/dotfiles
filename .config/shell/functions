@@ -35,12 +35,11 @@ alias xdh="cd $XDG_DATA_HOME"
 alias xch="cd $XDG_CONFIG_HOME"
 alias xsh="cd $XDG_STATE_HOME"
 if test -d "$DATA"; then
-	da=$(builtin cd $DATA/_* && pwd)
-	d1=$(builtin cd $DATA/1* && pwd)
-	d2=$(builtin cd $DATA/2* && pwd)
-	d3=$(builtin cd $DATA/3* && pwd)
-	d4=$(builtin cd $DATA/4* && pwd)
-	d5=$(builtin cd $DATA/5* && pwd)
+	d1=$(find "$DATA" -maxdepth 1 -type d -name "1*")
+	d2=$(find "$DATA" -maxdepth 1 -type d -name "2*")
+	d3=$(find "$DATA" -maxdepth 2 -type d -name "3*")
+	d4=$(find "$DATA" -maxdepth 1 -type d -name "4*")
+	d5=$(find "$DATA" -maxdepth 1 -type d -name "5*")
 fi 2>/dev/null
 
 ulimit -c unlimited # Enable core dumps
@@ -344,7 +343,7 @@ sshl() {
 	lemonade server -allow 127.0.0.1 &
 	local authcache="/var/tmp/ssh-keys"
 	mkdir -p "$authcache"
-	local file="$authcache/$1"
+	local authcachefile="$authcache/$1"
 	ssh -G "$1" | grep --silent "^user root$" &&
 		! [[ "$1" =~ "pve.*" ]] &&
 		! [[ "$1" =~ "encee.*" ]] &&
@@ -361,12 +360,12 @@ sshl() {
 	if test -n "$pass"
 	then pass ssh "$@"
 	else
-		test ! -e "$file" &&
+		test ! -e "$authcachefile" &&
 			ssh-copy-id -i "$(ssh -G "$1" |
 				grep --max-count 1 "^identityfile " |
 				cut -d " " -f2- |
 				sed "s|^~|$HOME|")" "$@" &&
-			touch "$file"
+			touch "$authcachefile"
 		#TERM=xterm-256color
 		sshk -R 2489:127.0.0.1:2489 "$@"
 	fi
