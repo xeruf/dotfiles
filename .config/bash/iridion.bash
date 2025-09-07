@@ -155,7 +155,7 @@ invoice() {
   local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
 
   echo "Client Name;Invoice Number;Item Quantity;Item Cost;Item Notes;Item Product;Item Discount"
-  #echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
+  # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
   local prefix="$name;DR$(date +%y%m)-$userid;"
   for domain
   do invoiceline "$domain" "$prefix"

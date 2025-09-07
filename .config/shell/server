@@ -115,6 +115,7 @@ data:
 			flux reconcile -n flux-system kustomization velero
 			flux get -A kustomizations --no-header | awk -F' ' '{system("flux reconcile -n " $1 " kustomization " $2)}'
 			;;
+		(*) echo "Give 'env' to update .flux.env"
 		esac
 		;;
 	(reconcile)
@@ -431,7 +432,9 @@ cat "$_stackspin_cluster_cache" 2>/dev/null |
 
 
 # Run following code only on headless machines
-test -z "$DISPLAY" && test "$XDG_VTNR" != 1 && ! pgrep -x "SystemUIServer" >/dev/null || return 0
+test -z "$DISPLAY" && test "$XDG_VTNR" != 1 &&
+	! pgrep -x "SystemUIServer" >/dev/null ||
+	return 0
 
 which kubectl >/dev/null ||
 	{ kubectl() { sudo k3s kubectl "$@"; } && export -f kubectl; }

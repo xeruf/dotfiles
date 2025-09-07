@@ -354,7 +354,7 @@ sshl() {
 	local pass=pass
 	local target=${1%[0-9a-z]}
 	test "$all" &&
-		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${target#nc-}*.bash" \) -exec cat {} + | $pass ssh "$@" 'cat > .bash_aliases && grep -q .bash_aliases .bashrc || echo "source ~/.bash_aliases" | tee -a .bashrc' &&
+		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${target#nc-}*.bash" \) -exec cat {} + | $pass ssh "$@" 'cat > ~/.bash_aliases && grep -q .bash_aliases ~/.bashrc || echo "source ~/.bash_aliases" | tee -a ~/.bashrc' &&
 		echo 'Updated .bash_aliases!'
 		#$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if test -n "$pass"
@@ -421,6 +421,7 @@ flp() {
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
 # Default grep with some convenience flags
+command -v ggrep && alias grep='ggrep'
 alias grpc='grep --color=auto --line-number --binary-files=without-match --directories=skip'
 # Default grep with some niceties and ignoring case
 alias grp='grpc --ignore-case'

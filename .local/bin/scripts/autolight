@@ -1,9 +1,11 @@
 #!/bin/sh -e
 # Automatically set screen brightness based on time of day.
+# TODO: Automatically adjust to timezone (summertime) / daylight times
+#
 # OLD: value=$(expr 100 - $(expr 13 - $(date +%H) | tr -d -) \* 5)
 # S Function: echo "(c($(date +%H) / 4 - 3) + 1) * 50" | bc -l
-# summertime: value=$(echo "l=(100 - 1.5 * ( 11 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
-value=$(echo "l=(100 - 3 * ( 12 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
+value=$(echo "l=(100 - 1.5 * ( 11 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
+# wintertime: value=$(echo "l=(100 - 3 * ( 12 - $(date +%H) ) ^ 2); if(l > 0) l else 3" | bc -l)
 if test "$1" != "-n"; then
    light -S $value
    inputmodule-control led-matrix --brightness $(echo $value / 5 + 2 | bc)
