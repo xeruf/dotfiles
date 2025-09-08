@@ -26,8 +26,9 @@ ORDER:
   - 'VFV'
   - 'DP-3'
   - 'DP-2' # right port adapter
+  - 'GIGA-BYTE' # Home Big
   - 'BOE' #internal
-  - 'DP-1' # right port
+  #- 'DP-1' # right port FW16
 
 # The default is to scale each display by DPI.
 # This may be disabled and scale 1 will be used, unless a SCALE has been specified.
