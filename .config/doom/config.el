@@ -283,9 +283,9 @@ Version 2019-11-04 2021-02-16"
       ;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
       )
     :config
-      (add-to-list 'projectile-project-root-files "README.org")
-      (add-to-list 'projectile-project-root-files ".orgids")
-      (add-to-list 'projectile-project-root-files ".gitignore")
+      (setq projectile-project-root-files
+            (append '("README.org" ".orgids" ".gitignore" ".stignore" ".projectile" ".nextcloudsync.log")
+                    projectile-project-root-files))
   ))
 
 
@@ -784,7 +784,8 @@ Version 2019-11-04 2021-02-16"
           org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
           org-latex-src-block-backend 'minted
           org-latex-default-class "article4"
-         org-latex-hyperref-template "\\hypersetup{\n pdfauthor={%a},\n pdftitle={%t},\n pdfkeywords={%k},pdfsubject={%d},\n pdfcreator={%c},\n pdflang={%L},\n colorlinks=true,\n urlcolor=blue,\n citecolor=green,\n linktocpage}\n")
+          ;org-latex-hyperref-template "\\hypersetup{\n pdfauthor={%a},\n pdftitle={%t},\n pdfkeywords={%k},pdfsubject={%d},\n pdfcreator={%c},\n pdflang={%L},\n colorlinks=true,\n urlcolor=blue,\n citecolor=green,\n linktocpage}\n"
+          )
     (add-to-list 'org-latex-classes
          '("article4" "\\documentclass{article}\n\\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
             ("\\section{%s}" . "\\section*{%s}")
@@ -1255,29 +1256,63 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   )
 
 
+;(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (use-package! mu4e
-  :defer 3
+  ; :defer 3
   :config
+
   (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
-      mu4e-update-interval (* 10 60) ; check mail 10 minutes
-      mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
-      mu4e-get-mail-command "offlineimap -o"
-      mu4e-maildir "~/.local/share/mail")
-  (setq mu4e-drafts-folder "/mail/Drafts"
-      mu4e-sent-folder   "/mail/Sent"
-      mu4e-refile-folder "/mail/All Mail"
-      mu4e-trash-folder  "/mail/Trash")
+        mu4e-update-interval (* 10 60) ; check mail every 10 minutes
+        mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+        mu4e-use-fancy-chars t
+        mu4e-get-mail-command "mbsync -a"
+        )
+  (setq mu4e-drafts-folder "/Drafts"
+        mu4e-sent-folder   "/Sent"
+        mu4e-trash-folder  "/Trash"
+        mu4e-refile-folder "/Archive"
+        )
   (setq mu4e-maildir-shortcuts
-      '(("/mail/inbox"     . ?i)
-	("/mail/Sent"      . ?s)
-	("/mail/Trash"     . ?t)
-	("/mail/Drafts"    . ?d)
-	("/mail/All Mail"  . ?a)))
-  (setq message-send-mail-function 'smtpmail-send-it
-      auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
-      smtpmail-smtp-server "127.0.0.1"
-      smtpmail-smtp-service 1025
-      smtpmail-stream-type 'ssl))
+      '((:maildir "/INBOX"    :key ?i)
+	(:maildir "/Archive"  :key ?a)
+	(:maildir "/Trash"    :key ?t)
+	(:maildir "/Drafts"   :key ?d :hide-unread t)
+	(:maildir "/Sent"     :key ?s :hide-unread t)
+        ))
+
+  (set-email-account!
+   "Janetzko"
+   '((smtpmail-smtp-user     . "janek@janetzko.us")
+     (smtpmail-smtp-server   . "mail.janetzko.us")
+     (smtpmail-smtp-service  . 587)
+     (user-mail-address      . "janek@janetzko.us")
+     (user-full-name         . "Janek"))
+   t)
+  (set-email-account!
+   "Melonion"
+   '((smtpmail-smtp-user     . "me@melonion.me")
+     (smtpmail-smtp-server   . "mail.melonion.me")
+     (smtpmail-smtp-service  . 587)
+     (user-mail-address      . "me@melonion.me")
+     (user-full-name         . "melonion"))
+   )
+
+
+  ; TODO SMTP Mail Sends
+  (setq ; message-send-mail-function 'smtpmail-send-it
+        auth-source-debug t)   ;; zum Debuggen in *Messages*
+
+  ;(setq message-send-mail-function 'smtpmail-send-it
+  ;    auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
+  ;    smtpmail-smtp-server "127.0.0.1"
+  ;    smtpmail-smtp-service 1025
+  ;    smtpmail-stream-type 'ssl)
+  )
+
+(use-package auth-source-pass
+  :init (auth-source-pass-enable))
+(setq auth-sources '(password-store)
+      auth-source-pass-filename "~/.local/share/pass/www")
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)
