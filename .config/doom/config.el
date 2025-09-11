@@ -263,11 +263,9 @@ Version 2019-11-04 2021-02-16"
 (use-package! recentf
   :config
     (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (setq recentf-list (append (list-non-hidden-directories user-data-dir)
-                               recentf-list
-                               (list-non-hidden-directories (expand-file-name "5-incubator/" user-data-dir))
-                               )
-          )
+    (let ((incubator (expand-file-name "5-incubator/" user-data-dir)))
+      (if (file-exists-p incubator) (setq recentf-list (append recentf-list (list-non-hidden-directories incubator)))))
+    (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
     (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
     (recentf-cleanup)
   )
@@ -1065,6 +1063,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (setq lsp-disabled-clients '(typeprof-ls)))
 
 (use-package eglot
+  :disabled
   :config
   (add-hook 'haskell-mode-hook #'eglot-ensure)
   ;; Optionally add keybindings to some common functions:
@@ -1085,10 +1084,12 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
       completion-auto-select 'second-tab)
 
 (use-package! adoc-mode ; Asciidoc, a md alternative
+  :defer t
   :mode "\\.adoc\\'"
   )
 
 (use-package! plantuml-mode ; Diagrams
+  :defer t
   :mode "\\.puml\\'"
   :config
     (set-file-template! 'plantuml-mode :mode 'plantuml-mode)
@@ -1117,6 +1118,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 ;  :init (add-to-list 'vc-handled-backends 'Fossil))
 
 (use-package! chordpro-mode
+  :defer t
   :mode ("\\.cho\\'" . chordpro-mode)
   :config
     (set-file-template! 'chordpro-mode :mode 'chordpro-mode) ; TODO broken
@@ -1124,6 +1126,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   )
 
 (use-package! lilypond-mode
+  :defer t
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config
 
@@ -1176,6 +1179,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (modify-category-entry ?, ?|)
 
 (use-package! activity-watch-mode
+  :defer t
   :config
     (activity-watch--send-heartbeat (activity-watch--create-heartbeat (current-time))
       :on-success (lambda (&rest _) (global-activity-watch-mode))
@@ -1184,6 +1188,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
 (use-package! rdictcc
   :if (locate-library "rdictcc")
+  :defer t
   :bind (("C-c t". 'rdictcc-translate-word-at-point)
          ("C-c T". 'rdictcc-translate-word))
   :config
@@ -1232,6 +1237,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   )
 
 (use-package! nov
+  :defer t
   :mode ("\\.epub\\'" . nov-mode)
   )
 
@@ -1258,7 +1264,8 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
 ;(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (use-package! mu4e
-  ; :defer 3
+  :defer 3
+  :if (locate-library "mu4e.el")
   :config
 
   (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
