@@ -10,8 +10,8 @@ encrypt: false
 highlight: true
 indent_character: '|'
 journals:
-  default: ~/data/2-box/journal/jrnl.jrnl
-  nug: ~/data/2-box/journal/nug.jrnl
+  default: {{ env.DATA }}/2-box/journal/jrnl.jrnl
+  nug: {{ env.DATA }}/2-box/journal/nug.jrnl
 linewrap: 99
 tagsymbols: '@'
 template: false

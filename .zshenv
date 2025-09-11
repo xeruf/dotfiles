@@ -5,7 +5,7 @@ export_existing() {
        shift
     done
 }
-export_existing DATA $HOME/daten $HOME/data
+export_existing DATA $HOME/data $HOME/IT/data
 export MUSIC="$DATA/4-media/music"
 
 export BORG_REPO='janek@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
