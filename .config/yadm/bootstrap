@@ -84,6 +84,7 @@ cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
 # TODO kakoune research: quit doc buffer, multi cursor, work on line
 
 # TODO first brew install - insert brew bundle? instalee migration from bundle?
+# brew install expect for unbuffer command
 subhighlight 'Doom Emacs'
 git clone --depth 1 https://github.com/hlissner/doom-emacs ${XDG_CONFIG_HOME:-$HOME/.config}/emacs && ${XDG_CONFIG_HOME:-$HOME/.config}/emacs/bin/doom install
 

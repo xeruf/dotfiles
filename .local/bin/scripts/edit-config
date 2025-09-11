@@ -1,6 +1,7 @@
 #!/bin/sh
 # Find config files with fzf, preview and edit them
 # Common config files are automatically checked/reloaded
+# TODO does not find XDG_CONFIG_HOME files on mac
 alias dedup-lines='awk '"'"'!a[$0]++'"'"
 
 listconf() {

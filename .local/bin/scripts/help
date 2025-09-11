@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # open info-page, man-page or command with help flag
-# depends: unbuffer
+# depends: unbuffer (expect package)
 # optdepends: highlight(dotfiles)
 # TODO show tldr page
 # TODO extract help in standard format from scripts
@@ -27,7 +27,7 @@ showinfo() {
 cmd="$1"
 case "$cmd" in
 	(fwupdmgr|hunt|rdoc|gh|chordpro|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja|qobuz-dl|beet|flux)
-		unbuffer "$@" --help | sed 's|^[^ ].*:|[1m\0[22m|' | $paginate;;
+		unbuffer "$@" --help | sed 's|^[^ ].*:|[1m&[22m|' | $paginate;;
 	(sqlcmd) sqlcmd -?;;
 	(exa) "$0" eza;;
 	(caddy|stretchly|go|flutter)
