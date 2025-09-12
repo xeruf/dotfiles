@@ -131,11 +131,11 @@ list() {
 
 ## BILLING scripts for InvoiceNinja
 
-# Invoice for an Iridion customer
+# Invoice for an Iridion customer, optionally with extra domains
 invoice() {
-  local prefixes='^(d|dp|xe)'
   if test $# -eq 0
   then
+    local prefixes='^(d|dp|xe)'
     for user in $(list users | grep -E "${prefixes}[0-9]")
     do userdomains "$user"
        invoice "$user"
@@ -151,19 +151,19 @@ invoice() {
   for username in "$userid" "dp$userid" "xe$userid"
   do userinfo="$(hestia v-list-user "$username")" && break
   done
-  local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | sed 's/^ *//')
   local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
 
   echo "Client Name;Invoice Number;Item Quantity;Item Cost;Item Notes;Item Product;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
   local prefix="$name;DR$(date +%y%m)-$userid;"
   for domain
-  do invoiceline "$domain" "$prefix"
+  do echo "$prefix$(invoicedomain "$domain")"
   done
   for domain in $(list dns-domains "$username")
-  do invoiceline "$domain" "$prefix"
+  do echo "$prefix$(invoicedomain "$domain")"
   done
 
+  local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | sed 's/^ *//')
   if test -n "$package"
   then
     local price
@@ -174,22 +174,23 @@ invoice() {
     esac
     echo "${prefix}12;$price;Januar 2025 - Dezember 2025;Webpaket $package;20"
   fi
-  # TODO recurring + batch
+  # TODO recurring + batch using :YEAR
 }
 
 increment_day() {
   awk -F. '{print $3"-"$2"-"$1}' | xargs -I{} date -d "{} +1 day" "+%d.%m.%Y"
 }
 
-invoiceline() {
+# Create an invoiceline for a domain based on registrar data, tld and years
+invoicedomain() {
   local domain=$1
-  local prefix=$2
+  local years=${2:-2}
 
   local date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/' | increment_day)
   local date_created=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
   local renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
 
-  local date_billed_fut=$(date -d "$(echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}') +2 year -1 day" '+%d.%m.%Y')
+  local date_billed_fut=$(date -d "$(echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}') +$years year -1 day" '+%d.%m.%Y')
   local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
   local date_fut="${date_billed_fut}$(test "$renew_fut" = "$date_billed_fut" || echo " [${renew_fut}]")"
   
@@ -205,7 +206,7 @@ invoiceline() {
     (coach) price='98,89';;
   esac
 
-  echo "${prefix}2;$price;$domain (${date_billed:-${date_created:-$(date '+%d.%m.%Y')}} - ${date_fut});.$suffix-Domain;0"
+  echo "$years;$price;$domain (${date_billed:-${date_created:-$(date '+%d.%m.%Y')}} - ${date_fut});.$suffix-Domain;0"
 }
 
 # Find info on a domain from registrars
