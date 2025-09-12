@@ -1,3 +1,5 @@
+[core]
+	hooksPath = /home/janek/.config/yadm/hooks
 [alias]
 	cgit    = !yadm cme "config/git:"   $XDG_CONFIG_HOME/git $CONFIG_SHELLS/git $HOME/.local/bin/scripts/git-*
 	cshell  = !yadm cme "config/shell:" $CONFIG_SHELLS $HOME/.zshenv
