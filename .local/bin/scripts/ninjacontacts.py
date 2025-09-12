@@ -1,129 +1,160 @@
-import csv, sys, re, io, os, unicodedata, hashlib
-from datetime import datetime
+#!/usr/bin/python3
+import csv, sys, re, os, hashlib
 
 INFILE  = os.environ.get("CSV", "clients.csv")
 OUTFILE = os.environ.get("VCF", "ninjaclients.vcf")
 
-def norm_header(h):
-    h = h.strip().lower()
-    h = h.replace("\ufeff","")
-    return re.sub(r'[^a-z0-9]+','_',h)
-
 def esc(v):
-    # vCard 3.0 escaping: backslash, comma, semicolon, newline
-    return (v.replace('\\','\\\\')
-             .replace('\n','\\n')
-             .replace('\r','')
-             .replace(';','\\;')
-             .replace(',','\\,'))
+    return (v or "").replace('\\','\\\\').replace('\r','').replace('\n','\\n').replace(';','\\;').replace(',','\\,')
 
 def fold(line):
-    # Fold at 75 chars with CRLF + space (vCard 3.0)
-    out = []
-    while len(line) > 75:
-        out.append(line[:75])
-        line = " " + line[75:]
-    out.append(line)
+    out=[]; 
+    while len(line)>75:
+        out.append(line[:75]); line=" "+line[75:]
+    out.append(line); 
     return "\r\n".join(out)
 
-def pick(row, hdr, *keys):
-    for k in keys:
-        if k in hdr and row.get(hdr[k], "").strip():
-            return row[hdr[k]].strip()
+def get(row, *names):
+    for n in names:
+        if n in row and str(row[n]).strip():
+            return str(row[n]).strip()
     return ""
 
-def join_nonempty(*parts, sep=" "):
-    return sep.join([p for p in parts if p])
+def split_phones(val):
+    if not val: return []
+    # split on common separators
+    parts = re.split(r'[;,/|]|(?:\s{2,})', val)
+    # also break if single string contains two numbers separated by single space with + or 0
+    flat=[]
+    for p in parts:
+        if re.search(r'\+\d+\s+\+\d+', p) or re.search(r'0\d+\s+0\d+', p):
+            flat.extend(p.split())
+        else:
+            flat.append(p)
+    return [p.strip() for p in flat if p.strip()]
 
-with open(INFILE, "r", encoding="utf-8-sig", newline="") as f:
-    sample = f.read(4096)
-    f.seek(0)
+def norm_de_phone(p):
+    # keep digits and leading '+'
+    p = re.sub(r'[^\d+]+', '', p)
+    if not p: return ""
+    if p.startswith('00'):
+        p = '+' + p[2:]
+    elif p.startswith('+'):
+        pass
+    elif p.startswith('0'):
+        p = '+49' + p[1:]
+    else:
+        # looks like bare national without 0 – assume DE
+        p = '+49' + p
+    return p
+
+def uniq(seq):
+    seen=set(); out=[]
+    for x in seq:
+        if x and x not in seen:
+            seen.add(x); out.append(x)
+    return out
+
+with open(INFILE, 'r', encoding='utf-8-sig', newline='') as f:
+    sample=f.read(4096); f.seek(0)
     try:
-        dialect = csv.Sniffer().sniff(sample, delimiters=",;\t|")
+        dialect=csv.Sniffer().sniff(sample, delimiters=',;\t|')
     except csv.Error:
-        dialect = csv.get_dialect("excel")
-    reader = csv.DictReader(f, dialect=dialect)
-    # map headers -> normalized
-    raw_headers = reader.fieldnames or []
-    hdr_map = {norm_header(h): h for h in raw_headers}
-    # reverse: normalized -> original
-    inv = {norm_header(h): h for h in raw_headers}
+        dialect=csv.get_dialect('excel')
+    reader=csv.DictReader(f, dialect=dialect)
 
-    def H(*names):  # helper to return normalized header if present
-        for n in names:
-            n = norm_header(n)
-            if n in inv: return {n: inv[n]}  # single-item dict
-        return {}
+    cards=[]
+    for i,row in enumerate(reader, start=1):
+        # Core fields (German headers)
+        nummer   = get(row, "Nummer")
+        vorname  = get(row, "Vorname")
+        nachname = get(row, "Nachname")
+        name     = get(row, "Name")
+        org      = get(row, "Rechnungsname") or get(row, "Name")
+        email    = get(row, "E-Mail")
+        web      = get(row, "Webseite")
 
-    # Build a dictionary of normalized->original for quick pick()
-    hdr = {norm_header(h): h for h in raw_headers}
+        # Phones
+        kunden_tel = split_phones(get(row, "Kunden Telefon"))
+        kontakt_tel= split_phones(get(row, "Telefonnummer des Kontakts"))
+        kunden_tel = uniq([norm_de_phone(x) for x in kunden_tel])
+        kontakt_tel= uniq([norm_de_phone(x) for x in kontakt_tel])
 
-    cards = []
-    for idx, row in enumerate(reader, start=1):
-        fn  = pick(row, hdr, "name", "full_name") or \
-              join_nonempty(pick(row, hdr, "first_name","firstname","given_name"),
-                            pick(row, hdr, "last_name","lastname","surname")) or \
-              pick(row, hdr, "company","company_name","client_name") or \
-              f"Client {idx}"
+        # Billing address
+        street    = get(row, "Straße")
+        add2      = get(row, "Adresszusatz")
+        city      = get(row, "Stadt")
+        state     = get(row, "Bundesland")
+        zipc      = get(row, "Postleitzahl")
+        country   = get(row, "Land")
 
-        n_last  = pick(row, hdr, "last_name","lastname","surname")
-        n_first = pick(row, hdr, "first_name","firstname","given_name")
+        # Shipping address
+        s_street  = get(row, "Strasse Versandanschrift")
+        s_add2    = get(row, "Versand Adresszusatz")
+        s_city    = get(row, "Stadt Versandanschrift")
+        s_state   = get(row, "Versand Bundesland")
+        s_zip     = get(row, "Postleitzahl Versandanschrift")
+        s_country = get(row, "Lieferungsland")
 
-        org  = pick(row, hdr, "company","company_name","organization")
-        email= pick(row, hdr, "email","e_mail","primary_email")
-        phone= pick(row, hdr, "phone","phone_number","telephone")
-        mobile=pick(row, hdr, "mobile","cell","mobile_phone")
-        fax  = pick(row, hdr, "fax","fax_number")
-        web  = pick(row, hdr, "website","web","url")
+        # Notes
+        public_n  = get(row, "Öffentliche Notizen")
+        private_n = get(row, "Interne Notizen")
+        note_parts=[]
+        if nummer:
+            note_parts.append(f"Kundennummer: {nummer}")
+        if public_n:
+            note_parts.append(public_n)
+        if private_n:
+            note_parts.append(private_n)
+        notes = "\\n---\\n".join([p for p in note_parts if p])
 
-        addr1= pick(row, hdr, "address1","street","street_address","billing_street")
-        addr2= pick(row, hdr, "address2","address_2","address_line_2")
-        city = pick(row, hdr, "city","billing_city","town")
-        state= pick(row, hdr, "state","province","region")
-        post = pick(row, hdr, "postal_code","zip","postcode")
-        ctry = pick(row, hdr, "country","country_name","billing_country")
+        # FN / N
+        fn = (vorname + " " + nachname).strip() if (vorname or nachname) else (name or org or f"Client {i}")
+        n_last  = nachname or ""
+        n_first = vorname or ""
 
-        notes = join_nonempty(
-            pick(row, hdr, "public_notes","public_note","notes","note"),
-            pick(row, hdr, "private_notes","private_note"),
-            sep="\\n---\\n"
-        )
-
-        # build UID from stable fields if possible
-        uid_src = join_nonempty(
-            pick(row, hdr, "id","client_id","public_id","number"),
-            fn, email or "", phone or "", org or "", sep="|"
-        ).encode("utf-8")
+        # UID
+        uid_src = "|".join([nummer or "", fn, email or "", org or ""]).encode("utf-8")
         uid = "in-" + hashlib.sha1(uid_src).hexdigest() + "@invoiceninja"
 
-        lines = []
+        lines=[]
         lines.append("BEGIN:VCARD")
         lines.append("VERSION:3.0")
-        lines.append("PRODID:-//InvoiceNinja CSV -> vCard//janek-helper//EN")
-        lines.append(fold("UID:" + uid))
-        if fn:   lines.append(fold("FN:" + esc(fn)))
-        # N:last;first;middle;prefix;suffix
-        lines.append(fold("N:" + esc(n_last) + ";" + esc(n_first) + ";;;"))
-        if org:  lines.append(fold("ORG:" + esc(org)))
-        if email:lines.append(fold("EMAIL;TYPE=INTERNET,WORK:" + esc(email)))
-        if phone:lines.append(fold("TEL;TYPE=WORK,VOICE:" + esc(phone)))
-        if mobile:lines.append(fold("TEL;TYPE=CELL,VOICE:" + esc(mobile)))
-        if fax:  lines.append(fold("TEL;TYPE=FAX:" + esc(fax)))
-        if web:  lines.append(fold("URL:" + esc(web)))
+        lines.append("PRODID:-//IN CSV→vCard (DE)//helper//EN")
+        lines.append(fold("UID:"+uid))
+        lines.append(fold("FN:"+esc(fn)))
+        lines.append(fold("N:"+esc(n_last)+";"+esc(n_first)+";;;"))
+        if org:  lines.append(fold("ORG:"+esc(org)))
+        if email:lines.append(fold("EMAIL;TYPE=INTERNET,WORK:"+esc(email)))
+        if web:  lines.append(fold("URL:"+esc(web)))
 
-        if any([addr1, addr2, city, state, post, ctry]):
-            street = join_nonempty(addr1, addr2, sep="\\n")
-            # ADR;TYPE=WORK:PO;EXT;STREET;LOCALITY;REGION;POSTCODE;COUNTRY
-            adr = f"ADR;TYPE=WORK:;;{esc(street)};{esc(city)};{esc(state)};{esc(post)};{esc(ctry)}"
+        # TELs
+        for p in kunden_tel:
+            lines.append(fold("TEL;TYPE=WORK,VOICE:"+esc(p)))
+        for p in kontakt_tel:
+            # avoid duplicates across both sets
+            if p not in kunden_tel:
+                lines.append(fold("TEL;TYPE=CELL,VOICE:"+esc(p)))
+
+        # ADR billing (WORK)
+        if any([street, add2, city, state, zipc, country]):
+            street_join = "\\n".join([x for x in [street, add2] if x])
+            adr = f"ADR;TYPE=WORK:;;{esc(street_join)};{esc(city)};{esc(state)};{esc(zipc)};{esc(country)}"
             lines.append(fold(adr))
 
+        # ADR shipping (HOME) if present and not identical to billing
+        if any([s_street, s_add2, s_city, s_state, s_zip, s_country]):
+            s_street_join = "\\n".join([x for x in [s_street, s_add2] if x])
+            adr2 = f"ADR;TYPE=HOME:;;{esc(s_street_join)};{esc(s_city)};{esc(s_state)};{esc(s_zip)};{esc(s_country)}"
+            lines.append(fold(adr2))
+
         if notes:
-            lines.append(fold("NOTE:" + esc(notes)))
+            lines.append(fold("NOTE:"+esc(notes)))
 
         lines.append("END:VCARD")
         cards.append("\r\n".join(lines))
 
-with open(OUTFILE, "w", encoding="utf-8", newline="") as out:
-    out.write("\r\n".join(cards) + ("\r\n" if cards else ""))
+with open(OUTFILE, 'w', encoding='utf-8', newline='') as out:
+    out.write("\r\n".join(cards)+("\r\n" if cards else ""))
 
 print(f"Wrote {OUTFILE} with {len(cards)} contacts.")

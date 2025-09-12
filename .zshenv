@@ -108,7 +108,7 @@ export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(t
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
 export DIRS_GENERATED="-x generated -x .gradle -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
-export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .dtrash -x .pyenv -x .local/cache -x .config/DeltaChat -x .config/discord -x .config/Slack -x .config/syncthing -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
+export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .dtrash -x .pyenv -x .local/cache -x .mixxx/analysis -x .config/DeltaChat -x .config/discord -x .config/Slack -x .config/syncthing -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
 export DIRS_IGNORE="-x .archive -x .sync -x .stfolder -x *build -x .git -x .idea* -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
 # red stderr
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
