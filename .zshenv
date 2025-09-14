@@ -84,12 +84,16 @@ export CONFIG_ZSH="$XDG_CONFIG_HOME"/zsh
 export CONFIG_SHELLS="$XDG_CONFIG_HOME"/shell
 mkdir -p "$XDG_STATE_HOME/zsh"
 
-# environment
+# Environment
 BIN="$HOME/.local/bin"
 test -d "$XDG_DATA_HOME/gem/ruby" &&
 	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1)"
 export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:$ruby_bins:$HOME/.rvm/bin"
-# TODO this is too early - editors may later be added to PATH
+
+# TODO this is too early (for mac?) - editors may later be added to PATH - but on Linux this helps so it is available everywhere
+case "$(uname)" in
+(Darwin) export EDITOR=nvim;;
+(*)
 export ALTERNATE_EDITOR="$(
 	if command -v nvim >/dev/null
 	then echo nvim
@@ -100,7 +104,8 @@ export EDITOR="$(
 	then echo $BIN/scripts/emacstty
 	else echo $ALTERNATE_EDITOR
 	fi
-)"
+)";;
+esac
 export IHP_EDITOR="$BIN/scripts/emacs-line"
 
 export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
