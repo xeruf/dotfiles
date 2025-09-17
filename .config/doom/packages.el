@@ -72,7 +72,7 @@
 (package! evil-replace-with-register) ; grrrrr
 (package! visual-fill-column) ; Soft line wrapping at character count
 
-(package! togetherly) ; Collaborative editing
+; (package! togetherly) ; Collaborative editing
 
 ;; https://elpa.gnu.org/packages/auto-correct.html
 (package! auto-correct)
@@ -80,24 +80,21 @@
 ;;; Viewers
 
 (package! nov) ; epub reader
-(package! picpocket) ; image viewer - https://github.com/johanclaesson/picpocket
+; (package! picpocket) ; image viewer - https://github.com/johanclaesson/picpocket
+; now using dirvish
 
 (package! dictcc)
 
 ;;; Programming
-(package! go-mode)
-(package! haml-mode)
-(package! web-mode)
+; (package! haml-mode)
 
-(package! ess)
-
-(package! helm-dash)
+(package! consult-dash)
 
 ;; https://www.emacswiki.org/emacs/CsvMode
 (package! csv-mode)
 
 (package! pkgbuild-mode) ; AUR PKGBUILDs
-(package! adoc-mode) ; Asciidoc, a md alternative
+(package! adoc-mode) ; Asciidoc, a md alternative used in SoCha
 
 (package! chordpro-mode
   :recipe (:host github :repo "toemacs/chordpro-mode")) ; chord sheets
@@ -105,9 +102,9 @@
 (package! osm-mode
   :recipe (:host github :repo "ruediger/osm-mode"))
 
-(unpin! plantuml-mode)
-(package! plantuml-mode
-  :recipe (:host github :repo "xeruf/plantuml-mode"))
+;(unpin! plantuml-mode)
+;(package! plantuml-mode
+;  :recipe (:host github :repo "xeruf/plantuml-mode"))
 
 (package! twee-mode
   :recipe (:host github :repo "magoyette/twee-mode"))

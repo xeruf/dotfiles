@@ -278,6 +278,7 @@ Version 2019-11-04 2021-02-16"
     (after! org
       (projectile-add-known-project org-directory)
       (projectile-register-project-type 'org '(".orgids"))
+      (projectile-register-project-type 'git '(".gitignore" ".git"))
       ;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
       )
     :config
@@ -1028,6 +1029,16 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
 ;;; File Editing Modes
 
+(defun major-mode-based-on-trimmed-filename ()
+  "Set major mode based on the portion of the filename before a #."
+  (when buffer-file-name
+    (let* ((original buffer-file-name)
+           (trimmed (if (string-match "\\([^#]+\\)" original) (match-string 1 original) original)))
+      (setq buffer-file-name trimmed)
+      (set-auto-mode)
+      (setq buffer-file-name original))))
+(add-hook 'find-file-hook #'major-mode-based-on-trimmed-filename)
+
 (setq initial-major-mode 'org-mode)
 (add-to-list 'auto-mode-alist '("/journal/" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
@@ -1041,22 +1052,24 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 ;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
 ;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
 
-(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
-(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-hook 'css-mode-hook #'rainbow-mode)
+(add-hook 'prog-mode-hook #'rainbow-mode)
+(add-hook 'pdf-view-mode-hook #'auto-revert-mode)
 
-(add-hook 'pdf-view-mode-hook 'auto-revert-mode)
-
-(use-package! web-mode
-  :mode "\\.html\\'"
-  :mode "\\.phtml\\'"
-  :mode "\\.tpl\\.php\\'"
-  :mode "\\.[agj]sp\\'"
-  :mode "\\.as[cp]x\\'"
-  :mode "\\.erb\\'"
-  :mode "\\.mustache\\'"
-  :mode "\\.djhtml\\'"
-  :config (add-hook 'web-mode-hook 'rainbow-mode)
-  )
+;  Let's see if dooms config can supercede this
+;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+;(use-package! web-mode
+;  :mode "\\.html\\'"
+;  :mode "\\.phtml\\'"
+;  :mode "\\.tpl\\.php\\'"
+;  :mode "\\.[agj]sp\\'"
+;  :mode "\\.as[cp]x\\'"
+;  :mode "\\.erb\\'"
+;  :mode "\\.mustache\\'"
+;  :mode "\\.djhtml\\'"
+;  :config (add-hook 'web-mode-hook #'rainbow-mode)
+;  )
 
 ; https://discourse.doomemacs.org/t/disabling-ruby-typeprof/3197/3
 (after! lsp-mode
@@ -1268,6 +1281,15 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   :if (locate-library "mu4e.el")
   :config
 
+   (setq mu4e-headers-fields
+         '((:mailing-list   . 5)
+           (:flags          . 6)
+           (:maildir        . 11)
+           (:account-stripe . 2)
+           (:date           . 9)
+           (:from-or-to     . 22)
+           (:subject        . nil)
+           ))
   (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
         mu4e-update-interval (* 10 60) ; check mail every 10 minutes
         mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
@@ -1280,29 +1302,14 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         mu4e-refile-folder "/Archive"
         )
   (setq mu4e-maildir-shortcuts
-      '((:maildir "/INBOX"    :key ?i)
-	(:maildir "/Archive"  :key ?a)
-	(:maildir "/Trash"    :key ?t)
-	(:maildir "/Drafts"   :key ?d :hide-unread t)
-	(:maildir "/Sent"     :key ?s :hide-unread t)
+      '((:maildir "/INBOX"      :key ?i)
+	(:maildir "/Archive"    :key ?a)
+	(:maildir "/Trash"      :key ?t)
+	(:maildir "/Spam"       :key ?s)
+	(:maildir "/Resources"  :key ?r)
+	(:maildir "/Drafts"     :key ?d :hide-unread t)
+	;(:maildir "/Sent"     :key ?s :hide-unread t)
         ))
-
-  (set-email-account!
-   "Janetzko"
-   '((smtpmail-smtp-user     . "janek@janetzko.us")
-     (smtpmail-smtp-server   . "mail.janetzko.us")
-     (smtpmail-smtp-service  . 587)
-     (user-mail-address      . "janek@janetzko.us")
-     (user-full-name         . "Janek"))
-   t)
-  (set-email-account!
-   "Melonion"
-   '((smtpmail-smtp-user     . "me@melonion.me")
-     (smtpmail-smtp-server   . "mail.melonion.me")
-     (smtpmail-smtp-service  . 587)
-     (user-mail-address      . "me@melonion.me")
-     (user-full-name         . "melonion"))
-   )
 
 
   ; TODO SMTP Mail Sends
