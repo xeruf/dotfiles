@@ -7,7 +7,7 @@ let g:firenvim_config = {
     \ '.*': {
       \ 'cmdline': 'firenvim',
       \ 'priority': 0,
-      \ 'selector': 'textarea:not([readonly]):not([class="flt-text-editing"]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]):not([title="Replace"]):not([title="Search"]):not([name="message"]),
+      \ 'selector': 'textarea:not([readonly]):not([class="flt-text-editing"]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]):not([title="Replace"]):not([title="Search"]):not([name="message"]):not([name="Description"]),
         \ div[role="textbox"]:not([aria-label="Search"]):not([id="ask-input"]):not([class="cm-content"]):not([class="ProseMirror"]), div[class="CodeMirror"]',
       \ 'takeover': 'always',
     \ },
@@ -30,7 +30,7 @@ let g:firenvim_config = {
     \ '.*twitter\.com.*':                    { 'priority': 9, 'takeover': 'never', },
     \ '://chat\..*':                         { 'priority': 9, 'takeover': 'never', },
     \ '.*leonardo\.ai.*':                    { 'priority': 9, 'takeover': 'never', },
-    \ '.*perplexity\.ai.*':                    { 'priority': 9, 'takeover': 'never', },
+    \ '.*perplexity\.ai.*':                  { 'priority': 9, 'takeover': 'never', },
     \
     \ '.*:8006/.*':                          { 'priority': 9, 'takeover': 'never', },
     \
