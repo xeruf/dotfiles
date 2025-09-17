@@ -1,9 +1,15 @@
-#!/bin/sh
+#!/bin/sh -e
 # Upload website to iridion
-if test $# -eq 0 
-then echo "$0 site [index.html] [USER]"
+if test $# -eq 0
+then echo "$0 site [index.html]"
 else
+
 site=$1
+case $site in
+    (polygon*|nod*) usr=polygon;;
+    (*) usr=$USER;;
+esac
 shift
-scp -r "$@" "iridion:/home/${2:-$USER}/web/$site/public_html$(test "$#" -gt 1 || test -d "$1" || echo '/index.html')"
+scp -r "$@" "iridion:/home/${usr}/web/${site}/public_html$(test "$#" -gt 1 || test -d "$1" || echo '/index.html')"
+
 fi

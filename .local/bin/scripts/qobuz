@@ -1,3 +1,7 @@
 #!/bin/sh -e
 # Wrapper for qobuz-dl
-qobuz-dl $(test "$#" -gt 0 && echo dl || echo fun) -q 6 "$@"
+flags=0
+for arg
+do case "$arg" in (-*) flags=$(expr $flags + 1);; esac
+done
+qobuz-dl $(test "$#" -gt $flags && echo dl || echo fun) -q 6 "$@"

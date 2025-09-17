@@ -15,7 +15,7 @@ do printf "\nProcessing...\n" >&2
 done
 echo
 
-uid=$(echo "$vcard" | grep UID | grep --only-matching '[-0-9a-fx]\{36\}')
+uid=$(echo "$vcard" | grep UID) # | grep --only-matching '[-0-9a-fx]\{36\}')
 dir="$XDG_DATA_HOME/contacts"
 test -d "$dir" && echo "$vcard">"$dir/$uid.vcf"
 
