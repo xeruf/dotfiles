@@ -13,7 +13,7 @@ logs() {
   if test $# -eq 0
   then
     lnav $(pwd | cut -d '/' -f1-5)/{logs,document_errors} ||
-      echo 'Provide domain name to find logs!'
+      echo 'Provide domain name to find logs!' >&2
   else
     for site in $(find /home -maxdepth 3 -name "*$1*")
     do cd $site
@@ -131,37 +131,71 @@ list() {
 
 ## BILLING scripts for InvoiceNinja
 
-# Invoice for an Iridion customer, optionally with extra domains
-invoice() {
+# Invoice multiple Iridion customers
+invoices() {
   if test $# -eq 0
   then
-    local prefixes='^(d|dp|xe)'
+    echo "Generating Invoices for all customers..."
+    local prefixes='^(d|dp|xe|ir)'
     for user in $(list users | grep -E "${prefixes}[0-9]")
     do userdomains "$user"
        invoice "$user"
        echo
     done
     return $?
+  else
+    for user
+    do invoice "$user" | tail +2
+    done
+    echo
+    for user
+    do invoice DR "$user" | tail +2
+    done
+    #for user
+    #do userdomains "$user"
+    #done
+  fi
+}
+
+# Invoice for an Iridion customer, optionally with extra domains
+invoice() {
+  if test $# -eq 0
+  then echo "Usage: ${FUNCNAME[0]} CUSTOMER [DOMAINS...]" >&2
+       return 1
   fi
   
+  local numprefix=D
+  case "$1" in
+  (DR)
+    numprefix=DR
+    years=1
+    shift
+    ;;
+  esac
+
   local userid="$1"
   shift
 
-  local userinfo
-  for username in "$userid" "dp$userid" "xe$userid"
-  do userinfo="$(hestia v-list-user "$username")" && break
-  done
-  local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
+  if test "$userid"; then
+    local userinfo
+    for username in "$userid" "dp$userid" "xe$userid"
+    do userinfo="$("$HESTIA/bin/v-list-user" "$username")" && break
+    done
+    local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
+  fi
 
   echo "Client Name;Invoice Number;Item Quantity;Item Cost;Item Notes;Item Product;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="$name;DR$(date +%y%m)-$userid;"
+  local prefix="$name;${numprefix}$(date +%y%m)-$userid;"
+  {
   for domain
-  do echo "$prefix$(invoicedomain "$domain")"
+  do echo "$prefix$(invoicedomain "$domain" $years)"
   done
   for domain in $(list dns-domains "$username")
-  do echo "$prefix$(invoicedomain "$domain")"
+  do test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1 ||
+      echo "$prefix$(invoicedomain "$domain" $years)"
   done
+  } | $(test "$years" && echo "sed s/202[1-5]/:YEAR/;s/202[2-6]/:YEAR+1/" || echo cat)
 
   local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | sed 's/^ *//')
   if test -n "$package"
@@ -171,10 +205,11 @@ invoice() {
       (alpha) price=4,5;;
       (beta) price=9;;
       (gamma) price=18;;
+      (delta) price=29;;
     esac
-    echo "${prefix}12;$price;Januar 2025 - Dezember 2025;Webpaket $package;20"
+    local year=$(test "$years" && echo ':YEAR' || date +%Y)
+    echo "${prefix}12;$price;Januar $year - Dezember $year;Webpaket $package;20"
   fi
-  # TODO recurring + batch using :YEAR
 }
 
 increment_day() {
@@ -183,30 +218,39 @@ increment_day() {
 
 # Create an invoiceline for a domain based on registrar data, tld and years
 invoicedomain() {
+  (
+  set -eo pipefail
   local domain=$1
-  local years=${2:-2}
+  shift
+  test -n "$domain" || return 1
 
   local date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/' | increment_day)
   local date_created=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
+  local date_created_de=$(echo "$date_created" | awk -F- '{print $3 "." $2 "." $1}')
   local renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
+  local date_start=$(test "$date_billed" && { echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}' ;} || echo "$date_created")
 
-  local date_billed_fut=$(date -d "$(echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}') +$years year -1 day" '+%d.%m.%Y')
+  local years=${1:-$(expr 5 - $(echo "$date_start" | cut -c4))}
+
+  local date_billed_fut=$(date -d "$date_start +$years year -1 day" '+%d.%m.%Y')
   local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
-  local date_fut="${date_billed_fut}$(test "$renew_fut" = "$date_billed_fut" || echo " [${renew_fut}]")"
+  local date_fut="${date_billed_fut}$( (( diff = 10#${renew:5:2} - 10#${date_start:5:2}, diff > -2 || diff < 2 )) || echo " [${renew_fut}]")"
   
   local price
   local suffix=${domain#*.}
   case "$suffix" in
     (de) price='7,85';;
-    (eu) price='13,85';;
-    (net|name|org|com|at|it|ch|us|cc) price='19,85';;
-    (me|nl|nexus) price='28,82';;
-    (blog) price='48,84';;
-    (online|house|group|digital) price='58,85';;
-    (coach) price='98,89';;
+    (eu) price='13,85';; # from 5€
+    (name|org|com|at|ch|us) price='19,85';;
+    (me|nl|nexus|net|it|cc) price='28,82';; # from 13€
+    (blog) price='48,84';; # from 22€
+    (tv|space|house|group) price='58,85';; # from 30€
+    (gmbh|online|digital) price='68,86';; # from 40€
+    (codes|coach) price='98,89';; # from 50€
   esac
 
-  echo "$years;$price;$domain (${date_billed:-${date_created:-$(date '+%d.%m.%Y')}} - ${date_fut});.$suffix-Domain;0"
+  echo "$years;$price;$domain (${date_billed:-${date_created_de:-$(date '+%d.%m.%Y')}} - ${date_fut});.$suffix-Domain;0"
+  )
 }
 
 # Find info on a domain from registrars
@@ -215,7 +259,7 @@ domaininfo() {
   then echo 'Provide domains as args or via stdin, reading from stdin...' >&2
        while read -r domain
        do test -n "$domain" || break
-          $FUNCNAME "$domain"
+          ${FUNCNAME[0]} "$domain"
        done
        return $?
   fi
@@ -286,13 +330,12 @@ userdomains() {
     contacts="$outfile-contacts"
     cat "$outfile" | rev | cut -d\	 -f1 | rev | sort | uniq | grep . > "$contacts"
     test -s "$contacts" || return
-    echo
-    echo Domains for $(cat "$contacts")
+    echo " == Domains for $(cat "$contacts")"
     domains --file "$contacts"
   fi
 }
 
-# Domains of all users plus list from all providers as of last export
+# Domains of all users, plus list from all providers as of last export
 # If arg is provided, only from that domain contact
 domains() {
   if test $# -gt 0
