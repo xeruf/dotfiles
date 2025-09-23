@@ -137,16 +137,16 @@ data:
 		"$cmdname" reconcile $app
 		;;
 	# Velero
-	(restic)
+	(restic|kopia)
 		(
 		namespace=stackspin
 		case $1 in (-n|--namespace) namespace=$2; shift 2;; esac
 		source $CLUSTER_DIR/.flux.env || return $?
-		export RESTIC_REPOSITORY="s3:${backup_s3_url}/${backup_s3_bucket}/${backup_s3_prefix}/restic/$namespace"
+		export RESTIC_REPOSITORY="s3:${backup_s3_url}/${backup_s3_bucket}/${backup_s3_prefix}/$command/$namespace"
 		export AWS_ACCESS_KEY_ID="${backup_s3_aws_access_key_id}"
 		export AWS_SECRET_ACCESS_KEY="${backup_s3_aws_secret_access_key}"
 		export RESTIC_PASSWORD="$(kubectl get secret -n velero velero-repo-credentials -o jsonpath='{.data.repository-password}' | base64 -d)"
-		restic "$@"
+		"$command" "$@"
 		)
 		;;
 	(backup)
@@ -233,8 +233,8 @@ data:
 		(dump|export) cd "$PROJECTS/vikunja"
 			filename="$pod-dump_$(date +%F).zip"
 			if ! "$cmdname" exec "$pod-api" -- sh -c 'rm -f *.zip && ./vikunja dump >/dev/null && ls --color -lAhF >&2 && cat *.zip' >"$filename"
-			then "$cmdname" exec "$pod" -- ./vikunja dump -p /app/vikunja/files &&
-				scp "$poddir/*.zip" "$filename"
+			then "$cmdname" exec "$pod" -- ./vikunja dump # -p /app/vikunja/files && scp "$poddir/*.zip" "$filename"
+				 kubectl cp -n "$("$cmdname" pod "$pod"):/app/vikunja/*.zip" .
 			fi &&
 			(
 				cur="$PWD/${filename}"
@@ -259,7 +259,7 @@ data:
 		(*) echo "Unknown $command subcommand: dump, restore, psql";;
 		esac
 		;;
-	(psql) # Vikunja, Zulip
+	(psql) # Vikunja, Zulip, Forgejo
 		local app=$1
 		shift
 		case "$1" in

@@ -10,8 +10,13 @@ encrypt: false
 highlight: true
 indent_character: '|'
 journals:
-  default: {{ env.DATA }}/2-box/journal/jrnl.jrnl
-  nug: {{ env.DATA }}/2-box/journal/nug.jrnl
+{% if env.DATA == "" %}
+  default: {{env.HOME}}/data/2-box/journal/jrnl.jrnl
+  tug: {{env.HOME}}/data/2-box/journal/tug.jrnl
+{% else %}
+  default: {{env.DATA}}/2-box/journal/jrnl.jrnl
+  tug: {{env.DATA}}/2-box/journal/tug.jrnl
+{% endif %}
 linewrap: 99
 tagsymbols: '@'
 template: false

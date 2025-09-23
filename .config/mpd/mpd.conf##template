@@ -4,7 +4,7 @@ pid_file "~/.local/state/mpd/mpd.pid"
 db_file "~/.local/state/mpd/mpd.db"
 
 music_directory "{{ env.MUSIC }}"
-playlist_directory "{{ env.MUSIC }}/Playlists"
+playlist_directory "{{ env.MUSIC }}/playlists"
 playlist_plugin {
   name "m3u"
   enabled "true"
@@ -21,8 +21,8 @@ restore_paused "yes"
 follow_outside_symlinks "yes"
 
 
-audio_output {
-    type	"pipewire"
-    name	"Pipewire"
-    command "paplay -f cd 2>/dev/null"
-}
+#audio_output {
+#    type	"pipewire"
+#    name	"Pipewire"
+#    command "paplay -f cd 2>/dev/null"
+#}

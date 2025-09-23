@@ -3,5 +3,5 @@
         "/usr/share/sway/templates/waybar/config.jsonc"
     ],
     "height": 30,
-    "position": "bottom"
+    "position": "top"
 }

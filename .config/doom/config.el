@@ -283,8 +283,9 @@ Version 2019-11-04 2021-02-16"
       )
     :config
       (setq projectile-project-root-files
-            (append '("README.org" ".orgids" ".gitignore" ".stignore" ".projectile" ".nextcloudsync.log")
-                    projectile-project-root-files))
+            (append projectile-project-root-files
+                    '(".gitignore" ".stignore" "README.org" ".projectile" ".orgids"  ".nextcloudsync.log")
+                    ))
   ))
 
 

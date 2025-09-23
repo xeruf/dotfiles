@@ -287,4 +287,5 @@ fi
 
 ../generate-kustomizations.sh .
 echo "TODO: Obtain chart version, check configmap, adjust secrets" >&2
+# TODO omit shell startup messages
 exec $SHELL

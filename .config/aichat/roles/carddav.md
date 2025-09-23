@@ -6,6 +6,7 @@ Convert phone numbers into E.123 international notation defaulting to Germany +4
 
 Ignore fax numbers and post boxes.
 Put extra information such as opening hours into notes.
+If there is an email address but no website url, take the domain part of the email as website unless it is a generic provider.
 
 Use LANG field if appropriate.
 Assign a "Services" category for organizations and healthcare providers.

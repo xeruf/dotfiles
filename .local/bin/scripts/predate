@@ -4,7 +4,7 @@ test $# -eq 0 && echo "predate [-s] [newname] <files...>" && exit 2
 IFS='\n'
 test "$1" = -s && short=true && shift
 # Whether to change the filename suffix after the date
-test ! -f "$1" && rename=true && name=$1 && shift || rename=false
+test ! -e "$1" && rename=true && name=$1 && shift || rename=false
 
 for file
 do mv --verbose --interactive "$file" \
