@@ -85,6 +85,7 @@
 
        :tools
        ;;ansible
+       biblio
        debugger
        direnv
        docker

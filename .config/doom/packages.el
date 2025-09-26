@@ -49,6 +49,9 @@
 (package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
 (package! recompile-on-save)
 
+; https://blog.pancho.name/posts/enabling-pinentry-in-doom-emacs/
+(package! pinentry)
+
 ;(package! vc-fossil)
 
 ;;; Prettification

@@ -1314,6 +1314,8 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
 
   ; TODO SMTP Mail Sends
+  (setq smtpmail-debug-info t
+        smtpmail-debug-verb t)
   (setq ; message-send-mail-function 'smtpmail-send-it
         auth-source-debug t)   ;; zum Debuggen in *Messages*
 
@@ -1324,10 +1326,18 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   ;    smtpmail-stream-type 'ssl)
   )
 
-(use-package auth-source-pass
-  :init (auth-source-pass-enable))
-(setq auth-sources '(password-store)
-      auth-source-pass-filename "~/.local/share/pass/www")
+(use-package! auth-source-pass
+  :demand t
+  :config
+  (setq auth-sources '(password-store))
+  (auth-source-pass-enable))
+; (setq auth-source-pass-filename "~/.local/share/pass/www")
+(setq epa-pinentry-mode 'loopback) ; ask in minibuffer
+(use-package pinentry
+  :config (pinentry-start))
+;(use-package! pinentry
+;    :init (setq epg-pinentry-mode `loopback)
+;          (pinentry-start))
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)
