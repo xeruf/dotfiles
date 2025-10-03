@@ -87,8 +87,8 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 # Environment
 BIN="$HOME/.local/bin"
 test -d "$XDG_DATA_HOME/gem/ruby" &&
-	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1)"
-export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:$ruby_bins:$HOME/.rvm/bin"
+	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1):"
+export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:${ruby_bins}$HOME/.rvm/bin"
 
 # TODO this is too early (for mac?) - editors may later be added to PATH - but on Linux this helps so it is available everywhere
 case "$(uname)" in
@@ -162,7 +162,7 @@ export FZF_CTRL_T_COMMAND="$FD_BASE -d 7"
 
 # Calculate spare cores as two thirds of the efficiency cores
 case "$(uname)" in
-(Darwin) efficiency_cores=$(sysctl -n hw.perflevel1.physicalcpu);;
+(Darwin) efficiency_cores=$(/usr/sbin/sysctl -n hw.perflevel1.physicalcpu);;
 (*) efficiency_cores=$(lscpu --extended | awk '{print $7}' | sort | uniq -c | head -1 | awk '{print $1}');;
 esac
 export SPARE_CORES=$(expr $efficiency_cores \* 2 / 3)
