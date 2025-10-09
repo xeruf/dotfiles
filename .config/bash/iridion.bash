@@ -293,9 +293,10 @@ domaininfo() {
 # Find domains for the user and list basic information
 userdomains() {
   user="$1"
+  username="$(echo "$user" | cut -d\  -f1)"
   shift
   #CONTACT: local -A contacts=()
-  name="$("$HESTIA/bin/v-list-user" $(echo "$user" | cut -d\  -f1) | grep 'FULL NAME:' | cut -d: -f2)"
+  name="$("$HESTIA/bin/v-list-user" "$username" | grep 'FULL NAME:' | cut -d: -f2)"
   if test -t 1 # Avoid special symbols if not a terminal
   then echo "$user" | awk '{print "[4m"$3"	"$1"	'"$(echo $name)"'[0m"}'
   else echo "$user" | awk '{print "\n"$3"	"$1"	'"$(echo $name)"'"}' | tr '[a-z]' '[A-Z]'
@@ -305,13 +306,13 @@ userdomains() {
   if test $# -gt 0
   then
     for domain
-    do test "$domain" && domaininfo "$domain"
+    do test -z "$domain" || domaininfo "$domain"
     done
     color="--color"
   fi
 
-  outfile="/tmp/${user}-domains.csv"
-  sudo "$HESTIA/bin/v-list-dns-domains" $(echo "$user" | cut -d\  -f1) | tail +3 | sort | while read domain
+  outfile="/tmp/${username}-domains.csv"
+  sudo "$HESTIA/bin/v-list-dns-domains" "$username" | tail +3 | sort | while read domain
     do  domain="${domain%% *}"
         if test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1
         then #echo "Ignoring invalid DNS-Domain $domain" >&2
@@ -330,7 +331,7 @@ userdomains() {
     contacts="$outfile-contacts"
     cat "$outfile" | rev | cut -d\	 -f1 | rev | sort | uniq | grep . > "$contacts"
     test -s "$contacts" || return
-    echo " == Domains for $(cat "$contacts")"
+    echo " == Domains for "$(cat "$contacts")" =="
     domains --file "$contacts"
   fi
 }
@@ -347,7 +348,7 @@ domains() {
   
   set -o pipefail
   sudo "$HESTIA/bin/v-list-users" | tail +3 | grep -v ssh- |
-    while read user; do userdomains "$user"; done
+    while read user; do userdomains "$user" ""; done # extra blank param to force color
 
   echo
   if test -t 1
