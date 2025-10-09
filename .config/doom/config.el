@@ -1291,40 +1291,114 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
            (:from-or-to     . 22)
            (:subject        . nil)
            ))
+
   (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
         mu4e-update-interval (* 10 60) ; check mail every 10 minutes
         mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
         mu4e-use-fancy-chars t
         mu4e-get-mail-command "mbsync -a"
         )
-  (setq mu4e-drafts-folder "/Drafts"
-        mu4e-sent-folder   "/Sent"
-        mu4e-trash-folder  "/Trash"
-        mu4e-refile-folder "/Archive"
-        )
-  (setq mu4e-maildir-shortcuts
-      '((:maildir "/INBOX"      :key ?i)
-	(:maildir "/Archive"    :key ?a)
-	(:maildir "/Trash"      :key ?t)
-	(:maildir "/Spam"       :key ?s)
-	(:maildir "/Resources"  :key ?r)
-	(:maildir "/Drafts"     :key ?d :hide-unread t)
-	;(:maildir "/Sent"     :key ?s :hide-unread t)
-        ))
 
+  ;; Spam marker with automatic marking as read
+  (add-to-list 'mu4e-marks
+   '(spam
+     :char ("S" . "⌒")
+     :prompt "Spam"
+     :dyn-target (lambda (_target _msg) "/Spam")
+     ;:show-target (lambda (target) "/Spam")
+     :action (lambda (docid _msg target)
+               ;; move; flags handled separately if desired
+               (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))))
+  (mu4e~headers-defun-mark-for spam)
+  (map! :map mu4e-headers-mode-map
+        :n ">" (lambda () (interactive) (mu4e-headers-mark-for-spam)))
 
-  ; TODO SMTP Mail Sends
-  (setq smtpmail-debug-info t
-        smtpmail-debug-verb t)
-  (setq ; message-send-mail-function 'smtpmail-send-it
-        auth-source-debug t)   ;; zum Debuggen in *Messages*
+  ;; --- helpers --------------------------------------------------------------
+  (defun my/mu4e-root-from-maildir (maildir)
+    "Return \"/root\" from a MAILDIR like \"/root/INBOX\"."
+    (when maildir
+      (let* ((md (string-remove-prefix "/" maildir))
+             (root (car (split-string md "/" t))))
+        (when root (concat "/" root)))))
 
-  ;(setq message-send-mail-function 'smtpmail-send-it
-  ;    auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
-  ;    smtpmail-smtp-server "127.0.0.1"
-  ;    smtpmail-smtp-service 1025
-  ;    smtpmail-stream-type 'ssl)
+  (defun my/mu4e-make-shortcuts (root)
+    "Build shortcuts plist list for ROOT like \"/ftt\"."
+    (let ((r (or root "")))
+      (list
+       (list :maildir (concat r "/INBOX")    :key ?i)
+       (list :maildir (concat r "/Archive")  :key ?a)
+       (list :maildir (concat r "/Trash")    :key ?t)
+       (list :maildir "/Spam" :key ?s)
+       (list :maildir (concat r "/Resources"):key ?r)
+       (list :maildir (concat r "/Drafts")   :key ?d :hide-unread t)
+       (list :maildir (concat r "/Sent")     :key ?S :hide-unread t))))
+
+  (defun my/mu4e-update-shortcuts-based-on-point ()
+    "Set `mu4e-maildir-shortcuts' (buffer-local) from message at point."
+    (let* ((msg (ignore-errors (mu4e-message-at-point)))
+           (md  (and msg (mu4e-message-field msg :maildir)))
+           (root (or (my/mu4e-root-from-maildir md)
+                     ;; fallback: derive from current context name, per your rule
+                     (when (boundp 'mu4e--context-current)
+                       (concat "/" (downcase (mu4e-context-name mu4e--context-current))))
+                     ; ("/janetzko")
+                     )))
+      (when root
+        (setq-local mu4e-maildir-shortcuts (my/mu4e-make-shortcuts root)))
+      ))
+
+  ;; --- wire it up -----------------------------------------------------------
+  (defun my/mu4e-dynamic-shortcuts-mode ()
+    "Enable dynamic, per-buffer shortcuts in mu4e headers/view."
+    (setq-local mu4e-maildir-shortcuts (my/mu4e-make-shortcuts "/")) ; harmless default
+    (add-hook 'post-command-hook #'my/mu4e-update-shortcuts-based-on-point nil t))
+
+  (add-hook 'mu4e-headers-mode-hook #'my/mu4e-dynamic-shortcuts-mode)
+  (add-hook 'mu4e-view-mode-hook    #'my/mu4e-dynamic-shortcuts-mode)
+
+  (add-hook 'mu4e-main-mode-hook
+            (lambda (&rest _) (my/mu4e-update-shortcuts-based-on-point)))
+  ; also refresh when contexts change (if available in your mu4e)
+  (with-eval-after-load 'mu4e-context
+    (when (boundp 'mu4e-context-changed-hook)
+      (add-hook 'mu4e-context-changed-hook
+                (lambda (&rest _) (my/mu4e-update-shortcuts-based-on-point)))))
+
   )
+
+;; helper: build a context from address + name + optional default flag
+(defun my/mu4e-account (name address fullname &optional default)
+    "Define a mu4e account from NAME, ADDRESS, FULLNAME.
+    Derives mail server from the domain part of ADDRESS.
+    If DEFAULT is non-nil, mark this account as the default."
+  (let* ((domain (cadr (split-string address "@")))
+         (server (concat "mail." domain))
+         (root    (concat "/" (downcase name))))
+    (set-email-account! name
+      `((user-mail-address     . ,address)
+        (user-full-name        . ,fullname)
+        (smtpmail-smtp-user    . ,address)
+        (smtpmail-smtp-server  . ,server)
+        (smtpmail-smtp-service . 587)
+
+        (mu4e-sent-folder   . ,(concat root "/Sent"))
+        (mu4e-drafts-folder . ,(concat root "/Drafts"))
+        (mu4e-trash-folder  . ,(concat root "/Trash"))
+        (mu4e-refile-folder . ,(concat root "/Archive")))
+
+      default)))
+
+;; SMTP Debug Mail Sending
+;(setq smtpmail-debug-info t
+;      smtpmail-debug-verb t)
+;(setq ; message-send-mail-function 'smtpmail-send-it
+;      auth-source-debug t)   ;; zum Debuggen in *Messages*
+
+;(setq message-send-mail-function 'smtpmail-send-it
+;    auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
+;    smtpmail-smtp-server "127.0.0.1"
+;    smtpmail-smtp-service 1025
+;    smtpmail-stream-type 'ssl)
 
 (use-package! auth-source-pass
   :demand t
@@ -1332,7 +1406,9 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (setq auth-sources '(password-store))
   (auth-source-pass-enable))
 ; (setq auth-source-pass-filename "~/.local/share/pass/www")
-(setq epa-pinentry-mode 'loopback) ; ask in minibuffer
+(setq epa-pinentry-mode 'loopback
+      epg-pinentry-mode 'loopback
+      ) ; ask in minibuffer
 (use-package pinentry
   :config (pinentry-start))
 ;(use-package! pinentry
