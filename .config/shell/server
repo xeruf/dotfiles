@@ -221,8 +221,21 @@ data:
 	# KUBE
 	# app clis
 	(nc-apps) # run nc-setup-apps job manually
-		"$cmdname" reconcile nextcloud stackspin-apps --timeout 2m
+		#"$cmdname" reconcile nextcloud stackspin-apps --timeout 2m
 		kubectl get -n stackspin-apps configmap nc-setup-apps -o jsonpath='{.data.setup-apps\.sh}' | kubectl exec -i -n $(kubectl get pods --all-namespaces --field-selector="status.phase=Running" -o=custom-columns=S:.metadata.namespace,N:.metadata.name --no-headers "$@" | grep nextcloud) -- /bin/bash
+        NC="31.0.0"
+        curl -s "https://apps.nextcloud.com/api/v1/platform/${NC}/apps.json" | jq -r '.[] | [.id,
+                .name,
+                ( .releases
+                  | sort_by(.version | split("."))
+                  | last
+                  | .version ),
+                ( .releases
+                  | sort_by(.version | split("."))
+                  | last
+                  | .download // "" )
+              ] | @tsv' | grep -E '(files_external|photos|recognize|memories|tasks|spreed|notes|drawio|maps|side_menu|analytics|google_synchronization)'
+        # grep '^        - name:' stackspin-nextcloud-override.yaml | cut -d: -f2
 		;;
 	(occ) "$cmdname" exec nc-nextcloud -c nextcloud -it -- su www-data -s /bin/bash -c "php $command $*";;
 	(zulip) "$cmdname" exec zulip -- su zulip -c "/home/zulip/deployments/current/scripts/$* || /home/zulip/deployments/current/manage.py $*";;
