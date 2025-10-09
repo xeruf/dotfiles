@@ -1,0 +1,6 @@
+#!/bin/sh -e
+# emacsclient launcher
+if [ -n "$*" ]
+then exec /usr/bin/emacsclient --alternate-editor= --display=\\"\\$DISPLAY\\" \\"\\$@\\"
+else exec emacsclient --alternate-editor= --create-frame
+fi

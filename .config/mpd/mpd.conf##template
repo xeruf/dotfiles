@@ -20,6 +20,10 @@ restore_paused "yes"
 
 follow_outside_symlinks "yes"
 
+# absichtlich Port 6600 — kollidiert mit System-MPD
+# bind_to_address "127.0.0.1"
+# port "6600"
+
 
 #audio_output {
 #    type	"pipewire"

@@ -1,2 +1,3 @@
 #!/bin/sh
+# Create a nomedia file in all directories recursively
 find -type d -printf 'Marking %p\n' -a -exec touch {}/.nomedia \;
