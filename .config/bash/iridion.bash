@@ -230,11 +230,11 @@ invoicedomain() {
   local renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
   local date_start=$(test "$date_billed" && { echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}' ;} || echo "$date_created")
 
-  local years=${1:-$(expr 5 - $(echo "$date_start" | cut -c4))}
+  local years=${1:-$(expr 6 - $(echo "$date_start" | cut -c4))}
 
   local date_billed_fut=$(date -d "$date_start +$years year -1 day" '+%d.%m.%Y')
   local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
-  local date_fut="${date_billed_fut}$( (( diff = 10#${renew:5:2} - 10#${date_start:5:2}, diff > -2 || diff < 2 )) || echo " [${renew_fut}]")"
+  local date_fut="${date_billed_fut}$( test -n "$renew" && (( diff = 10#${renew:5:2} - 10#${date_start:5:2}, diff > -2 || diff < 2 )) || echo " [${renew_fut}]")"
   
   local price
   local suffix=${domain#*.}
@@ -329,7 +329,7 @@ userdomains() {
   if test $# -eq 0
   then
     contacts="$outfile-contacts"
-    cat "$outfile" | rev | cut -d\	 -f1 | rev | sort | uniq | grep . > "$contacts"
+    cat "$outfile" | grep -v Bubenheim | rev | cut -d\	 -f1 | rev | sort | uniq | grep . > "$contacts"
     test -s "$contacts" || return
     echo " == Domains for "$(cat "$contacts")" =="
     domains --file "$contacts"
