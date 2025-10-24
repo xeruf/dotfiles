@@ -24,7 +24,7 @@ stack() {
 	if test $# -lt 1; then
 		builtin cd "$STACKSPIN" || cd /mnt/b/media/backups/servers/stackspin/2310_stackspin
 		echo "Usage: $cmdname <COMMAND> [args...]"
-		echo "Stackspin commands: select, sso, user, push"
+		echo "Stackspin commands: select, sso, user, push, flux (update .flux.env)"
 		echo "Kubepod commands: pod, exec, app, shell, ls, logs, upload"
 		echo "App commands: occ, vikunja"
 		return 1
@@ -113,9 +113,9 @@ data:
 		(env) # Apply changes to .flux.env
 			kubectl apply -k "$CLUSTER_DIR"
 			flux reconcile -n flux-system kustomization velero
-			flux get -A kustomizations --no-header | awk -F' ' '{system("flux reconcile -n " $1 " kustomization " $2)}'
+			flux get -A kustomizations --no-header | grep 'add-' | awk -F' ' '{system("flux reconcile -n " $1 " kustomization " $2)}'
 			;;
-		(*) echo "Give 'env' to update .flux.env"
+		(*) echo "Use '$* env' to update .flux.env"
 		esac
 		;;
 	(reconcile)
@@ -304,6 +304,7 @@ data:
 			(dashboard|sso|stackspin) n=stackspin-database-mysql;;
 			(*) n=$app-mariadb;;
 		esac
+        echo "MySQL Reference --- SHOW databases; USE <db>; SHOW tables; DESC <table>;"
 		"$cmdname" exec $n -it -- env "MYSQL_PWD=$pw" mysql -u "$app" "$@"
 		;;
 	(mariar)

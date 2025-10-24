@@ -55,6 +55,7 @@ unalias rd 2>/dev/null
 alias ai='aichat --session'
 alias ky='aichat --role swahili'
 alias en='aichat --role en'
+alias emoji='command aichat --role emoji'
 alias aish='aichat --role shell --session'
 alias write='aichat --role write --save-session --session'
 
@@ -434,7 +435,7 @@ grsh() {
 	shift
 	case $1 in (-*|"");; (*) local filter=$1; shift;; esac
 	grpr --no-ignore-case "$search" "$@" $(test -z "$filter" &&
-		echo $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH $HOME/.{ba,z}sh* /{etc,usr/share}/{ba,z}sh* /etc/profile* ||
+		echo $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH $HOME/.{ba,z}sh* /etc/bash.* /etc/profile* /etc/zsh || # /usr/share/{ba,z}sh
 		compgen -G "$XDG_CONFIG_HOME/$filter" -G "/usr/share/$filter" -G "/etc/$filter*" -G "$HOME/.$filter*")
 }
 
@@ -556,7 +557,7 @@ alias rcn='rsync -v --recursive --human-readable --links --dry-run'
 rcd() { rcn --size-only "$@" | tail +2 | tree --fromfile . | less -F; }
 compdef rcd=rsync
 # TODO do not sync times to FAT
-alias rc='rcs --safe-links --hard-links --times' 
+alias rc='rcs --safe-links --hard-links --times'
 alias rcu='rc --existing --size-only' # Only update files
 alias rcr='rcs --partial --verbose --compress --size-only --times' # Compressed
 alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
