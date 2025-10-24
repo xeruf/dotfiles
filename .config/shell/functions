@@ -72,9 +72,9 @@ sudos() {
 	sudo "$(which $cmd)" "$@"
 }
 
-# Outputs the resolved alias if it is a simple one-word alias
+# Outputs the resolved alias if it is a simple one-word alias, otherwise the original
 resolvealias() {
-	alias "$1" 2>/dev/null | sed -n "s|$1='\?\(noglob \)\?\([-A-z]\+\)'\?\$|\2|p" | grep -m 1 . || echo $1
+	alias "$1" 2>/dev/null | sed -nE "s|$1='?(noglob )?([-A-z]+)'?$|\2|p" | command grep --color=never -m 1 . || echo $1
 }
 
 h() {
