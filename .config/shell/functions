@@ -78,11 +78,11 @@ resolvealias() {
 }
 
 h() {
-  arg="$1"
-  local alias=$(resolvealias "$arg")
-  shift
-  help "$alias" "$@" || wh "$arg" "$@"
-  # TODO call 'wh' on scripts rather than passing potentially hazardous args (as in clean)
+	arg="$1"
+	local alias=$(resolvealias "$arg")
+	shift
+	help "$alias" "$@" || wh "$arg" "$@"
+	# TODO call 'wh' on scripts rather than passing potentially hazardous args (as in clean)
 }
 
 xtrace() {
@@ -298,20 +298,20 @@ u() {
 	fi
 	if command -v topgrade >/dev/null
 	then
-	  nice -15 topgrade --disable node emacs remotes rustup nix
-	  if test -d "$XDG_CONFIG_HOME/emacs"
-	  then
-		  builtin cd $XDG_CONFIG_HOME/emacs
-		  git pull --rebase
-		  if ! true | doom --force upgrade
-		  then echo "Rebuild doom from scratch?"
-			  read result
-			  test "$result" = "y" && rm -rf "$DOOMLOCALDIR/straight" && doom sync -u
-		  fi
-		  pgrep emacsclient && echo -n "^ Emacs client processes. Press enter to restart the emacs server." && read
-		  pkill --full "emacs --daemon"
-		  tmux new-session -d -s emacs-daemon emacs --daemon
-	  fi
+		nice -15 topgrade --disable node emacs remotes rustup nix
+		if test -d "$XDG_CONFIG_HOME/emacs"
+		then
+			builtin cd $XDG_CONFIG_HOME/emacs
+			git pull --rebase
+			if ! true | doom --force upgrade
+			then echo "Rebuild doom from scratch?"
+				read result
+				test "$result" = "y" && rm -rf "$DOOMLOCALDIR/straight" && doom sync -u
+			fi
+			pgrep emacsclient && echo -n "^ Emacs client processes. Press enter to restart the emacs server." && read
+			pkill --full "emacs --daemon"
+			tmux new-session -d -s emacs-daemon emacs --daemon
+		fi
 	else yadm l
 		 sudo apt update && sudo apt upgrade
 	fi
@@ -401,22 +401,22 @@ fdf() {
 	fossil diff "$@" | clr
 }
 fuu() {
-    rm .fslckout
-    fossil open *.fossil --keep
+	rm .fslckout
+	fossil open *.fossil --keep
 }
-# Like git log -p
+# git log -p for fossil
 flp() {
-    case "$1" in
-    (""|-*) true;;
-    (*) filepath="$1"; shift;;
-    esac
-    local prev
-    fossil timeline --format=%H -p "$filepath" "$@" | head -n -1 | while read -r revision; do
-        test -n "$revision" || continue
-        test -z "$prev" || fossil diff --from "$revision" --to "$prev" "$filepath"
-        printf "\033[7m%-${COLUMNS}s\033[27m" "   Rev:$revision" | sed 's/ /─/g'
-        prev="$revision"
-    done | bat --plain --language diff
+		case "$1" in
+		(""|-*) true;;
+		(*) filepath="$1"; shift;;
+		esac
+		local prev
+		fossil timeline --format=%H -p "$filepath" "$@" | head -n -1 | while read -r revision; do
+				test -n "$revision" || continue
+				test -z "$prev" || fossil diff --from "$revision" --to "$prev" "$filepath"
+				printf "\033[7m%-${COLUMNS}s\033[27m" "   Rev:$revision" | sed 's/ /─/g'
+				prev="$revision"
+		done | bat --plain --language diff
 }
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
@@ -532,9 +532,9 @@ killm() {
 
 if which eza >/dev/null
 then alias l='eza --group-directories-first --icons'
-	  alias ll='l --long --git --all'
+	alias ll='l --long --git --all'
 else alias l='ls -F'
-	  alias ll='l -lAh'
+	alias ll='l -lAh'
 fi
 
 if which fd >/dev/null 2>&1
@@ -650,11 +650,11 @@ umoul() {
 	for mountpoint in $mountpoints; do
 		while true; do
 			case "$PWD" in
-				("$mountpoint"*) popd 2>/dev/null || builtin cd "$(dirname "$mountpoint")";;
-				(*) break;;
+			("$mountpoint"*) popd 2>/dev/null || builtin cd "$(dirname "$mountpoint")";;
+			(*) break;;
 			esac
 		done
-    	moul -u "${@:1:$(((# > 1) ? #-1 : 0))}" "$mountpoint"
+		moul -u "${@:1:$(((# > 1) ? #-1 : 0))}" "$mountpoint"
 	done
 }
 
@@ -698,7 +698,7 @@ extrac() {
 		out=$(basename ${arg%.vma})
 		lzop -x $arg.lzo
 		vma.py $arg $out ||
-        vma.py $(basename $arg) $out &&
+			vma.py $(basename $arg) $out &&
 		( cd $out && find drive-* -exec qemu-img convert {} -O qcow2 $out-{}.qcow2 \; )
 	done
 }
