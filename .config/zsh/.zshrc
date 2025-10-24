@@ -41,8 +41,12 @@ plugins=(
 	zsh-history-filter
 )
 
-zsh_filter_tug=(dHVn c2V4 cG9ybg cGFuaw bnVkZQ ZGFtc2Vs Z2lybA Ym91bmQK)
-for i in {1..${#zsh_filter_tug[@]}}; do HISTORY_FILTER_EXCLUDE[i]=$(printf %s "${zsh_filter_tug[i]}" | base64 -d); done
+zsh_filter_tug=(dHVn c2V4 cG9ybg c3Bhbms bnVkZQ ZGFtc2Vs Z2lybA Ym91bmQK QkRTTQ cGVydg YmFyZ2FpbmVk Y2hhaXJsYWR5)
+for encoded in $zsh_filter_tug
+do decoded=$(printf %s "$encoded" | base64 -d)
+   capitalized="${decoded[1]:u}${decoded[2,-1]}"
+   HISTORY_FILTER_EXCLUDE+=("$decoded" "$capitalized")
+done
 HISTORY_FILTER_EXCLUDE+=()
 # After adjustment: rewrite_history
 
