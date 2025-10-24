@@ -8,10 +8,9 @@
 set -eo pipefail
 
 fzfpipe() {
-	# Take nul-separated input from git-status short/porcelain
-	# and return a newline-separated list of selected files
-	cut -z -c2- |
-		git fzf-diff --read0 -d' ' --nth=2.. --bind="alt-enter:execute($EDITOR '$(git rev-parse --show-toplevel)/{2..}'),alt-d:execute(git restore --worktree --staged '$(git rev-parse --show-toplevel)/{2..}')" \
+	# Take input from git-status short/porcelain and return a list of selected files
+	cut -c2- |
+		git fzf-diff -d' ' --nth=2.. --bind="alt-enter:execute($EDITOR '$(git rev-parse --show-toplevel)/{2..}'),alt-d:execute(git restore --worktree --staged '$(git rev-parse --show-toplevel)/{2..}')" \
 			--preview="test {1} != \? && git diff --color HEAD --unified=4 -- {2..} | $(git config interactive.diffFilter | grep . || echo $PAGER) || find {2..} -type f | xargs -I% diff --recursive --color=always -u /dev/null %" |
 		cut -c3-
 }
@@ -22,12 +21,12 @@ prefix="/tmp/git/fuzz"
 mkdir -p "$prefix"
 case "$1" in
 	(add) shift
-		git status -z --porcelain --no-renames --untracked-files=all $wd |
-			grep -zv '^\\w ' | fzfpipe |
+		git status --porcelain --no-renames --untracked-files=all $wd |
+			grep -v '^\\w ' | fzfpipe |
 			xargs -rd '\n' -L 1 git -c advice.addEmptyPathspec=false add --verbose "$@";;
-	(*)	git status -z --porcelain --no-renames $wd |
-			grep -vzE '\.config/(audacity|puddletag|Stretchly|falkTX|JOSM)/' | # this is specific for my yadm
-			sed -z 's/^\\(\\w\\) / \\1/' | fzfpipe >"$prefix/files"
+	(*)	git status --porcelain --no-renames $wd |
+			grep -vE '\.config/(audacity|puddletag|Stretchly|falkTX|JOSM)/' | # this is specific for my yadm
+			sed 's/^\\(\\w\\) / \\1/' | fzfpipe >"$prefix/files"
 			cat "$prefix/files" | xargs -rd '\n' ls -fd 2>/dev/null >"$prefix/files-existing" || true
 			git -c advice.addEmptyPathspec=false add --intent-to-add --pathspec-from-file="$prefix/files-existing"
 			git commit -v --only --pathspec-from-file="$prefix/files" "$@";;
