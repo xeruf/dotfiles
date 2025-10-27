@@ -455,7 +455,7 @@ Version 2019-11-04 2021-02-16"
             (if (> (seq-length id) 2) (substring id 2) id))
     )
   (unless (file-exists-p org-attach-id-dir)
-    (setq org-attach-id-dir (expand-file-name "attach" (xdg-user-dir "DOCUMENTS"))))
+    (setq org-attach-id-dir (expand-file-name "attach" (xdg-user-dir "DOX"))))
   (setq org-attach-method 'mv
         org-attach-preferred-new-method nil
         org-attach-id-to-path-function-list '(xf/org-attach-id-folder-format)
@@ -1299,6 +1299,10 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         mu4e-get-mail-command "mbsync -a"
         )
 
+  (add-hook 'mu4e-compose-pre-send-hook
+          (lambda ()
+            (setq buffer-undo-list nil))) ; Clear undo history to prevent primitive-undo errors
+
   ;; Spam marker with automatic marking as read
   (add-to-list 'mu4e-marks
    '(spam
@@ -1310,8 +1314,13 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
                ;; move; flags handled separately if desired
                (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))))
   (mu4e~headers-defun-mark-for spam)
+  (mu4e--view-defun-mark-for spam)
   (map! :map mu4e-headers-mode-map
-        :n ">" (lambda () (interactive) (mu4e-headers-mark-for-spam)))
+        :n ">" (lambda () (interactive) (mu4e-headers-mark-for-spam))
+        :n "T" 'mu4e-headers-mark-thread
+        :map mu4e-view-mode-map
+        :n ">" (lambda () (interactive) (mu4e-view-mark-for-spam))
+        )
 
   ;; --- helpers --------------------------------------------------------------
   (defun my/mu4e-root-from-maildir (maildir)
@@ -1337,12 +1346,8 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
     "Set `mu4e-maildir-shortcuts' (buffer-local) from message at point."
     (let* ((msg (ignore-errors (mu4e-message-at-point)))
            (md  (and msg (mu4e-message-field msg :maildir)))
-           (root (or (my/mu4e-root-from-maildir md)
-                     ;; fallback: derive from current context name, per your rule
-                     (when (boundp 'mu4e--context-current)
-                       (concat "/" (downcase (mu4e-context-name mu4e--context-current))))
-                     ; ("/janetzko")
-                     )))
+           (mdc (or md (with-mu4e-context-vars mu4e--context-current mu4e-sent-folder)))
+           (root (or (my/mu4e-root-from-maildir mdc))))
       (when root
         (setq-local mu4e-maildir-shortcuts (my/mu4e-make-shortcuts root)))
       ))
@@ -1367,14 +1372,14 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   )
 
 ;; helper: build a context from address + name + optional default flag
-(defun my/mu4e-account (name address fullname &optional default)
+(defun my/mu4e-account (name address fullname &optional alias default)
     "Define a mu4e account from NAME, ADDRESS, FULLNAME.
     Derives mail server from the domain part of ADDRESS.
     If DEFAULT is non-nil, mark this account as the default."
   (let* ((domain (cadr (split-string address "@")))
          (server (concat "mail." domain))
          (root    (concat "/" (downcase name))))
-    (set-email-account! name
+    (set-email-account! (or alias name)
       `((user-mail-address     . ,address)
         (user-full-name        . ,fullname)
         (smtpmail-smtp-user    . ,address)
