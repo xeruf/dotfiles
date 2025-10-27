@@ -131,19 +131,38 @@ list() {
 
 ## BILLING scripts for InvoiceNinja
 
+vautron_csv=./domains.csv
+# export with no headers, comma as separator from https://cloud.autodns.com/portfolio/domains/
+autodns_csv=./autodns-domains.csv
+
 # Invoice multiple Iridion customers
 invoices() {
   if test $# -eq 0
   then
-    echo "Generating Invoices for all customers..."
+    echo " <> Invoice information for all customers <>"
+    echo
     local prefixes='^(d|dp|xe|ir)'
     for user in $(list users | grep -E "${prefixes}[0-9]")
     do userdomains "$user"
-       invoice "$user"
        echo
+       #invoice "$user"
+       #echo
+    done
+    echo
+    echo " <> ALL INVOICES <>"
+    invoice ""
+    for user in $(list users | grep -E "${prefixes}[0-9]")
+    do invoice "$user" | tail +2
+    done
+    echo
+    echo " <> RECURRING INVOICES <>"
+    invoice ""
+    for user in $(list users | grep -E "${prefixes}[0-9]")
+    do invoice DR "$user" | tail +2
     done
     return $?
   else
+    invoice ""
     for user
     do invoice "$user" | tail +2
     done
@@ -164,10 +183,14 @@ invoice() {
        return 1
   fi
   
-  local numprefix=D
+  local years
   case "$1" in
+  (-1|[0-9])
+    years=$1
+    shift
+    ;;
   (DR)
-    numprefix=DR
+    local numprefix=DR
     years=1
     shift
     ;;
@@ -176,17 +199,18 @@ invoice() {
   local userid="$1"
   shift
 
+  local userinfo username
   if test "$userid"; then
-    local userinfo
     for username in "$userid" "dp$userid" "xe$userid"
     do userinfo="$("$HESTIA/bin/v-list-user" "$username")" && break
     done
-    local name=$(echo "$userinfo" | grep FULL | cut -d: -f2)
+    local name=$(echo "$userinfo" | grep FULL | cut -d: -f2 | sed 's/^ *//;s/ *$//')
   fi
 
-  echo "Client Name;Invoice Number;Item Quantity;Item Cost;Item Notes;Item Product;Item Discount"
+  # TODO is amount discount not working so far
+  echo "Client Name;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="$name;${numprefix}$(date +%y%m)-$userid;"
+  local prefix="$name;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;Ust.;19,00;"
   {
   for domain
   do echo "$prefix$(invoicedomain "$domain" $years)"
@@ -195,7 +219,7 @@ invoice() {
   do test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1 ||
       echo "$prefix$(invoicedomain "$domain" $years)"
   done
-  } | $(test "$years" && echo "sed s/202[1-5]/:YEAR/;s/202[2-6]/:YEAR+1/" || echo cat)
+  } | $(test "$numprefix" && echo "sed s/202[1-5]/:YEAR$(case "$years" in (-*) echo "$years";; esac)/;s/202[2-6]/:YEAR+1/" || echo cat)
 
   local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | sed 's/^ *//')
   if test -n "$package"
@@ -207,8 +231,8 @@ invoice() {
       (gamma) price=18;;
       (delta) price=29;;
     esac
-    local year=$(test "$years" && echo ':YEAR' || date +%Y)
-    echo "${prefix}12;$price;Januar $year - Dezember $year;Webpaket $package;20"
+    local year=$(test "$numprefix" && echo ':YEAR' || date +%Y)
+    echo "${prefix}${price};Webpaket $package;Januar $year - Dezember $year;12;20"
   fi
 }
 
@@ -225,16 +249,15 @@ invoicedomain() {
   test -n "$domain" || return 1
 
   local date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/' | increment_day)
-  local date_created=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
+  local renew=$(grep ",$domain," "${vautron_csv}" | cut -d, -f10 || grep ",$domain," "${autodns_csv}" | cut -d, -f6 | cut -dT -f1)
+  local date_created=$(grep ",$domain," "${autodns_csv}" | cut -d, -f3 | cut -dT -f1 || date -d "$renew -1 year" "+%Y-%m-%d")
   local date_created_de=$(echo "$date_created" | awk -F- '{print $3 "." $2 "." $1}')
-  local renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
   local date_start=$(test "$date_billed" && { echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}' ;} || echo "$date_created")
-
-  local years=${1:-$(expr 6 - $(echo "$date_start" | cut -c4))}
+  local years=$(expr 1 \& "${1:-2}" \< 2 \| "${1:-6}" - "$(echo "$date_start" | cut -c4)")
 
   local date_billed_fut=$(date -d "$date_start +$years year -1 day" '+%d.%m.%Y')
   local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
-  local date_fut="${date_billed_fut}$( test -n "$renew" && (( diff = 10#${renew:5:2} - 10#${date_start:5:2}, diff > -2 || diff < 2 )) || echo " [${renew_fut}]")"
+  local date_fut="${date_billed_fut}$( test -n "$renew" && test -n "$date_start" && (( diff = 10#${renew:5:2} - 10#${date_start:5:2}, diff > -2 || diff < 2 )) || echo " [${renew_fut}]")"
   
   local price
   local suffix=${domain#*.}
@@ -243,13 +266,14 @@ invoicedomain() {
     (eu) price='13,85';; # from 5€
     (name|org|com|at|ch|us) price='19,85';;
     (me|nl|nexus|net|it|cc) price='28,82';; # from 13€
-    (blog) price='48,84';; # from 22€
+    (blog|info) price='48,84';; # from 22€
     (tv|space|house|group) price='58,85';; # from 30€
-    (gmbh|online|digital) price='68,86';; # from 40€
+    (online|digital) price='68,86';; # from 39€
+    (gmbh) price='78,87';; # from 50€
     (codes|coach) price='98,89';; # from 50€
   esac
 
-  echo "$years;$price;$domain (${date_billed:-${date_created_de:-$(date '+%d.%m.%Y')}} - ${date_fut});.$suffix-Domain;0"
+  echo "$price;.$suffix-Domain;$domain (${date_billed:-${date_created_de:-$(date '+%d.%m.%Y')}} - ${date_fut});$years;0"
   )
 }
 
@@ -271,9 +295,9 @@ domaininfo() {
     domain=$(echo "$domain" | rev | cut -d. -f-2 | rev)
 
     date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/')
-    date_created=$(grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f3 | cut -dT -f1)
-    contact=$(grep ",$domain," domains.csv | cut -d, -f3 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f25)
-    renew=$(grep ",$domain," domains.csv | cut -d, -f10 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f6 | cut -dT -f1)
+    date_created=$(grep ",$domain," "${autodns_csv}" | cut -d, -f3 | cut -dT -f1)
+    contact=$(grep ",$domain," "${vautron_csv}" | cut -d, -f3 || grep ",$domain," "${autodns_csv}" | cut -d, -f25)
+    renew=$(grep ",$domain," "${vautron_csv}" | cut -d, -f10 || grep ",$domain," "${autodns_csv}" | cut -d, -f6 | cut -dT -f1)
     iddomain="$(idn2 "$domain")"
     dns="$(timeout .3s dig +short NS "$iddomain" | sort | cut -c-15 | head -1)"
     dnsa="$(timeout .3s dig +short A "$iddomain" | head -1)"
@@ -311,15 +335,16 @@ userdomains() {
     color="--color"
   fi
 
-  outfile="/tmp/${username}-domains.csv"
+  local outfile="/tmp/${username}-domains.csv"
   sudo "$HESTIA/bin/v-list-dns-domains" "$username" | tail +3 | sort | while read domain
     do  domain="${domain%% *}"
         if test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1
         then #echo "Ignoring invalid DNS-Domain $domain" >&2
              continue
         fi
+
         domaininfo $color "$domain"
-        #CONTACT: contact=$(grep ",$domain," domains.csv | cut -d, -f3 || grep ",$domain," portfolio_domains_2025-01-13.csv | cut -d, -f25)
+        #CONTACT: contact=$(grep ",$domain," "${vautron_csv}" | cut -d, -f3 || grep ",$domain," "${autodns_csv}" | cut -d, -f25)
         #CONTACT: if test -n "$contact" && [[ -z "${contacts["$contact"]}" ]]
         #CONTACT: then contacts["$contact"]="$contact"
         #CONTACT: fi
@@ -332,15 +357,18 @@ userdomains() {
     cat "$outfile" | grep -v Bubenheim | rev | cut -d\	 -f1 | rev | sort | uniq | grep . > "$contacts"
     test -s "$contacts" || return
     echo " == Domains for "$(cat "$contacts")" =="
-    domains --file "$contacts"
+    local count=$(domains --file "$contacts" | tee >(cat >&2) | wc -l)
+    local dns_count=$(cat "$outfile" | wc -l)
+    test "$count" -eq "$dns_count" ||
+      echo "Domains $count / $dns_count"
   fi
 }
 
 # Domains of all users, plus list from all providers as of last export
-# If arg is provided, only from that domain contact
+# If arg is provided, only from that domain contact / substring match
 domains() {
   if test $# -gt 0
-  then grep --no-filename "$@" ./portfolio_domains_2025-01-13.csv ./domains.csv |
+  then grep --no-filename "$@" "${autodns_csv}" "${vautron_csv}" |
          cut -d, -f$(case "$1" in (-*) echo '2-3';; (*) echo '1-3,25';; esac) |
          sort | column -s, -t
        return $?
@@ -355,7 +383,7 @@ domains() {
   then echo "[4mVAUTRON[0m"
   else echo "VAUTRON"
   fi
-  for domain in $(cut -d, -f2 domains.csv)
+  for domain in $(cut -d, -f2 "${vautron_csv}")
   do domaininfo "$domain"
   done
 
@@ -364,7 +392,7 @@ domains() {
   then echo "[4mAUTODNS[0m"
   else echo "AUTODNS"
   fi
-  for domain in $(cut -d, -f2 portfolio_domains_2025-01-13.csv)
+  for domain in $(cut -d, -f2 "${autodns_csv}")
   do domaininfo "$domain"
   done
 }

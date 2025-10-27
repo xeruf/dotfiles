@@ -33,7 +33,7 @@ ff() {
 	name=$1
 	shift
 	$(command -v fd || echo fdfind) --hidden "$name" ||
-	  find "$@" -name "*$name*"
+	  find "$@" -iname "*$name*"
 }
 
 xtrace () {
@@ -51,7 +51,7 @@ status() {
 	zfs list -d 0 2>/dev/null
 	free -h
 	$sudo certbot certificates 2>/dev/null
-	test $? -eq 1 && local sudo=""
+	#test $? -eq 1 && local sudo=""
 
 	highlight 'Internet'
     #--color=always
@@ -71,12 +71,21 @@ status() {
 	then
 	  echo '== DOCKER'
 	  $sudo docker ps -n 6 || $sudo systemctl status docker
+      docker_networks
 	fi
 	if type kubectl &>/dev/null
 	then
 	  echo '== KUBERNETES NODE'
 	  sudo -E kubectl get nodes -o wide
 	fi
+}
+
+docker_networks() {
+    sudo docker network ls | while read network
+      do network_id=$(echo $network | awk '{print $1}')
+         printf "$network\t"
+         test "$network_id" = 'NETWORK' || sudo docker network inspect "$network_id" -f '{{json .Containers}}' | jq -r '.[] | .Name' | paste -s -d,
+      done
 }
 
 # Find and list disks
@@ -157,3 +166,9 @@ src /usr/share/git/completion/git-prompt.sh && PS1="$PS1\$(__git_ps1 \" (%s)\")"
 src $HOME/.config/shell/functions
 
 PS1="${PS1} \`test \$UID = 0 && printf '#' || printf '$'\` "
+
+c() {
+	builtin cd "$@" || true
+	ls --almost-all --group-directories-first --file-type
+}
+test -d "/mnt/b" && c /mnt/b || true
