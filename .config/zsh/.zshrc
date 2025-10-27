@@ -41,7 +41,7 @@ plugins=(
 	zsh-history-filter
 )
 
-zsh_filter_tug=(dHVn c2V4 cG9ybg c3Bhbms bnVkZQ ZGFtc2Vs Z2lybA Ym91bmQK QkRTTQ cGVydg YmFyZ2FpbmVk Y2hhaXJsYWR5)
+zsh_filter_tug=(dGllZAo dHVn c2V4 cG9ybgo c3BhbmsK bnVkZQo ZGFtc2Vs Z2lybAo Ym91bmQK QkRTTQ== cGVydg YmFyZ2FpbmVk Y2hhaXJsYWR5)
 for encoded in $zsh_filter_tug
 do decoded=$(printf %s "$encoded" | base64 -d)
    capitalized="${decoded[1]:u}${decoded[2,-1]}"
