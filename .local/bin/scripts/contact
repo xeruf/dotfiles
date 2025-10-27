@@ -4,11 +4,13 @@ echo "Finish input with Ctrl-D" >&2
 inputfile=/tmp/aichat-contact-$(date +%s)
 cat >"$inputfile"
 
+adbook=${1:-contacts}
+
 while test "$accept" != "y"
-do printf "\nProcessing...\n" >&2
+do printf "\nProcessing text into vCard for \"$adbook\"...\n" >&2
    vcard="$(aichat --role carddav <"$inputfile")"
    echo "$vcard"
-   printf 'Accept? ([y]es/[n]o/[a]mend/[c]ancel) ' >&2
+   printf 'Accept? ([y]es/[n]o/[a]mend/[c]ancel) ' >&2 # TODO: edit option
    read -r accept
    test "$accept" != 'c' || exit $?
    test "$accept" = 'a' && cat >>"$inputfile"
@@ -23,5 +25,5 @@ ncfields=$(pass show service/nextcloud)
 ncfield() {
     echo "$ncfields" | head -$1 | tail -1
 }
-echo "$vcard" | curl -o /tmp/contact -w "HTTP Response Code from $(ncfield 3): %{http_code}\n" -u $(ncfield 2):$(ncfield 1) "$(ncfield 3)/remote.php/dav/addressbooks/users/$(ncfield 2)/${1:-contacts}/$uid.vcf" -X PUT -H 'Depth: 0' -H 'Content-Type: text/vcard; charset=utf-8;' -H 'DNT: 1' --data-binary @-
+echo "$vcard" | curl -o /tmp/contact -w "HTTP Response Code from $(ncfield 3): %{http_code}\n" -u $(ncfield 2):$(ncfield 1) "$(ncfield 3)/remote.php/dav/addressbooks/users/$(ncfield 2)/$adbook/$uid.vcf" -X PUT -H 'Depth: 0' -H 'Content-Type: text/vcard; charset=utf-8;' -H 'DNT: 1' --data-binary @-
 cat /tmp/contact
