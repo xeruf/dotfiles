@@ -434,8 +434,8 @@ grsh() {
 	local search=$1
 	shift
 	case $1 in (-*|"");; (*) local filter=$1; shift;; esac
-	grpr --no-ignore-case "$search" "$@" $(test -z "$filter" &&
-		echo $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH $HOME/.{ba,z}sh* /etc/bash.* /etc/profile* /etc/zsh || # /usr/share/{ba,z}sh
+	grpc --recursive "$search" "$@" $(test -z "$filter" &&
+		echo $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH $HOME/.{ba,z}sh* /etc/bash* /etc/profile* /etc/zsh || # /usr/share/{ba,z}sh
 		compgen -G "$XDG_CONFIG_HOME/$filter" -G "/usr/share/$filter" -G "/etc/$filter*" -G "$HOME/.$filter*")
 }
 
