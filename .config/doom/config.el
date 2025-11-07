@@ -6,10 +6,10 @@
   "Heuristically toggle between light and dark themes."
   (interactive)
   (let* ((theme (s-replace-all '(("light" . "dark") ("dark" . "light")
-                     ("black" . "white") ("white" . "black")
-                     ("day" . "night") ("night" . "day"))
-                   (symbol-name doom-theme)))
-        (theme-base (s-replace-regexp "-[^-]*$" "" theme)))
+                                 ("black" . "white") ("white" . "black")
+                                 ("day" . "night") ("night" . "day"))
+                               (symbol-name doom-theme)))
+         (theme-base (s-replace-regexp "-[^-]*$" "" theme)))
     (or (if suffix (or (load-theme-string (concat theme "-" suffix)) (load-theme-string (concat theme-base "-" suffix)))) (load-theme-string (if (and (not suffix) (equal theme (symbol-name doom-theme))) (concat theme "-light") theme)) (load-theme-string theme-base))
     )
   )
@@ -19,7 +19,7 @@
       hscroll-margin 20
       )
 
-;;;; BINDINGS
+;;; BINDINGS
 
 (defun xah/open-in-external-app (&optional @fname)
   "Open the current file or dired marked files in external app.
@@ -59,20 +59,20 @@ Version 2019-11-04 2021-02-16"
   (interactive)
   (apply 'start-process
          `("dragon" nil
-         "dragon-drop" "-a" "-x"
+           "dragon-drop" "-a" "-x"
            ,@(dired-get-marked-files)
            ,@(unless (dired-get-marked-files)
-             (list (or (buffer-file-name)
-                 (image-dired-original-file-name)
-                 default-directory))
-             ))
+               (list (or (buffer-file-name)
+                         (image-dired-original-file-name)
+                         default-directory))
+               ))
          )
   )
 
 (defun xf/org-journal-current ()
   (interactive)
   (org-journal-open-current-journal-file)
-  ;(goto-char (point-max))
+  ;;(goto-char (point-max))
   )
 
 ;; rebing C-u - https://emacs.stackexchange.com/a/58320
@@ -81,7 +81,7 @@ Version 2019-11-04 2021-02-16"
 (global-set-key (kbd "C-*") 'universal-argument)
 (define-key universal-argument-map (kbd "C-*") 'universal-argument-more)
 
-; TODO map C-c C-c to save and quit if unmapped
+;; TODO map C-c C-c to save and quit if unmapped
 
 ;; https://emacs.stackexchange.com/questions/21335/prevent-folding-org-files-opened-by-ediff
 (with-eval-after-load 'outline
@@ -126,12 +126,12 @@ Version 2019-11-04 2021-02-16"
 :%s/<\\/?span ?[^ >]*>//g
 :%s/\\n\\n<a id=.*<\\/a>\\n\\n//g
 :%s/<\\(http[^ \\n]+\\)>/\\1/g"
-;:%s/\\\\<\\([^ \\n]+\\)\\\\>/<\\1>/g"
-;:%s/\\n *\\n /\\n /
-;:%s/    /  /g"
+      ;;:%s/\\\\<\\([^ \\n]+\\)\\\\>/<\\1>/g"
+      ;;:%s/\\n *\\n /\\n /
+      ;;:%s/    /  /g"
       )
 
-; TODO use smerge-basic-map
+;; TODO use smerge-basic-map
 (map! :map smerge-mode-map
       :leader
       "Ss"      'smerge-next
@@ -146,17 +146,17 @@ Version 2019-11-04 2021-02-16"
       "So"      'smerge-keep-lower
       )
 
-;;;; GLOBAL SETUP
+;;; GLOBAL SETUP
 
 (setq confirm-kill-emacs nil
       lazy-highlight-cleanup nil
       large-file-warning-threshold 40000000)
 
-; TODO auto-trim whitespace unless markdown
+;; TODO auto-trim whitespace unless markdown
 (whitespace-mode 0)
 (auto-correct-mode)
 
-;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
+;;;; UTF-8 encoding - https://zhangda.wordpress.com/2016/02/15/configurations-for-beautifying-emacs-org-mode/
 ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
 (setq utf-translate-cjk-mode nil)
 
@@ -169,43 +169,42 @@ Version 2019-11-04 2021-02-16"
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
-;; backwards compatibility as default-buffer-file-coding-system
-;; is deprecated in 23.2.
+;; backwards compatibility as default-buffer-file-coding-system is deprecated in 23.2.
 (if (boundp buffer-file-coding-system)
     (setq buffer-file-coding-system 'utf-8)
   (setq default-buffer-file-coding-system 'utf-8))
 
-;;; Clipboard
+;;;; Clipboard
 
 ;; Checks if the session type is in fact for Wayland.
 (if (string= (getenv "XDG_SESSION_TYPE") "wayland")
-  (progn
-    ;; Clipboard from Terminal in Wayland: https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
-    (setq wl-copy-process nil)
-    
-    (defun wl-copy (text)
-      (setq wl-copy-process (make-process :name "wl-copy"
-                                          :buffer nil
-                                          :command '("wl-copy" "-f" "-n")
-                                          :connection-type 'pipe
-                                          :noquery t))
-      (process-send-string wl-copy-process text)
-      (process-send-eof wl-copy-process))
-    
-    (defun wl-paste ()
-      (if (and wl-copy-process (process-live-p wl-copy-process))
-          nil ; should return nil if we're the current paste owner
-        (shell-command-to-string "wl-paste -n | tr -d \r")))
-    
-    (setq interprogram-cut-function 'wl-copy)
-    (setq interprogram-paste-function 'wl-paste)
-    )
+    (progn
+      ;; Clipboard from Terminal in Wayland: https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
+      (setq wl-copy-process nil)
+      
+      (defun wl-copy (text)
+        (setq wl-copy-process (make-process :name "wl-copy"
+                                            :buffer nil
+                                            :command '("wl-copy" "-f" "-n")
+                                            :connection-type 'pipe
+                                            :noquery t))
+        (process-send-string wl-copy-process text)
+        (process-send-eof wl-copy-process))
+      
+      (defun wl-paste ()
+        (if (and wl-copy-process (process-live-p wl-copy-process))
+            nil ; should return nil if we're the current paste owner
+          (shell-command-to-string "wl-paste -n | tr -d \r")))
+      
+      (setq interprogram-cut-function 'wl-copy)
+      (setq interprogram-paste-function 'wl-paste)
+      )
   ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
   (add-hook 'window-setup-hook #'xclip-mode)
-)
+  )
 
-;;; Data Preservation
+;;;; Data Preservation
 
 ;; Undo
 (setq evil-want-fine-undo t)
@@ -223,7 +222,7 @@ Version 2019-11-04 2021-02-16"
       kept-old-versions 3
       )
 
-;;;; Directory configuration
+;;;; Directory Configuration
 
 (defvar user-data-dir (if (file-exists-p "~/IT/data/") "~/IT/data" "~/data") "Location of encrypted data disk")
 
@@ -245,11 +244,11 @@ Version 2019-11-04 2021-02-16"
       (if (file-equal-p command-line-default-directory "~")
           (setq default-directory org-directory))
       (setq org-agenda-files (append
-                             (list (expand-file-name "agenda/"))
-                             ;(list (expand-file-name "inbox/"))
-                             ;(directory-files-recursively (expand-file-name "project/" org-directory) ".org\\'")
-                            ))
-    ))
+                              (list (expand-file-name "agenda/"))
+                              ;;(list (expand-file-name "inbox/"))
+                              ;;(directory-files-recursively (expand-file-name "project/" org-directory) ".org\\'")
+                              ))
+      ))
 
 (defun list-non-hidden-directories (directory)
   "List all non-hidden subdirectories in DIRECTORY and return them as a list."
@@ -262,31 +261,31 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! recentf
   :config
-    (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
-    (let ((incubator (expand-file-name "5-incubator/" user-data-dir)))
-      (if (file-exists-p incubator) (setq recentf-list (append recentf-list (list-non-hidden-directories incubator)))))
-    (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
-    (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
-    (recentf-cleanup)
+  (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
+  (let ((incubator (expand-file-name "5-incubator/" user-data-dir)))
+    (if (file-exists-p incubator) (setq recentf-list (append recentf-list (list-non-hidden-directories incubator)))))
+  (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
+  (setq recentf-keep '(recentf-keep-default-predicate file-remote-p "/ssh:.*"))
+  (recentf-cleanup)
   )
 
 (use-package! projectile
   :init
-    (projectile-add-known-project doom-user-dir)
-    (let ((media-dir (expand-file-name "4-media/" user-data-dir)))
-      (if (file-exists-p media-dir) (projectile-add-known-project media-dir))
+  (projectile-add-known-project doom-user-dir)
+  (let ((media-dir (expand-file-name "4-media/" user-data-dir)))
+    (if (file-exists-p media-dir) (projectile-add-known-project media-dir))
     (after! org
       (projectile-add-known-project org-directory)
       (projectile-register-project-type 'org '(".orgids"))
       (projectile-register-project-type 'git '(".gitignore" ".git"))
-      ;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
+      ;;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
       )
     :config
-      (setq projectile-project-root-files
-            (append projectile-project-root-files
-                    '(".gitignore" ".stignore" "README.org" ".projectile" ".orgids"  ".nextcloudsync.log")
-                    ))
-  ))
+    (setq projectile-project-root-files
+          (append projectile-project-root-files
+                  '(".gitignore" ".stignore" "README.org" ".projectile" ".orgids"  ".nextcloudsync.log")
+                  ))
+    ))
 
 
 ;;;; Miscellaneous Config
@@ -304,21 +303,22 @@ Version 2019-11-04 2021-02-16"
 (use-package! image
   :custom
   ;; Enable converting external formats (ie. webp) to internal ones.
-  (image-use-external-converter t))
-;(setq image-file-name-regexps "/preview/")
-;(add-to-list 'image-file-name-regexps "/preview/")
+  (image-use-external-converter t)
+  ;;(setq image-file-name-regexps "/preview/")
+  ;;(add-to-list 'image-file-name-regexps "/preview/")
+  )
 
-;;;; ORG
+;;; ORG
 
 (use-package! org
   :bind (:map org-mode-map
-         ("C-c b" . org-cycle-list-bullet)
-         ("C-c ." . org-time-stamp-inactive)
-         ("C-c C-." . org-time-stamp)
-         ("C-c C-;" . (lambda () (interactive) (let ((time-stamp-format time-stamp-full)) (call-interactively 'org-time-stamp))))
-         ("M-C-+" . org-timestamp-up)
-         ("M-C--" . org-timestamp-down)
-        )
+              ("C-c b" . org-cycle-list-bullet)
+              ("C-c ." . org-time-stamp-inactive)
+              ("C-c C-." . org-time-stamp)
+              ("C-c C-;" . (lambda () (interactive) (let ((time-stamp-format time-stamp-full)) (call-interactively 'org-time-stamp))))
+              ("M-C-+" . org-timestamp-up)
+              ("M-C--" . org-timestamp-down)
+              )
   :init
 
   ;; Behavior
@@ -331,7 +331,7 @@ Version 2019-11-04 2021-02-16"
         )
 
   ;; Visuals
-  ; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
+  ;; https?[0-z.\/-]*\.(png|jpg)\?[^?]*
   (setq org-fold-core-style 'overlays)
   (setq org-image-actual-width nil)
   (setq org-ellipsis "◀")
@@ -342,8 +342,8 @@ Version 2019-11-04 2021-02-16"
     (downcase (s-replace-regexp "[^[:alnum:][:digit:]]\+"  "-"
                                 (s-replace-regexp ".*://\\([^.]+\\)\\..*" "\\1" (substring-no-properties (org-sort-remove-invisible string))))))
 
-  ; the value does not matter, see https://emacs.stackexchange.com/questions/71774/pass-default-value-to-org-set-property/71777#71777
-  ;(add-to-list 'org-global-properties-fixed '("ID_ALL" . "id"))
+  ;; the value does not matter, see https://emacs.stackexchange.com/questions/71774/pass-default-value-to-org-set-property/71777#71777
+  ;;(add-to-list 'org-global-properties-fixed '("ID_ALL" . "id"))
   (map! :map org-mode-map
         :leader
         "\\"    'org-ctrl-c-ctrl-c
@@ -367,15 +367,15 @@ Version 2019-11-04 2021-02-16"
         :desc "Medium Priority" "pb" (lambda () (interactive) (org-priority "B"))
         :desc "High Priority" "pa" (lambda () (interactive) (org-priority "A"))
         :desc "Set ID property" "lI" (lambda () (interactive)
-              ;; Check out https://github.com/novoid/dot-emacs/blob/master/config.org#my-id-get-or-generate
-              ; TODO trim trailing dash if there are symbols at the end
-              (org-set-property "ID"
-                (let ((heading (org-get-heading t t t t)))
-                  (if heading (org-read-property-value "ID" nil (xf/slugify heading)) (file-name-sans-extension (file-name-nondirectory buffer-file-name)))
-                ))
-              (or (org-entry-get nil "CREATED") (org-set-property "CREATED" (format-time-string time-stamp-full)))
-              (or (org-entry-get nil "MODIFIED") (org-set-property "MODIFIED" (format-time-string time-stamp-full)))
-              )
+                                       ;; Check out https://github.com/novoid/dot-emacs/blob/master/config.org#my-id-get-or-generate
+                                       ;; TODO trim trailing dash if there are symbols at the end
+                                       (org-set-property "ID"
+                                                         (let ((heading (org-get-heading t t t t)))
+                                                           (if heading (org-read-property-value "ID" nil (xf/slugify heading)) (file-name-sans-extension (file-name-nondirectory buffer-file-name)))
+                                                           ))
+                                       (or (org-entry-get nil "CREATED") (org-set-property "CREATED" (format-time-string time-stamp-full)))
+                                       (or (org-entry-get nil "MODIFIED") (org-set-property "MODIFIED" (format-time-string time-stamp-full)))
+                                       )
         :desc "Set Roam Aliases" "la" (lambda () (interactive) (org-set-property "ROAM_ALIASES" nil))
         :desc "Add tag" "mt" 'org-roam-tag-add
         :desc "Remove tag" "mT" 'org-roam-tag-remove
@@ -395,7 +395,7 @@ Version 2019-11-04 2021-02-16"
         org-priority-start-cycle-with-default nil)
   (setq org-priority-faces '((65 . error) (66 . "DarkGoldenRod") (67 . warning) (68 . "bisque") (69 . "grey")))
 
-  ; highlight review keyword
+  ;; highlight review keyword
   (setq org-todo-keywords
         '(
           (sequence
@@ -430,7 +430,7 @@ Version 2019-11-04 2021-02-16"
           ("STRT" . +org-todo-active)
           ("[?]"  . +org-todo-onhold)
           ("WAIT" . +org-todo-onhold)
-          ;("REVIEW" . +org-todo-onhold)
+          ;;("REVIEW" . +org-todo-onhold)
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)
           ("NO"   . +org-todo-cancel)
@@ -441,7 +441,7 @@ Version 2019-11-04 2021-02-16"
   (setq org-startup-folded 'show2levels
         org-display-remote-inline-images 'cache)
 
-  ; TODO customize org-log-note-headings
+  ;; TODO customize org-log-note-headings
 
   ;; Automated logging for todos - https://stackoverflow.com/questions/12262220/add-created-date-property-to-todos-in-org-mode/52815573#52815573
   (setq org-log-done 'time
@@ -465,9 +465,9 @@ Version 2019-11-04 2021-02-16"
     "convert csv to org-table considering '12,12'"
     (interactive (list (point) (mark)))
     (replace-regexp "\\(^\\)\\|\\(\".*?\"\\)\\|," (quote (replace-eval-replacement
-                              replace-quote (cond ((equal "^" (match-string 1)) "|")
-                                                     ((equal "," (match-string 0)) "|")
-                                                     ((match-string 2))) ))  nil  beg end))
+                                                          replace-quote (cond ((equal "^" (match-string 1)) "|")
+                                                                              ((equal "," (match-string 0)) "|")
+                                                                              ((match-string 2))) ))  nil  beg end))
 
   (defun org-todo-or-insert (&optional arg)
     (interactive "P")
@@ -514,10 +514,10 @@ Version 2019-11-04 2021-02-16"
             (and (= 1 (org-current-level)) ; at level-1 heading, or
                  (org-at-heading-p))
             (org-at-table-p))              ; in a table (to preserve cell movement)
-        ; perform org-shifttab at root level elements and inside tables
+        ;; perform org-shifttab at root level elements and inside tables
         (org-shifttab arg)
-        ; try to fold up elsewhere
-        (ct/org-foldup)))
+      ;; try to fold up elsewhere
+      (ct/org-foldup)))
   (define-key org-mode-map (kbd "S-<tab>") 'ct/org-shifttab)
 
 
@@ -541,18 +541,18 @@ Version 2019-11-04 2021-02-16"
 
   (setq org-agenda-custom-commands
         '(("d" "Daily agenda and all TODOs" (
-            (tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "DO NOW:")))
-            (agenda "" ((org-agenda-start-day nil) (org-agenda-span 4)))
-            (tags "PRIORITY=\"B\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "Important:")))
-            (alltodo ""
-                     ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
-                                                     (air-org-skip-subtree-if-priority ?A)
-                                                     (org-agenda-skip-if nil '(scheduled deadline))))
-                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
+                                             (tags "PRIORITY=\"A\""
+                                                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                                                    (org-agenda-overriding-header "DO NOW:")))
+                                             (agenda "" ((org-agenda-start-day nil) (org-agenda-span 4)))
+                                             (tags "PRIORITY=\"B\""
+                                                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                                                    (org-agenda-overriding-header "Important:")))
+                                             (alltodo ""
+                                                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
+                                                                                      (air-org-skip-subtree-if-priority ?A)
+                                                                                      (org-agenda-skip-if nil '(scheduled deadline))))
+                                                       (org-agenda-overriding-header "ALL normal priority tasks:"))))
            ((org-agenda-compact-blocks t)))))
 
   (use-package! dash
@@ -562,11 +562,11 @@ Version 2019-11-04 2021-02-16"
     (setq org-display-custom-times 't)
     )
 
-)
+  )
 
 (after! org-fancy-priorities
   ;; https://unicode-table.com/en/blocks/miscellaneous-symbols-and-arrows https://www.w3schools.com/colors/colors_names.asp
-  ; (custom-reevaluate-setting 'org-fancy-priorities-list) (add-to-list 'org-fancy-priorities-list "☠" t)
+  ;; (custom-reevaluate-setting 'org-fancy-priorities-list) (add-to-list 'org-fancy-priorities-list "☠" t)
   (setq org-fancy-priorities-list '("❗" "✯" "❖" "⬢" "■"))
   )
 
@@ -574,182 +574,182 @@ Version 2019-11-04 2021-02-16"
   ;; Prompt after idleness - Focused? ETC? (Pragmatic Programmer)
   :init
 
-    (setq org-journal-file-type 'monthly
-          org-journal-file-format "%Y%m.org"
-          org-journal-created-property-timestamp-format time-stamp-format
-          org-journal-carryover-delete-empty-journal 'always
-          org-journal-date-format (concat "[" time-stamp-bare " %3a]")
-          org-journal-time-format "%02H "
-          )
+  (setq org-journal-file-type 'monthly
+        org-journal-file-format "%Y%m.org"
+        org-journal-created-property-timestamp-format time-stamp-format
+        org-journal-carryover-delete-empty-journal 'always
+        org-journal-date-format (concat "[" time-stamp-bare " %3a]")
+        org-journal-time-format "%02H "
+        )
 
   :config
-    ; TODO map njj to open-or-create-entry
+  ;; TODO map njj to open-or-create-entry
 
-    ;; https://emacs.stackexchange.com/questions/17897/create-an-org-journal-template-for-daily-journal-entry/32655#32655
-    (defun pc/new-buffer-p ()
-      (not (file-exists-p (buffer-file-name))))
-    (defun pc/insert-journal-template ()
-      (when (pc/new-buffer-p)
-        (save-excursion
-          (goto-char (point-min))
-          (insert (concat ":properties:\n:id:       " (file-name-base buffer-file-name) "\n:end:\n#+startup: overview noinlineimages\n#+options: \\n:t\n")))))
-    (add-hook 'org-journal-after-entry-create-hook #'pc/insert-journal-template)
+  ;; https://emacs.stackexchange.com/questions/17897/create-an-org-journal-template-for-daily-journal-entry/32655#32655
+  (defun pc/new-buffer-p ()
+    (not (file-exists-p (buffer-file-name))))
+  (defun pc/insert-journal-template ()
+    (when (pc/new-buffer-p)
+      (save-excursion
+        (goto-char (point-min))
+        (insert (concat ":properties:\n:id:       " (file-name-base buffer-file-name) "\n:end:\n#+startup: overview noinlineimages\n#+options: \\n:t\n")))))
+  (add-hook 'org-journal-after-entry-create-hook #'pc/insert-journal-template)
 
-    (defvar xf/survey-mode-journal--timer nil)
-    (defvar xf/survey-mode-journal--timer-interval 300)
+  (defvar xf/survey-mode-journal--timer nil)
+  (defvar xf/survey-mode-journal--timer-interval 300)
 
-    (define-minor-mode xf/survey-mode
-      "New org-journal entry after long idleness"
-      :group 'org-roam
-      :global t
-      (when xf/survey-mode-journal--timer (cancel-timer xf/survey-mode-journal--timer))
-      (setq xf/survey-mode-journal--timer
-            (when xf/survey-mode
-              (run-with-idle-timer
-               xf/survey-mode-journal--timer-interval :repeat
-               #'xf/journal-survey))))
+  (define-minor-mode xf/survey-mode
+    "New org-journal entry after long idleness"
+    :group 'org-roam
+    :global t
+    (when xf/survey-mode-journal--timer (cancel-timer xf/survey-mode-journal--timer))
+    (setq xf/survey-mode-journal--timer
+          (when xf/survey-mode
+            (run-with-idle-timer
+             xf/survey-mode-journal--timer-interval :repeat
+             #'xf/journal-survey))))
 
-    (defun xf/journal-survey ()
-      "Open a new journal entry"
-      (interactive)
-      (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
+  (defun xf/journal-survey ()
+    "Open a new journal entry"
+    (interactive)
+    (unless (equal major-mode 'org-journal-mode) (call-interactively 'org-journal-new-entry)))
 
-    ;(if (file-exists-p org-journal-dir) (xf/survey-mode))
-    ; open journal at launch (call-interactively 'org-journal-new-entry)
+  ;;(if (file-exists-p org-journal-dir) (xf/survey-mode))
+  ;; open journal at launch (call-interactively 'org-journal-new-entry)
   )
 
 ;; FIXME can I combine defer and after?
 (use-package! org-roam
-  ;:after org-mode
+  ;;:after org-mode
   :defer 3
   :init
-    (setq company-minimum-prefix-length 2
-          company-tooltip-limit 9
-          company-dabbrev-ignore-case 't
-          completion-ignore-case 't)
+  (setq company-minimum-prefix-length 2
+        company-tooltip-limit 9
+        company-dabbrev-ignore-case 't
+        completion-ignore-case 't)
   :config
-    (require 'org-roam-protocol)
+  (require 'org-roam-protocol)
 
-    ;; https://github.com/org-roam/org-roam/pull/833
-    (defun xf/dashify-slug (slug)
-      (s-replace "_" "-" slug))
-    (advice-add 'org-roam-node-slug :filter-return #'xf/dashify-slug)
+  ;; https://github.com/org-roam/org-roam/pull/833
+  (defun xf/dashify-slug (slug)
+    (s-replace "_" "-" slug))
+  (advice-add 'org-roam-node-slug :filter-return #'xf/dashify-slug)
 
-    (setq org-roam-db-update-on-save nil
-          org-roam-extract-new-file-path "${slug}.org"
-          +org-roam-auto-backlinks-buffer nil) ; TODO t)
-    (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
+  (setq org-roam-db-update-on-save nil
+        org-roam-extract-new-file-path "${slug}.org"
+        +org-roam-auto-backlinks-buffer nil) ; TODO t)
+  (add-hook 'org-capture-after-finalize-hook (lambda () (if (org-roam-file-p) (org-roam-db-sync))))
 
-    (setq xf/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
-    (setq xf/org-roam-capture-title "\n#+title: ${title}")
-    (setq org-roam-capture-templates
-          `(("d" "default" plain "%?" :target
-             (file+head ,org-roam-extract-new-file-path ,(concat xf/org-roam-capture-props "#+filetags: :" xf/org-roam-capture-title))
-             :unnarrowed t)
-            )
+  (setq xf/org-roam-capture-props (concat ":properties:\n:id:       ${slug}\n:created:  %<" time-stamp-format ">\n:modified: <>\n:end:\n"))
+  (setq xf/org-roam-capture-title "\n#+title: ${title}")
+  (setq org-roam-capture-templates
+        `(("d" "default" plain "%?" :target
+           (file+head ,org-roam-extract-new-file-path ,(concat xf/org-roam-capture-props "#+filetags: :" xf/org-roam-capture-title))
+           :unnarrowed t)
           )
-    (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration" "writing:blog")
-      do (add-to-list 'org-roam-capture-templates
-            `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
-             (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat xf/org-roam-capture-props "#+filetags: :" item ":" xf/org-roam-capture-title))
-             :unnarrowed t)
-            )
-      )
+        )
+  (cl-loop for item in '("health" "own" "list" "notes" "project" "entity:person" "tech:software:list" "faith" "inspiration" "writing:blog")
+           do (add-to-list 'org-roam-capture-templates
+                           `(,(substring item 0 1) ,(car (split-string item ":")) plain "%?" :target
+                             (file+head ,(concat (car (split-string item ":")) "/" org-roam-extract-new-file-path) ,(concat xf/org-roam-capture-props "#+filetags: :" item ":" xf/org-roam-capture-title))
+                             :unnarrowed t)
+                           )
+           )
 
-    (defvar xf/auto-org-roam-db-sync--timer nil)
-    (defvar xf/auto-org-roam-db-sync--timer-interval 40)
-    (define-minor-mode xf/auto-org-roam-db-sync-mode
-      "Toggle automatic `org-roam-db-sync' when Emacs is idle.
+  (defvar xf/auto-org-roam-db-sync--timer nil)
+  (defvar xf/auto-org-roam-db-sync--timer-interval 40)
+  (define-minor-mode xf/auto-org-roam-db-sync-mode
+    "Toggle automatic `org-roam-db-sync' when Emacs is idle.
        Reference: `auto-save-visited-mode'"
-      :group 'org-roam
-      :global t
-      (when xf/auto-org-roam-db-sync--timer (cancel-timer xf/auto-org-roam-db-sync--timer))
-      (setq xf/auto-org-roam-db-sync--timer
-            (when xf/auto-org-roam-db-sync-mode
-              (run-with-idle-timer
-               xf/auto-org-roam-db-sync--timer-interval :repeat
-               #'org-roam-db-sync))))
+    :group 'org-roam
+    :global t
+    (when xf/auto-org-roam-db-sync--timer (cancel-timer xf/auto-org-roam-db-sync--timer))
+    (setq xf/auto-org-roam-db-sync--timer
+          (when xf/auto-org-roam-db-sync-mode
+            (run-with-idle-timer
+             xf/auto-org-roam-db-sync--timer-interval :repeat
+             #'org-roam-db-sync))))
 
-    ;; TODO kill opened buffers
-    (defun xf/org-roam-update ()
-      "Update org-roam database and sync ids to orgids."
-      (interactive)
-      (org-roam-db-sync)
-      (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations))
-      (when (equal major-mode 'org-mode) (org-mode-restart)))
+  ;; TODO kill opened buffers
+  (defun xf/org-roam-update ()
+    "Update org-roam database and sync ids to orgids."
+    (interactive)
+    (org-roam-db-sync)
+    (let ((org-display-remote-inline-images 'skip)) (org-roam-update-org-id-locations))
+    (when (equal major-mode 'org-mode) (org-mode-restart)))
 
-    ; FIXME test if still needed (if (file-exists-p org-roam-directory) (xf/auto-org-roam-db-sync-mode))
+  ;; FIXME test if still needed (if (file-exists-p org-roam-directory) (xf/auto-org-roam-db-sync-mode))
 
-    ;; Node Search
-    (setq org-roam-node-display-template
-          #("${doom-hierarchy:*} ${doom-type:7} ${doom-tags:30}" 20 35
-            (face font-lock-keyword-face)
-            28 40
-            (face org-tag)
-            ))
+  ;; Node Search
+  (setq org-roam-node-display-template
+        #("${doom-hierarchy:*} ${doom-type:7} ${doom-tags:30}" 20 35
+          (face font-lock-keyword-face)
+          28 40
+          (face org-tag)
+          ))
 
-    ;; REVIEW Remove when addressed upstream. See org-roam/org-roam#2066.
-    (defun my/org-roam-node-read--to-candidate (node template)
-      "Return a minibuffer completion candidate given NODE.
+  ;; REVIEW Remove when addressed upstream. See org-roam/org-roam#2066.
+  (defun my/org-roam-node-read--to-candidate (node template)
+    "Return a minibuffer completion candidate given NODE.
     TEMPLATE is the processed template used to format the entry."
-      (let ((candidate-main (org-roam-node--format-entry
-                             template
-                             node
-                             (1- (frame-width)))))
-        (cons (propertize candidate-main 'node node) node)))
-    (advice-add 'org-roam-node-read--to-candidate :override #'my/org-roam-node-read--to-candidate)
+    (let ((candidate-main (org-roam-node--format-entry
+                           template
+                           node
+                           (1- (frame-width)))))
+      (cons (propertize candidate-main 'node node) node)))
+  (advice-add 'org-roam-node-read--to-candidate :override #'my/org-roam-node-read--to-candidate)
   )
 
 (use-package! ox
   :config
-    (map! :map org-mode-map
-          :leader
-          "e" 'org-export-dispatch-without-time
-          "E" 'org-export-repeat
-          :desc "Save and Export" "be" (lambda () (interactive) (basic-save-buffer) (org-export-repeat))
-          :localleader
-          ":" 'org-babel-mark-block
-          "E" 'org-export-repeat
-          )
+  (map! :map org-mode-map
+        :leader
+        "e" 'org-export-dispatch-without-time
+        "E" 'org-export-repeat
+        :desc "Save and Export" "be" (lambda () (interactive) (basic-save-buffer) (org-export-repeat))
+        :localleader
+        ":" 'org-babel-mark-block
+        "E" 'org-export-repeat
+        )
 
-    (defun org-export-disable-id ()
-      (interactive)
-      (defun my-link-remover (link contents info) contents)
-      (org-link-set-parameters "id" :export 'my-link-remover)
-      )
+  (defun org-export-disable-id ()
+    (interactive)
+    (defun my-link-remover (link contents info) contents)
+    (org-link-set-parameters "id" :export 'my-link-remover)
+    )
 
-    (setq org-html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://gongzhitaao.org/orgcss/org.css\"/>"
-          org-html-head-include-default-style nil
-          org-html-htmlize-output-type 'css)
+  (setq org-html-style "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://gongzhitaao.org/orgcss/org.css\"/>"
+        org-html-head-include-default-style nil
+        org-html-htmlize-output-type 'css)
 
-    (defun org-export-repeat ()
-      (interactive)
-      (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
-      )
+  (defun org-export-repeat ()
+    (interactive)
+    (let ((current-prefix-arg '(4))) (call-interactively 'org-export-dispatch))
+    )
 
-    ;; TODO name file according to subtree headline
-    (defun org-export-dispatch-without-time ()
-      (interactive)
-      (let ((org-time-stamp-custom-formats
-             '("%d.%m.%Y" . "%d.%m.%Y"))
-            (org-display-custom-times 't))
-        (org-set-property "EXPORT_FILE_NAME" (xf/slugify (org-get-heading t t t t)))
-        (org-export-dispatch))
-      )
+  ;; TODO name file according to subtree headline
+  (defun org-export-dispatch-without-time ()
+    (interactive)
+    (let ((org-time-stamp-custom-formats
+           '("%d.%m.%Y" . "%d.%m.%Y"))
+          (org-display-custom-times 't))
+      (org-set-property "EXPORT_FILE_NAME" (xf/slugify (org-get-heading t t t t)))
+      (org-export-dispatch))
+    )
 
-    (setq org-latex-to-pdf-process '("xelatex -interaction -shell-escape nonstopmode %f" "xelatex -interaction nonstopmode -shell-escape %f"))
-    ;; Exporting - https://orgmode.org/manual/Export-Settings.html
-    (setq org-export-with-tags nil
-          org-export-with-tasks 'done
-          org-export-with-todo-keywords nil
-          ; only apply to tex, not html: org-export-with-toc nil
-          org-export-with-section-numbers nil
-          org-export-with-broken-links 't
-          org-ascii-text-width 999
-          org-export-headline-levels 4
-          org-export-with-sub-superscripts '{}
-          org-use-sub-superscripts '{}
-          )
+  (setq org-latex-to-pdf-process '("xelatex -interaction -shell-escape nonstopmode %f" "xelatex -interaction nonstopmode -shell-escape %f"))
+  ;; Exporting - https://orgmode.org/manual/Export-Settings.html
+  (setq org-export-with-tags nil
+        org-export-with-tasks 'done
+        org-export-with-todo-keywords nil
+        ;; only apply to tex, not html: org-export-with-toc nil
+        org-export-with-section-numbers nil
+        org-export-with-broken-links 't
+        org-ascii-text-width 999
+        org-export-headline-levels 4
+        org-export-with-sub-superscripts '{}
+        org-use-sub-superscripts '{}
+        )
 
   )
 
@@ -764,57 +764,57 @@ Version 2019-11-04 2021-02-16"
 (use-package! ox-latex
   :after ox
   :config
-    ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
-    (defun org/get-headline-string-element (headline backend info)
-      (let ((prop-point (next-property-change 0 headline)))
-        (if prop-point (plist-get (text-properties-at prop-point headline) :parent))))
-    (defun org/ensure-latex-clearpage (headline backend info)
-      (when (org-export-derived-backend-p backend 'latex)
-        (let ((elmnt (org/get-headline-string-element headline backend info)))
-          (when (member "newpage" (org-element-property :tags elmnt))
-            (concat "\\clearpage\n" headline)))))
-    (add-to-list 'org-export-filter-headline-functions
-                 'org/ensure-latex-clearpage)
+  ;; Insert linebreak after headings tagged with "newpage" when exporting through latex - https://emacs.stackexchange.com/a/30892
+  (defun org/get-headline-string-element (headline backend info)
+    (let ((prop-point (next-property-change 0 headline)))
+      (if prop-point (plist-get (text-properties-at prop-point headline) :parent))))
+  (defun org/ensure-latex-clearpage (headline backend info)
+    (when (org-export-derived-backend-p backend 'latex)
+      (let ((elmnt (org/get-headline-string-element headline backend info)))
+        (when (member "newpage" (org-element-property :tags elmnt))
+          (concat "\\clearpage\n" headline)))))
+  (add-to-list 'org-export-filter-headline-functions
+               'org/ensure-latex-clearpage)
 
-    ; https://tex.stackexchange.com/questions/50747/options-for-appearance-of-links-in-hyperref/50754#50754
-    (add-to-list 'org-latex-default-packages-alist "\\PassOptionsToPackage{colorlinks=true,urlcolor=blue,allcolors=blue}{hyperref}")
+  ;; https://tex.stackexchange.com/questions/50747/options-for-appearance-of-links-in-hyperref/50754#50754
+  (add-to-list 'org-latex-default-packages-alist "\\PassOptionsToPackage{colorlinks=true,urlcolor=blue,allcolors=blue}{hyperref}")
 
-    ;;(setq org-latex-toc-command "\\tableofcontents*\n\n")
-    (setq ;org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
-          org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
-          org-latex-src-block-backend 'minted
-          org-latex-default-class "article4"
-          ;org-latex-hyperref-template "\\hypersetup{\n pdfauthor={%a},\n pdftitle={%t},\n pdfkeywords={%k},pdfsubject={%d},\n pdfcreator={%c},\n pdflang={%L},\n colorlinks=true,\n urlcolor=blue,\n citecolor=green,\n linktocpage}\n"
-          )
-    (add-to-list 'org-latex-classes
-         '("article4" "\\documentclass{article}\n\\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-            ("\\paragraph{%s}" . "\\paragraph*{%s}")
-            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-    (add-to-list 'org-latex-classes
-         '("shortreport" "\\documentclass[oneside]{memoir}\n\\chapterstyle{article}"
-            ("\\chapter{%s}" . "\\chapter*{%s}")
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-            ("\\paragraph{%s}" . "\\paragraph*{%s}")
-            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  ;;(setq org-latex-toc-command "\\tableofcontents*\n\n")
+  (setq ;org-latex-pdf-process '("latexmk -shell-escape -pdfxe -pdfxelatex=\"xelatex --shell-escape\" -outdir=/tmp/latexmk -f -pdf %F && mv %f /tmp/latexmk && mv /tmp/latexmk/%b.pdf %o") ; https://emacs.stackexchange.com/a/48351
+   org-latex-packages-alist '(("" "fullpage") ("avoid-all" "widows-and-orphans") ("" "svg"))
+   org-latex-src-block-backend 'minted
+   org-latex-default-class "article4"
+   ;;org-latex-hyperref-template "\\hypersetup{\n pdfauthor={%a},\n pdftitle={%t},\n pdfkeywords={%k},pdfsubject={%d},\n pdfcreator={%c},\n pdflang={%L},\n colorlinks=true,\n urlcolor=blue,\n citecolor=green,\n linktocpage}\n"
+   )
+  (add-to-list 'org-latex-classes
+               '("article4" "\\documentclass{article}\n\\usepackage{titlesec} \\titleformat{\\paragraph}{\\normalfont\\normalsize\\itshape}{\\theparagraph}{1em}{} \\titlespacing*{\\paragraph}{0pt}{2ex plus 1ex minus .2ex}{.5ex plus .2ex}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (add-to-list 'org-latex-classes
+               '("shortreport" "\\documentclass[oneside]{memoir}\n\\chapterstyle{article}"
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-    )
+  )
 
 ;; https://discord.com/channels/406534637242810369/406554085794381833/814175445004189706
 ;; Fix xdg-open after setting process-connection-type
-;(setq process-connection-type nil)
-;(after! org
-;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
+;;(setq process-connection-type nil)
+;;(after! org
+;;  (add-to-list 'org-file-apps '(system . "setsid -w xdg-open %s"))
 
-;;;; PACKAGES
+;;; PACKAGES
 
-;;; Colors
+;;;; Colors
 
-; https://www.emacswiki.org/emacs/HexColour
+;; https://www.emacswiki.org/emacs/HexColour
 (require 'cl)
 (defun hexcolor-luminance (color)
   "Calculate the luminance of a color string (e.g. \"#ffaa00\", \"blue\").
@@ -827,28 +827,28 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (defun hexcolor-add-to-font-lock ()
   (interactive)
   (font-lock-add-keywords nil
-   `((,(concat "#[0-9a-fA-F]\\{3\\}[0-9a-fA-F]\\{3\\}?\\|"
-               (regexp-opt (x-defined-colors) 'words))
-      (0 (let ((color (match-string-no-properties 0)))
-           (put-text-property
-            (match-beginning 0) (match-end 0)
-            'face `((:foreground ,(if (> 128.0 (hexcolor-luminance color))
-                                       "white" "black"))
-                    (:background ,color)))))))))
+                          `((,(concat "#[0-9a-fA-F]\\{3\\}[0-9a-fA-F]\\{3\\}?\\|"
+                                      (regexp-opt (x-defined-colors) 'words))
+                             (0 (let ((color (match-string-no-properties 0)))
+                                  (put-text-property
+                                   (match-beginning 0) (match-end 0)
+                                   'face `((:foreground ,(if (> 128.0 (hexcolor-luminance color))
+                                                             "white" "black"))
+                                           (:background ,color)))))))))
 
 (defvar hexcolor-keywords
   '(("#[abcdef[:digit:]]\\{6\\}"
      (0 (put-text-property (match-beginning 0)
                            (match-end 0)
-		    'face (list :background
-			        (match-string-no-properties 0)))))))
+		           'face (list :background
+			               (match-string-no-properties 0)))))))
 (defun hexcolor-add-to-font-lock ()
   (font-lock-add-keywords nil hexcolor-keywords))
 
 (add-hook 'web-mode-hook 'hexcolor-add-to-font-lock)
 
 (after! eshell
-  ; https://stackoverflow.com/questions/63469203/eshell-and-color-output
+  ;; https://stackoverflow.com/questions/63469203/eshell-and-color-output
   (require 'xterm-color)
   (add-hook 'eshell-before-prompt-hook
             (lambda ()
@@ -860,7 +860,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (setenv "TERM" "xterm-256color")
   )
 
-;;; Mappings
+;;;; Mappings
 
 (map! :map special-mode-map
       "<tab>" 'other-window
@@ -889,12 +889,12 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (ivy-define-key ivy-minibuffer-map (kbd "C-l") 'ivy-partial-or-done)
   )
 
-;;; Dired
+;;;; Dired
 
 (use-package! dired
   :config
-  ; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
-  ; Alternative: https://www.emacswiki.org/emacs/OpenWith
+  ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
+  ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
   (defvar unsupported-mime-types
     '("image/x-xcf")) ; "application/zip"))
   (load "subr-x")
@@ -909,13 +909,13 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
     (let* ((file (dired-get-filename nil t))
            (mime (get-mimetype file)))
       (if (or (string-suffix-p ".desktop" file) (string-prefix-p "audio" mime) (string-prefix-p "video" mime) (member mime unsupported-mime-types))
-        (call-process "xdg-open" nil 0 nil file)
+          (call-process "xdg-open" nil 0 nil file)
         (find-file file))))
 
-  ; maybe add +org/close-fold
+  ;; maybe add +org/close-fold
   (map! ; what about closing popup buffers first, like debugger-mode :n "<escape>" (lambda () (interactive) (if (eq major-mode 'org-mode) (condition-case nil (org-up-element) (error (dired-jump))) (dired-jump)))
-        :leader
-        "." 'dired-jump)
+   :leader
+   "." 'dired-jump)
 
   (map! :map dired-mode-map
         :n "RET" 'dired-find-file-dwim
@@ -925,12 +925,12 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
         :desc "Size information" "s"
-                (lambda () (interactive) (dired-do-shell-command "s"))
+        (lambda () (interactive) (dired-do-shell-command "s"))
         :desc "Lowercase files" "L"
-                (lambda () (interactive) (dired-do-shell-command "lowercase"))
+        (lambda () (interactive) (dired-do-shell-command "lowercase"))
         :desc "Symlink to this" "l" 'dired-do-symlink
         :desc "Open image-dired" "i"
-                (lambda () (interactive) (image-dired buffer-file-name))
+        (lambda () (interactive) (image-dired buffer-file-name))
         :desc "Open image externally" "I" 'image-dired-dired-display-external
         :desc "Org attach subtree" "a" 'org-attach-dired-to-subtree
         :map wdired-mode-map
@@ -941,25 +941,25 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (use-package! dired-ranger
   :disabled
   :config
-    (ranger-override-dired-mode 0)
-    (map! :map dired-mode-map
-          :n "r" 'ranger
-          :localleader
-          :desc "Start ranger" "r" 'ranger
-          :map ranger-mode-map
-          "i"    'dired-toggle-read-only
-          :n "r" 'ranger)
-    )
+  (ranger-override-dired-mode 0)
+  (map! :map dired-mode-map
+        :n "r" 'ranger
+        :localleader
+        :desc "Start ranger" "r" 'ranger
+        :map ranger-mode-map
+        "i"    'dired-toggle-read-only
+        :n "r" 'ranger)
+  )
 (use-package! image-dired
   :init
-    (setq image-dired-external-viewer "gimp"
-          image-dired-thumb-size 400
-          image-dired-show-all-from-dir-max-files 300)
+  (setq image-dired-external-viewer "gimp"
+        image-dired-thumb-size 400
+        image-dired-show-all-from-dir-max-files 300)
   :config
-  ; TODO map image-dired-delete-marked
-    (add-to-list 'image-dired-cmd-create-thumbnail-options "-auto-orient")
-    (add-to-list 'image-dired-cmd-create-temp-image-options "-auto-orient")
-    (add-to-list 'image-dired-cmd-create-standard-thumbnail-options "-auto-orient")
+  ;; TODO map image-dired-delete-marked
+  (add-to-list 'image-dired-cmd-create-thumbnail-options "-auto-orient")
+  (add-to-list 'image-dired-cmd-create-temp-image-options "-auto-orient")
+  (add-to-list 'image-dired-cmd-create-standard-thumbnail-options "-auto-orient")
   )
 (use-package! diredfl
   :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
@@ -972,63 +972,63 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (add-to-list 'all-the-icons-extension-icon-alist '("nupkg" all-the-icons-octicon "file-zip" :v-adjust 0.0 :face all-the-icons-lmaroon))
   )
 
-;;; evil
+;;;; evil
 (add-hook 'visual-line-mode-hook (lambda () (setq line-move-visual nil)))
 (use-package! evil
   :ensure t
   :init (setq evil-respect-visual-line-mode nil)
   :config
-        (evil-set-register ?i "yiwjgriw") ; copy current word and replace down
-        (after! evil-surround
-          (setq-default evil-embrace-evil-surround-keys (-union evil-embrace-evil-surround-keys '(?` ?~ ?\~)))
-          ;; TILDE https://github.com/emacs-evil/evil-surround/issues/20#issuecomment-471516289
-          (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
-            (let ((inner-name (make-symbol (concat "evil-inner-" name)))
-                  (outer-name (make-symbol (concat "evil-a-" name))))
-              `(progn
-                 (evil-define-text-object ,inner-name (count &optional beg end type)
-                   (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-                 (evil-define-text-object ,outer-name (count &optional beg end type)
-                   (evil-select-paren ,start-regex ,end-regex beg end type count t))
-                 (define-key evil-inner-text-objects-map ,key #',inner-name)
-                 (define-key evil-outer-text-objects-map ,key #',outer-name))))
-          (define-and-bind-quoted-text-object "tilde" "~" "~" "~")
-          )
+  (evil-set-register ?i "yiwjgriw") ; copy current word and replace down
+  (after! evil-surround
+    (setq-default evil-embrace-evil-surround-keys (-union evil-embrace-evil-surround-keys '(?` ?~ ?\~)))
+    ;; TILDE https://github.com/emacs-evil/evil-surround/issues/20#issuecomment-471516289
+    (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
+      (let ((inner-name (make-symbol (concat "evil-inner-" name)))
+            (outer-name (make-symbol (concat "evil-a-" name))))
+        `(progn
+           (evil-define-text-object ,inner-name (count &optional beg end type)
+             (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+           (evil-define-text-object ,outer-name (count &optional beg end type)
+             (evil-select-paren ,start-regex ,end-regex beg end type count t))
+           (define-key evil-inner-text-objects-map ,key #',inner-name)
+           (define-key evil-outer-text-objects-map ,key #',outer-name))))
+    (define-and-bind-quoted-text-object "tilde" "~" "~" "~")
+    )
   )
 
 (use-package! evil-replace-with-register ; gr
   :ensure t
   :init
-    (setq evil-replace-with-register-key (kbd "gr"))
+  (setq evil-replace-with-register-key (kbd "gr"))
   :config
-    (evil-replace-with-register-install)
-    (defun eval-paragraph ()
-      (interactive)
-      (er/mark-paragraph)
-      (call-interactively '+eval:region)
+  (evil-replace-with-register-install)
+  (defun eval-paragraph ()
+    (interactive)
+    (er/mark-paragraph)
+    (call-interactively '+eval:region)
     )
-    (map! :n "gR" 'eval-paragraph
-          :n "g%" 'eval-defun
-          :v "gR" '+eval/region)
+  (map! :n "gR" 'eval-paragraph
+        :n "g%" 'eval-defun
+        :v "gR" '+eval/region)
   )
 
 (use-package! evil-args ; https://github.com/wcsmith/evil-args
   :config
-    ;; bind evil-args text objects
-    (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
-    (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+  ;; bind evil-args text objects
+  (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+  (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
 
-    ;; bind evil-forward/backward-args
-    (define-key evil-normal-state-map "L" 'evil-forward-arg)
-    (define-key evil-normal-state-map "H" 'evil-backward-arg)
-    (define-key evil-motion-state-map "L" 'evil-forward-arg)
-    (define-key evil-motion-state-map "H" 'evil-backward-arg)
+  ;; bind evil-forward/backward-args
+  (define-key evil-normal-state-map "L" 'evil-forward-arg)
+  (define-key evil-normal-state-map "H" 'evil-backward-arg)
+  (define-key evil-motion-state-map "L" 'evil-forward-arg)
+  (define-key evil-motion-state-map "H" 'evil-backward-arg)
 
-    ;; bind evil-jump-out-args
-    (define-key evil-normal-state-map "K" 'evil-jump-out-args)
+  ;; bind evil-jump-out-args
+  (define-key evil-normal-state-map "K" 'evil-jump-out-args)
   )
 
-;;; File Editing Modes
+;;;; File Editing Modes
 
 (defun major-mode-based-on-trimmed-filename ()
   "Set major mode based on the portion of the filename before a #."
@@ -1050,29 +1050,32 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 (add-to-list 'auto-mode-alist `("\\.config/yadm/bootstrap" . sh-mode))
 
-;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
-;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
+(add-to-list 'auto-mode-alist '("\\.ssv\\'" . csv-mode))
+(setq csv-separators '(";" "," "\t"))
+
+;;(add-to-list 'auto-mode-alist '("\\.twee\\'" . twee-chapbook-mode))
+;;(add-hook 'twee-chapbook-mode-hook 'twee-mode)
 
 (add-hook 'css-mode-hook #'rainbow-mode)
 (add-hook 'prog-mode-hook #'rainbow-mode)
 (add-hook 'pdf-view-mode-hook #'auto-revert-mode)
 
-;  Let's see if dooms config can supercede this
-;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
-;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-;(use-package! web-mode
-;  :mode "\\.html\\'"
-;  :mode "\\.phtml\\'"
-;  :mode "\\.tpl\\.php\\'"
-;  :mode "\\.[agj]sp\\'"
-;  :mode "\\.as[cp]x\\'"
-;  :mode "\\.erb\\'"
-;  :mode "\\.mustache\\'"
-;  :mode "\\.djhtml\\'"
-;  :config (add-hook 'web-mode-hook #'rainbow-mode)
-;  )
+;;; Let's see if dooms config can supercede this
+;;(add-to-list 'auto-mode-alist `("\\.scss.erb\\'" . scss-mode))
+;;(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+;;(use-package! web-mode
+;;  :mode "\\.html\\'"
+;;  :mode "\\.phtml\\'"
+;;  :mode "\\.tpl\\.php\\'"
+;;  :mode "\\.[agj]sp\\'"
+;;  :mode "\\.as[cp]x\\'"
+;;  :mode "\\.erb\\'"
+;;  :mode "\\.mustache\\'"
+;;  :mode "\\.djhtml\\'"
+;;  :config (add-hook 'web-mode-hook #'rainbow-mode)
+;;  )
 
-; https://discourse.doomemacs.org/t/disabling-ruby-typeprof/3197/3
+;; https://discourse.doomemacs.org/t/disabling-ruby-typeprof/3197/3
 (after! lsp-mode
   (setq lsp-disabled-clients '(typeprof-ls)))
 
@@ -1106,37 +1109,37 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   :defer t
   :mode "\\.puml\\'"
   :config
-    (set-file-template! 'plantuml-mode :mode 'plantuml-mode)
-    (setq plantuml-executable-path "nostderr"
-          plantuml-executable-args '("plantuml" "-headless")
-          plantuml-default-exec-mode 'jar
-          plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
-          org-plantuml-jar-path plantuml-jar-path
-          plantuml-java-args '("-Djava.awt.headless=true" "-jar")
-          plantuml-indent-level 4
-          )
-    (after! org
-      (org-babel-do-load-languages 'org-babel-load-languages
-                                   '((plantuml . t)))
-      )
+  (set-file-template! 'plantuml-mode :mode 'plantuml-mode)
+  (setq plantuml-executable-path "nostderr"
+        plantuml-executable-args '("plantuml" "-headless")
+        plantuml-default-exec-mode 'jar
+        plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+        org-plantuml-jar-path plantuml-jar-path
+        plantuml-java-args '("-Djava.awt.headless=true" "-jar")
+        plantuml-indent-level 4
+        )
+  (after! org
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((plantuml . t)))
+    )
 
-    (add-hook 'plantuml-mode-hook
-              (lambda () (setq-local compile-command (format "plantuml %s" (shell-quote-argument buffer-file-name)))))
+  (add-hook 'plantuml-mode-hook
+            (lambda () (setq-local compile-command (format "plantuml %s" (shell-quote-argument buffer-file-name)))))
 
   )
 
-;(use-package vc-fossil
-;  ;; Keep from loading unnecessarily at startup.
-;  :defer t
-;  ;; This allows VC to load vc-fossil when needed.
-;  :init (add-to-list 'vc-handled-backends 'Fossil))
+;;(use-package vc-fossil
+;;  ;; Keep from loading unnecessarily at startup.
+;;  :defer t
+;;  ;; This allows VC to load vc-fossil when needed.
+;;  :init (add-to-list 'vc-handled-backends 'Fossil))
 
 (use-package! chordpro-mode
   :defer t
   :mode ("\\.cho\\'" . chordpro-mode)
   :config
-    (set-file-template! 'chordpro-mode :mode 'chordpro-mode) ; TODO broken
-    (define-key chordpro-mode-map (kbd "C-c C-c") 'chordpro-insert-chord)
+  (set-file-template! 'chordpro-mode :mode 'chordpro-mode) ; TODO broken
+  (define-key chordpro-mode-map (kbd "C-c C-c") 'chordpro-insert-chord)
   )
 
 (use-package! lilypond-mode
@@ -1144,31 +1147,31 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   :mode ("\\.ly\\'" . LilyPond-mode)
   :config
 
-    (map! :map rdictcc-buffer-mode-map
-          :leader
-          "hi" 'LilyPond-info)
+  (map! :map rdictcc-buffer-mode-map
+        :leader
+        "hi" 'LilyPond-info)
   
-    (set-file-template! 'LilyPond-mode :mode 'LilyPond-mode)
-    (setq LilyPond-pdf-command "xdg-open")
-    (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
+  (set-file-template! 'LilyPond-mode :mode 'LilyPond-mode)
+  (setq LilyPond-pdf-command "xdg-open")
+  (add-hook 'LilyPond-mode-hook 'turn-on-font-lock)
 
-    (defun xf/live-preview ()
-      (interactive)
-      (setq-local compile-command (format "lilypond %s" (shell-quote-argument buffer-file-name)))
-      ; TODO this does not quite work
-      (message mode-name)
-      (message buffer-file-name)
-      (message "%s" (length (window-list)))
-      (unless (> (length (window-list)) 1)
-        (split-window-horizontally)
-        (find-file (concat (file-name-sans-extension buffer-file-name) ".pdf"))
-        (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".ly"))
-        )
+  (defun xf/live-preview ()
+    (interactive)
+    (setq-local compile-command (format "lilypond %s" (shell-quote-argument buffer-file-name)))
+                                        ; TODO this does not quite work
+    (message mode-name)
+    (message buffer-file-name)
+    (message "%s" (length (window-list)))
+    (unless (> (length (window-list)) 1)
+      (split-window-horizontally)
+      (find-file (concat (file-name-sans-extension buffer-file-name) ".pdf"))
+      (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".ly"))
       )
+    )
 
-    (add-hook 'LilyPond-mode-hook 'xf/live-preview)
+  (add-hook 'LilyPond-mode-hook 'xf/live-preview)
 
-    ; TODO (require 'lyqi nil t)
+  ;; TODO (require 'lyqi nil t)
   )
 
 (setq js-indent-level 2)
@@ -1195,9 +1198,9 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (use-package! activity-watch-mode
   :defer t
   :config
-    (activity-watch--send-heartbeat (activity-watch--create-heartbeat (current-time))
-      :on-success (lambda (&rest _) (global-activity-watch-mode))
-      :on-error (lambda (&rest _) (message "")))
+  (activity-watch--send-heartbeat (activity-watch--create-heartbeat (current-time))
+                                  :on-success (lambda (&rest _) (global-activity-watch-mode))
+                                  :on-error (lambda (&rest _) (message "")))
   )
 
 (use-package! rdictcc
@@ -1207,25 +1210,25 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
          ("C-c T". 'rdictcc-translate-word))
   :config
 
-        ;; TODO what happened to q?
-        (map! :leader "T" 'rdictcc-translate-word
-              :map rdictcc-buffer-mode-map
-              :n "q" 'kill-this-buffer
-              "q" 'kill-this-buffer
-              )
+  ;; TODO what happened to q?
+  (map! :leader "T" 'rdictcc-translate-word
+        :map rdictcc-buffer-mode-map
+        :n "q" 'kill-this-buffer
+        "q" 'kill-this-buffer
+        )
 
-        (setq rdictcc-program-args "--directory $XDG_DATA_HOME/dictcc")
+  (setq rdictcc-program-args "--directory $XDG_DATA_HOME/dictcc")
   )
 
 (after! tramp
   (setq tramp-default-method "scpx")
   (add-to-list 'tramp-methods
-   '("yadm"
-     (tramp-login-program "yadm")
-     (tramp-login-args (("enter")))
-     (tramp-login-env (("SHELL") ("/bin/sh")))
-     (tramp-remote-shell "/bin/sh")
-     (tramp-remote-shell-args ("-c"))))
+               '("yadm"
+                 (tramp-login-program "yadm")
+                 (tramp-login-args (("enter")))
+                 (tramp-login-env (("SHELL") ("/bin/sh")))
+                 (tramp-remote-shell "/bin/sh")
+                 (tramp-remote-shell-args ("-c"))))
   (map! :leader
         :desc "Yadm status" "gT" (lambda () (interactive) (magit-status "/yadm::")))
   )
@@ -1233,21 +1236,21 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (use-package! magit
   :defer t
   :config
-    (setq git-commit-summary-max-length 70
-          magit-clone-set-remote.pushDefault 't
-          magit-clone-default-directory (expand-file-name "1-projects" user-data-dir)
-          magit-blame--style (car magit-blame-styles))
-    (setq magit-clone-name-alist
-      '(("\\`\\(?:github:\\|gh:\\)?\\([^:]+\\)\\'" "github.com" "user.name")
-        ("\\`\\(?:gitlab:\\|gl:\\)\\([^:]+\\)\\'" "gitlab.com" "user.name")
-        ("\\`\\(?:gitea:\\|x:\\)\\([^:]+\\)\\'" "git.jfischer.org" "user.name")))
+  (setq git-commit-summary-max-length 70
+        magit-clone-set-remote.pushDefault 't
+        magit-clone-default-directory (expand-file-name "1-projects" user-data-dir)
+        magit-blame--style (car magit-blame-styles))
+  (setq magit-clone-name-alist
+        '(("\\`\\(?:github:\\|gh:\\)?\\([^:]+\\)\\'" "github.com" "user.name")
+          ("\\`\\(?:gitlab:\\|gl:\\)\\([^:]+\\)\\'" "gitlab.com" "user.name")
+          ("\\`\\(?:gitea:\\|x:\\)\\([^:]+\\)\\'" "git.jfischer.org" "user.name")))
   )
 
 (use-package! direnv ; nix-shell stuffs
   :defer t
   :config
-    (setq direnv-always-show-summary nil)
-    (direnv-mode)
+  (setq direnv-always-show-summary nil)
+  (direnv-mode)
   )
 
 (use-package! nov
@@ -1261,36 +1264,36 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (use-package! emms
   :disabled
   :config
-    (require 'emms-setup)
-    (require 'emms-player-mpd)
-    (emms-all) ; don't change this to values you see on stackoverflow questions if you expect emms to work
-    (setq emms-player-list '(emms-player-mpd))
-    (add-to-list 'emms-info-functions 'emms-info-mpd)
-    (add-to-list 'emms-player-list 'emms-player-mpd)
-    (setq emms-source-file-default-directory (getenv "MUSIC"))
+  (require 'emms-setup)
+  (require 'emms-player-mpd)
+  (emms-all) ; don't change this to values you see on stackoverflow questions if you expect emms to work
+  (setq emms-player-list '(emms-player-mpd))
+  (add-to-list 'emms-info-functions 'emms-info-mpd)
+  (add-to-list 'emms-player-list 'emms-player-mpd)
+  (setq emms-source-file-default-directory (getenv "MUSIC"))
 
-    ;; Socket is not supported
-    (setq emms-player-mpd-server-name "localhost")
-    (setq emms-player-mpd-server-port "6600")
-    (setq emms-player-mpd-music-directory (expand-file-name "music" user-data-dir))
+  ;; Socket is not supported
+  (setq emms-player-mpd-server-name "localhost")
+  (setq emms-player-mpd-server-port "6600")
+  (setq emms-player-mpd-music-directory (expand-file-name "music" user-data-dir))
   )
 
 
-;(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (use-package! mu4e
   :defer 3
   :if (locate-library "mu4e.el")
   :config
 
-   (setq mu4e-headers-fields
-         '((:mailing-list   . 5)
-           (:flags          . 6)
-           (:maildir        . 11)
-           (:account-stripe . 2)
-           (:date           . 9)
-           (:from-or-to     . 22)
-           (:subject        . nil)
-           ))
+  (setq mu4e-headers-fields
+        '((:mailing-list   . 5)
+          (:flags          . 6)
+          (:maildir        . 11)
+          (:account-stripe . 2)
+          (:date           . 9)
+          (:from-or-to     . 22)
+          (:subject        . nil)
+          ))
 
   (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
         mu4e-update-interval (* 10 60) ; check mail every 10 minutes
@@ -1300,19 +1303,19 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         )
 
   (add-hook 'mu4e-compose-pre-send-hook
-          (lambda ()
-            (setq buffer-undo-list nil))) ; Clear undo history to prevent primitive-undo errors
+            (lambda ()
+              (setq buffer-undo-list nil))) ; Clear undo history to prevent primitive-undo errors
 
   ;; Spam marker with automatic marking as read
   (add-to-list 'mu4e-marks
-   '(spam
-     :char ("S" . "⌒")
-     :prompt "Spam"
-     :dyn-target (lambda (_target _msg) "/Spam")
-     ;:show-target (lambda (target) "/Spam")
-     :action (lambda (docid _msg target)
-               ;; move; flags handled separately if desired
-               (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))))
+               '(spam
+                 :char ("S" . "⌒")
+                 :prompt "Spam"
+                 :dyn-target (lambda (_target _msg) "/Spam")
+                 ;;:show-target (lambda (target) "/Spam")
+                 :action (lambda (docid _msg target)
+                           ;; move; flags handled separately if desired
+                           (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))))
   (mu4e~headers-defun-mark-for spam)
   (mu4e--view-defun-mark-for spam)
   (map! :map mu4e-headers-mode-map
@@ -1363,7 +1366,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
   (add-hook 'mu4e-main-mode-hook
             (lambda (&rest _) (my/mu4e-update-shortcuts-based-on-point)))
-  ; also refresh when contexts change (if available in your mu4e)
+  ;; also refresh when contexts change (if available in your mu4e)
   (with-eval-after-load 'mu4e-context
     (when (boundp 'mu4e-context-changed-hook)
       (add-hook 'mu4e-context-changed-hook
@@ -1373,52 +1376,52 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 
 ;; helper: build a context from address + name + optional default flag
 (defun my/mu4e-account (name address fullname &optional alias default)
-    "Define a mu4e account from NAME, ADDRESS, FULLNAME.
+  "Define a mu4e account from NAME, ADDRESS, FULLNAME.
     Derives mail server from the domain part of ADDRESS.
     If DEFAULT is non-nil, mark this account as the default."
   (let* ((domain (cadr (split-string address "@")))
          (server (concat "mail." domain))
          (root    (concat "/" (downcase name))))
     (set-email-account! (or alias name)
-      `((user-mail-address     . ,address)
-        (user-full-name        . ,fullname)
-        (smtpmail-smtp-user    . ,address)
-        (smtpmail-smtp-server  . ,server)
-        (smtpmail-smtp-service . 587)
+                        `((user-mail-address     . ,address)
+                          (user-full-name        . ,fullname)
+                          (smtpmail-smtp-user    . ,address)
+                          (smtpmail-smtp-server  . ,server)
+                          (smtpmail-smtp-service . 587)
 
-        (mu4e-sent-folder   . ,(concat root "/Sent"))
-        (mu4e-drafts-folder . ,(concat root "/Drafts"))
-        (mu4e-trash-folder  . ,(concat root "/Trash"))
-        (mu4e-refile-folder . ,(concat root "/Archive")))
+                          (mu4e-sent-folder   . ,(concat root "/Sent"))
+                          (mu4e-drafts-folder . ,(concat root "/Drafts"))
+                          (mu4e-trash-folder  . ,(concat root "/Trash"))
+                          (mu4e-refile-folder . ,(concat root "/Archive")))
 
-      default)))
+                        default)))
 
-;; SMTP Debug Mail Sending
-;(setq smtpmail-debug-info t
-;      smtpmail-debug-verb t)
-;(setq ; message-send-mail-function 'smtpmail-send-it
-;      auth-source-debug t)   ;; zum Debuggen in *Messages*
+;;; SMTP Debug Mail Sending
+;;(setq smtpmail-debug-info t
+;;      smtpmail-debug-verb t)
+;;(setq ; message-send-mail-function 'smtpmail-send-it
+;;      auth-source-debug t)   ;; zum Debuggen in *Messages*
 
-;(setq message-send-mail-function 'smtpmail-send-it
-;    auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
-;    smtpmail-smtp-server "127.0.0.1"
-;    smtpmail-smtp-service 1025
-;    smtpmail-stream-type 'ssl)
+;;(setq message-send-mail-function 'smtpmail-send-it
+;;    auth-sources '("~/.authinfo") ;need to use gpg version but only local smtp stored for now
+;;    smtpmail-smtp-server "127.0.0.1"
+;;    smtpmail-smtp-service 1025
+;;    smtpmail-stream-type 'ssl)
 
 (use-package! auth-source-pass
   :demand t
   :config
   (setq auth-sources '(password-store))
   (auth-source-pass-enable))
-; (setq auth-source-pass-filename "~/.local/share/pass/www")
+;; (setq auth-source-pass-filename "~/.local/share/pass/www")
 (setq epa-pinentry-mode 'loopback
       epg-pinentry-mode 'loopback
       ) ; ask in minibuffer
 (use-package pinentry
   :config (pinentry-start))
-;(use-package! pinentry
-;    :init (setq epg-pinentry-mode `loopback)
-;          (pinentry-start))
+;;(use-package! pinentry
+;;    :init (setq epg-pinentry-mode `loopback)
+;;          (pinentry-start))
 
 (after! spell-fu
   (remove-hook 'text-mode-hook #'spell-fu-mode)
@@ -1447,9 +1450,9 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         (insert selected-region))
       (ediff-buffers clipboard-buffer region-buffer))))
 
-; uncomment this to exit loading the config prematurely
-;(with-current-buffer " *load*"
-;  (goto-char (point-max)))
+;;; uncomment this to exit loading the config prematurely
+;;(with-current-buffer " *load*"
+;;  (goto-char (point-max)))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
