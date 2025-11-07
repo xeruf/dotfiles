@@ -233,6 +233,7 @@ invoice() {
     esac
     local year=$(test "$numprefix" && echo ':YEAR' || date +%Y)
     echo "${prefix}${price};Webpaket $package;Januar $year - Dezember $year;12;20"
+    # echo "${prefix}${price};Webpaket $package;Januar 2023 - Dezember 2024;24;20"
   fi
 }
 
@@ -253,7 +254,7 @@ invoicedomain() {
   local date_created=$(grep ",$domain," "${autodns_csv}" | cut -d, -f3 | cut -dT -f1 || date -d "$renew -1 year" "+%Y-%m-%d")
   local date_created_de=$(echo "$date_created" | awk -F- '{print $3 "." $2 "." $1}')
   local date_start=$(test "$date_billed" && { echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}' ;} || echo "$date_created")
-  local years=$(expr 1 \& "${1:-2}" \< 2 \| "${1:-6}" - "$(echo "$date_start" | cut -c4)")
+  local years=$(expr 1 \& "${1:-2}" \< 2 \| "${1:-5}" - "$(echo "$date_start" | cut -c4)")
 
   local date_billed_fut=$(date -d "$date_start +$years year -1 day" '+%d.%m.%Y')
   local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
