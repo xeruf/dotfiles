@@ -1372,12 +1372,22 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
        (list :maildir (concat r "/Drafts")   :key ?d :hide-unread t)
        (list :maildir (concat r "/Sent")     :key ?S :hide-unread t))))
 
+
+  (setq mu4e-refile-folder (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Archive")))
+  (setq mu4e-sent-folder   (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Sent")))
+  (setq mu4e-trash-folder  (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Trash")))
+  (setq mu4e-drafts-folder (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Drafts")))
+  ;;(setq mu4e-sent-folder (lambda (msg) (mu4e-message-field msg :maildir) "/Sent"))
+  ;;(mu4e-drafts-folder . ,(concat root "/Drafts"))
+  ;;(mu4e-trash-folder  . ,(concat root "/Trash"))
+  ;;(mu4e-refile-folder . ,(concat root "/Archive")))
+
   (defun my/mu4e-update-shortcuts-based-on-point ()
     "Set `mu4e-maildir-shortcuts' (buffer-local) from message at point."
     (let* ((msg (ignore-errors (mu4e-message-at-point)))
            (md  (and msg (mu4e-message-field msg :maildir)))
-           (mdc (or md (with-mu4e-context-vars mu4e--context-current mu4e-sent-folder)))
-           (root (or (my/mu4e-root-from-maildir mdc))))
+           (mdc (or md (with-mu4e-context-vars mu4e--context-current user-mailbox-root)))
+           (root (my/mu4e-root-from-maildir mdc)))
       (when root
         (setq-local mu4e-maildir-shortcuts (my/mu4e-make-shortcuts root)))
       ))
@@ -1411,17 +1421,13 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
          (root    (concat "/" (downcase name))))
     (set-email-account! (or alias name)
                         `((user-mail-address     . ,address)
+                          (user-mailbox-root     . ,root)
                           (user-full-name        . ,fullname)
                           (smtpmail-smtp-user    . ,address)
                           (smtpmail-smtp-server  . ,server)
-                          (smtpmail-smtp-service . 587)
-
-                          (mu4e-sent-folder   . ,(concat root "/Sent"))
-                          (mu4e-drafts-folder . ,(concat root "/Drafts"))
-                          (mu4e-trash-folder  . ,(concat root "/Trash"))
-                          (mu4e-refile-folder . ,(concat root "/Archive")))
-
-                        default)))
+                          (smtpmail-smtp-service . 587))
+                        default)
+    ))
 
 ;;; SMTP Debug Mail Sending
 ;;(setq smtpmail-debug-info t
