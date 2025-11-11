@@ -1306,6 +1306,32 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
             (lambda ()
               (setq buffer-undo-list nil))) ; Clear undo history to prevent primitive-undo errors
 
+
+  ;; Account Move Mark
+  (defun my/mu4e-account-names ()
+    "Return a list of mu4e context names as strings."
+    (mapcar (lambda (context)
+              (my/mu4e-root-from-maildir (with-mu4e-context-vars context mu4e-sent-folder)))
+            mu4e-contexts)
+    )
+
+  (add-to-list 'mu4e-marks
+               '(move-account
+                 :char "M"
+                 :prompt "Move Account"
+                 :ask-target (lambda ()
+                               (completing-read "Target account: "
+                                                (my/mu4e-account-names)))
+                 :action (lambda (docid msg target)
+                           (let* ((current-maildir (mu4e-message-field msg :maildir))
+                                  ;; Extract folder after account name
+                                  (folder (replace-regexp-in-string
+                                           "^/[^/]+/\\(.*\\)" "\\1" current-maildir))
+                                  ;; Build target path
+                                  (target-path (concat target "/" folder)))
+                             (mu4e--server-move docid target-path "+S-N")))))
+  (mu4e~headers-defun-mark-for move-account)
+
   ;; Spam marker with automatic marking as read
   (add-to-list 'mu4e-marks
                '(spam
@@ -1320,6 +1346,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (mu4e--view-defun-mark-for spam)
   (map! :map mu4e-headers-mode-map
         :n ">" (lambda () (interactive) (mu4e-headers-mark-for-spam))
+        :n "M" (lambda () (interactive) (mu4e-headers-mark-for-move-account))
         :n "T" 'mu4e-headers-mark-thread
         :map mu4e-view-mode-map
         :n ">" (lambda () (interactive) (mu4e-view-mark-for-spam))
