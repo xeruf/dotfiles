@@ -6,6 +6,7 @@ export_existing() {
     done
 }
 export_existing DATA $HOME/data $HOME/IT/data
+export_existing NEXTCLOUD $DATA/nextcloud $HOME/Nextcloud
 export MUSIC="$DATA/4-media/music"
 
 export BORG_REPO='janek@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'

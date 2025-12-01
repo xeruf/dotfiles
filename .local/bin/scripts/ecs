@@ -1,8 +1,8 @@
 #!/bin/sh -e
 # ecs grepper
-ecs="$DATA/nextcloud/FTT/Deltapeak/logs/ecs"
+ecs="$NEXTCLOUD/FTT/Deltapeak/logs/ecs"
 command cd "$ecs"
-id=$(grep -i "$1" cu_customers_nobreaks.csv cu_products.csv | cut -d'"' -f4 | sort | uniq | paste -s -d'|')
+id=$(grep -i "$1" cu_customers_nobreaks.csv cu_products.csv | cut -d'"' -f4 | sort | uniq | paste -s -d'|' - )
 idmatch="^($id)$"
 mlr --csv --allow-ragged-csv-input --headerless-csv-output filter "\$cid =~ \"$idmatch\"" cu_customers_nobreaks.csv
 unbuffer mlr --csv --allow-ragged-csv-input filter "\$cid =~ \"$idmatch\"" then cut -f product cu_products.csv | sort | uniq

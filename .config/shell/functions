@@ -544,8 +544,8 @@ then
 	# [F]ind [F]ile
 	alias f="noglob fn --color=always "
 	alias ff=f
-	compdef f=fd
-	compdef fn=fd
+	compdef f=fd 2>/dev/null
+	compdef fn=fd 2>/dev/null
 else
 	alias ff='find -not -path "*.sync*" -and -not \( -name daten -prune \) -iname'
 	alias f1='find -mindepth 1 -maxdepth 1'
