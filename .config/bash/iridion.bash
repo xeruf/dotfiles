@@ -189,9 +189,10 @@ invoice() {
     years=$1
     shift
     ;;
-  (DR)
+  (DR*)
     local numprefix=DR
-    years=1
+    years=${1:2}
+    years=${years:-1}
     shift
     ;;
   esac
@@ -207,10 +208,10 @@ invoice() {
     local name=$(echo "$userinfo" | grep FULL | cut -d: -f2 | sed 's/^ *//;s/ *$//')
   fi
 
-  # TODO is amount discount not working so far
-  echo "Client Name;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
+  # FIXME is amount discount not working so far: https://github.com/invoiceninja/invoiceninja/issues/11362
+  echo "Client Name;Invoice Next Send Date;How Often;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="$name;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;Ust.;19,00;"
+  local prefix="$name;$(test "$numprefix" && echo "2025-12-09");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;Ust.;19,00;"
   {
   for domain
   do echo "$prefix$(invoicedomain "$domain" $years)"
@@ -219,9 +220,9 @@ invoice() {
   do test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1 ||
       echo "$prefix$(invoicedomain "$domain" $years)"
   done
-  } | $(test "$numprefix" && echo "sed s/202[1-5]/:YEAR$(case "$years" in (-*) echo "$years";; esac)/;s/202[2-6]/:YEAR+1/" || echo cat)
+  } | { test "$numprefix" && sed "s/202[1-5] /:YEAR$(case "$years" in (-*) echo "$years";; esac) /;s/202[2-6])/:YEAR+$years)/" || cat; }
 
-  local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | sed 's/^ *//')
+  local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | cut -d- -f1 | sed 's/^ *//')
   if test -n "$package"
   then
     local price
@@ -283,7 +284,7 @@ domaininfo() {
   if test $# -eq 0
   then echo 'Provide domains as args or via stdin, reading from stdin...' >&2
        while read -r domain
-       do test -n "$domain" || break
+       do test -n "$domain" || continue
           ${FUNCNAME[0]} "$domain"
        done
        return $?
