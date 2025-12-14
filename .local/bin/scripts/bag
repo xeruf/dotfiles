@@ -3,7 +3,7 @@
 # Usage: bag [-n] [--dry-run] [--home] [--root MOUNTED_ROOT]
 root="/"
 args="--progress --stats"
-# TODO proper ssh handling with local root access
+# TODO proper ssh handling using local user with local root access to backup all files
 # case $BORG_REPO in (*:*) run=borg;; esac
 while test $# -gt 0; do
   case "$1" in
