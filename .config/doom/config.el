@@ -262,6 +262,7 @@ Version 2019-11-04 2021-02-16"
 (use-package! recentf
   :config
   (add-to-list 'recentf-exclude "\\.\\(sync\\|stversions\\|stfolder\\)")
+  (add-to-list 'recentf-exclude "\\/tug")
   (let ((incubator (expand-file-name "5-incubator/" user-data-dir)))
     (if (file-exists-p incubator) (setq recentf-list (append recentf-list (list-non-hidden-directories incubator)))))
   (setq recentf-list (append (list-non-hidden-directories user-data-dir) recentf-list))
@@ -271,21 +272,22 @@ Version 2019-11-04 2021-02-16"
 
 (use-package! projectile
   :init
+  (setq projectile-ignored-projects '("~/" "~/data/" "~/data/1-projects/" "/home/janek/data/1-projects/"))
   (projectile-add-known-project doom-user-dir)
   (let ((media-dir (expand-file-name "4-media/" user-data-dir)))
-    (if (file-exists-p media-dir) (projectile-add-known-project media-dir))
-    (after! org
-      (projectile-add-known-project org-directory)
-      (projectile-register-project-type 'org '(".orgids"))
-      (projectile-register-project-type 'git '(".gitignore" ".git"))
-      ;;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
-      )
-    :config
-    (setq projectile-project-root-files
-          (append projectile-project-root-files
-                  '(".gitignore" ".stignore" "README.org" ".projectile" ".orgids"  ".nextcloudsync.log")
-                  ))
-    ))
+    (if (file-exists-p media-dir) (projectile-add-known-project media-dir)))
+  (after! org
+    (projectile-add-known-project org-directory)
+    (projectile-register-project-type 'org '(".orgids"))
+    ;;(projectile-register-project-type 'git '(".gitignore" ".git"))
+    ;;(setq projectile-project-search-path '((org-directory . 0) ((expand-file-name "1-projects" user-data-dir) . 3)))
+    )
+  ;;:config
+  ;;(setq projectile-project-root-files
+  ;;      (append projectile-project-root-files
+  ;;              '(".gitignore" ".stignore" "README.org" ".projectile" ".orgids"  ".nextcloudsync.log")
+  ;;              ))
+  )
 
 
 ;;;; Miscellaneous Config
@@ -894,15 +896,14 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (use-package! dired
   :config
   ;; Make dired open certain file types externally when pressing RET on a file https://pastebin.com/8QWYpCA2
-  ;; Alternative: https://www.emacswiki.org/emacs/OpenWith
+  ;; Alternative: https://www.emacswiki.org/emacs/OpenWith (no mime, just file endings)
   (defvar unsupported-mime-types
     '("image/x-xcf")) ; "application/zip"))
+
   (load "subr-x")
   (defun get-mimetype (filepath)
     (string-trim
      (shell-command-to-string (concat "file -b --mime-type \"" filepath "\""))))
-
-  ;;(let ((mime "image/x-xcf")) (msg mime))
 
   (defun dired-find-file-dwim ()
     (interactive)
@@ -910,7 +911,19 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
            (mime (get-mimetype file)))
       (if (or (string-suffix-p ".desktop" file) (string-prefix-p "audio" mime) (string-prefix-p "video" mime) (member mime unsupported-mime-types))
           (call-process "xdg-open" nil 0 nil file)
-        (find-file file))))
+        (find-file file)))
+    )
+  ;; (defun my/dired-find-file-external-for-videos ()
+  ;;   "In dired, open video files externally with xdg-open, others normally."
+  ;;   (interactive)
+  ;;   (let ((file (dired-get-file-for-visit)))
+  ;;     (if (string-match-p (regexp-opt '("mp4" "mkv" "avi" "mov" "webm") t) file)
+  ;;         (start-process "" nil "xdg-open" file)
+  ;;       (dired-find-file))))
+  ;; 
+  ;; (with-eval-after-load 'dired
+  ;;   (define-key dired-mode-map (kbd "RET") #'my/dired-find-file-external-for-videos))
+
 
   ;; maybe add +org/close-fold
   (map! ; what about closing popup buffers first, like debugger-mode :n "<escape>" (lambda () (interactive) (if (eq major-mode 'org-mode) (condition-case nil (org-up-element) (error (dired-jump))) (dired-jump)))
@@ -918,9 +931,8 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
    "." 'dired-jump)
 
   (map! :map dired-mode-map
-        :n "RET" 'dired-find-file-dwim
         :n "l"   'dired-find-file-dwim
-        :n "h"   'dired-up-directory
+        ;;:n "h"   'dired-up-directory
         :n "ö"   'evil-ex-search-forward
         :localleader
         :desc "Compress/Extract" "c" 'dired-do-compress
@@ -935,9 +947,17 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         :desc "Org attach subtree" "a" 'org-attach-dired-to-subtree
         :map wdired-mode-map
         :n "RET" (lambda () (interactive) (wdired-exit) (dired-find-file-dwim))
+        :map dirvish-mode-map
+        :n "l"   'dired-find-file-dwim
         )
 
+  (after! dirvish
+    (map! :map dirvish-mode-map
+          :n "l"   'dired-find-file-dwim)
+    )
+
   )
+
 (use-package! dired-ranger
   :disabled
   :config
