@@ -7,7 +7,7 @@ while test $# -gt 1; do
   shift
   dir="$1"
   while ! test -e "$dir"
-  do dir="$(dirname "$dir")"
+  do dir="$(dirname -- "$dir")"
   done
   test -L "$dir" ||
     test $flag "$dir"

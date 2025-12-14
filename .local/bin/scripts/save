@@ -2,6 +2,11 @@
 # Put system to sleep after specified number of seconds
 # If used in a pipe, put a command into /tmp/save to override
 mpc pause || mpdr || true
-$(which timer || sleep) "${@:-30}"
-# TODO delay in case I happen to still be on PC - use idle?
-$(cat /tmp/save 2>/dev/null) || systemctl suspend
+# notify-send 
+if test $# -gt 0; then
+    $(which timer || sleep) "${@:-30}"
+    $(cat /tmp/save 2>/dev/null) || systemctl suspend
+else
+    # TODO make this abortable
+    timeout 40 swayidle timeout 30 'systemctl suspend'
+fi

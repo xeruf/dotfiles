@@ -1,0 +1,9 @@
+#!/bin/sh -ex
+# Swaymsg recovery from tty
+logictl list-sessions
+cd /run/user/$(id -u)/
+export WAYLAND_DISPLAY=$(ls -t wayland-* | grep -m 1 -v lock)
+export SWAYSOCK=$(ls -t sway-ipc.* | head -1)
+swaymsg -t get_tree
+# swaymsg output "*" enable
+# swaygms reload

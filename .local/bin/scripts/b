@@ -68,6 +68,8 @@ prefix=/tmp/b
 mkdir -p "$prefix"
 declare -a timg timga bat batplain ls
 for arg; do
+	# flags can be passed here by first terminating getopts with double dash, see e.g. "wh"
+	# TODO this struggles on filenames with dash, because the double dash is already eaten
 	test -z "$noflags" && case "$arg" in (--) noflags=true; continue;; (-*) flags="$flags $arg"; continue;; esac
 	checkperm "$arg"
 	if ! $elevate test -e "$arg"

@@ -2,16 +2,16 @@
 # Creates the last arg as directory (or its parent if not ending in a slash)
 # and moves the preceding arguments into it.
 # Automatically elevates if missing permissions.
-for last; do true; done
 checkaccess -w "$@" || elevate=sudo
 ! $elevate test -e "$1" && echo "$1 does not exist" && exit 1
 
-dir="$(dirname "$1")"
+dir="$(dirname -- "$1")"
 test "$(lsattr -d "$dir" 2>/dev/null | cut -c6)" = a && setappend=true
 test -z "$setappend" || sudo chattr -V -a "$dir"
 
-$elevate mkdir -p "$(case "$last" in (*/) echo "$last";; (*) dirname "$last";; esac)"
-$elevate mv -vi "$@"
+for last; do true; done
+$elevate mkdir -p "$(case "$last" in (*/) echo "$last";; (*) dirname -- "$last";; esac)"
+$elevate mv -vi -- "$@"
 # TODO Diff when interactive
 
 test -z "$setappend" || sudo chattr -V +a "$dir"
