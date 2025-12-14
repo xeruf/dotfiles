@@ -434,7 +434,7 @@ grsh() {
 	local search=$1
 	shift
 	case $1 in (-*|"");; (*) local filter=$1; shift;; esac
-	grpc --recursive "$search" "$@" $(test -z "$filter" &&
+	grpc --color=always --recursive "$search" "$@" $(test -z "$filter" &&
 		echo $HOME/.local/bin $CONFIG_SHELLS $CONFIG_ZSH $HOME/.{ba,z}sh* /etc/bash* /etc/profile* /etc/zsh || # /usr/share/{ba,z}sh
 		compgen -G "$XDG_CONFIG_HOME/$filter" -G "/usr/share/$filter" -G "/etc/$filter*" -G "$HOME/.$filter*")
 }
@@ -559,8 +559,8 @@ compdef rcd=rsync
 # TODO do not sync times to FAT
 alias rc='rcs --safe-links --hard-links --times'
 alias rcu='rc --existing --size-only' # Only update files
-alias rcr='rcs --partial --verbose --compress --size-only --times' # Compressed
-alias rcs='rsync --recursive --info=progress2,remove,symsafe,flist,del --human-readable'
+alias rcr='rsync --recursive --human-readable --verbose --progress --partial --compress --size-only --times' # Compressed - [r]sync [c]opy [r]emote
+alias rcs='rsync --recursive --human-readable --info=progress2,remove,symsafe,flist,del'
 alias dsync='rc --delete --specials'
 alias move='rc --remove-source-files'
 # https://unix.stackexchange.com/questions/57305/rsync-compare-directories/177946

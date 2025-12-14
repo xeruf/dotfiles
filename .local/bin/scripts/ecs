@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # ecs grepper
-ecs="$NEXTCLOUD/FTT/Deltapeak/logs/ecs"
+ecs="$NEXTCLOUD/FTT/Deltapeak Daten/logs/ecs"
 command cd "$ecs"
 id=$(grep -i "$1" cu_customers_nobreaks.csv cu_products.csv | cut -d'"' -f4 | sort | uniq | paste -s -d'|' - )
 idmatch="^($id)$"
