@@ -7,7 +7,7 @@ let g:firenvim_config = {
     \ '.*': {
       \ 'cmdline': 'firenvim',
       \ 'priority': 0,
-      \ 'selector': 'textarea:not([readonly]):not([class="flt-text-editing"]):not([class="handsontableInput"]):not([wrap="off"]):not([rows="1"]):not([title="Replace"]):not([title="Search"]):not([name="message"]):not([name="Description"]),
+      \ 'selector': 'textarea:not([readonly]):not([wrap="off"]):not([rows="1"]):not([aria-multiline="false"]):not([id="keyhandler"]):not([class="flt-text-editing"]):not([class="handsontableInput"]):not([title="Replace"]):not([title="Search"]):not([name="message"]):not([name="Description"]),
         \ div[role="textbox"]:not([aria-label="Search"]):not([id="ask-input"]):not([class="cm-content"]):not([class="ProseMirror"]), div[class="CodeMirror"]',
       \ 'takeover': 'always',
     \ },

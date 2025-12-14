@@ -53,13 +53,26 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 
-(package! broadcast)
+;; USERNAME FOR FORKS
+;;(setq my-git-username-cache-file (expand-file-name "cached-git-username" custom-emacs-data-dir))
+;;(defun my-load-or-cache-git-username ()
+;;  "Load cached Git username or cache it if not present."
+;;  (if (file-exists-p my-git-username-cache-file)
+;;      (string-trim (with-temp-buffer
+;;                     (insert-file-contents my-git-username-cache-file)
+;;                     (buffer-string)))
+;;    (let ((username (string-trim (shell-command-to-string "git config --get user.name"))))
+;;      (with-temp-file my-git-username-cache-file
+;;        (insert username))
+;;      username)))
+;;(setq straight-host-usernames `((github . ,(my-load-or-cache-git-username))))
+
 
 ;;; Multimedia & Integration
 ;;(package! emms)
 ;;(package! exiftool)
 ;;(package! elpher)
-(package! activity-watch-mode :recipe (:fork t)) ; eagle eyes
+(package! activity-watch-mode) ; :recipe (:fork t) not needed anymore changes were merged ; eagle eyes
 
 (package! kill-or-bury-alive) ; https://github.com/mrkkrp/kill-or-bury-alive
 (package! recompile-on-save)
@@ -89,6 +102,8 @@
 (package! evil-tutor) ; dark vim tutor
 (package! evil-replace-with-register) ; grrrrr
 (package! visual-fill-column) ; Soft line wrapping at character count
+
+(package! broadcast) ; synchronize buffer actions
 
 ;; (package! togetherly) ; Collaborative editing
 

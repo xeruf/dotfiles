@@ -2,6 +2,6 @@
     "include": [
         "/usr/share/sway/templates/waybar/config.jsonc"
     ],
-    "height": 30,
-    "position": "top"
+    "height": 160,
+    "position": "bottom"
 }
