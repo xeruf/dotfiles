@@ -7,12 +7,16 @@ alias dedup-lines='awk '"'"'!a[$0]++'"'"
 listconf() {
   { cat "$conf_cache"
     fd --hidden --type file --size -1m --max-depth 1 . "$HOME"
-    find /boot -name "*.c*f*" 2>/dev/null
-    find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc /var/lib/postgres /var/lib/pleroma/static/instance \
+    fd --glob "*.c*f*" /boot 2>/dev/null
+    # find /boot -name "*.c*f*" 2>/dev/null
+    fd /var/lib/postgres /var/lib/pleroma/static/instance --type f 2>/dev/null
+    # fd . "${XDG_CONFIG_HOME:-$HOME/.config}" /etc --maxdepth 4
+    find "${XDG_CONFIG_HOME:-$HOME/.config}" /etc \
       -maxdepth 4 -follow \
       \( -name Partitions -o -name mdn -o -name .git -o -name .local -o -name plugged \) -prune -o \
       ! \( -iname "*.markdown" -o -name "Network Persistent State" -o -iname "*.pem" \) -a \
-      -type f -readable -exec grep -lI '' {} + 2>/dev/null
+      -type f -exec grep -lI '' {} + 2>/dev/null # TODO only filter out permission denied from stderr
+    # -readable
   } | dedup-lines
 }
 

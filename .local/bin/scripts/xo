@@ -2,11 +2,14 @@
 # xdg-open all given files
 # TODO handle .desktop-files with gtk-launch/dex/kioclient exec, add selector from xdg-mime-file
 while test $# -gt 0; do
-	which xdg-open >/dev/null || open "$1"
+	if which xdg-open >/dev/null
+	then
 	case $1 in
 		(*.epub) okular "$1" &;;
 		(*.html) xdg-open "$(realpath "$1")";;
 		(*) xdg-open "$(case "$1" in (-*) echo './';; esac)$1";;
 	esac
+	else open "$1"
+	fi
 	shift
 done

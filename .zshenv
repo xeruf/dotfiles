@@ -90,6 +90,7 @@ BIN="$HOME/.local/bin"
 test -d "$XDG_DATA_HOME/gem/ruby" &&
 	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1):"
 export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:${ruby_bins}$HOME/.rvm/bin"
+# /opt/homebrew/opt/coreutils/libexec/gnubin for gnu override of BSD tools
 
 # TODO this is too early (for mac?) - editors may later be added to PATH - but on Linux this helps so it is available everywhere
 case "$(uname)" in
