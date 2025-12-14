@@ -56,12 +56,13 @@ def uniq(seq):
     return out
 
 with open(INFILE, 'r', encoding='utf-8-sig', newline='') as f:
-    sample=f.read(4096); f.seek(0)
-    try:
-        dialect=csv.Sniffer().sniff(sample, delimiters=',;\t|')
-    except csv.Error:
-        dialect=csv.get_dialect('excel')
-    reader=csv.DictReader(f, dialect=dialect)
+    # sample=f.read(4096); f.seek(0)
+    # try:
+    #     dialect=csv.Sniffer().sniff(sample, delimiters=',;\t|')
+    # except csv.Error:
+    #     dialect=csv.get_dialect('excel')
+    # reader=csv.DictReader(f, dialect=dialect)
+    reader=csv.DictReader(f, delimiter=',', quotechar='"', doublequote=True, escapechar=None)
 
     cards=[]
     for i,row in enumerate(reader, start=1):
