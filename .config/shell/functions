@@ -102,11 +102,11 @@ wh() {
 	local res=$(which "$@" 2>/dev/null || type "$@") || return $?
 	# only works in zsh, not bash
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
-	then echo "$res" | bat --style=plain --language=sh &&
+	then echo "$res" | bat --style=plain --language sh &&
 		tool="$(echo "$res" | head -1 | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
 		wh $(test $tool = $1 && echo "-p") $tool
 		# use command which for other shells
-	else test -r "$res" && b -- --language=sh "$res" || echo "$res" | bat --style=plain --language=sh
+	else test -r "$res" && b -- --language=sh -- "$res" || echo "$res" | bat --style=plain --language sh
 	fi
 }
 compdef wh=which

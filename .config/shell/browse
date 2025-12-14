@@ -69,7 +69,7 @@ loci() {
 alias loc='noglob loci'
 alias uloc='noglob sudo updatedb && loci'
 # locate exactly
-locei() { locate --all --basename "\\$1" "$@" | fselect }
+locei() { locate --all "*/$1" "$@" | fselect }
 alias loce='noglob locei'
 # locate all
 alias loca='noglob sudo updatedb -l 0 --prunenames "" --prunefs "tmpfs sysfs debugfs" --prunepaths "" -o /var/cache/locate-all.db &&

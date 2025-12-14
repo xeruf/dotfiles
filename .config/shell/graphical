@@ -74,7 +74,8 @@ themeswitch() {
 			#mozedit $mozfile '/light@mozilla/,/"enabled"/ s/\("enabled":.*\)true/\1false/; /dark@mozilla/,/"enabled"/ s/\("enabled":.*\)false/\1true/'
 			;;
 	esac
-	pkill --signal SIGUSR1 kitty
+	# This reloads kitty config in all terminals
+	# pkill --signal SIGUSR1 kitty
 }
 export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
