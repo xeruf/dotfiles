@@ -1310,8 +1310,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   ;; Account Move Mark
   (defun my/mu4e-account-names ()
     "Return a list of mu4e context names as strings."
-    (mapcar (lambda (context)
-              (my/mu4e-root-from-maildir (with-mu4e-context-vars context mu4e-sent-folder)))
+    (mapcar (lambda (context) (with-mu4e-context-vars context user-mailbox-root))
             mu4e-contexts)
     )
 
@@ -1319,9 +1318,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
                '(move-account
                  :char "M"
                  :prompt "Move Account"
-                 :ask-target (lambda ()
-                               (completing-read "Target account: "
-                                                (my/mu4e-account-names)))
+                 :ask-target (lambda () (completing-read "Target account: " (my/mu4e-account-names)))
                  :action (lambda (docid msg target)
                            (let* ((current-maildir (mu4e-message-field msg :maildir))
                                   ;; Extract folder after account name
@@ -1367,27 +1364,32 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
        (list :maildir (concat r "/INBOX")    :key ?i)
        (list :maildir (concat r "/Archive")  :key ?a)
        (list :maildir (concat r "/Trash")    :key ?t)
-       (list :maildir "/Spam" :key ?s)
+       (list :maildir "/Spam"                :key ?s :hide-unread t)
        (list :maildir (concat r "/Resources"):key ?r)
        (list :maildir (concat r "/Drafts")   :key ?d :hide-unread t)
-       (list :maildir (concat r "/Sent")     :key ?S :hide-unread t))))
+       (list :maildir (concat r "/Sent")     :key ?S :hide-unread t)
+       )))
 
 
-  (setq mu4e-refile-folder (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Archive")))
-  (setq mu4e-sent-folder   (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Sent")))
-  (setq mu4e-trash-folder  (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Trash")))
-  (setq mu4e-drafts-folder (lambda (msg) (concat (my/mu4e-root-from-maildir (mu4e-message-field msg :maildir)) "/Drafts")))
+  (setq mu4e-refile-folder (lambda (msg) (concat (my/mu4e-root-from-message msg) "/Archive")))
+  (setq mu4e-sent-folder   (lambda (msg) (concat (my/mu4e-root-from-message msg) "/Sent")))
+  (setq mu4e-trash-folder  (lambda (msg) (concat (my/mu4e-root-from-message msg) "/Trash")))
+  (setq mu4e-drafts-folder (lambda (msg) (concat (my/mu4e-root-from-message msg) "/Drafts")))
   ;;(setq mu4e-sent-folder (lambda (msg) (mu4e-message-field msg :maildir) "/Sent"))
   ;;(mu4e-drafts-folder . ,(concat root "/Drafts"))
   ;;(mu4e-trash-folder  . ,(concat root "/Trash"))
   ;;(mu4e-refile-folder . ,(concat root "/Archive")))
 
+  (defun my/mu4e-root-from-message (msg)
+    "Obtain mail root from current message or context"
+    (let* ((md  (and msg (mu4e-message-field msg :maildir)))
+           (mdc (or md (with-mu4e-context-vars mu4e--context-current user-mailbox-root))))
+      (my/mu4e-root-from-maildir mdc)
+      ))
+
   (defun my/mu4e-update-shortcuts-based-on-point ()
     "Set `mu4e-maildir-shortcuts' (buffer-local) from message at point."
-    (let* ((msg (ignore-errors (mu4e-message-at-point)))
-           (md  (and msg (mu4e-message-field msg :maildir)))
-           (mdc (or md (with-mu4e-context-vars mu4e--context-current user-mailbox-root)))
-           (root (my/mu4e-root-from-maildir mdc)))
+    (let ((root (my/mu4e-root-from-message (ignore-errors (mu4e-message-at-point)))))
       (when root
         (setq-local mu4e-maildir-shortcuts (my/mu4e-make-shortcuts root)))
       ))
