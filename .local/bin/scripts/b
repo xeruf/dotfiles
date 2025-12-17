@@ -16,19 +16,22 @@ set -o pipefail
 
 inspect=false
 
-opts='itvh'
-while getopts "$opts" OPTION; do
-case "$OPTION" in
-	# inspect: Show file info without preview
-	(i) inspect=true;;
-	(t) tree=true;;
-	(v) set -eo xtrace;
-		export PS4='+\#> ';;
-	(h|?) echo "Usage: $(basename $0) [-$opts] <paths...>" && exit 2;;
-	(--) break;;
-esac
-done
-shift "$(($OPTIND -1))"
+if test "${#1}" -lt 4
+then
+  opts='itvh'
+  while getopts "$opts" OPTION; do
+  case "$OPTION" in
+  	# inspect: Show file info without preview
+  	(i) inspect=true;;
+  	(t) tree=true;;
+  	(v) set -eo xtrace;
+  		export PS4='+\#> ';;
+  	(h|?) echo "Usage: $(basename $0) [-$opts] <paths...>" && exit 2;;
+  	(--) break;;
+  esac
+  done
+  shift "$(($OPTIND -1))"
+fi
 
 checkperm() {
 	checkaccess -r "$@" || elevate=sudo
@@ -42,7 +45,7 @@ fileinfo() {
 		$elevate file --exclude elf -E "$arg"
 		tput rmso
 
-		stat=$(which gstat || echo stat)
+		stat=$(which gstat 2>/dev/null || echo stat)
 		size=$($stat --format %s "$arg")
 		# I think this check is here to avoid scrolling text interpreted as video
 		#probe="$($elevate ffprobe "$arg" 2>&1)"
@@ -70,7 +73,11 @@ declare -a timg timga bat batplain ls
 for arg; do
 	# flags can be passed here by first terminating getopts with double dash, see e.g. "wh"
 	# TODO this struggles on filenames with dash, because the double dash is already eaten
-	test -z "$noflags" && case "$arg" in (--) noflags=true; continue;; (-*) flags="$flags $arg"; continue;; esac
+	test -z "$noflags" && case "$arg" in
+	    (--) noflags=true; continue;;
+	    (-[a-z]|--*) flags="$flags $arg"; continue;;
+	    (-*) noflags=true;;
+	  esac
 	checkperm "$arg"
 	if ! $elevate test -e "$arg"
 	then if test -h "$arg"
