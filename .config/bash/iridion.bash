@@ -73,6 +73,7 @@ letsencrypt() {
     done
   else
     (
+      set -e
       IFS=$'\n'
       for user
       do
@@ -211,7 +212,7 @@ invoice() {
   # FIXME is amount discount not working so far: https://github.com/invoiceninja/invoiceninja/issues/11362
   echo "Client Name;Invoice Next Send Date;How Often;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="$name;$(test "$numprefix" && echo "2025-12-09");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;Ust.;19,00;"
+  local prefix="${name:-$userid};$(test "$numprefix" && echo "2026-01-13");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;Ust.;19,00;"
   {
   for domain
   do echo "$prefix$(invoicedomain "$domain" $years)"
@@ -272,7 +273,7 @@ invoicedomain() {
     (tv|space|house|group) price='58,85';; # from 30€
     (online|digital) price='68,86';; # from 39€
     (gmbh) price='78,87';; # from 50€
-    (codes|coach) price='98,89';; # from 50€
+    (codes|coach|ec) price='98,89';; # from 60€
   esac
 
   echo "$price;.$suffix-Domain;$domain (${date_billed:-${date_created_de:-$(date '+%d.%m.%Y')}} - ${date_fut});$years;0"
