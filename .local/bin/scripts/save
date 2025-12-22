@@ -8,6 +8,5 @@ if test $# -gt 0; then
     $(which timer || sleep) "${@:-30}"
     $(cat /tmp/save 2>/dev/null) || systemctl suspend
 else
-    # TODO make this abortable
-    timeout 40 swayidle timeout 30 'systemctl suspend'
+    timeout --foreground 40 swayidle timeout 30 'systemctl suspend'
 fi
