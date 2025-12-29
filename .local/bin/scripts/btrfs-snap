@@ -5,9 +5,19 @@ mountpoint -q "$dir/data" ||
     sudo find "$dir" -mindepth 1 -maxdepth 1 -execdir mount {} \;
 sudo find "$dir" -mindepth 2 -maxdepth 2 \( -name @ -o -name @home \) -print \
     -execdir btrfs subvolume snapshot -r {} @snapshots/{}/$(date +%F) \;
-# TODO check for luke, mount and send
-# sudo btrfs send /mnt/btrfs/root/@snapshots/@/2025-11-25 | sudo btrfs receive /mnt/luke/@snapshots/@/
+
+# check for luke and send
+luke=/mnt/luke/@snapshots
+if test -d $luke
+then
+    snaps="$dir/root/@snapshots/"
+    sub=@
+    sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | head -1)" "$snaps/$sub/$(date +%F)" | pv | sudo btrfs receive "$luke/$sub/"
+    sub=@home
+    sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | head -1)" "$snaps/$sub/$(date +%F)" | pv | sudo btrfs receive "$luke/$sub/"
+fi
 # TODO send data snapshot to secondary disk
+
 echo 'unmount btrfs roots again?'
 read -r _
 sudo find "$dir" -mindepth 1 -maxdepth 1 -execdir umount {} \;

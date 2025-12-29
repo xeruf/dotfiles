@@ -48,7 +48,8 @@ fi
 # FSTAB: BY LABEL
 if grep --word-regexp "^LABEL=$arg" /etc/fstab
 then # have to mount twice as the first one might be creating the directory
-  mount -L "$arg" "$@" 2>/dev/null || mount -L "$arg" "$@"
+  # TODO sudo?
+  mount -L "$arg" "$@" 2>/dev/null || sudo mount -L "$arg" "$@"
   exit $?
 fi
 # FSTAB: BY MOUNTPOINT/NAME - does not find by UUID

@@ -9,9 +9,6 @@ export_existing DATA $HOME/data $HOME/IT/data
 export_existing NEXTCLOUD $DATA/nextcloud $HOME/Nextcloud
 export MUSIC="$DATA/4-media/music"
 
-export BORG_REPO='janek@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
-export BORG_PASSCOMMAND='pass service/device/borg/backup'
-
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
@@ -26,6 +23,11 @@ export_existing VOSK_MODELS "/mnt/data/projects/vosk/models"
  # adjust programs to use xdg
 export MNT=/run/media/$USER
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
+
+#export BORG_REPO='janek@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
+#export BORG_REPO="$MNT/15TB/janek-backups/borg"
+export BORG_REPO="/mnt/backup/janek-backups/borg"
+export BORG_PASSCOMMAND='pass service/device/borg/backup'
 
 export LYNX_CFG_PATH="$XDG_CONFIG_HOME"/lynx.cfg
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
