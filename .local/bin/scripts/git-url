@@ -1,8 +1,8 @@
 #!/bin/sh
 # Translate different repo notations into ssh
 # Usage:
-#  git repo <url>
-#  git repo <host> <repo> [user]
+#  git url <url>
+#  git url <host> <repo> [user]
 case "$1" in
   (http*)
     if expr "$1" : ".*:" >/dev/null

@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # Clones from resolving the arguments and switches into the new directory
-# ARGS: see git-repo, all arguments beyond the first three are forwarded to git clone
-remote=$(git-repo "$@")
+# ARGS: see git-url, all arguments beyond the first three are forwarded to git clone
+remote=$(git-url "$@")
 echo "Cloning $remote"
 test $1 = https && shift
 case $# in
