@@ -346,18 +346,14 @@ sshl() {
 	mkdir -p "$authcache"
 	local authcachefile="$authcache/$1"
 	ssh -G "$1" | grep --silent "^user root$" &&
-		! [[ "$1" =~ "pve.*" ]] &&
-		! [[ "$1" =~ "encee.*" ]] &&
-		! [[ "$1" =~ "tmtgw" ]] &&
-		! [[ "$1" =~ "delta*" ]] &&
 		! [[ "$1" =~ "nc-*" ]] &&
-		! [[ "$1" =~ "ddns*" ]] &&
-	local pass=pass
+		! [[ "$1" =~ "poly*" ]] &&
+		local pass=pass
 	local target=${1%[0-9a-z]}
 	test "$all" &&
 		find $XDG_CONFIG_HOME/bash/ \( -name aliases.bash -o -name "${target#nc-}*.bash" \) -exec cat {} + | $pass ssh "$@" 'cat > ~/.bash_aliases && grep -q .bash_aliases ~/.bashrc || echo "source ~/.bash_aliases" | tee -a ~/.bashrc' &&
 		echo 'Updated .bash_aliases!'
-		#$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
+		$pass ssh "$1" 'grep -q ".bash_aliases" .bashrc || echo "source ~/.bash_aliases" >>.bashrc'
 	if test -n "$pass"
 	then pass ssh "$@"
 	else
