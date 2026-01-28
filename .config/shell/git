@@ -1,5 +1,6 @@
 # Tools
 alias g="git"
+alias gs="git s"
 
 y() {
   local unignore="$XDG_CONFIG_HOME/yadm/unignore"
