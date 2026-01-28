@@ -4,17 +4,16 @@
 .Trashes
 
 # General
-*.log
 npm-debug.log*
 .vscode/
 *.pyc
 
 # Templates
-*.example
+#*.example
 
 # Logs
-*.log
-*.log.*
+#*.log
+#*.log.*
 *.bak
 *~
 

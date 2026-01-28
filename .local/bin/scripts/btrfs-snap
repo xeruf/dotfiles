@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # btrfs snapshots of all filesystems
-dir=/mnt/btrfs 
+dir=/mnt/btrfs
 mountpoint -q "$dir/data" ||
     sudo find "$dir" -mindepth 1 -maxdepth 1 -execdir mount {} \;
 sudo find "$dir" -mindepth 2 -maxdepth 2 \( -name @ -o -name @home \) -print \
@@ -10,6 +10,7 @@ sudo find "$dir" -mindepth 2 -maxdepth 2 \( -name @ -o -name @home \) -print \
 luke=/mnt/luke/@snapshots
 if test -d $luke
 then
+    echo "Sending snapshots to \033[3mluke\033[0m"
     snaps="$dir/root/@snapshots/"
     sub=@
     sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | head -1)" "$snaps/$sub/$(date +%F)" | pv | sudo btrfs receive "$luke/$sub/"
@@ -18,6 +19,6 @@ then
 fi
 # TODO send data snapshot to secondary disk
 
-echo 'unmount btrfs roots again?'
+echo 'press enter to unmount local btrfs filesystem roots'
 read -r _
 sudo find "$dir" -mindepth 1 -maxdepth 1 -execdir umount {} \;

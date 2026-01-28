@@ -78,7 +78,8 @@ highlight "c :: clean electron caches"
 
 highlight "o :: optimize space extensively"
 if [[ $1 =~ "o" ]]; then
-	sudo find /root/.cache $XDG_CACHE_HOME /var/cache /var/log /var/tmp -mindepth 1 -maxdepth 2 -not -name CACHEDIR.TAG -atime +9 -exec rm -r {} + -prune
+	echo 'Cleaning old cache files'
+	sudo find /root/.cache $XDG_CACHE_HOME /var/cache /var/log /var/tmp -mindepth 1 -maxdepth 2 -not -name CACHEDIR.TAG -mtime +9 -atime +9 -exec rm -r {} + -prune
 
 	if test -f "/var/log/apt/history.log"; then
 		aptclean_cur=$(cat "/var/log/apt/history.log" | wc -l)
