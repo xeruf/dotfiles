@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 git rev-parse @{upstream} >/dev/null 2>&1 ||
 	git branch --set-upstream-to=@{push}
 git pull --rebase --autostash "$@" 2> >(head -4 >&2)

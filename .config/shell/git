@@ -2,6 +2,13 @@
 alias g="git"
 alias gs="git s"
 
+gy() {
+  printf 'PWD: ' && command git "$@" ||
+    { printf 'DATA: ' && git -C "$DATA" "$@"; }
+  printf 'YADM: '
+  yadm "$@"
+}
+
 y() {
   local unignore="$XDG_CONFIG_HOME/yadm/unignore"
   test -r "$unignore" && cat "$unignore" | while read f; do eval ls -d $f; done | yadm add --intent-to-add --pathspec-from-file=-
@@ -38,7 +45,7 @@ gcn() {
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
 git() {
   case "$1" in
-    (config|clone|journal) ;;
+    (-C|config|clone|journal) ;;
     (*) case "$PWD" in
       ($HOME|$XDG_CONFIG_HOME|$LAST_YADM)
         yadm "$@"
