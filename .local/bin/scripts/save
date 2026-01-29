@@ -1,11 +1,16 @@
 #!/bin/sh -e
 # Put system to sleep after specified number of seconds
 # If used in a pipe, put a command into /tmp/save to override
+case "$(uname)" in
+(Darwin)
+    sleep "${@:-30}"
+    pmset sleepnow
+    exit;;
+esac
 mpc pause || mpdr || true
 # notify-send
-# TODO on macos?
 if test $# -gt 0; then
-    $(which timer || sleep) "${@:-30}"
+    $(which timer || echo sleep) "${1:-30}"
     $(cat /tmp/save 2>/dev/null) || systemctl suspend
 else
     timeout --foreground 40 swayidle timeout 30 'systemctl suspend'

@@ -1,6 +1,13 @@
 #!/bin/sh -e
 # Suspend screen until enter is pressed or interrupted
-$(which timer || sleep) "${1:-3}"
+$(which timer || echo sleep) "${1:-3}"
+
+case "$(uname)" in
+(Darwin)
+  pmset displaysleepnow
+  exit;;
+esac
+
 dpms() {
   if test $XDG_SESSION_TYPE = wayland
   then swaymsg "output * dpms $*"
