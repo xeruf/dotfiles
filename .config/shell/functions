@@ -417,8 +417,10 @@ flp() {
 
 alias gdiff='git diff --word-diff=color --word-diff-regex=. --no-index'
 
-# Default grep with some convenience flags
+# Ripgrep across text files in data directory
+alias gre="rg --type org --type txt --type markdown --glob '!**/tug/**' $DATA"
 command -v ggrep && alias grep='ggrep'
+# Default grep with some convenience flags
 alias grpc='grep --color=auto --line-number --binary-files=without-match --directories=skip'
 # Default grep with some niceties and ignoring case
 alias grp='grpc --ignore-case'
