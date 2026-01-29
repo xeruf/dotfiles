@@ -96,7 +96,9 @@ export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bi
 
 # TODO this is too early (for mac?) - editors may later be added to PATH - but on Linux this helps so it is available everywhere
 case "$(uname)" in
-(Darwin) export EDITOR=nvim;;
+(Darwin)
+	export EDITOR=nvim
+	export ALTERNATE_EDITOR=nvim;;
 (*)
 export ALTERNATE_EDITOR="$(
 	if command -v nvim >/dev/null

@@ -7,9 +7,10 @@ else
 site=$1
 case $site in
     (polygon*|nod*) usr=polygon;;
+    (*deltapeak*) usr=dp0001;;
     (*) usr=$USER;;
 esac
 shift
-scp -r "$@" "iridion:/home/${usr}/web/${site}/public_html$(test "$#" -gt 1 || test -d "$1" || echo '/index.html')"
+rsync -rv "$@" "iridion:/home/${usr}/web/${site}/public_html/$(test "$#" -gt 1 || test -d "$1" || echo 'index.html')"
 
 fi
