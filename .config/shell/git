@@ -49,8 +49,10 @@ git() {
     (*) case "$PWD" in
       ($HOME|$XDG_CONFIG_HOME|$LAST_YADM)
         yadm "$@"
-        return $?
-        ;;
+        return $? ;;
+      (~/IT)
+        command git -C "$DATA" "$@"
+        return $? ;;
       ($XDG_CONFIG_HOME*|$HOME/.local*)
         if ! command git rev-parse --show-toplevel &>/dev/null; then
           export LAST_YADM="$PWD"
