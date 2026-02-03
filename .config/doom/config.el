@@ -1095,6 +1095,19 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 ;;  :config (add-hook 'web-mode-hook #'rainbow-mode)
 ;;  )
 
+(add-to-list 'auto-mode-alist '("\\.vcf\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.ics\\'" . conf-mode))
+
+(after! conf-mode
+  (font-lock-add-keywords
+   'conf-mode
+   '(("^BEGIN:VEVENT" . font-lock-keyword-face)
+     ("^END:VEVENT"   . font-lock-keyword-face)
+     ("^BEGIN:VCALENDAR" . font-lock-keyword-face)
+     ("^END:VCALENDAR"   . font-lock-keyword-face)
+     ("^[A-Z-]+:" . font-lock-variable-name-face))))
+
+
 ;; https://discourse.doomemacs.org/t/disabling-ruby-typeprof/3197/3
 (after! lsp-mode
   (setq lsp-disabled-clients '(typeprof-ls)))
