@@ -98,6 +98,8 @@ Version 2019-11-04 2021-02-16"
       "C--"     'doom/decrease-font-size
       "C-u"     'evil-scroll-up
       :leader
+      "hc"      'describe-char
+      "hC"      'describe-key-briefly
       "l"       'link-hint-open-link-at-point
       "u"       'evil-prev-buffer
       "i"       'evil-next-buffer

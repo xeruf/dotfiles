@@ -5,7 +5,7 @@ velero_backup() {
 	velero backup logs $name
 }
 
-export PROJECTS="${PROJECTS:-$HOME/projects}"
+export PROJECTS="${PROJECTS:-$HOME/IT}"
 
 ## STACKSPIN
 export STACKSPIN="${STACKSPIN:-$PROJECTS/stackspin}"
@@ -34,14 +34,16 @@ stack() {
 	case "$command" in
 	# stackspin administration
 	(select)
-		export _cluster_name="$1"
+		export _cluster_name="${1##*/}"
 		export _cluster_ip="$(ssh -G "$_cluster_name" | grep --max-count 1 "^hostname " | cut -d " " -f2-)"
-		export CLUSTER_DIR="$STACKSPIN/clusters/$_cluster_name"
+		test -e "$1" &&
+			export CLUSTER_DIR="$(realpath "$1")" ||
+			export CLUSTER_DIR="$STACKSPIN/clusters/$_cluster_name"
 		export KUBECONFIG="$CLUSTER_DIR/kube_config_cluster.yml"
 		# Uncomment the line below to always use the main stackspin repo, even when running in a fork.
 		#export GITLAB_CI="true"
 		echo Selected Stackspin cluster "$_cluster_name" with IP "$_cluster_ip"
-		echo "$_cluster_name" >"$_stackspin_cluster_cache" || true
+		echo "$CLUSTER_DIR" >"$_stackspin_cluster_cache" || true
 		#test "$PWD" = "$HOME" && builtin cd "$STACKSPIN"
 		;;
 	(activate)

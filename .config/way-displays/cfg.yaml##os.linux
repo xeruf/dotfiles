@@ -5,12 +5,12 @@
 
 
 # Arrange displays in a ROW (default, left to right) or a COLUMN (top to bottom)
-ARRANGE: COLUMN
+# ARRANGE: COLUMN
 
 # Align ROWs at the TOP (default), MIDDLE or BOTTOM
 # Align COLUMNs at the LEFT (default), MIDDLE or RIGHT
 #ALIGN: MIDDLE
-#ALIGN: BOTTOM
+ALIGN: BOTTOM
 
 
 # The default ORDER is simply the order in which the displays are discovered.
@@ -71,8 +71,8 @@ MODE:
       HZ: 30
 
     # Highest available
-    #- NAME_DESC: DP-2
-    #  MAX: TRUE
+    - NAME_DESC: DP-3
+      MAX: TRUE
 
 # Rotate or translate the display.
 # 90, 180, 270, FLIPPED, FLIPPED-90, FLIPPED-180, FLIPPED-270
