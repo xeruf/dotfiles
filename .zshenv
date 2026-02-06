@@ -42,6 +42,7 @@ export DOOMLOCALDIR="$XDG_STATE_HOME"/emacs
 export WINEPREFIX="$XDG_DATA_HOME"/wine
 
  ## Development tools
+export CODEX_HOME="$XDG_CONFIG_HOME/codex"
 export ABRA_DIR="$XDG_DATA_HOME"/abra
 export GOPATH="$XDG_STATE_HOME"/go
 export GOMODCACHE="$XDG_CACHE_HOME"/go/mod

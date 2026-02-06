@@ -308,10 +308,13 @@ u() {
 				read result
 				test "$result" = "y" && rm -rf "$DOOMLOCALDIR/straight" && doom sync -u
 			fi
-			pgrep emacsclient && echo -n "^ Emacs client processes. Press enter to restart the emacs server." && read
-			pkill --full "emacs --daemon"
+			pgrep emacsclient &&
+				echo -n "^ Emacs client processes. Press enter to restart the emacs server." &&
+				read
+			pkill -f "emacs --daemon"
 			tmux new-session -d -s emacs-daemon emacs --daemon
 		fi
+		# tldr ?
 	else yadm l
 		 sudo apt update && sudo apt upgrade
 	fi
