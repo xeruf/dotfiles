@@ -4,13 +4,13 @@
 if test $# -eq 0
 then
   set -x
-  $0 sleep uni nap cry tech read dev phone bike tour laptop computer piano faith health lens Zinc \
-    socha \
-    girl CB Turi Taura \
-    Erlangen Bayreuth Berlin
+  $0 sleep uni nap cry tech read dev phone bike tour laptop computer piano faith health lens Zinc depression tie girl \
+    socha Emacs \
+    CB Turi Taura \
+    Erlangen Bayreuth Berlin Lichtenfels
   true $?
 else
   for arg
-  do rpl "\(^\|[^@/]\)\b$arg\b" "\1@$arg" "$JOURNAL"/*.jrnl 2>/dev/null
+  do rpl "(?<!\S)$arg(?!\S)" "@$arg" "$JOURNAL"/*.jrnl # 2>/dev/null
   done
 fi

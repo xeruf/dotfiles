@@ -1,8 +1,84 @@
-#!/bin/bash -e
-# Use grep and sed to replace $1 with $2 recursively and print what is done
-grep --null --recursive --files-with-matches \
-  --binary-files=without-match $(echo $DIRS_IGNORE | sed 's/-x/--exclude-dir/g') "$1" -- "${@:3}" |
-	xargs -0 sed -i "\%${1}%{
-		s||${2}|g
-		w /dev/stdout
-	}"
+#!/usr/bin/env bash
+set -euo pipefail
+
+# $1 = regex pattern (Perl syntax, unsanitized)
+# $2 = replacement (Perl replacement, backrefs allowed)
+# ${@:3} = paths to search
+
+PATTERN=$1
+REPLACEMENT=$2
+shift 2
+
+# macOS-compatible: do the search and replace in Perl (no GNU grep/sed/xargs).
+# Accepts files and/or directories; respects DIRS_IGNORE (-x dir).
+perl -e '
+  use strict;
+  use warnings;
+  use File::Find;
+
+  my ($pat, $rep, @paths) = @ARGV;
+  die "usage: rpl <pattern> <replacement> <path...>\n" unless $pat && defined $rep;
+
+  if (!@paths) {
+    opendir(my $dh, ".") or die "rpl: cannot open current directory\n";
+    my $has_subdir = 0;
+    while (defined(my $ent = readdir($dh))) {
+      next if $ent eq "." || $ent eq "..";
+      if (-d $ent) { $has_subdir = 1; last; }
+    }
+    closedir($dh);
+    if ($has_subdir) {
+      die "rpl: no paths given and current dir has subdirectories\n";
+    }
+    @paths = (".");
+  }
+
+  my %skip;
+  if (defined $ENV{DIRS_IGNORE} && length $ENV{DIRS_IGNORE}) {
+    for my $tok (split /\s+/, $ENV{DIRS_IGNORE}) {
+      $tok =~ s/^-x//;
+      $skip{$tok} = 1 if length $tok;
+    }
+  }
+
+  my @files;
+  for my $p (@paths) {
+    if (-d $p) {
+      find({
+        no_chdir => 1,
+        wanted => sub {
+          my $name = $File::Find::name;
+          if (-d $name) {
+            if (exists $skip{$_} || exists $skip{$name}) {
+              $File::Find::prune = 1;
+            }
+            return;
+          }
+          return if -B $name;
+          push @files, $name;
+        },
+      }, $p);
+    } elsif (-f $p) {
+      push @files, $p unless -B $p;
+    }
+  }
+
+  local $^I = "";
+  local @ARGV = @files;
+  while (<>) {
+    my $orig = $_;
+    if (/$pat/) {
+      if ($rep =~ /\$\d/) {
+        s/$pat/$rep/gee;
+      } else {
+        s/$pat/$rep/g;
+      }
+      if ($_ ne $orig) {
+        my $report = $_;
+        chomp($report);
+        print STDERR "$ARGV:$.\t$report\n";
+      }
+    }
+    print;
+  }
+' "$PATTERN" "$REPLACEMENT" "$@"
