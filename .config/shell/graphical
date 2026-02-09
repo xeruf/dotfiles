@@ -41,10 +41,10 @@ theme_default="dark"
 themeswitch() {
 	theme="$1"
 	if test "$2" = "kde"
-	then kcmshell5 kcm_lookandfeel
+	then #kcmshell5 kcm_lookandfeel
 	elif test "$theme" != "$THEME" -a "$2" != "q"
-	then kcmshell5 kcm_lookandfeel &
-		emacsclient -e "(toggle-theme \"$theme\")"
+	then #kcmshell5 kcm_lookandfeel &
+		emacsclient -e "(toggle-theme \"$theme\")" &
 	fi
 	export THEME="$theme"
 	echo "$theme">"$theme_save"
@@ -78,5 +78,19 @@ themeswitch() {
 }
 export THEME=$(cat "$theme_save" 2> /dev/null)
 export THEME=${THEME:-$theme_default}
-themeswitch $THEME
+
+# Detect theme based on terminal background, especially for macOS
+if [ -n "${COLORFGBG:-}" ]; then
+  # COLORFGBG often looks like "15;0" (fg;bg) or "15;0;0"
+  bg="${COLORFGBG##*;}"
+  # bg >= 10 is often "light-ish" in many terminals
+  if [ "$bg" -ge 10 ] 2>/dev/null; then
+    themeswitch light
+  else
+    themeswitch dark
+  fi
+else
+  themeswitch $THEME
+fi
+
 alias ts='themeswitch'
