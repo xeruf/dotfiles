@@ -7,9 +7,11 @@ then
   $0 sleep uni nap cry tech read dev phone bike tour laptop computer piano faith health lens Zinc depression tie girl \
     socha Emacs \
     CB Turi Taura \
-    Erlangen Bayreuth Berlin Lichtenfels
+    Erlangen Bayreuth Berlin Lichtenfels Mombasa Kenya
   true $?
 else
+  # TODO look ahead for dots and commas and any sentence end marks
+  # should be case-insensitive, or maybe not for proper nouns?
   for arg
   do rpl "(?<!\S)$arg(?!\S)" "@$arg" "$JOURNAL"/*.jrnl # 2>/dev/null
   done
