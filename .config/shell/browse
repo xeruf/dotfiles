@@ -1,6 +1,7 @@
 # Utilities for file system navigation
 
-alias watchdir='watch -c -n 1 exa -l --icons'
+alias exa=eza
+alias watchdir='watch -c -n 1 eza -l --icons'
 
 # Useful when the current directory was recreated
 alias recd='cd $PWD'
@@ -29,7 +30,7 @@ up() {
 # Switch directory & ls
 cl() {
 	builtin cd $1
-	ls --almost-all --group-directories-first --file-type
+	$(command -v gls 2>/dev/null || echo ls --group-directories-first) -AF --color=always
 }
 
 # cd but search for data dirs and run ls after switching to target dir
@@ -47,10 +48,10 @@ cd() {
 		# - column malaligns output with ANSI escape sequences (view with LESS="" less)
 		#   column --fillrows --output-width $(expr $COLUMNS + 20)
 		#   pr -4 -l1 -W $COLUMNS -S"  "
-		# TODO test whether still needed with exa
+		# TODO test whether still needed with eza
 		command $LS --sort=none --quote-name |
 			head -12 |
-			COLUMNS=$(tput cols) xargs $(which exa >/dev/null 2>&1 && echo "exa --list-dirs --icons --reverse" || echo "$LS --format=vertical --literal --classify --directory") --sort=time --color=always -- |
+			COLUMNS=$(tput cols) xargs $(which eza >/dev/null 2>&1 && echo "eza --list-dirs --icons --reverse" || echo "$LS --format=vertical --literal --classify --directory") --sort=time --color=always -- |
 			head -3
 		code=$? && test $code -eq 141 || return $code
 	fi
@@ -60,7 +61,7 @@ alias cdr='cd $(git root)'
 # LOCATE {{{1
 # Select and show file / folder from list
 alias fselect='fzf -0 -1 --reverse --height=40% --keep-right |
-	  while read f; do test -d "$f" && cd "$f" || { print -s b "\"$f\"" && b "$f"; }; done';
+		while read f; do test -d "$f" && cd "$f" || { print -s b "\"$f\"" && b "$f"; }; done';
 loci() {
 	locate --all --ignore-case --basename --existing "$@" |
 		command grep --extended-regexp --ignore-case --color=always $(echo "$|${@:$#}" | sed 's/ /|/g') |
@@ -73,8 +74,8 @@ locei() { locate --all "*/$1" "$@" | fselect }
 alias loce='noglob locei'
 # locate all
 alias loca='noglob sudo updatedb -l 0 --prunenames "" --prunefs "tmpfs sysfs debugfs" --prunepaths "" -o /var/cache/locate-all.db &&
-	  sudo chmod +r /var/cache/locate-all.db &&
-	  loci --database /var/cache/locate-all.db'
+		sudo chmod +r /var/cache/locate-all.db &&
+		loci --database /var/cache/locate-all.db'
 hunta() {
 	unbuffer hunt -H "$@" / | less -RF +G
 }
@@ -84,7 +85,7 @@ alias c=z
 # Listing for quick directory switcher based on zoxide and fzf
 alias zoxide-list='noglob zoxide query -sl'
 __zx_ls="ls --almost-all --color --human-readable --group-directories-first --file-type"
- # Check fzf features first
+	# Check fzf features first
 alias fzf-dir="fzf -0 -1 --tiebreak=chunk,end,length \
 		--preview-window=30% --preview='$__zx_ls {}' \
 		--height=80% --reverse --keep-right"

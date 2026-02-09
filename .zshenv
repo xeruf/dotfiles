@@ -117,6 +117,7 @@ esac
 export IHP_EDITOR="$BIN/scripts/emacs-line"
 
 export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first --file-type --dereference-command-line'
+export LSCOLORS=Ex
 export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'

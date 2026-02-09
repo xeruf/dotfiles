@@ -5,7 +5,8 @@ if test "$PWD" = "$HOME" && test "$0" != "$SHELL"; then
 	timew | head -3
 fi 2>/dev/null || return 0
 
-LSCOLORS=${LSCOLORS:-Ex} ls -F --color=always
+# should override LSCOLORS globally instead, set by oh my zsh defaults, testing - this is for mac (BSD)
+LSCOLORS=${LSCOLORS:-Ex} $(command -v gls 2>/dev/null || echo ls) -F --color=always
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]

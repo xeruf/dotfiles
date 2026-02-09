@@ -7,4 +7,4 @@
 # Any other arguments (usually pathnames) are passed on to the tree command
 case "$1" in ([0-9]) depth=$1; shift;; esac
 tree --dirsfirst --du -h -C -L ${depth:-3} -I node_modules "$@" | ${PAGER:-less} -rF
-# TODO consider exa -T -L X
+# TODO consider exz -T -L X

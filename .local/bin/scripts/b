@@ -264,12 +264,12 @@ if test "$ls" -o $# -le $(echo "$flags" | wc -w); then
 	{
 		# Below issues are fixed by disabling timeout, maybe an alternative can be found to prevent hanging on huge dirs
 		# handle single quotes in filenames
-		# listing sometimes doubles as exa prints partial listings while working
+		# listing sometimes doubles as eza prints partial listings while working
 		#timeout .6s sh -c "
 			if test -n "$tree"
 			then $elevate tree -a --dirsfirst --du -h -C -L 3 $flags -- "${ls[@]:-.}"
-			elif which exa 2>/dev/null >&2
-			then $elevate exa --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags -- "${ls[@]:-.}"
+			elif which eza 2>/dev/null >&2
+			then $elevate eza --icons --color=always --long --group --classify --all --all --sort=modified --reverse $flags -- "${ls[@]:-.}"
 			else ls --color=always -La -lhF $flags -- "${ls[@]:-.}"
 			# replaced for wider compatibility: else $elevate ls -l $(test $# -gt ${#ls[@]} && echo '-d') --color=always --human-readable --si --group-directories-first --file-type --dereference-command-line-symlink-to-dir --all $flags -- "${ls[@]:-.}"
 			fi
