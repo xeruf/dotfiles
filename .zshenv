@@ -186,7 +186,7 @@ export CARGO_BUILD_JOBS=${SPARE_CORES}
 # TODO move to proper place - is also called when firenvim starts
 #autolight
 #export TZ='Europe/Dublin'
-export TZ='Africa/Nairobi'
+#export TZ='Africa/Nairobi'
 # timedatectl set-timezone Africa/Nairobi
 
 export CONTEST_NETWORK=lan-restricted-dev
