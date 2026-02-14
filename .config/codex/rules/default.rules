@@ -1,0 +1,4 @@
+prefix_rule(pattern=["python3", "/Users/tj/.config/codex/skills/.system/skill-installer/scripts/list-skills.py"], decision="allow")
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["git", "commit", "-m"], decision="allow")
+prefix_rule(pattern=["npm", "run", "dev"], decision="allow")

@@ -1,0 +1,10 @@
+# Use Codex coding model
+model = "gpt-5.3-codex"
+# When to ask for approval
+approval_policy = "on-request"
+# Allow writes inside the current workspace (repo) only
+sandbox_mode = "workspace-write"
+
+[notice.model_migrations]
+gpt-5-codex = "gpt-5.2-codex"
+"gpt-5.2-codex" = "gpt-5.3-codex"
