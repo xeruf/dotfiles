@@ -2,3 +2,6 @@ prefix_rule(pattern=["python3", "/Users/tj/.config/codex/skills/.system/skill-in
 prefix_rule(pattern=["git", "add"], decision="allow")
 prefix_rule(pattern=["git", "commit", "-m"], decision="allow")
 prefix_rule(pattern=["npm", "run", "dev"], decision="allow")
+prefix_rule(pattern=["git", "worktree"], decision="allow")
+prefix_rule(pattern=["rm", ".git/index.lock"], decision="allow")
+prefix_rule(pattern=["git", "push"], decision="allow")

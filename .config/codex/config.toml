@@ -4,7 +4,11 @@ model = "gpt-5.3-codex"
 approval_policy = "on-request"
 # Allow writes inside the current workspace (repo) only
 sandbox_mode = "workspace-write"
+personality = "pragmatic"
 
 [notice.model_migrations]
 gpt-5-codex = "gpt-5.2-codex"
 "gpt-5.2-codex" = "gpt-5.3-codex"
+
+[projects."/home/janek/data/1-projects/nostr/mostr"]
+trust_level = "trusted"
