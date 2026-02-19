@@ -3,8 +3,9 @@
 dir=/mnt/btrfs
 mountpoint -q "$dir/data" ||
     sudo find "$dir" -mindepth 1 -maxdepth 1 -execdir mount {} \;
+date="$(date +%F)"
 sudo find "$dir" -mindepth 2 -maxdepth 2 \( -name @ -o -name @home \) -print \
-    -execdir btrfs subvolume snapshot -r {} @snapshots/{}/$(date +%F) \;
+    -execdir btrfs subvolume snapshot -r {} @snapshots/{}/$date \;
 
 # check for luke and send
 luke=/mnt/luke/@snapshots
@@ -13,9 +14,9 @@ then
     echo "Sending snapshots to \033[3mluke\033[0m"
     snaps="$dir/root/@snapshots/"
     sub=@
-    sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | head -1)" "$snaps/$sub/$(date +%F)" | pv | sudo btrfs receive "$luke/$sub/"
+    sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | grep -v "$date" | head -1)" "$snaps/$sub/$date" | pv | sudo btrfs receive "$luke/$sub/"
     sub=@home
-    sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | head -1)" "$snaps/$sub/$(date +%F)" | pv | sudo btrfs receive "$luke/$sub/"
+    sudo btrfs send -p "$snaps/$sub/$(ls -t "$luke/$sub/" | grep -v "$date" | head -1)" "$snaps/$sub/$date" | pv | sudo btrfs receive "$luke/$sub/"
 fi
 # TODO send data snapshot to secondary disk
 

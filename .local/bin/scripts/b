@@ -14,6 +14,10 @@
 
 set -o pipefail
 
+# temporary fix for kitty issues
+origterm=$TERM
+export TERM=xterm
+
 inspect=false
 
 if test "${#1}" -lt 4
@@ -141,7 +145,7 @@ for arg; do
 			# TODO preconvert aac - |*\ ADTS\ *
 			if ! $inspect && which audiowaveform >/dev/null; then
 				img="$tmpfile.png"
-				case $TERM in (*-kitty) kitty=true; audioheight=2;; (*) audioheight=5;; esac
+				case $origterm in (*-kitty) kitty=true; audioheight=2;; (*) audioheight=5;; esac
 				find "$img" -not -empty 2>/dev/null | grep --quiet . ||
 				audiowaveform --quiet --pixels-per-second 2 --height 36 --width 2000 --amplitude-scale auto \
 					--background-color 000000 --waveform-color 99BBFF --axis-label-color 000000 \
@@ -222,7 +226,7 @@ if test "$bat" -o "$batplain"; then
 	test "$batplain" && $batcommand "${batpager:-$pager}" $batstyle "${batplain[@]}"
 	test "$bat" &&
 		if test "$cut" && ! $inspect
-		then case $TERM in (*kitty)
+		then case $origterm in (*kitty)
 				declare -a timgtxt
 				for file in "${bat[@]}"
 				do txt="$prefix/$(basename -- "$file").txt"

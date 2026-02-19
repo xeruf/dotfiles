@@ -13,6 +13,7 @@ dpms() {
   then swaymsg "output * dpms $*"
   else xset dpms force "$@"
   fi
+  stretchly $(test "$1" = on && echo resume || echo pause)
 }
 dpms off
 trap 'dpms on' INT
