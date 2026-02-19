@@ -64,7 +64,7 @@
 	untracked = magenta
 
 [user]
-	email = 27jf@pm.me
+	email = git@melonion.me
 	name = xeruf
 
 [mailmap]

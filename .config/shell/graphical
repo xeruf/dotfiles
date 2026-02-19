@@ -5,7 +5,7 @@ command -v notify-send >/dev/null &&
 if which jrnl >/dev/null; then
 	j(){ jrnl "$@" && jrnl-tag; }
 	jna() { jrnl -to today "$@" | less +G; }
-	jn() { case "$1" in (@*) jna "$@";; (*) jna -n 99;; esac; }
+	jn() { case "$1" in (@*) jna "$@";; (*) jna -n 99 "$@";; esac; }
 	alias jnc='jna -contains'
 	alias jne='jrnl --edit'
 fi
