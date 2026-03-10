@@ -4,10 +4,10 @@ alias gs="git s"
 
 gy() {
   if command git rev-parse --is-inside-work-tree >/dev/null 2>&1
-  then printf 'PWD: ' && command git "${@:-st}" ||
-  else printf 'DATA: ' && git -C "$DATA" "${@:-st}"
+  then printf '[4mPWD:[0m ' && command git "${@:-st}" ||
+  else printf '[4mDATA:[0m ' && git -C "$DATA" "${@:-st}"
   fi
-  printf 'YADM: '
+  printf '[4mYADM:[0m '
   yadm "${@:-st}"
 }
 

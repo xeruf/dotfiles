@@ -210,9 +210,9 @@ invoice() {
   fi
 
   # FIXME is amount discount not working so far: https://github.com/invoiceninja/invoiceninja/issues/11362
-  echo "Client Name;Invoice Next Send Date;How Often;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
+  echo "Client Name;Invoice Next Send Date;How Often;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Auto Bill;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="${name:-$userid};$(test "$numprefix" && echo "2026-01-13");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;Ust.;19,00;"
+  local prefix="${name:-$userid};$(test "$numprefix" && echo "2026-01-13");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;always;Ust.;19,00;"
   {
   for domain
   do echo "$prefix$(invoicedomain "$domain" $years)"
