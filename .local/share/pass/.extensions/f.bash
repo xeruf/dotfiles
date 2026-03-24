@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 # Decrypts all matching password store entries
+# TODO from current dir but fallback to global
 case $PWD in ($PASSWORD_STORE_DIR/[a-z]*) dir=$PWD;; (*) dir=$PASSWORD_STORE_DIR;; esac
 files="$(find -L "$dir" -name .extensions -prune -o -type f -path "*$1*" -printf '%p\n')"
 test -n "$files" || exit 1

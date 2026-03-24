@@ -10,9 +10,10 @@ model_reasoning_effort = "medium"
 [notice.model_migrations]
 gpt-5-codex = "gpt-5.2-codex"
 "gpt-5.2-codex" = "gpt-5.3-codex"
+"gpt-5.3-codex" = "gpt-5.4"
 
-[projects."/home/janek/data/1-projects/nostr/mostr"]
+[projects."/home/janek/data/1-projects/nostr/nodex"]
 trust_level = "trusted"
 
 [tui]
-status_line = ["model-with-reasoning", "git-branch", "session-id"]
+status_line = ["model-with-reasoning", "git-branch", "context-remaining", "weekly-limit", "session-id"]

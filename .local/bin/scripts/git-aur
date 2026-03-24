@@ -1,6 +1,6 @@
 #!/bin/sh -e
 aurdir="$DATA/1-projects/aur"
-commands="<origin|clone|create|commit|push|clean>"
+commands="<origin|clone|create|update|commit|push|clean>"
 if test $# -eq 0
 then echo "Usage: $0 $commands"
 	 case "$PWD" in ($aurdir*) exit 0;; (*) cd "$aurdir"; exec $SHELL;; esac
