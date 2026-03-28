@@ -60,7 +60,7 @@ if [[ $1 =~ "d" ]]; then
 	find \( -name 'src' -o -name 'vendor' -o -name 'web' \) -prune -o \
 		-type d \( -name 'cache' $(echo $DIRS_GENERATED | sed 's|-x \([^ ]\+\)|-o -name \1|g') \) \
 		-print -exec rm $i -r {} + -prune
-	echo -n "  " && highlight "build directories"
+	printf "  " && highlight "build directories"
 	find \( -name ".git" -o -path "*/mixxx/build" -o -name "app" -o -name "Leaflet" -o -name "www" -o -name "src" \) \
 		-prune -o \( -name "build" -o -name "target" \) -type d \
 		-print -exec rm -rI {} + -prune

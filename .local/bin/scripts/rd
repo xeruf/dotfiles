@@ -9,7 +9,7 @@ do
 	if test -d "$f"
 	then
 		if test -e "$f/.git" || test -e "$f/packed-refs"
-		then echo -n "Force delete git project $f? "
+		then printf "Force delete git project $f? "
 			read answer
 			test "$answer" = "y" &&
 				$elevate rm -rf "$f" &&
@@ -24,7 +24,7 @@ do
 		# $elevate find -H "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 4) -type d -empty -name .stfolder -exec rm -div {} \;
 		test $# -eq 0 && exit $?
 		if test -e "$f"; then
-			echo -n "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&
+			printf "$f ($(ls -A "$f" | head -3 | paste -s -d' ')) " >&2 &&
 			$elevate rm -rI "$f"
 		fi
 	else $elevate rm -i "$f"

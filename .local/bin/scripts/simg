@@ -14,7 +14,7 @@ echo 'VIEW(){
 	spacing=$(expr \( $(tput cols) - 60 \) / 4)
 	printf "%${spacing}s %30s %$(expr "$spacing" "*" 2)s %-30s\n" "" "$(aboutimg "$1")" "" "$(aboutimg "$2")"
 	timg -g $(tput cols)x30 --center --title --grid=$# "$@"
-	echo -n "Remove (number)?"
+	printf "Remove (number)?"
 	read n
 	test -n "$n" && eval rm -v \"\$$n\"
 }' >"$include"
