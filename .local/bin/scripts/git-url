@@ -17,6 +17,7 @@ esac
 host=$1
 case $host in
   (socha) user=software-challenge; host=github.com;;
+  (poly|polygon) user=polygongmbh; host=github.com;;
   (hub|github) host=github.com;;
   (lab) host=gitlab.com;;
   (ftt|"") host=forge.ftt.gmbh; user=janek;;
