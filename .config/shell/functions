@@ -314,10 +314,10 @@ u() {
 			pkill -f "emacs --daemon"
 			tmux new-session -d -s emacs-daemon emacs --daemon
 		fi
-		# tldr ?
-	else yadm l
+	else
 		 sudo apt update && sudo apt upgrade
 	fi
+   gy l
 }
 
 # Networking

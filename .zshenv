@@ -17,6 +17,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
+export_existing PROJECTS "$HOME/IT"
 export_existing STACKSPIN "$DATA/1-projects/stack/stackspin"
 export_existing INSTALEE_HOME "$HOME/projects/instalee" "$DATA/1-projects/1-personal/instalee"
 export_existing VOSK_MODELS "/mnt/data/projects/vosk/models"
@@ -42,11 +43,13 @@ export DOOMLOCALDIR="$XDG_STATE_HOME"/emacs
 export WINEPREFIX="$XDG_DATA_HOME"/wine
 
  ## Development tools
+export VIBE_HOME="$XDG_CONFIG_HOME/vibe"
 export CODEX_HOME="$XDG_CONFIG_HOME/codex"
+
 export ABRA_DIR="$XDG_DATA_HOME"/abra
+export KREW_ROOT="$XDG_DATA_HOME"/krew
 export GOPATH="$XDG_STATE_HOME"/go
 export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
-export KREW_ROOT="$XDG_DATA_HOME"/krew
 
 export CARGO_HOME="$XDG_STATE_HOME"/cargo
 export RUSTUP_HOME="$XDG_STATE_HOME"/rustup

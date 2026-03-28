@@ -2,8 +2,6 @@ test -n "$PS1" || return 0
 
 which pfetch >/dev/null 2>&1 && pfetch
 
-alias myip='curl -4 ifconfig.me && printf "\n" && curl -6 ifconfig.me && printf "\n"'
-
 ds() {
 	df -B1M -x tmpfs -x devtmpfs -x squashfs -x overlay "$@" |
 	    #awk 'length($0) <= 100' |
@@ -16,6 +14,10 @@ export -f ds &&
 
 test $(id -u) -eq 0 || sudo=sudo
 
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
 alias jc="$sudo journalctl --boot --unit"
 alias sc="$sudo systemctl"
 alias scs="$sudo systemctl status"
@@ -27,6 +29,8 @@ alias hist='history | less'
 alias m='mv -vi'
 
 alias nginx-edit="sudo vi /etc/nginx/nginx.conf && nginx -t && sudo systemctl reload nginx"
+
+alias myip='curl -4 ifconfig.me && printf "\n" && curl -6 ifconfig.me && printf "\n"'
 
 # Fast Find
 ff() {
