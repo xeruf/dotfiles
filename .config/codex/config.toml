@@ -1,18 +1,38 @@
 # Use Codex coding model
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 # When to ask for approval
 approval_policy = "on-request"
 # Allow writes inside the current workspace (repo) only
 sandbox_mode = "workspace-write"
 personality = "pragmatic"
 model_reasoning_effort = "medium"
+check_for_update_on_startup = false
 
-[notice.model_migrations]
-gpt-5-codex = "gpt-5.2-codex"
-"gpt-5.2-codex" = "gpt-5.3-codex"
-"gpt-5.3-codex" = "gpt-5.4"
+[notice]
+hide_rate_limit_model_nudge = true
 
 [projects."/home/janek/data/1-projects/nostr/nodex"]
+trust_level = "trusted"
+
+[projects."/Users/tj/IT/steuerfrei"]
+trust_level = "trusted"
+
+[projects."/Users/tj/Library/Mobile Documents/com~apple~CloudDocs/Steuerfrei/ERiC-43.3.2.0"]
+trust_level = "trusted"
+
+[projects."/Users/tj/Library/Mobile Documents/com~apple~CloudDocs/Steuerfrei/eric"]
+trust_level = "trusted"
+
+[projects."/Users/tj/IT/backups/zulip-export-3u_5ti93"]
+trust_level = "trusted"
+
+[projects."/Users/tj/IT/instalee"]
+trust_level = "trusted"
+
+[projects."/Users/tj/IT/nostr/nodex"]
+trust_level = "trusted"
+
+[projects."/Users/tj/IT/nostr/nostr-rs-relay"]
 trust_level = "trusted"
 
 [tui]
