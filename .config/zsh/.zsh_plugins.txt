@@ -1,4 +1,4 @@
-romkatv/powerlevel10k kind:fpath
+romkatv/powerlevel10k path:powerlevel10k.zsh-theme
 ohmyzsh/ohmyzsh path:plugins/gitfast
 zsh-users/zsh-autosuggestions
 zdharma-continuum/fast-syntax-highlighting
