@@ -40,6 +40,9 @@ if test -r "$ANTIDOTE_HOME/antidote.zsh"
 then
 	source "$ANTIDOTE_HOME/antidote.zsh"
 	source <(antidote load "$CONFIG_ZSH/.zsh_plugins.txt")
+	autoload -Uz promptinit
+	promptinit
+	prompt powerlevel10k
 fi
 
 ## Functions
