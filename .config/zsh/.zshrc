@@ -209,6 +209,21 @@ source_existing() {
 	done
 }
 
+lazy_source_once() {
+	local loader=$1
+	shift
+	for cmd in "$@"
+	do
+		eval "
+$cmd() {
+	unfunction ${(@q)@}
+	$loader
+	$cmd \"\$@\"
+}
+"
+	done
+}
+
 #  To customize p10k prompt, run `p10k configure` or edit .p10k.zsh.
 source $CONFIG_ZSH/.p10k.zsh
 source $CONFIG_ZSH/aichat.zsh
@@ -217,10 +232,18 @@ do #echo "sourcing $file" #	. $file
 done
 source_existing /usr/share/fzf/key-bindings.zsh /usr/share/fzf/completion.zsh
 
-source_existing "$NVM_DIR/nvm.sh"
-source_existing "$NVM_DIR/bash_completion"
+load_nvm() {
+	source_existing "$NVM_DIR/nvm.sh" "$NVM_DIR/bash_completion"
+}
+test -s "$NVM_DIR/nvm.sh" &&
+	lazy_source_once load_nvm nvm node npm npx corepack yarn pnpm
 
-source_existing /opt/asdf-vm/asdf.sh
+load_asdf() {
+	source_existing /opt/asdf-vm/asdf.sh
+}
+test -s /opt/asdf-vm/asdf.sh &&
+	lazy_source_once load_asdf asdf
+
 source_existing $XDG_CONFIG_HOME/broot/launcher/bash/br
 
 which zoxide >/dev/null &&
