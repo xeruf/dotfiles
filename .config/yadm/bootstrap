@@ -50,27 +50,19 @@ SECTION 'Application Setup'
 
 highlight "CLI Applications"
 
-# TODO update repo users, replace slow omz
-# checkout https://starship.rs/ over p10k
 subhighlight "Zsh"
-test -n "$ZSH" || export ZSH="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/oh-my-zsh"
-mkdir -p "$(dirname $ZSH)"
-oldzsh="$XDG_STATE_HOME/zsh/oh-my-zsh" && test ! -d "$ZSH" -a -d "$oldzsh" && mv -vn $oldzsh $ZSH
+ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote}"
+mkdir -p "$(dirname $ANTIDOTE_HOME)"
 cloneshallow() {
 	url=https://github.com/$2/$1.git
-	dir="${3:-$ZSH/custom/plugins/$1}"
+	dir="${3:-$XDG_DATA_HOME/$1}"
 	mkdir -p "$(dirname $dir)"
 	if test -d "$dir"
 	then git -C "$dir" remote set-url origin $url
 	else git clone --depth=1 $url "$dir"
 	fi
 }
-cloneshallow oh-my-zsh                  robbyrussell       "$ZSH"
-cloneshallow powerlevel10k              romkatv            "$ZSH/themes/powerlevel10k"
-cloneshallow fast-syntax-highlighting   zdharma-continuum
-cloneshallow zsh-autosuggestions        zsh-users
-cloneshallow zsh-vim-mode               softmoth
-cloneshallow zsh-history-filter         MichaelAquilina
+cloneshallow antidote mattmc3 "$ANTIDOTE_HOME"
 case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh|'');; (*) chsh -s $(which zsh);; esac
 
 if command -v nvim >/dev/null 2>&1; then
@@ -187,4 +179,3 @@ mx="$HOME/.mixxx"
 if ! test -d "$mx"
 then mkdir "$mx" && ln -sv -t "$mx" ${XDG_DATA_HOME:-$HOME/.local/share}/mixxx/* $XDG_CONFIG_HOME/mixxx/*
 fi
-

@@ -1,0 +1,7 @@
+romkatv/powerlevel10k
+ohmyzsh/ohmyzsh path:plugins/gitfast
+zsh-users/zsh-autosuggestions
+zdharma-continuum/fast-syntax-highlighting
+softmoth/zsh-vim-mode
+zsh-users/zsh-history-substring-search
+MichaelAquilina/zsh-history-filter

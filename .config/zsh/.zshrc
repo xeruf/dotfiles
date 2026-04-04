@@ -17,30 +17,10 @@ fi
 
 DEFAULT_USER=$USER
 
-ZSH_THEME="powerlevel10k/powerlevel10k"
-#POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator context dir rbenv vcs) POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time)
-#ZSH_CUSTOM=$ZSH/custom
-
 HIST_STAMPS="yyyy-mm-dd" # history command timestamps
 
 # COMPLETION
 # ENABLE_CORRECTION="true" # Correct command arguments
-HYPHEN_INSENSITIVE="true" # - and _ interchangeable
-COMPLETION_WAITING_DOTS="true" # Dots while waiting for completion
-DISABLE_UNTRACKED_FILES_DIRTY="true" # DOn't mark untracked files as dirty - speeds up status check
-
-# Plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(
-	#git
-	gitfast
-	#git-auto-fetch
-	zsh-autosuggestions
-	fast-syntax-highlighting
-	zsh-vim-mode
-	history-substring-search
-	zsh-history-filter
-)
 
 zsh_filter_tug=(dGllZA== dHVn c2V4 cG9ybg== c3Bhbms= bnVkZQ== ZGFtc2Vs Z2lybA== cGVydg== Ym91bmQ= QkRTTQ== YmFyZ2FpbmVk Y2hhaXJsYWR5 Ym9uZA== eGhhbXN0ZXI= dGl0cw== cHVzc3k= bnVnCg==)
 for encoded in $zsh_filter_tug
@@ -54,13 +34,12 @@ HISTORY_FILTER_EXCLUDE+=()
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
 fpath=($fpath "$CONFIG_ZSH/completion") # Custom completions
 ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION" # Cache completions
-DISABLE_UPDATE_PROMPT=true
-ZSH_DISABLE_COMPFIX=true
+ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote}"
 
-# Fallback for fresh systems
-if test -d "$ZSH"
-then source $ZSH/oh-my-zsh.sh
-else source $HOME/.zshenv
+if test -r "$ANTIDOTE_HOME/antidote.zsh"
+then
+	source "$ANTIDOTE_HOME/antidote.zsh"
+	source <(antidote load "$CONFIG_ZSH/.zsh_plugins.txt")
 fi
 
 ## Functions
