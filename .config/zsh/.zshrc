@@ -39,7 +39,7 @@ ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidot
 if test -r "$ANTIDOTE_HOME/antidote.zsh"
 then
 	source "$ANTIDOTE_HOME/antidote.zsh"
-	source <(antidote load "$CONFIG_ZSH/.zsh_plugins.txt")
+	antidote load "$CONFIG_ZSH/.zsh_plugins.txt"
 fi
 
 ## Functions
