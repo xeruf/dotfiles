@@ -53,16 +53,10 @@ highlight "CLI Applications"
 subhighlight "Zsh"
 ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote}"
 mkdir -p "$(dirname $ANTIDOTE_HOME)"
-cloneshallow() {
-	url=https://github.com/$2/$1.git
-	dir="${3:-$XDG_DATA_HOME/$1}"
-	mkdir -p "$(dirname $dir)"
-	if test -d "$dir"
-	then git -C "$dir" remote set-url origin $url
-	else git clone --depth=1 $url "$dir"
-	fi
-}
-cloneshallow antidote mattmc3 "$ANTIDOTE_HOME"
+if test -d "$ANTIDOTE_HOME"
+then git -C "$ANTIDOTE_HOME" remote set-url origin https://github.com/mattmc3/antidote.git
+else git clone https://github.com/mattmc3/antidote.git "$ANTIDOTE_HOME"
+fi
 case "$(grep "^$USER" /etc/passwd | sed 's/.*://')" in (*zsh|'');; (*) chsh -s $(which zsh);; esac
 
 if command -v nvim >/dev/null 2>&1; then
@@ -72,7 +66,10 @@ if command -v nvim >/dev/null 2>&1; then
 fi
 
 subhighlight "Setup kakoune plugin loader"
-cloneshallow plug.kak robertmeta "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
+if test -d "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
+then git -C "$XDG_CONFIG_HOME/kak/plugins/plug.kak" remote set-url origin https://github.com/robertmeta/plug.kak.git
+else git clone --depth=1 https://github.com/robertmeta/plug.kak.git "$XDG_CONFIG_HOME/kak/plugins/plug.kak"
+fi
 # TODO kakoune research: quit doc buffer, multi cursor, work on line
 
 # TODO first brew install - insert brew bundle? instalee migration from bundle?
