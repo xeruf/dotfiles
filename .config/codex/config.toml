@@ -17,15 +17,6 @@ trust_level = "trusted"
 [projects."/Users/tj/IT/steuerfrei"]
 trust_level = "trusted"
 
-[projects."/Users/tj/Library/Mobile Documents/com~apple~CloudDocs/Steuerfrei/ERiC-43.3.2.0"]
-trust_level = "trusted"
-
-[projects."/Users/tj/Library/Mobile Documents/com~apple~CloudDocs/Steuerfrei/eric"]
-trust_level = "trusted"
-
-[projects."/Users/tj/IT/backups/zulip-export-3u_5ti93"]
-trust_level = "trusted"
-
 [projects."/Users/tj/IT/instalee"]
 trust_level = "trusted"
 
@@ -37,3 +28,4 @@ trust_level = "trusted"
 
 [tui]
 status_line = ["model-with-reasoning", "git-branch", "context-remaining", "weekly-limit", "session-id"]
+theme = "ansi"
