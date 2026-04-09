@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Lower Internal Mic Level
+Exec=sh -c 'sleep 3 && wpctl set-volume 59 0.25'
+X-GNOME-Autostart-enabled=true
