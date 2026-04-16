@@ -819,7 +819,7 @@ Version 2019-11-04 2021-02-16"
 ;;;; Colors
 
 ;; https://www.emacswiki.org/emacs/HexColour
-(require 'cl)
+(require 'cl-lib)
 (defun hexcolor-luminance (color)
   "Calculate the luminance of a color string (e.g. \"#ffaa00\", \"blue\").
 This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
@@ -1063,14 +1063,14 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
 (add-hook 'find-file-hook #'major-mode-based-on-trimmed-filename)
 
 (setq initial-major-mode 'org-mode)
-(add-to-list 'auto-mode-alist '("/journal/" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.jrnl\\'" . org-mode) 't)
+(add-to-list 'auto-mode-alist '("/journal/" . org-mode) 't)
 
 (add-to-list 'auto-mode-alist '("\\.el##" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_SHELLS") "\\.config/shell"). sh-mode))
-(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_ZSH") "\\.config/zsh") . sh-mode))
-(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode))
 (add-to-list 'auto-mode-alist `("\\.config/yadm/bootstrap" . sh-mode))
+(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_SHELLS") "\\.config/shell"). sh-mode) 't)
+(add-to-list 'auto-mode-alist `(,(or (getenv "CONFIG_ZSH") "\\.config/zsh") . sh-mode) 't)
+(add-to-list 'auto-mode-alist `("\\.local/bin" . sh-mode) 't)
 
 (add-to-list 'auto-mode-alist '("\\.ssv\\'" . csv-mode))
 (setq csv-separators '(";" "," "\t"))
@@ -1375,7 +1375,9 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
                            ;; move; flags handled separately if desired
                            (mu4e--server-move docid (mu4e--mark-check-target target) "+S-u-N"))))
   (mu4e~headers-defun-mark-for spam)
-  (mu4e--view-defun-mark-for spam)
+  ;; mu4e >= 1.14 dropped the separate view mark generator and routes the
+  ;; view commands through the headers implementation instead.
+  (defalias 'mu4e-view-mark-for-spam 'mu4e-headers-mark-for-spam)
   (map! :map mu4e-headers-mode-map
         :n ">" (lambda () (interactive) (mu4e-headers-mark-for-spam))
         :n "M" (lambda () (interactive) (mu4e-headers-mark-for-move-account))

@@ -82,6 +82,10 @@
 
 ;;(package! vc-fossil)
 
+;; mu4e-compat currently errors out on mu4e > 1.12 and is not needed for this
+;; config, which targets the installed mu4e API directly.
+(package! mu4e-compat :disable t)
+
 ;;; Prettification
 (package! dired+)
 (package! xterm-color)
