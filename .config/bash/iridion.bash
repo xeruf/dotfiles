@@ -212,7 +212,7 @@ invoice() {
   # FIXME is amount discount not working so far: https://github.com/invoiceninja/invoiceninja/issues/11362
   echo "Client Name;Invoice Next Send Date;How Often;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Auto Bill;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="${name:-$userid};$(test "$numprefix" && echo "2026-01-13");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;always;Ust.;19,00;"
+  local prefix="${name:-$userid};$(test "$numprefix" && echo "$senddate");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;always;Ust.;19,00;"
   {
   for domain
   do echo "$prefix$(invoicedomain "$domain" $years)"
@@ -256,7 +256,8 @@ invoicedomain() {
   local date_created=$(grep ",$domain," "${autodns_csv}" | cut -d, -f3 | cut -dT -f1 || date -d "$renew -1 year" "+%Y-%m-%d")
   local date_created_de=$(echo "$date_created" | awk -F- '{print $3 "." $2 "." $1}')
   local date_start=$(test "$date_billed" && { echo "$date_billed" | awk -F. '{print $3 "-" $2 "-" $1}' ;} || echo "$date_created")
-  local years=$(expr 1 \& "${1:-2}" \< 2 \| "${1:-5}" - "$(echo "$date_start" | cut -c4)")
+  local default_year=$(echo $(date +%y) | cut -c2)
+  local years=$(expr 1 \& "${1:-2}" \< 2 \| "${1:-$default_year}" - "$(echo "$date_start" | cut -c4)")
 
   local date_billed_fut=$(date -d "$date_start +$years year -1 day" '+%d.%m.%Y')
   local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
@@ -270,7 +271,7 @@ invoicedomain() {
     (name|org|com|at|ch|us) price='19,85';;
     (me|nl|nexus|net|it|cc) price='28,82';; # from 13€
     (blog|info) price='48,84';; # from 22€
-    (tv|space|house|group) price='58,85';; # from 30€
+    (tv|space|house|group|social) price='58,85';; # from 30€
     (online|digital) price='68,86';; # from 39€
     (gmbh) price='78,87';; # from 50€
     (codes|coach|ec) price='98,89';; # from 60€
