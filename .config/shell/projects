@@ -89,6 +89,6 @@ projects() {
 			fi
 		done
 	esac
-	builtin cd $PROJECTS
+	#builtin cd $PROJECTS
 }
 

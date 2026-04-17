@@ -47,10 +47,8 @@ ulimit -c unlimited # Enable core dumps
 which lsb_release >/dev/null &&
 	export DIST=$(lsb_release --id | cut -d'	' -f2)
 
-# Weird alias to broken color-diff
-unalias diff 2>/dev/null
-# Alias on some systems?
-unalias rd 2>/dev/null
+# Weird alias to broken color-diff - omz common?
+# unalias diff 2>/dev/null
 
 alias ai='aichat --session'
 alias ky='aichat --role swahili'
@@ -77,6 +75,7 @@ resolvealias() {
 	alias "$1" 2>/dev/null | sed -nE "s|$1='?(noglob )?([-A-z]+)'?$|\2|p" | command grep --color=never -m 1 . || echo $1
 }
 
+unalias h 2>/dev/null
 h() {
 	arg="$1"
 	local alias=$(resolvealias "$arg")
@@ -173,20 +172,20 @@ edit-bin() {
 	fi
 }
 
-# Task management & time tracking {{{1
-t() {
-	if test "$#" -eq 0 && which tn >/dev/null
-	then tn
-	else
-		if test "$1" = "do"
-		then shift && test "$1" -gt 0 2>/dev/null && task mod sched:today "$@" || task add sched:today "$@"
-		else task "$@"
-		fi
-	fi
-}
-alias tw='timew'
-# Create a temporary timewarrior database for testing
-alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
+# # Task management & time tracking {{{1
+# t() {
+# 	if test "$#" -eq 0 && which tn >/dev/null
+# 	then tn
+# 	else
+# 		if test "$1" = "do"
+# 		then shift && test "$1" -gt 0 2>/dev/null && task mod sched:today "$@" || task add sched:today "$@"
+# 		else task "$@"
+# 		fi
+# 	fi
+# }
+# alias tw='timew'
+# # Create a temporary timewarrior database for testing
+# alias twtest='( cp -r "$TIMEWARRIORDB" /tmp/tw-bak && TIMEWARRIORDB=/tmp/timewarriordb-test/$(date +%s) && mkdir -p "$TIMEWARRIORDB"/data && :> "$TIMEWARRIORDB"/timewarrior.cfg && $SHELL )'
 
 # Systemd {{{1
 
@@ -382,6 +381,7 @@ alias sqli='rlwrap sqlite3 -column -header -cmd .tables'
 
 alias usergroups="cat /etc/passwd | cut -d':' -f1 | xargs -n 1 id"
 
+unalias p 2>/dev/null
 p() { pass "$@" || pass edit "$@"; }
 
 alias omd='(echo "#+OPTIONS: tags:nil"; xclip -o -selection clipboard) | pandoc -f org-auto_identifiers -t markdown --wrap preserve | xclip -filter'
