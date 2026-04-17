@@ -4,3 +4,5 @@ zdharma-continuum/fast-syntax-highlighting
 softmoth/zsh-vim-mode
 zsh-users/zsh-history-substring-search
 MichaelAquilina/zsh-history-filter
+ohmyzsh/ohmyzsh path:lib/directories.zsh
+ohmyzsh/ohmyzsh path:plugins/common-aliases

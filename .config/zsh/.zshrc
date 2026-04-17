@@ -34,13 +34,6 @@ HISTORY_FILTER_EXCLUDE+=()
 _comp_options+=(globdots) # Show files starting with dot in autocomplete
 fpath=($fpath "$CONFIG_ZSH/completion") # Custom completions
 ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION" # Cache completions
-ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote}"
-
-if test -r "$ANTIDOTE_HOME/antidote.zsh"
-then
-	source "$ANTIDOTE_HOME/antidote.zsh"
-	antidote load "$CONFIG_ZSH/.zsh_plugins.txt"
-fi
 
 ## Functions
 
@@ -136,6 +129,7 @@ export KEYTIMEOUT=1
 
 ## User configuration
 
+setopt autocd # auto cd into directory names provided
 # turn on spelling correction
 setopt correct
 CORRECT_IGNORE="[_|.]*"
@@ -173,20 +167,25 @@ alias zsy='noglob zmv -Ls'
 
 test -d /opt/homebrew && eval "$(/opt/homebrew/bin/brew shellenv)"
 
+# ZSH and SHELL extensions
+
 autoload -Uz compinit
 compinit
-
-for file in $CONFIG_SHELLS/*
-do source $file
-done
-
-# GENERATED SHIT
 
 source_existing() {
 	for arg
 	do test -s "$arg" && source "$arg"
 	done
 }
+
+ANTIDOTE_HOME="${ANTIDOTE_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote}"
+source_existing "$ANTIDOTE_HOME/antidote.zsh" && antidote load "$CONFIG_ZSH/.zsh_plugins.txt"
+
+for file in $CONFIG_SHELLS/*
+do source $file
+done
+
+# GENERATED SHIT
 
 lazy_source_once() {
 	local loader=$1

@@ -183,6 +183,7 @@ esac
 export SPARE_CORES=$(expr $efficiency_cores \* 2 / 3)
 
 ## cplusplus - ctest, cmake, ninja
+export NINJAJOBS=${SPARE_CORES} # this probably does not work
 export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1
