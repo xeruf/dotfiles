@@ -92,7 +92,7 @@
 	sv = --paginate status -v
 	svv = --paginate status -vv
 
-	tl = !git ls-tree --full-tree --name-only -r HEAD | tree -C --fromfile . | ${PAGER:-less}
+	tl = !git ls-tree --full-tree --name-only -r HEAD | tree -a -C --fromfile . | ${PAGER:-less}
 	tree = !git ls-tree --name-only -r HEAD | tree -C --fromfile . | ${PAGER:-less}
 
 	# repo
