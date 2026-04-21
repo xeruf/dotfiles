@@ -82,45 +82,91 @@ hunta() {
 
 # ZOXIDE {{{1
 alias c=z
-# Listing for quick directory switcher based on zoxide and fzf
-alias zoxide-list='noglob zoxide query -sl'
-__zx_ls="ls -AhF --color"
-	# Check fzf features first
+
+# List zoxide matches together with their scores.
+zoxide-list() {
+	noglob zoxide query -sl "$@"
+}
+
+if command -v eza >/dev/null 2>&1
+then __zx_ls='eza --all --icons --group-directories-first --classify --color=always'
+	else __zx_ls='ls -AFl'
+fi
+
+# Shared fzf settings for directory pickers.
 alias fzf-dir="fzf -0 -1 --tiebreak=chunk,end,length \
 		--preview-window=30% --preview='$__zx_ls {}' \
 		--height=80% --reverse --keep-right"
-# fzf for zoxide - returns the selected path stripped of its score
-zoxide-fzf() {
-	fzf-dir -n2.. --preview="$__zx_ls {2..}" "$@" | sed 's|.* /|/|'
+
+# Strip the zoxide score prefix from a combined zoxide/search candidate line.
+zoxide-strip-score() {
+	awk '{sub(/^[[:space:]]*[^[:space:]]+[[:space:]]+/, ""); print}'
 }
-# Locate directories and add 0 zoxide score
+
+# Search extra directory candidates outside zoxide.
 locate-zox() {
-	locate --basename --ignore-case "$@" |
-		# TODO too slow
-		# while read -r file; do test -d "$file" && echo "$file"; done |
-		sed 's/^/   0 /'
+	local query="${*:-}"
+	case "$(uname)" in
+	(Darwin)
+		command -v mdfind >/dev/null 2>&1 || return 0
+		mdfind "kMDItemFSName == '*${query//\'/}'*'" 2>/dev/null |
+			while read -r path; do
+				test -d "$path" && printf '0 %s\n' "$path"
+			done;;
+	(*)
+		command -v locate >/dev/null 2>&1 || return 0
+		locate --basename --ignore-case "$@" 2>/dev/null |
+			while read -r path; do
+				test -d "$path" && printf '0 %s\n' "$path"
+			done;;
+	esac | awk '!seen[$0]++'
 }
-# Switch directory heuristically using zoxide and locate
+
+# Combine zoxide results with secondary filesystem matches.
+directory-candidates() {
+	local query
+	query="$(zoxide-list "$@" 2>/dev/null)"
+	test -n "$query" && printf '%s\n' "$query"
+	locate-zox "$@"
+}
+
+# Pick a directory interactively from scored candidates.
+zoxide-fzf() {
+	fzf-dir -n2.. --preview="$__zx_ls {2..}" "$@" | zoxide-strip-score
+}
+
+# Return the top zoxide match when it clearly dominates the alternatives.
+zoxide-obvious-match() {
+	local query="$1" best second best_score second_score best_path
+	best="$(printf '%s\n' "$query" | sed -n '1p')"
+	second="$(printf '%s\n' "$query" | sed -n '2p')"
+	test -n "$best" || return 1
+	best_score="$(printf '%s\n' "$best" | awk '{print $1}')"
+	second_score="$(printf '%s\n' "$second" | awk '{print $1}')"
+	best_path="$(printf '%s\n' "$best" | zoxide-strip-score)"
+	test -n "$best_path" && test "$best_path" != "$PWD" || return 1
+	awk -v best="$best_score" -v second="${second_score:-0}" '
+		BEGIN { exit !(best > 20 && (second == 0 || best > 10 * second)) }
+	' || return 1
+	printf '%s\n' "$best_path"
+}
+
+# Jump directly on a dominant zoxide hit, otherwise open the picker.
 d() {
-	# TODO do not use expr, rather test, so there can be floats
 	test "$1" != "-" -a ! -d "$1" -a $# -eq 1 || { cd "$@" && return; }
-	local query="$(zoxide-list "$@")"
-	# First find out whether there is an obvious match
-	# (score at least ten times above runner-up and score above 20)
-	# which is not the current directory
-	# If not select with fzf, using locate to find extra options
-	target="$(if test -n "$query" &&
-			echo "$(echo "$query" | sed 's| \+\([^ ]\+\).*|\1|;q')" \> 20 \& \
-				$(echo "$query" | sed 'N;s|/.* \([0-9]\+\)|> 10 * \1|;q' | sed 's| */.*||') >/dev/null &&
-			[[ ! "$(echo "$query" | head -1)" =~ ".*$PWD" ]]
-			then echo "$query" | head -1
-			else test -n "$query" && echo "$query"; locate-zox "$@"
-		fi | zoxide-fzf)"
-	test $? -lt 2 && test -z "$target" && sudo updatedb && target="$(locate --basename "$@" | fzf-dir)"
+	local query target
+	query="$(zoxide-list "$@" 2>/dev/null)"
+	target="$(zoxide-obvious-match "$query")"
+	test -n "$target" || target="$(directory-candidates "$@" | zoxide-fzf)"
+	if test -z "$target" && command -v updatedb >/dev/null 2>&1 && command -v locate >/dev/null 2>&1
+	then
+		sudo updatedb && target="$(locate-zox "$@" | zoxide-fzf)"
+	fi
 	test -n "$target" && cde "$target"
 }
-# Switch directory interactively using zoxide and locate
+
+# Always open the interactive picker on the same candidates as `d`.
 di() {
-	test "$1" = "-" || local dir=$({ zoxide-list "$@"; locate-zox "$@" } | zoxide-fzf)
+	test "$1" = "-" || local dir="$(directory-candidates "$@" | zoxide-fzf)"
 	cd "${dir:-$1}"
 }
