@@ -1,6 +1,4 @@
-# Tools
-alias g="git"
-alias gs="git s"
+alias gs="g s"
 
 gy() {
   if command git rev-parse --is-inside-work-tree >/dev/null 2>&1
@@ -45,7 +43,7 @@ gcn() {
 }
 
 # if in home or under XDG_CONFIG_HOME and not within a git directory, replace git by yadm
-git() {
+g() {
   case "$1" in
     (-C|config|clone|journal) ;;
     (*) case "$PWD" in
