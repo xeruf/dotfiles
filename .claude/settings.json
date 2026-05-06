@@ -1,15 +1,10 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "bash /Users/tj/.claude/statusline-command.sh"
-  },
   "permissions": {
     "allow": [
       "Read",
       "Write",
       "Edit",
       "Glob",
-
       "Bash(sed *)",
       "Bash(ls *)",
       "Bash(cat *)",
@@ -17,16 +12,13 @@
       "Bash(grep *)",
       "Bash(head *)",
       "Bash(tail *)",
-
       "Bash(git *)",
-
       "Bash(node *)",
       "Bash(npx *)",
       "Bash(npm *)",
       "Bash(pnpm *)",
       "Bash(yarn *)",
       "Bash(bun *)",
-
       "Bash(make *)",
       "Bash(vite *)",
       "Bash(next *)",
@@ -43,5 +35,11 @@
       "Bash(mkfs *)",
       "Bash(fdisk *)"
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "effortLevel": "medium",
+  "theme": "auto"
 }
