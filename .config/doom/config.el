@@ -1335,6 +1335,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
         mu4e-use-fancy-chars t
         mu4e-get-mail-command "mbsync -a"
+        mu4e-mu-home (expand-file-name "~/.local/state/mu")
         )
 
   (add-hook 'mu4e-compose-pre-send-hook
