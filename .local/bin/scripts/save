@@ -13,5 +13,5 @@ if test $# -gt 0; then
     $(cat /tmp/save 2>/dev/null) || systemctl suspend
 else
     echo "*** Suspending in 30 seconds unless you do something..."
-    timeout --foreground 40 swayidle timeout 30 'systemctl suspend'
+    timeout --foreground 60 swayidle timeout 30 'systemctl suspend'
 fi

@@ -3,7 +3,7 @@ command! PU PlugClean! | PlugUpdate | PlugUpgrade
 
 " TODO auto-update on start/error
 
-lua require 'colorizer'.setup({ '*'; markdown = { names = false; }; })
+lua pcall(function() require 'colorizer'.setup({ '*'; markdown = { names = false; }; }) end)
 
 let g:strip_whitespace_on_save=1
 autocmd FileType taskedit,crontab,markdown DisableStripWhitespaceOnSave
