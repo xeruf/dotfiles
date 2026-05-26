@@ -34,12 +34,26 @@
       "Bash(dd *)",
       "Bash(mkfs *)",
       "Bash(fdisk *)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
+  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
-  "effortLevel": "medium",
-  "theme": "auto"
+  "enabledPlugins": {
+    "cc-caffeine@samber": true
+  },
+  "extraKnownMarketplaces": {
+    "samber": {
+      "source": {
+        "source": "github",
+        "repo": "samber/cc"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "theme": "auto",
+  "skipAutoPermissionPrompt": true
 }
