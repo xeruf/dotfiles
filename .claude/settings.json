@@ -27,6 +27,7 @@
       "Bash(prettier *)"
     ],
     "deny": [
+      "Bash(git reset --hard *)",
       "Bash(sudo *)",
       "Bash(rm -r *)",
       "Bash(chmod *)",

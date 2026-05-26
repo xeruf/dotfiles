@@ -151,7 +151,7 @@ test -d "$_ovpn" &&
 	sudo rm -vdf /etc/openvpn/client &&
 	sudo ln -vsf "$_ovpn" /etc/openvpn/client &&
 	sudo chmod -vR ugo-rwx,ug+rX,u+w "$_ovpn" &&
-	sudo chown -vR janek:openvpn "$_ovpn"
+	sudo chown -vR $USER:openvpn "$_ovpn"
 
 test "$DISPLAY" || exit 0
 
@@ -161,7 +161,7 @@ SECTION "Linux App Setup"
 
 subhighlight "Enable MPD"
 mkdir "${XDG_STATE_HOME}/mpd"
-sudo systemctl enable --now mpd
+# sudo systemctl enable --now mpd
 mpc update
 
 highlight "Desktop Applications"

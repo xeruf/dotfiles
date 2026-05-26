@@ -101,11 +101,11 @@ wh() {
 	local res=$(which "$@" 2>/dev/null || type "$@") || return $?
 	# only works in zsh, not bash
 	if expr "$res" : "${@:$#}: aliased to" >/dev/null && ! expr "$res" : ".*builtin" >/dev/null
-	then echo "$res" | bat --style=plain --language sh &&
-		tool="$(echo "$res" | head -1 | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)"
-		wh $(test $tool = $1 && echo "-p") $tool
+	then printf '%s\n' "$res" | bat --style=plain --language sh &&
+		tool=$(printf '%s\n' "$res" | head -1 | cut -d' ' -f$(expr 5 '&' "$res" : ".*to \(sudo\|noglob\) " '|' 4) | cut -d'(' -f2)
+		wh $(test $tool = $1 && printf '-p') $tool
 		# use command which for other shells
-	else test -r "$res" && b -- --language=sh -- "$res" || echo "$res" | bat --style=plain --language sh
+	else test -r "$res" && b -- --language=sh -- "$res" || printf '%s\n' "$res" | bat --style=plain --language sh
 	fi
 }
 compdef wh=which
@@ -150,7 +150,7 @@ edit-shell() {
 			test -f "$file" || return 2;;
 		(*) file="$(find $CONFIG_SHELLS -name "$1*" | head -1 | grep . || echo "$CONFIG_SHELLS/$1")";;
 	esac
-	test -f "$file" && checksum="$(md5sum "$file")"
+	test -f "$file" && checksum=$(md5sum "$file")
 	$EDITOR "$(test "$line" && case "$EDITOR" in (nvim) echo "+normal! ${line}ggzx";; (*vi*) echo "+$line";; (emacs*|*/emacs*) echo "+${line}";; esac || echo "--")" "${file%:*}"
 	test -s "$file" || return 1
 	# Reload shell config upon change
@@ -159,7 +159,7 @@ edit-shell() {
 
 # Edit an executable in the PATH
 edit-bin() {
-	local toedit="$(resolvealias "$1")"
+	local toedit=$(resolvealias "$1")
 	#case "$toedit" in (*\ text*);; (*) toedit="$1";; esac
 	if f="$(which "$toedit" 2>/dev/null)" && test -f "$f"
 	then edit "$f"
@@ -287,7 +287,7 @@ u() {
 		then
 			# TODO also run if location changed significantly or mirror is slow
 			if command -v pacman-mirrors >/dev/null
-			then sudo pacman-mirrors --geoip
+			then sudo pacman-mirrors --continent
 			else sudo touch /etc/pacman.d/mirrorlist
 			fi
 			sudo pacman -Syy --needed base gnupg archlinux-keyring
@@ -340,6 +340,7 @@ dns() {
 	done
 }
 
+alias mosh="LANG=en_US.UTF-8 mosh"
 alias sshk="$(case $TERM in (*-kitty) echo 'TERM=xterm-256color kitty +kitten';; esac) ssh"
 sshl() {
 	test "$1" = "-a" && shift && local all=true

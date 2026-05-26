@@ -24,7 +24,7 @@ npm-debug.log*
 build/
 out/
 
-cache/
+/cache/
 *_build/
 cmake*build*/
 __pycache__/

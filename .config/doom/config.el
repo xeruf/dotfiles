@@ -228,6 +228,11 @@ Version 2019-11-04 2021-02-16"
 
 (defvar user-data-dir (if (file-exists-p "~/IT/data/") "~/IT/data" "~/data") "Location of encrypted data disk")
 
+;; Set early so mail.el (loaded via local.el below) sees it when its
+;; `after! mu4e' block runs — its hook registers before the use-package!
+;; mu4e :config block further down.
+(setq mu4e-mu-home (expand-file-name "~/.local/state/mu"))
+
 (load! "./user.el" nil t)
 (load! "./local.el" nil t)
 (load! "./theme.el" nil t)
@@ -1334,9 +1339,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         mu4e-update-interval (* 10 60) ; check mail every 10 minutes
         mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
         mu4e-use-fancy-chars t
-        mu4e-get-mail-command "mbsync -a"
-        mu4e-mu-home (expand-file-name "~/.local/state/mu")
-        )
+        mu4e-get-mail-command "mbsync -a")
 
   (add-hook 'mu4e-compose-pre-send-hook
             (lambda ()
