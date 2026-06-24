@@ -1,5 +1,5 @@
 #!/bin/sh -e
-test -f "$1" || cd "$XDG_DATA_HOME/openvpn"
+test "$1" = forti || test -f "$1" || cd "$XDG_DATA_HOME/openvpn"
 case "$1" in
     ("") tmux new-session -s "vpn" "tmux ls; $SHELL";;
     (forti)

@@ -8,7 +8,7 @@ test ! -e "$1" && rename=true && name=$1 && shift || rename=false
 
 for file
 do  date="$(latest "$file" | head -2 | tail -1 | cut -c$(test "$short" && echo "3,4,6,7,9,10" || echo "-10"))"
-    mv --verbose --interactive "$file" \
+    mv -v -i "$file" \
 	"$date$(
 		if $rename
 		then echo "$(test "$name" && echo "_$name").${file##*.}"

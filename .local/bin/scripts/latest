@@ -9,8 +9,16 @@ case "$1" in
 ([0-9]) count=$(expr $1 \* 10); shift;;
 esac
 
+# BSD find lacks -printf; on those, format the mtime with stat instead.
+case "$(uname)" in
+(Darwin|*BSD)
+	mtimes() { find "$1" -maxdepth 4 $args \
+		-exec stat -f '%Sm %N' -t '%Y-%m-%d+%H:%M' {} +; };;
+(*) mtimes() { find "$1" -maxdepth 4 $args -printf '%.16T+ %P\n'; };;
+esac
+
 for f in "${@:-$PWD}"
 do test $# -gt 1 && { highlight "$f" || echo "$f"; }
-	find "$f" -maxdepth 4 $args -printf '%.16T+ %P\n' |
+	mtimes "$f" |
 	sort -r | $(test "$all" && echo "less" || echo "head -$count")
 done
