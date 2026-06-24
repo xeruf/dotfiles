@@ -198,26 +198,26 @@ invoice() {
     ;;
   esac
 
-  local userid="$1"
+  local userid="${1%% *}"
+  local username="${1#* }"
   shift
 
-  local userinfo username
+  local userinfo iridionuser
   if test "$userid"; then
-    for username in "$userid" "dp$userid" "xe$userid"
-    do userinfo="$("$HESTIA/bin/v-list-user" "$username")" && break
+    for iridionuser in "$userid" "dp$userid" "xe$userid"
+    do userinfo="$("$HESTIA/bin/v-list-user" "$iridionuser")" && break
     done
     local name=$(echo "$userinfo" | grep FULL | cut -d: -f2 | sed 's/^ *//;s/ *$//')
   fi
 
-  # FIXME is amount discount not working so far: https://github.com/invoiceninja/invoiceninja/issues/11362
   echo "Client Name;Invoice Next Send Date;How Often;Invoice Number;Invoice Status;Invoice Is Amount Discount;Item Is Amount Discount;Invoice Auto Bill;Invoice Tax Name 1;Invoice Tax Rate 1;Item Cost;Item Product;Item Notes;Item Quantity;Item Discount"
   # echo "Kunde - Name;Rechnung - Nummer;Artikel - Menge;Artikel - Kosten;Artikel - Notizen;Artikel - Rabatt"
-  local prefix="${name:-$userid};$(test "$numprefix" && echo "$senddate");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;always;Ust.;19,00;"
+  local prefix="${name:-$username};$(test "$numprefix" && echo "$senddate");Yearly;${numprefix:-D}$(date +%y%m)-$userid;Draft;False;False;always;Ust.;19,00;"
   {
   for domain
   do echo "$prefix$(invoicedomain "$domain" $years)"
   done
-  for domain in $(list dns-domains "$username")
+  for domain in $(list dns-domains "$iridionuser")
   do test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1 ||
       echo "$prefix$(invoicedomain "$domain" $years)"
   done
@@ -234,8 +234,8 @@ invoice() {
       (delta) price=29;;
     esac
     local year=$(test "$numprefix" && echo ':YEAR' || date +%Y)
-    echo "${prefix}${price};Webpaket $package;Januar $year - Dezember $year;12;20"
-    # echo "${prefix}${price};Webpaket $package;Januar 2023 - Dezember 2024;24;20"
+    #echo "${prefix}${price};Webpaket $package;Januar $year - Dezember $year;12;20"
+    echo "${prefix}${price};Webpaket $package;Januar 2024 - Dezember 2025;24;20"
   fi
 }
 
@@ -269,10 +269,10 @@ invoicedomain() {
     (de) price='7,85';;
     (eu) price='13,85';; # from 5€
     (name|org|com|at|ch|us) price='19,85';;
-    (me|nl|nexus|net|it|cc) price='28,82';; # from 13€
+    (me|nl|nexus|net|it|cc|biz) price='28,82';; # from 13€
     (blog|info) price='48,84';; # from 22€
     (tv|space|house|group|social) price='58,85';; # from 30€
-    (online|digital) price='68,86';; # from 39€
+    (online|digital|life) price='68,86';; # from 39€
     (gmbh) price='78,87';; # from 50€
     (codes|coach|ec) price='98,89';; # from 60€
   esac

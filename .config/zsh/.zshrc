@@ -22,7 +22,7 @@ HIST_STAMPS="yyyy-mm-dd" # history command timestamps
 # COMPLETION
 # ENABLE_CORRECTION="true" # Correct command arguments
 
-zsh_filter_tug=(dGllZA== dHVn c2V4 cG9ybg== c3Bhbms= bnVkZQ== ZGFtc2Vs Z2lybA== cGVydg== Ym91bmQ= QkRTTQ== YmFyZ2FpbmVk Y2hhaXJsYWR5 Ym9uZA== eGhhbXN0ZXI= dGl0cw== cHVzc3k= bnVnCg==)
+zsh_filter_tug=(dGllZA== dHVn c2V4 cG9ybg== c3Bhbms= bnVkZQ== ZGFtc2Vs Z2lybA== cGVydg== Ym91bmQ= QkRTTQ== YmFyZ2FpbmVk Y2hhaXJsYWR5 Ym9uZA== eGhhbXN0ZXI= dGl0cw== cHVzc3k= bnVnCg== bmFrZQo=)
 for encoded in $zsh_filter_tug
 do decoded=$(printf %s "$encoded" | base64 -d)
    capitalized="${decoded[1]:u}${decoded[2,-1]}"
