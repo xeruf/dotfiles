@@ -62,6 +62,7 @@ alias write='aichat --role write --save-session --session'
 compdef tldr=man
 compdef help=man
 compdef h=help
+unalias help 2>/dev/null
 alias info='info --vi-keys'
 
 sudos() {

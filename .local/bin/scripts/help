@@ -26,7 +26,7 @@ showinfo() {
 
 cmd="$1"
 case "$cmd" in
-	(fwupdmgr|hunt|rdoc|gh|chordpro|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja|qobuz-dl|beet|flux)
+	(fwupdmgr|hunt|rdoc|gh|chordpro|pdfjam|reflector|topgrade|r128gain|7z|kubectl|diffr|docker|jrnl|difft|wiked-diff|qpdf|ninja|qobuz-dl|beet|flux|nak)
 		unbuffer "$@" --help | sed 's|^[^ ].*:|[1m&[22m|' | $paginate;;
 	(sqlcmd) sqlcmd -?;;
 	(exa) "$0" eza;;
@@ -57,6 +57,7 @@ case "$cmd" in
 		showinfo zsh $(test "$last" != zsh && echo "$last") ||
 			LESS="$LESS$(test "$last" != zsh && echo "+/^ *$last *\\[")" man zshall;;
 	(emacs) man emacs;;
+	(clean) exit 1;;
 	(*) showinfo "$@" || man "$@" || return=$?
 		if test "${return:-0}" -gt 0 && which "$cmd" >/dev/null
 		then { unbuffer "$@" --help || { test $? == 1 && "$@" -help; } || { test $? == 1 && "$@" -h; }; } 2>&1 | $paginate
