@@ -4,7 +4,8 @@
 # this command saves a list of commits between the HEAD and the given committish
 # into the .git directory.
 # Without parameters it applies the saved list of commits onto the current HEAD.
-# NOTE: You should prefer rebase -i to this brewery.
+# NOTE: Prefer rebase -i to this brewery.
+# The only advantage is that it preserves commit metadata, especially timestamps
 verbosity=1
 while test $# -gt 0; do
   case $1 in
