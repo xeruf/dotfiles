@@ -221,7 +221,7 @@ invoice() {
   do test $(echo "$domain" | tr -cd '.' | wc -c) -ne 1 ||
       echo "$prefix$(invoicedomain "$domain" $years)"
   done
-  } | { test "$numprefix" && sed "s/202[1-5] /:YEAR$(case "$years" in (-*) echo "$years";; esac) /;s/202[2-6])/:YEAR+$years)/" || cat; }
+  } | { test "$numprefix" && sed -E "s/20(1.|2[0-5]) /:YEAR$(case "$years" in (-*) echo "$years";; esac) /;s/20[1-2][0-9]\)/:YEAR+$years)/" || cat; }
 
   local package=$(echo "$userinfo" | grep PACKAGE | cut -d: -f2 | cut -d- -f1 | sed 's/^ *//')
   if test -n "$package"
@@ -234,8 +234,8 @@ invoice() {
       (delta) price=29;;
     esac
     local year=$(test "$numprefix" && echo ':YEAR' || date +%Y)
-    #echo "${prefix}${price};Webpaket $package;Januar $year - Dezember $year;12;20"
-    echo "${prefix}${price};Webpaket $package;Januar 2024 - Dezember 2025;24;20"
+    echo "${prefix}${price};Webpaket $package;Januar $year - Dezember $year;12;20"
+    #echo "${prefix}${price};Webpaket $package;Januar 2024 - Dezember 2025;24;20"
   fi
 }
 
@@ -260,21 +260,22 @@ invoicedomain() {
   local years=$(expr 1 \& "${1:-2}" \< 2 \| "${1:-$default_year}" - "$(echo "$date_start" | cut -c4)")
 
   local date_billed_fut=$(date -d "$date_start +$years year -1 day" '+%d.%m.%Y')
-  local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
+  test -n "$renew" &&
+    local renew_fut=$(date -d "${renew:-+1 year} -1 day" '+%d.%m.%Y')
   local date_fut="${date_billed_fut}$( test -n "$renew" && test -n "$date_start" && (( diff = 10#${renew:5:2} - 10#${date_start:5:2}, diff > -2 || diff < 2 )) || echo " [${renew_fut}]")"
   
   local price
   local suffix=${domain#*.}
   case "$suffix" in
     (de) price='7,85';;
-    (eu) price='13,85';; # from 5€
-    (name|org|com|at|ch|us) price='19,85';;
+    (eu|com.de) price='13,85';; # from 5€
+    (name|org|com|at|ch|us|*.uk) price='19,85';; # from 8€
     (me|nl|nexus|net|it|cc|biz) price='28,82';; # from 13€
-    (blog|info) price='48,84';; # from 22€
-    (tv|space|house|group|social) price='58,85';; # from 30€
-    (online|digital|life) price='68,86';; # from 39€
-    (gmbh) price='78,87';; # from 50€
-    (codes|coach|ec) price='98,89';; # from 60€
+    (blog|info|email) price='48,84';; # from 22€
+    (tv|space|house|group|social|life) price='58,85';; # from 30€
+    (online|digital) price='68,86';; # from 36€
+    (gmbh) price='78,87';; # from 42€
+    (codes|coach|ec|eco) price='98,89';; # from 60€
   esac
 
   echo "$price;.$suffix-Domain;$domain (${date_billed:-${date_created_de:-$(date '+%d.%m.%Y')}} - ${date_fut});$years;0"
@@ -296,7 +297,7 @@ domaininfo() {
   case "$1" in (--color) color=true; shift;; esac
 
   for domain; do
-    domain=$(echo "$domain" | rev | cut -d. -f-2 | rev)
+    # domain=$(echo "$domain" | rev | cut -d. -f-2 | rev)
 
     date_billed=$(grep "$domain (" cu_invoicelineitems.csv | grep -v SSL | tail -1 | cut -d\" -f8 | sed -sE 's/.* - (.*)\).*/\1/')
     date_created=$(grep ",$domain," "${autodns_csv}" | cut -d, -f3 | cut -dT -f1)

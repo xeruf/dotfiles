@@ -601,7 +601,7 @@ mvln() {
 	local file=$(test -f "$1" && echo 1 || echo 0)
 	if test -d $1; then
 		mkdir -p "$2"
-		mv -vT $1 $2
+		mv -v $1 $2
 	else
 		m $1 $2
 	fi
