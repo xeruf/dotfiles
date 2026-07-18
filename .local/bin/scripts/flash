@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/bin/sh -ex
 lsblk $2
-printf "Flash $1? "
+printf "Flash $1 onto $2? "
 read
-sudo dd if=$1 of=$2 status=progress bs=1M
+sudo dd if=$1 of=$2 bs=4M conv=fsync status=progress
