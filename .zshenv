@@ -75,11 +75,19 @@ export R_LIBS="$XDG_STATE_HOME"/R/lib
 export FVM_CACHE_PATH="$XDG_DATA_HOME"/fvm
 
  # Java & Android
-export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
+# macOS keeps java prefs in ~/Library/Preferences through MacOSXPreferences, which never
+# reads userRoot — only Linux's FileSystemPreferences does. Setting it on a Mac creates
+# nothing and prints "Picked up _JAVA_OPTIONS" ahead of every JVM's own output.
+[[ $OSTYPE == darwin* ]] || export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 export GRADLE_USER_HOME="$XDG_STATE_HOME"/gradle
 export ANDROID_PREFS_ROOT="$XDG_CONFIG_HOME"/android
 export ANDROID_EMULATOR_HOME="$XDG_STATE_HOME"/android/emulator
-export ANDROID_SDK_ROOT="/opt/android/sdk"
+# one SDK per machine, first that exists wins — mac (Android Studio) then linux
+for _asdk in "$HOME/Library/Android/sdk" /opt/android/sdk; do
+	test -d "$_asdk" && export ANDROID_SDK_ROOT="$_asdk" && break
+done
+unset _asdk
+export ANDROID_HOME="$ANDROID_SDK_ROOT"
  # taskwarrior & timewarrior
 export TIMEWARRIORDB="$XDG_DATA_HOME"/timewarrior
 export TASKRC="$XDG_CONFIG_HOME"/task/taskrc
@@ -96,7 +104,7 @@ mkdir -p "$XDG_STATE_HOME/zsh"
 BIN="$HOME/.local/bin"
 test -d "$XDG_DATA_HOME/gem/ruby" &&
 	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1):"
-export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$CARGO_HOME/bin:$KREW_ROOT/bin:${ruby_bins}$HOME/.rvm/bin"
+export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/emulator:$CARGO_HOME/bin:$KREW_ROOT/bin:${ruby_bins}$HOME/.rvm/bin"
 # /opt/homebrew/opt/coreutils/libexec/gnubin for gnu override of BSD tools
 
 # TODO this is too early (for mac?) - editors may later be added to PATH - but on Linux this helps so it is available everywhere
