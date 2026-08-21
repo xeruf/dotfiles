@@ -119,7 +119,7 @@ Version 2019-11-04 2021-02-16"
       "Sm"      'smerge-mode
       "m;"      'comment-line
       "Q"       'save-buffers-kill-terminal ; or evil-quit-all?
-      :desc "Dragon current buffer" "d" 'xf/dragon
+      :desc "Dragon current buffer" "D" 'xf/dragon
       :desc "Update DB & Quit"      "wU" (lambda () (interactive) (xf/org-roam-update) (save-buffers-kill-terminal))
       :map ctl-x-map
       "8 SPC" (lambda () (insert-char "200B"))
@@ -175,36 +175,6 @@ Version 2019-11-04 2021-02-16"
 (if (boundp buffer-file-coding-system)
     (setq buffer-file-coding-system 'utf-8)
   (setq default-buffer-file-coding-system 'utf-8))
-
-;;;; Clipboard
-
-;; Checks if the session type is in fact for Wayland.
-(if (string= (getenv "XDG_SESSION_TYPE") "wayland")
-    (progn
-      ;; Clipboard from Terminal in Wayland: https://vernon-grant.com/emacs/tmux-emacs-and-the-system-clipboard-on-wayland/
-      (setq wl-copy-process nil)
-      
-      (defun wl-copy (text)
-        (setq wl-copy-process (make-process :name "wl-copy"
-                                            :buffer nil
-                                            :command '("wl-copy" "-f" "-n")
-                                            :connection-type 'pipe
-                                            :noquery t))
-        (process-send-string wl-copy-process text)
-        (process-send-eof wl-copy-process))
-      
-      (defun wl-paste ()
-        (if (and wl-copy-process (process-live-p wl-copy-process))
-            nil ; should return nil if we're the current paste owner
-          (shell-command-to-string "wl-paste -n | tr -d \r")))
-      
-      (setq interprogram-cut-function 'wl-copy)
-      (setq interprogram-paste-function 'wl-paste)
-      )
-  ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-  (add-hook 'window-setup-hook #'xclip-mode)
-  )
 
 ;;;; Data Preservation
 
