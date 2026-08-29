@@ -5,6 +5,6 @@ while read -r line
     echo $line | bat -A
     line="$(echo ${line%} | sed "s|.*\[0m\(.*\)|\1|")"
     echo $line | bat -A
-    command expr length "$line" \> 2 &&
+    [ "${#line}" -gt 2 ] &&
       echo "${line%,}" | python3 -m json.tool --no-ensure-ascii --sort-keys
   done

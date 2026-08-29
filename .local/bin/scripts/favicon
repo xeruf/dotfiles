@@ -2,6 +2,6 @@
 # Extract the icon of a given page using duckduckgo
 url=$(echo $1 | sed 's|https\?://||' | cut -d '/' -f1)
 file="/tmp/favicon-$url.ico"
-wget -nv -O "$file" "https://icons.duckduckgo.com/ip2/$url.ico"
+curl -sS -L -o "$file" "https://icons.duckduckgo.com/ip2/$url.ico"
 echo "$file"
 timg "$file"
