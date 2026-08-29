@@ -54,7 +54,7 @@ case $arg in
 		then if test $# -lt 2 -a "$(ls -U | wc -l)" -lt 3
 			then test "$(ls)" && mv -iv * ..
 				cd .. && rm -d "$namepart"
-			else cd .. && mv -ivT "$namepart" "$name"
+			else cd .. && mv -iv "$namepart" "$name"
 			fi
 		fi
 		case $del in

@@ -44,7 +44,7 @@ case "$cmd" in
 	# Show manpage with tweaks
 	(fossil)
 		# TODO view fossil ui in terminal
-		if test $# -eq 1 && repo="$(locate -b -l 1 "fossil*.fossil")"
+		if test $# -eq 1 && repo="$(locate -l 1 "fossil*.fossil")"
 		then fossil ui --page=doc/trunk/www/permutedindex.html "$repo"
 		else shift; fossil help "$@"
 		fi;;

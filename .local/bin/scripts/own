@@ -5,5 +5,5 @@ case "$1" in
 	(+*) sudo chmod -R "$1" "${@:-.}"; shift; break;;
 	(-*) u="${1#-}"; shift; break;;
 esac
-sudo chown -R --preserve-root "$u:$u" "${@:-.}"
+sudo chown -R "$u:$u" "${@:-.}"
 #sudo chmod u+w . -R
