@@ -576,6 +576,12 @@ alias move='rc --remove-source-files'
 alias rdiff='rsync --info=name --recursive --checksum --delete --links --dry-run'
 alias rdiffe='rdiff --existing --size-only'
 
+claude() {
+	test "$PWD" = "$HOME" && cd ~/IT/claude
+	command claude "$@"
+}
+alias heinzel='cd ~/IT/claude/heinzel && command claude'
+
 # Swap the names of two files
 swap() {
 	test $# -eq 2 || exit 1

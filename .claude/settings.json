@@ -1,4 +1,5 @@
 {
+  "cleanupPeriodDays": 300,
   "permissions": {
     "allow": [
       "Read",
@@ -27,75 +28,22 @@
       "Bash(prettier *)"
     ],
     "deny": [
-      "Bash(git reset --hard *)",
       "Bash(sudo *)",
-      "Bash(rm -r *)",
-      "Bash(chmod *)",
+      "Bash(git reset --hard *)",
+      "Bash(rm -r*)",
       "Bash(chown *)",
       "Bash(dd *)",
-      "Bash(mkfs *)",
-      "Bash(fdisk *)"
+      "Bash(fdisk *)",
+      "Bash(mkfs*)"
     ],
     "defaultMode": "auto"
-  },
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/keep-awake/scripts/keep-awake.sh"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/keep-awake/scripts/keep-awake.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/keep-awake/scripts/keep-awake.sh"
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/keep-awake/scripts/pause-awake.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/keep-awake/scripts/stop-awake.sh"
-          }
-        ]
-      }
-    ]
   },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "cc-caffeine@samber": false
+    "cc-caffeine@samber": true
   },
   "extraKnownMarketplaces": {
     "samber": {
@@ -105,9 +53,8 @@
       }
     }
   },
-  "effortLevel": "high",
   "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
   "theme": "auto",
-  "skipAutoPermissionPrompt": true,
-  "model": "opus"
+  "skipAutoPermissionPrompt": true
 }
