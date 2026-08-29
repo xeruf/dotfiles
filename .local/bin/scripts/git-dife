@@ -5,4 +5,4 @@ test -e "$file" && rooted=false || rooted=true
 root="$($rooted && echo "$(git root)/")$file"
 test ! -e "$root" && echo "No such file: $file" >&2 && exit 1
 upstream="${2:-@{u}}"
-git show "$upstream:$($rooted || echo "./")$file" | dif --label "$1 $(stat "$1" --format '%y')" --label "$upstream" "$root" -
+git show "$upstream:$($rooted || echo "./")$file" | dif --label "$1 $(date -r "$1" "+%Y-%m-%d %H:%M:%S")" --label "$upstream" "$root" -

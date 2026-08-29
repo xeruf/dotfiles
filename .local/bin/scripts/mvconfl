@@ -4,6 +4,6 @@ for last; do true; done
 i=1
 while test $i -lt $#
 do file=${!i}
-   mv -iv $file $last.sync-conflict-$(stat -c %y $file | tr -d ':-' | cut -c-25 | tr ' .' '-')
+   mv -iv $file $last.sync-conflict-$(date -r "$file" "+%Y-%m-%d %H:%M:%S" | tr -d ':-' | cut -c-25 | tr ' .' '-')
    i=$((i+1))
 done

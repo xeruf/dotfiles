@@ -10,7 +10,7 @@ target="$1"
 shift
 for existing
 do test "$(realpath "$target")" != "$(realpath "$existing")" -a -f "$existing" &&
-    test "$(stat --format %s "$target")" -eq "$(stat --format %s "$existing")" &&
+    test "$(wc -c < "$target")" -eq "$(wc -c < "$existing")" &&
     diff -q "$target" "$existing" >/dev/null &&
     echo "$existing"
     #test "$(md5sum "$existing" | cut -d\  -f1)" = "$(md5sum "$filepath" | cut -d\  -f1)" &&
