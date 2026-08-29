@@ -17,10 +17,10 @@ do
 		fi
 
 		# Clean empty files
-		$elevate find "$f" -name '.thumbnails' -printf 'Pre-cleaning %p\n' -exec rm -r {} +
+		$elevate find "$f" -name '.thumbnails' -print -exec rm -r {} + | sed 's/^/Pre-cleaning /'
 		$elevate find -H "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 3) \
 			\( -name '.stfolder' -o -name '.*keep' -o -name '*.py' -o -name 'nodelay.txt' -o -name '.git' -o -name 'tmp' -o -name '.nomedia' -o -name '__init__.py' -o -name '*ignore' -o -name 'instalee' \) \
-			\( -type d -o -type f \) -prune -o -empty -printf 'Removing empty %p\n' -exec rm -d {} +
+			\( -type d -o -type f \) -prune -o -empty -print -exec rm -d {} + | sed 's/^/Removing empty /'
 		# $elevate find -H "$f" -maxdepth $(expr 1 \& "$f" = "/" \| 5 \& $# \> 0 \| 4) -type d -empty -name .stfolder -exec rm -div {} \;
 		test $# -eq 0 && exit $?
 		if test -e "$f"; then
