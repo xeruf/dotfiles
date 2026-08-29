@@ -3,4 +3,5 @@ input=$1
 file=$(mktemp)
 echo "output to $file" >&2
 ffmpeg -i "$input" "$file.wav"
+# TODO: hardcoded Linux paths (/usr/share/whisper.cpp...); make model path configurable
 /usr/bin/whisper-cli --model /usr/share/whisper.cpp-model-medium/ggml-medium.bin "${@:2}" "$file.wav" | tee "$file.txt"

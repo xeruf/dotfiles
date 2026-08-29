@@ -5,6 +5,7 @@ mailto_link="$1"
 email_address="${mailto_link#mailto:}"
 
 # Copy the extracted email address to the clipboard
+# TODO: xclip/notify-send are Linux-only; use pbcopy/osascript on macOS
 printf "$email_address" | xclip -selection clipboard
 
 # Optional: Notify the user

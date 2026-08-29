@@ -4,4 +4,5 @@ tmp=/tmp/checkdomain
 mkdir -p $tmp
 prefix="$tmp/split$(date +%s)"
 sh -c "printf '%s\n' {$(paste -s -d, domains)}.{$(paste -s -d, tlds)}" | split -l 10 - "$prefix"
+# TODO: xdg-open is Linux-only; use open on macOS
 find "$tmp" -path "$prefix*" -exec sh -c 'xdg-open "https://www.checkdomain.net/en/domains/search/?domain=$(paste -s -d, {})"' \;

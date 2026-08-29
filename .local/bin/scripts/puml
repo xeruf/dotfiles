@@ -1,2 +1,3 @@
 #!/bin/sh
+# TODO: entr not installed (brew install entr)
 find . -maxdepth 2 -name '*.puml' -o -name '*.plantuml' | entr -r plantuml /_

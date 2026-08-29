@@ -1,5 +1,6 @@
 #!/bin/sh
 # Transforms org to markdown using a simplified regex
+# TODO: sed \w and T are GNU extensions; BSD sed treats them as literals
 sed ':o; s/_\(\w[^_]*\w\)_/\/\1\//g;
       /^#\+ /{
         s/^#/*/; To;

@@ -21,5 +21,6 @@ fi
 else
   f="/tmp/browser.$RANDOM.html"
   cat /dev/stdin > $f
+# TODO: xdg-open is Linux-only; use open on macOS
   xdg-open $f
 fi

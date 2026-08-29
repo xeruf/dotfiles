@@ -9,6 +9,7 @@ param=$(echo "$hash" | cut -d\$ -f3)
 # Check if hash contains parameters
 if test $(echo "$hash" | tr -cd \$ | wc -c) -gt 3
 then salt=$(echo "$hash" | cut -d\$ -f4)
+# TODO: mkpasswd comes from the whois package, not stock macOS
     salted_hash=$(mkpasswd -m sha-512 --"$param" --salt="$salt" "$password")
 else salted_hash=$(mkpasswd -m sha-512 --salt="$param" "$password")
 fi

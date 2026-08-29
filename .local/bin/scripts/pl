@@ -2,6 +2,7 @@
 # Playlist management
 # optdepends: highlight python
 # env: MUSIC
+# TODO: realpath --relative-to, sed -i '' (BSD), python2 are not portable
 test $# -gt 0 && command=$1 && shift
 test "$1" = '-v' && verbose='true' && shift || verbose='false'
 ! test -d "$MUSIC" && echo "No music directory!" && exit 1

@@ -1,6 +1,7 @@
 #!/bin/sh -e
 # Lossy image compression using ImageMagick
 # Eliminates artifacts and metadata
+# TODO: stat --format and numfmt are GNU coreutils (not stock macOS)
 while true
 	do case $1 in
 		(-h|--help|"") echo "Usage: $0 [-q quality (default 85)] [-o outfile] [xRES] <images...>" && exit 2;;

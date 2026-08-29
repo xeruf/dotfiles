@@ -1,3 +1,4 @@
 #!/bin/sh
 # To test args passed from some graphical program
+# TODO: notify-send is Linux-only; use osascript "display notification" on macOS
 notify-send "$(arg-test "$@")"

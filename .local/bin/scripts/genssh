@@ -12,5 +12,6 @@ test -f "$keys/$name.pub" || ssh-keygen -t ${2:-ed25519} -b 4096 -f "$keys/$name
 cat "$keys/$name.pub"
 if test "$OSTYPE" = "cygwin"
 then cat "$keys/$name.pub">/dev/clipboard
+# TODO: xclip is Linux-only; use pbcopy on macOS
 else xclip -sel clip 2>/dev/null <"$keys/$name.pub"
 fi && echo "SSH Public key copied to clipboard" >&2 || true

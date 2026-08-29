@@ -2,6 +2,7 @@
 # plantuml from xclip selection clipboard
 file="/tmp/plantuml-xclip-$(date +%s).plantuml"
 echo "@startuml" >$file
+# TODO: xclip is Linux-only; use pbpaste on macOS
 xclip -o >>$file
 echo -e "\n@enduml" >>$file
 plantuml $file
