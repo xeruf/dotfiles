@@ -8,7 +8,7 @@ case $# in
     (1) dir=$(basename ${remote%.git});;
     (3) # TODO recognize shared prefix
         test "$3" != "$(git config --get user.name)" &&
-        prefix=$(echo "$3" | sed "s|\(.\)\b.*$|\1|") &&
+        prefix=$(echo "$3" | cut -c1) &&
         case "$2" in
             ("$prefix"*) ;;
             ("$(git config --get user.name)") ;;

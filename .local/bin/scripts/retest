@@ -9,5 +9,5 @@ gradle=$(test -x "./gradlew"; expr gradle \& $? \| ./gradlew)
 
 ( exit $code )
 while test $? -eq $code
-do $gradle ${prefix}clean$(echo $task | sed -e 's/^./\U&/') ${prefix}$task "${@:3}"
+do $gradle ${prefix}clean$(echo "$task" | cut -c1 | tr '[:lower:]' '[:upper:]')${task#?} ${prefix}$task "${@:3}"
 done
