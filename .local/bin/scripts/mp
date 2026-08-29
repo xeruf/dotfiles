@@ -26,11 +26,11 @@ then shift
 				-name "$matchname*" -exec realpath {} +; } 2>/dev/null)"
 		test -n "$verbose" && echo "Scanning path '$filepath' $(
 			test "$arg" != "$filepath" && echo "from '$arg' ")(MUSIC: '$MUSIC', PWD: '$PWD')" >&2
-		test $(printf "$filepath" | wc -l) -gt 0 && printf "$filepath" | xargs --delim='\n' "$0" -r $verbose && continue
+		test $(printf "$filepath" | wc -l) -gt 0 && printf "$filepath" | tr '\n' '\0' | xargs -0 "$0" -r $verbose && continue
 		test -n "$filepath" || continue
 		if { file -- "$filepath" | grep -i ' playlist' || expr "$filepath" : ".*\.m3u8\?$"; } >/dev/null
 		then pushd "$(dirname "$filepath")" >/dev/null &&
-			cat "$filepath" | sed '/#.*/D' | xargs --delim='\n' "$0" -r $verbose &&
+			cat "$filepath" | sed '/#.*/D' | tr '\n' '\0' | xargs -0 "$0" -r $verbose &&
 			popd >/dev/null
 		else
 			test -n "$verbose" &&
@@ -51,7 +51,7 @@ else
 	test -n "$(mpc playlist)" -a "$(mpc status | wc -l)" -gt 1 && next=-q
 	test "$1" = "--seek" && seek=-q && shift
 	( "$0" -r "$@" && mpc -q update --wait ) | #tee /tmp/mp 2>&1
-		xargs --delim='\n' mpc insert
+		tr '\n' '\0' | xargs -0 mpc insert
 	mpc ${quiet:-${next:-$seek}} play
 	test -z "$next" || mpc ${quiet:-$seek} next
 	test -z "$seek" || mpc $quiet seek "30%"

@@ -1,8 +1,8 @@
 #!/bin/sh -e
 # Move roam files into subfolders
 cd $DATA/2-standards/box
-find . -mindepth 1 -type d -printf '%f\n' |
+find . -mindepth 1 -type d -exec basename {} \; |
   while read dir; do
     grep -l --directories=skip "#+filetags: :$dir" * |
-      xargs --verbose --no-run-if-empty mv -t "$dir"
+      xargs --no-run-if-empty -I{} mv -v {} "$dir"
   done

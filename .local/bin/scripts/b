@@ -11,6 +11,7 @@
 #   video thumbnails via mtn, pdf pages from pdftoppm
 # - text files are displayed through bat
 # Usually automatically requests elevation through sudo when needed
+# TODO: macOS-incompatible: stat --format and numfmt are GNU coreutils (gstat/gfmt); fdisk -l is Linux-only
 
 set -o pipefail
 
@@ -104,7 +105,7 @@ for arg; do
 		then echo Converting "$arg"
 			 pdftoppm -forcenum -r 70 "$arg" "$tmpfile" -l $limit
 		fi
-		find "$prefix" -path "$tmpfile*.ppm" | sort | head -$limit | xargs -d'\n' timg -W --grid=$grid
+		find "$prefix" -path "$tmpfile*.ppm" | sort | head -$limit | tr '\n' '\0' | xargs -0 timg -W --grid=$grid
 		;;
 	(*\ application/*document*|*.xlsx:\ *)
 		# https://ask.libreoffice.org/t/convert-to-command-line-parameter/840/4

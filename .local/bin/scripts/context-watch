@@ -1,2 +1,2 @@
 #!/bin/sh
-find -name "*.mkiv" | xargs -i% sh -c 'echo % | entr context --luatex %'
+find . -name "*.mkiv" | xargs -I{} sh -c 'echo {} | entr context --luatex {}'
