@@ -1,3 +1,4 @@
 #!/bin/sh
 # Pipe a command into this and each output line will rewrite the previous one
-sed --unbuffered '2,$s|^|\\e[1A\\e[K|' | cut -c-$(tput cols) | xargs -d '\n' -L 1 echo -e
+# Old GNU-only version: sed --unbuffered '2,$s|^|\\e[1A\\e[K|' | cut -c-$(tput cols) | xargs -d '\n' -L 1 echo -e
+sed '2,$s|^|\\033[1A\\033[K|' | cut -c-$(tput cols) | while IFS= read -r l; do printf '%b\n' "$l"; done

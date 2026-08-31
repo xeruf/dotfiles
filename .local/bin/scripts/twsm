@@ -1,4 +1,5 @@
 #!/bin/sh
 # Timewarrior summary of the last n weeks
-timew summary $(date --date="Monday $1 week ago" -I) to tomorrow :ids ${@:2} |
+# GNU date -d with BSD date -v fallback (no common flag exists for either alone)
+timew summary $(date -d "Monday $1 week ago" -I 2>/dev/null || date -v-Mon -v-$1w +%F) to tomorrow :ids ${@:2} |
   less --quit-if-one-screen
