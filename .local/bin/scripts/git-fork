@@ -1,18 +1,22 @@
-#!/bin/bash -ex
-# Clones a fork and sets a corresponding upstream
-# ARGS
-# - repo name (omit if setting upstream in existing repo)
-# - upstream user
-# - own user
-# - host
-# - target directory name (and further arguments to clone)
-# In an existing repo, first arg is omitted
-# TODO: transform https://codeberg.org/forgejo-contrib/forgejo-helm -> forgejo-helm forgejo-contrib "" codeberg.org
-if test -d ".git" # TODO search upwards
-then repo="$(basename "$PWD")"
-	git remote set-url origin "$(git-url "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}" "${@:4}")"
+#!/bin/bash -e
+# Clone a fork and set a matching upstream, or (inside a repo) just reset the remotes.
+usage() {
+	cat >&2 <<-EOF
+	Usage: $(basename "$0") <repo|url> [upstream user] [own user] [host] [target dir / clone args...]
+	  <repo|url> may be a full URL, e.g. https://codeberg.org/forgejo-contrib/forgejo-helm
+	  inside a repo: omit <repo>; trailing arg then overrides the repo name (default: repo dir name)
+	EOF
+}
+case "${1:-}" in (""|-h|--help) usage; exit 2;; esac
+if root="$(git rev-parse --show-toplevel 2>/dev/null)" # search upwards for the repo
+then repo="${4:-$(basename "$root")}"
+	git remote set-url origin "$(git-url "${3:-github.com}" "$repo" "${2:-$(git config --get user.name)}")"
 	git remote remove upstream 2>/dev/null || true
-else test $# -eq 0 && echo "Usage: $0 <repo (omit if in repo)> <upstream owner> [own user] [host]" && exit 2
+else case "$1" in
+	(http*://*/*/*) # https://host/user/repo -> repo user "" host
+		rest="${1%.git}" && rest="${rest#*://}" && path="${rest#*/}"
+		set -- "${path##*/}" "${path%%/*}" "" "${rest%%/*}" "${@:2}";;
+	esac
 	repo="$1" && shift
 	if test $# -eq 0
 	then

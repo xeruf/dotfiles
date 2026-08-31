@@ -1,6 +1,6 @@
 #!/bin/sh
-# nsxiv key-handler: pressed key in $1, target files on stdin (one per
-# line) — the marked set, or the current file if nothing is marked.
+# nsxiv key-handler: pressed key in $1, target files on stdin (one per line) —
+# the marked set, or the current file if nothing is marked.
 # Trigger with Ctrl-x then the key below.
 
 case "$1" in

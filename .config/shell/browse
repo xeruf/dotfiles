@@ -122,15 +122,17 @@ locate-zox() {
 	esac | awk '!seen[$0]++'
 }
 
-# Combine zoxide results with secondary filesystem matches.
+# Combine zoxide results with secondary filesystem matches, deduped by path
+# (zoxide entries come first, so a real score wins over locate's placeholder 0).
 directory-candidates() {
 	local query
 	query="$(zoxide-list "$@" 2>/dev/null)"
-	test -n "$query" && printf '%s\n' "$query"
-	locate-zox "$@"
+	{ test -n "$query" && printf '%s\n' "$query"; locate-zox "$@"; } |
+		awk '{path=$0; sub(/^[[:space:]]*[^[:space:]]+[[:space:]]+/, "", path)} !seen[path]++'
 }
 
-# Pick a directory interactively from scored candidates.
+# Pick a directory from scored candidates; fzf's -1 (in fzf-dir) auto-selects
+# when there's only one match, so this only prompts when there's real ambiguity.
 zoxide-fzf() {
 	fzf-dir -n2.. --preview="$__zx_ls {2..}" "$@" | zoxide-strip-score
 }

@@ -247,7 +247,7 @@ increment_day() {
 invoicedomain() {
   (
   set -eo pipefail
-  local domain=$1
+  local domain="$(echo "$1" | tr 'A-Z' 'a-z')"
   shift
   test -n "$domain" || return 1
 
