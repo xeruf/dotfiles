@@ -1,0 +1,14 @@
+# Globs (one per line) of packages aur-rebuild should skip.
+# Prebuilt binaries that checkrebuild flags on every upgrade —
+# rebuilding just re-downloads the same tarball; they need an
+# upstream version bump, not a rebuild.
+*-bin
+rubymine
+rustrover
+zoom
+intellij-idea-ultimate-edition
+
+# Prefab SDKs/toolchains shipping their own vendored libs.
+android-sdk-build-tools
+dotnet-runtime-7.0
+intel-oneapi-compiler-shared-opencl-cpu

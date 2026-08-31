@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# aur-rebuild — find/rebuild packages whose libraries or interpreter
+# paths broke after a repo update (soname bump, python/perl/ruby bump).
+# Needs: rebuild-detector (checkrebuild), yay.
+#
+#   aur-rebuild        what the LAST pacman transaction broke
+#   aur-rebuild -a     full scan (whole backlog; slow, ~2min)
+#   aur-rebuild -v     also show why (missing libs / stale paths)
+#   aur-rebuild -y     rebuild what was listed (combines: -ay, -av …)
+#
+# Skips packages listed in ~/.config/aur-rebuild-ignore (one glob per
+# line, '#' comments) — for prebuilt binaries flagged forever.
+#
+# Also drops packages whose files under the stale interpreter dir are
+# only build metadata (.packlist, perllocal.pod, bare dirs): checkrebuild
+# flags a package for owning ANY file under an old python/perl/ruby dir,
+# which misfires on packages installing their modules elsewhere.
+set -euo pipefail
+
+all=0 rebuild=0 verbose=0
+while getopts "avyh" o; do
+	case $o in
+	a) all=1 ;;
+	v) verbose=1 ;;
+	y) rebuild=1 ;;
+	h) sed -n '2,17p' "$0" | sed 's/^# \?//'; exit 0 ;;
+	*) exit 1 ;;
+	esac
+done
+
+command -v checkrebuild >/dev/null || {
+	echo "install rebuild-detector first" >&2; exit 1; }
+
+# Packages touched by the most recent pacman transaction. checkrebuild
+# expands these to their reverse deps (pactree -rud1) when fed on stdin,
+# so a bumped ffmpeg still surfaces every consumer that broke with it.
+last_transaction() {
+	awk '/\[ALPM\] transaction started/ { delete p; n=0 }
+	     /\[ALPM\] (upgraded|installed|reinstalled) / { p[n++] = $4 }
+	     END { for (i = 0; i < n; i++) print p[i] }' /var/log/pacman.log
+}
+
+log=$(mktemp); trap 'rm -f "$log"' EXIT
+if ((all)); then
+	checkrebuild -v >"$log"
+elif [[ ! -t 0 ]]; then
+	# Targets on stdin — how the pacman hook (NeedsTargets) invokes us.
+	checkrebuild -v >"$log"
+else
+	last_transaction | checkrebuild -v >"$log"
+fi
+
+# checkrebuild -v prints the package table, then a blank line, then the
+# per-file reasons ("ldd <path>" blocks and "<dir> is owned by <pkg>").
+mapfile -t found < <(awk 'NF == 0 { exit } { print $NF }' "$log")
+reasons=$(awk 'blank { print } NF == 0 { blank = 1 }' "$log")
+
+declare -a ignore=()
+# AUR_REBUILD_IGNORE lets the pacman hook, which runs as root with
+# HOME=/root, point at the real user's ignore list.
+ignore_file="${AUR_REBUILD_IGNORE:-${XDG_CONFIG_HOME:-$HOME/.config}/aur-rebuild-ignore}"
+[[ -f $ignore_file ]] && mapfile -t ignore < <(grep -vE '^\s*(#|$)' "$ignore_file")
+
+# A package flagged only for stale-interpreter paths is a false positive
+# if it ships no real files under those dirs. A missing .so is never
+# filtered — those reason lines carry no package name, so a package with
+# any ldd breakage keeps at least one unmatched reason and stays listed.
+metadata_only() {
+	local pkg=$1 dir files real=0
+	local -a dirs
+	mapfile -t dirs < <(grep -F " is owned by $pkg " <<<"$reasons" |
+		sed 's/ is owned by .*//')
+	((${#dirs[@]})) || return 1  # not an interpreter hit; keep it
+	# No `grep -q` here: it exits on the first match and SIGPIPEs the
+	# upstream pacman, which under `pipefail` reads as "no real files"
+	# and would silently drop a package that genuinely needs rebuilding.
+	for dir in "${dirs[@]}"; do
+		files=$(pacman -Qlq "$pkg" | grep -F "$dir" |
+			grep -vE '/$|\.packlist$|perllocal\.pod$') || true
+		[[ -n $files ]] && real=1
+	done
+	((real == 0))
+}
+
+pkgs=()
+for p in "${found[@]}"; do
+	for g in "${ignore[@]}"; do [[ $p == $g ]] && continue 2; done
+	metadata_only "$p" && continue
+	pkgs+=("$p")
+done
+
+((${#pkgs[@]})) || { echo "Nothing to rebuild."; exit 0; }
+
+((verbose)) && printf '%s\n' "$reasons"
+
+# Split into what you installed on purpose, pulled-in dependencies, and
+# dependencies nothing needs any more. A broken dep breaks the app on top
+# of it, so deps are still rebuilt — but naming the affected apps says
+# more than the dep's own name does.
+# Membership via associative arrays, not `… | grep -q`: grep exits on
+# the first match and SIGPIPEs the writer, which `pipefail` reports as
+# failure — turning a hit into a miss for whichever names happen to sit
+# early in the list.
+declare -A is_explicit=() is_orphan=()
+while read -r p; do is_explicit["$p"]=1; done < <(pacman -Qqe)
+while read -r p; do is_orphan["$p"]=1; done < <(pacman -Qdtq)
+
+apps=() deps=() dead=()
+for p in "${pkgs[@]}"; do
+	if [[ ${is_explicit[$p]:-} ]]; then apps+=("$p")
+	elif [[ ${is_orphan[$p]:-} ]]; then dead+=("$p")
+	else deps+=("$p")
+	fi
+done
+
+# Explicitly-installed packages that pull in a broken dep — what will
+# actually misbehave, even though the dep is the thing to rebuild.
+affected=()
+for p in "${deps[@]}"; do
+	while read -r r; do
+		[[ $r == "$p" ]] && continue
+		[[ ${is_explicit[$r]:-} ]] && affected+=("$r")
+	done < <(pactree -ru "$p" 2>/dev/null)
+done
+mapfile -t affected < <(printf '%s\n' "${affected[@]}" | sort -u | awk 'NF')
+
+join() { (IFS=,; echo "${*}" | sed 's/,/, /g'); }
+
+if ((rebuild)); then
+	# Mark install reasons at install time, not afterwards: pacman -S
+	# marks everything explicit, and a post-hoc `pacman -D --asdeps`
+	# leaves dependencies wrongly marked explicit if the run is
+	# interrupted. Two passes, each already correct on its own.
+	y=(yay -S --rebuild --answerclean None --answerdiff None)
+	((${#apps[@]})) && "${y[@]}" "${apps[@]}"
+	((${#deps[@]})) && "${y[@]}" --asdeps "${deps[@]}"
+	((${#dead[@]})) && printf 'Skipped %d orphaned dep(s): %s\n' \
+		"${#dead[@]}" "$(join "${dead[@]}")"
+	exit 0
+fi
+
+((${#apps[@]})) && printf '%d apps: %s\n' "${#apps[@]}" "$(join "${apps[@]}")"
+((${#deps[@]})) && printf '%d deps (%s): %s\n' "${#deps[@]}" \
+	"$( ((${#affected[@]})) && join "${affected[@]}" || echo 'no explicit consumer' )" \
+	"$(join "${deps[@]}")"
+((${#dead[@]})) && printf '%d orphaned, consider removing: %s\n' \
+	"${#dead[@]}" "$(join "${dead[@]}")"
+exit 0

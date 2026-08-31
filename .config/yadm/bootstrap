@@ -121,6 +121,9 @@ if test -f /etc/pacman.conf; then
 		sudo systemctl start reflector &
 		sudo systemctl enable reflector.timer
 	fi
+
+	subhighlight "Deactivate rebuild-detector hook (90-aur-rebuild replaces it)"
+	sudo ln -sfn /dev/null /etc/pacman.d/hooks/rebuild-detector.hook
 fi
 
 SECTION 'Linux Services'
