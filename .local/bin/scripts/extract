@@ -34,7 +34,7 @@ case $arg in
 			(*.tbz2)        tar xjf "$fullpath"   ;;
 			(*.tgz)         tar xzf "$fullpath"   ;;
 			(*.7z) 7z$(which 7z >/dev/null || echo r) x $param "$fullpath";;
-			(*.z01|*.zip|*.jar)
+			(*.z01|*.zip|*.jar|*.epub)
 				if which 7z >/dev/null
 				then 7z x $param "$fullpath"
 				else unzip "$fullpath" | rewrite

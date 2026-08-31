@@ -134,6 +134,7 @@ alias hist='print -z $(history | grep -v -e "killm " -e "netkeeper " | tac | fzf
 alias es='edit-shell'
 alias ec='edit-config'
 alias eb='edit-bin'
+alias ex='extract'
 
 CONFIG_SHELL_FUNCTIONS="${BASH_SOURCE[0]:-${(%):-%x}}"
 # Fuzzy find and edit shell config files
