@@ -176,6 +176,25 @@ Version 2019-11-04 2021-02-16"
     (setq buffer-file-coding-system 'utf-8)
   (setq default-buffer-file-coding-system 'utf-8))
 
+;;;; Clipboard
+
+;; GUI Emacs talks to the system clipboard on its own; a terminal frame can't.
+;; `xclip' bridges the kill ring to whatever clipboard tool is present
+;; (wl-clipboard, xclip/xsel, pbcopy, termux-clipboard), bidirectionally.
+;; Doom's `:os tty' module would wire this up, but it's disabled in init.el
+;; (it also drags in kkp, which breaks the terminal), so enable just this piece.
+;; Not using `:os (tty +osc)'/clipetty: OSC-52 is copy-only, and its remote
+;; reach (SSH, tmux) is moot here where every emacsclient is local -- servers
+;; can run their own config.
+(use-package! xclip
+  :hook (tty-setup . xclip-mode)
+  :init
+  ;; On Wayland force wl-copy/wl-paste: xclip.el otherwise prefers the `xclip'
+  ;; binary (over XWayland) whenever it is installed, which loses primary
+  ;; selection and syncs unreliably.
+  (when (getenv "WAYLAND_DISPLAY")
+    (setq xclip-method 'wl-copy)))
+
 ;;;; Data Preservation
 
 ;; Undo
@@ -890,6 +909,8 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
           (call-process "xdg-open" nil 0 nil file)
         (find-file file)))
     )
+
+  ;; not needed, use l instead
   ;; (defun my/dired-find-file-external-for-videos ()
   ;;   "In dired, open video files externally with xdg-open, others normally."
   ;;   (interactive)
@@ -897,7 +918,6 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   ;;     (if (string-match-p (regexp-opt '("mp4" "mkv" "avi" "mov" "webm") t) file)
   ;;         (start-process "" nil "xdg-open" file)
   ;;       (dired-find-file))))
-  ;; 
   ;; (with-eval-after-load 'dired
   ;;   (define-key dired-mode-map (kbd "RET") #'my/dired-find-file-external-for-videos))
 
@@ -954,9 +974,17 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
         image-dired-show-all-from-dir-max-files 300)
   :config
   ;; TODO map image-dired-delete-marked
-  (add-to-list 'image-dired-cmd-create-thumbnail-options "-auto-orient")
-  (add-to-list 'image-dired-cmd-create-temp-image-options "-auto-orient")
-  (add-to-list 'image-dired-cmd-create-standard-thumbnail-options "-auto-orient")
+  ;; Insert -auto-orient right after the "%f[0]" input arg: before -strip
+  ;; (which drops the EXIF orientation tag) and, with GraphicsMagick, after
+  ;; the leading "convert" subcommand -- add-to-list would prepend it and
+  ;; break `gm'. Anchored on the element, not an index, so it works with or
+  ;; without the gm prefix; the member guard keeps it idempotent.
+  (dolist (var '(image-dired-cmd-create-thumbnail-options
+                 image-dired-cmd-create-temp-image-options
+                 image-dired-cmd-create-standard-thumbnail-options))
+    (let ((tail (member "%f[0]" (symbol-value var))))
+      (when (and tail (not (member "-auto-orient" (symbol-value var))))
+        (setcdr tail (cons "-auto-orient" (cdr tail))))))
   )
 (use-package! diredfl
   :config (add-to-list 'diredfl-compressed-extensions ".nupkg")
@@ -1298,7 +1326,7 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
   (setq mu4e-headers-fields
         '((:mailing-list   . 5)
           (:flags          . 6)
-          (:maildir        . 11)
+          (:maildir        . 12)
           (:account-stripe . 2)
           (:date           . 9)
           (:from-or-to     . 22)

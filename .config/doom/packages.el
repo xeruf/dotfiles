@@ -68,6 +68,11 @@
 ;;(setq straight-host-usernames `((github . ,(my-load-or-cache-git-username))))
 
 
+;;; Terminal
+;; System-clipboard interop for TTY Emacs. Normally provided by the `:os tty'
+;; module, which is disabled in init.el; declare it here so `doom sync' keeps it.
+(package! xclip)
+
 ;;; Multimedia & Integration
 ;;(package! emms)
 ;;(package! exiftool)
