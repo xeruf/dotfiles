@@ -270,12 +270,11 @@ invoicedomain() {
     (de) price='7,85';;
     (eu|com.de) price='13,85';; # from 5€
     (name|org|com|at|ch|us|*.uk) price='19,85';; # from 8€
-    (me|nl|nexus|net|it|cc|biz) price='28,82';; # from 13€
-    (blog|info|email) price='48,84';; # from 22€
-    (tv|space|house|group|social|life) price='58,85';; # from 30€
-    (online|digital) price='68,86';; # from 36€
-    (gmbh) price='78,87';; # from 42€
-    (codes|coach|ec|eco) price='98,89';; # from 60€
+    (me|nl|nexus|net|it|cc|biz) price='29,82';; # 13-21€
+    (info|email) price='48,84';; # 24-27€
+    (blog|tv|space|house|group|social|life|digital) price='58,85';; # from 29€
+    (gmbh|online) price='78,87';; # from 40€
+    (codes|coach|ec|eco) price='98,89';; # 60-85€
   esac
 
   echo "$price;.$suffix-Domain;$domain (${date_billed:-${date_created_de:-$(date '+%d.%m.%Y')}} - ${date_fut});$years;0"
