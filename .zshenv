@@ -7,7 +7,8 @@ export_existing() {
 }
 export_existing DATA $HOME/data $HOME/IT/data
 export_existing NEXTCLOUD $DATA/nextcloud $HOME/Nextcloud
-export MUSIC="$DATA/4-media/music"
+export_existing CLAUDE_HOME $HOME/IT/claude $DATA/1-projects/claude
+export MUSIC="$DATA/media/music"
 
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"

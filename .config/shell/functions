@@ -578,10 +578,10 @@ alias rdiff='rsync --info=name --recursive --checksum --delete --links --dry-run
 alias rdiffe='rdiff --existing --size-only'
 
 claude() {
-	test "$PWD" = "$HOME" && cd ~/IT/claude
+	test "$PWD" = "$HOME" && cd "$CLAUDE_HOME"
 	command claude "$@"
 }
-alias heinzel='cd ~/IT/claude/heinzel && command claude'
+alias heinzel="cd $CLAUDE_HOME/heinzel && command claude"
 
 # Swap the names of two files
 swap() {

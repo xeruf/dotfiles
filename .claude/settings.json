@@ -43,18 +43,19 @@
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "cc-caffeine@samber": true
+    "keep-awake@claude-community": true
   },
   "extraKnownMarketplaces": {
-    "samber": {
+    "claude-community": {
       "source": {
         "source": "github",
-        "repo": "samber/cc"
+        "repo": "anthropics/claude-plugins-community"
       }
     }
   },
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
   "theme": "auto",
+  "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
