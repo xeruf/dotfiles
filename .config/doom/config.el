@@ -186,14 +186,17 @@ Version 2019-11-04 2021-02-16"
 ;; Not using `:os (tty +osc)'/clipetty: OSC-52 is copy-only, and its remote
 ;; reach (SSH, tmux) is moot here where every emacsclient is local -- servers
 ;; can run their own config.
-(use-package! xclip
-  :hook (tty-setup . xclip-mode)
-  :init
-  ;; On Wayland force wl-copy/wl-paste: xclip.el otherwise prefers the `xclip'
-  ;; binary (over XWayland) whenever it is installed, which loses primary
-  ;; selection and syncs unreliably.
-  (when (getenv "WAYLAND_DISPLAY")
-    (setq xclip-method 'wl-copy)))
+(add-hook! 'tty-setup-hook
+  (defun +tty-init-clipboard-h ()
+    ;; On Wayland force wl-copy/wl-paste: xclip.el otherwise prefers the `xclip'
+    ;; binary (over XWayland) whenever it is installed, which loses primary
+    ;; selection and syncs unreliably.
+    (when (getenv "WAYLAND_DISPLAY")
+      (setq xclip-method 'wl-copy))
+    ;; Guarded so a missing package (e.g. before `doom sync') can't abort TTY
+    ;; frame creation.
+    (and (require 'xclip nil t)
+         (with-demoted-errors "xclip: %s" (xclip-mode +1)))))
 
 ;;;; Data Preservation
 
