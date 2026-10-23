@@ -1,0 +1,19 @@
+#!/bin/sh -e
+# Merge the shared IgnoreList into every Resilio Sync folder below the given dirs (default: $DATA)
+# Idempotent: replaces the block between the markers on each run
+src="${XDG_CONFIG_HOME:-$HOME/.config}/rslsync/IgnoreList"
+begin='# >>> rslsync-ignore'
+end='# <<< rslsync-ignore'
+test $# -gt 0 || set -- "${DATA:-$HOME/data}"
+find "$@" -maxdepth 4 -path '*/.sync/IgnoreList' -not -path '*/node_modules/*' 2>/dev/null |
+	while read -r list; do
+		tmp="$list.tmp"
+		awk -v b="$begin" -v e="$end" '$0==b{skip=1} !skip{print} $0==e{skip=0}' "$list" >"$tmp"
+		# stock IgnoreList lacks a trailing newline
+		test -z "$(tail -c1 "$tmp")" || echo >>"$tmp"
+		{ echo "$begin"; cat "$src"; echo "$end"; } >>"$tmp"
+		if cmp -s "$list" "$tmp"
+		then rm "$tmp"
+		else mv "$tmp" "$list" && echo "Updated $list"
+		fi
+	done

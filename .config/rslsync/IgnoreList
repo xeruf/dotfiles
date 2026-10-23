@@ -1,0 +1,13 @@
+# Appended to every Resilio Sync folder's .sync/IgnoreList by rslsync-ignore
+# Git transient files #
+FETCH_HEAD
+.gitstatus.*
+index.lock
+HEAD.lock
+packed-refs.lock
+config.lock
+shallow.lock
+gc.pid
+tmp_pack_*
+tmp_idx_*
+tmp_obj_*

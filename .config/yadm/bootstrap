@@ -77,6 +77,9 @@ subhighlight "Claude Code keep-awake (sleep prevention; wired via settings.json 
 test -d "$HOME/.claude/keep-awake" ||
 	git clone --depth=1 https://github.com/AxGord/claude-keep-awake.git "$HOME/.claude/keep-awake"
 
+subhighlight "Resilio Sync IgnoreList (rerun after adding a sync folder)"
+$HOME/.local/bin/scripts/rslsync-ignore
+
 case $(uname) in (Darwin) exit 0;; esac
 # LINUX SPECIFIC
 
