@@ -16,6 +16,14 @@
   at 5h ≥ 80% or 7d ≥ 90%, hold the launch and wake after `resets_at`.
   When 5h ≥ 50%, launch agents sequentially one at a time rather than in waves.
 
+# files
+- Never store results meant for me in /tmp or the scratchpad; put them in a local folder,
+  e.g. a sibling of the project directory.
+- Put intermediates in the project's local build folder (e.g. `build/`, `target/`, `dist/`) if one exists;
+  fall back to the scratchpad only otherwise.
+
 # tools
+- `sudo` and `rm -r` are deliberately blocked. Never attempt them, not even a probe;
+  hand me the complete command to run myself.
 - **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
 When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.

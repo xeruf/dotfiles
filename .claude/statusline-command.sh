@@ -38,17 +38,24 @@ ahead=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" rev-list --count '@{u}..HEAD' 2>/dev/
 dirty=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
 worktrees=$(GIT_OPTIONAL_LOCKS=0 git -C "$cwd" worktree list --porcelain 2>/dev/null | grep -c '^worktree ')
 
-# bar <percent> [label]: 5-cell bar, green <60, yellow <85, red above; label defaults to the percent
+# bar <percent> [label]: 5-cell bar in eighth-blocks (2.5% steps) on a grey track, green <60, yellow <85, red above; label defaults to the percent
+# why: the track is a background colour, not ░, so a partial cell has no gap before the empty cells
 bar() {
   p=${1%.*}
   if [ "$p" -ge 85 ]; then c=31; elif [ "$p" -ge 60 ]; then c=33; else c=32; fi
-  filled=$(( (p + 10) / 20 ))
+  eighths=$(( (p * 40 + 50) / 100 ))
   s=""; i=0
   while [ $i -lt 5 ]; do
-    if [ $i -lt $filled ]; then s="${s}▰"; else s="${s}▱"; fi
+    cell=$(( eighths - i * 8 ))
+    if [ $cell -ge 8 ]; then s="${s}█"
+    elif [ $cell -le 0 ]; then s="${s} "
+    else
+      case $cell in 1) g=▏;; 2) g=▎;; 3) g=▍;; 4) g=▌;; 5) g=▋;; 6) g=▊;; 7) g=▉;; esac
+      s="${s}${g}"
+    fi
     i=$((i + 1))
   done
-  printf "\033[%sm%s %s\033[00m" "$c" "$s" "${2:-$p%}"
+  printf "\033[%s;100m%s\033[49m %s\033[00m" "$c" "$s" "${2:-$p%}"
 }
 
 # tokens <count>: 76k / 1M
@@ -62,10 +69,12 @@ span() {
   else printf "%dm" $(($1 / 60)); fi
 }
 
-# human <seconds>: rounded duration — minutes under 100m, then hours, then days above 40h
+# human <seconds>: rounded duration — seconds under 100s, minutes under 100m, then hours, then days above 40h
 human() {
   s=$1
-  if [ "$s" -lt 6000 ]; then
+  if [ "$s" -lt 100 ]; then
+    printf "%ds" "$s"
+  elif [ "$s" -lt 5970 ]; then
     printf "%dm" $(( (s + 30) / 60 ))
   elif [ "$s" -lt 144000 ]; then
     printf "%dh" $(( (s + 1800) / 3600 ))
