@@ -1406,10 +1406,11 @@ This is 0.3 red + 0.59 green + 0.11 blue and always between 0 and 255."
        (list :maildir (concat r "/INBOX")    :key ?i)
        (list :maildir (concat r "/Archive")  :key ?a)
        (list :maildir (concat r "/Trash")    :key ?t)
-       (list :maildir "/Spam"                :key ?s :hide-unread t)
        (list :maildir (concat r "/Resources"):key ?r)
-       (list :maildir (concat r "/Drafts")   :key ?d :hide-unread t)
+       (list :maildir (concat r "/Drafts")   :key ?d)
        (list :maildir (concat r "/Sent")     :key ?S :hide-unread t)
+       (list :maildir (concat r "/Notes")    :key ?n)
+       (list :maildir "/Spam"                :key ?s :hide-unread t)
        )))
 
 
