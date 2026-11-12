@@ -47,6 +47,7 @@ export WINEPREFIX="$XDG_DATA_HOME"/wine
 export VIBE_HOME="$XDG_CONFIG_HOME/vibe"
 export CODEX_HOME="$XDG_CONFIG_HOME/codex"
 
+export DOCKER_CONFIG="$XDG_STATE_HOME"/docker
 export ABRA_DIR="$XDG_DATA_HOME"/abra
 export KREW_ROOT="$XDG_DATA_HOME"/krew
 export GOPATH="$XDG_STATE_HOME"/go
@@ -80,7 +81,10 @@ export FVM_CACHE_PATH="$XDG_DATA_HOME"/fvm
 # reads userRoot — only Linux's FileSystemPreferences does. Setting it on a Mac creates
 # nothing and prints "Picked up _JAVA_OPTIONS" ahead of every JVM's own output.
 [[ $OSTYPE == darwin* ]] || export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
+# brew-wrapped java tools (epubcheck, pdftk, gradle) default to opt/openjdk, the newest JDK
+#export JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 export GRADLE_USER_HOME="$XDG_STATE_HOME"/gradle
+export KONAN_DATA_DIR="$XDG_CACHE_HOME"/konan
 export ANDROID_PREFS_ROOT="$XDG_CONFIG_HOME"/android
 export ANDROID_EMULATOR_HOME="$XDG_STATE_HOME"/android/emulator
 # one SDK per machine, first that exists wins — mac (Android Studio) then linux
@@ -136,6 +140,7 @@ export LS_COLORS=''
 export DISABLE_LS_COLORS=true # prevents override by oh my zsh
 
 export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
+
  # TODO put into config file and use --exclude-from
  # -x 'System Volume Information'
 # Dirs that should be in XDG cache
@@ -149,7 +154,7 @@ export DIRS_IGNORE="-x .archive -x worktrees -x .sync -x .stfolder -x *build -x 
 test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so${LD_PRELOAD:+:$LD_PRELOAD}"
 # software config
 export OSFONTDIR="$XDG_DATA_HOME"/fonts:/usr/share/fonts
-# TODO check context export TEXMF=/usr/share/texmf-dist/texmf-context
+# for ConTeXt: TEXMF=/usr/share/texmf-dist/texmf-context
 export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 ## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
