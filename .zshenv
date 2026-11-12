@@ -1,49 +1,50 @@
-export_existing() {
-    local var=$1
-    while test $# -gt 0
-    do test -d "$2" && export $var="$2" && break
-       shift
-    done
-}
-export_existing DATA $HOME/data $HOME/IT/data
-export_existing NEXTCLOUD $DATA/nextcloud $HOME/Nextcloud
-export_existing CLAUDE_HOME $HOME/IT/claude $DATA/1-projects/claude
-export MUSIC="$DATA/media/music"
-
 # xdg
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.local/cache"
 export XDG_CONFIG_HOME="$HOME/.config"
 
+# locations
+export_existing() {
+	local var=$1
+	while test $# -gt 0
+	do test -d "$2" && export $var="$2" && break
+		shift
+	done
+}
+export_existing DATA $HOME/data $HOME/IT/data
+export_existing NEXTCLOUD $DATA/nextcloud $HOME/Nextcloud
+export_existing CLAUDE_HOME $HOME/IT/claude $DATA/1-projects/claude
+export MUSIC="$DATA/media/music"
 export JOURNAL="$(eval "dirname $(grep -1 journals $XDG_CONFIG_HOME/jrnl/jrnl.yaml | tail -1 | cut -d':' -f2-)" ||
 	echo "$DATA/2-box/journal")"
 export_existing PROJECTS "$HOME/IT"
 export_existing STACKSPIN "$DATA/1-projects/stack/stackspin"
 export_existing INSTALEE_HOME "$HOME/projects/instalee" "$DATA/1-projects/1-personal/instalee"
 export_existing VOSK_MODELS "/mnt/data/projects/vosk/models"
- # adjust programs to use xdg
-export MNT=/run/media/$USER
-export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
+# backup
+export MNT=/run/media/$USER
 #export BORG_REPO='janek@172.16.0.2:/mnt/b/user/janek/backup/janek-borg'
 #export BORG_REPO="$MNT/15TB/janek-backups/borg"
 export BORG_REPO="/mnt/backup/janek-backups/borg"
 export BORG_PASSCOMMAND='pass service/device/borg/backup'
 
+# adjust programs to use xdg
 export LYNX_CFG_PATH="$XDG_CONFIG_HOME"/lynx.cfg
 export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
 export RLWRAP_HOME="$XDG_DATA_HOME"/rlwrap
 export LESSHISTFILE="$XDG_STATE_HOME"/lesshst
 
- ## Graphical
+## Graphical
+export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export KDEHOME="$XDG_STATE_HOME"/kdehome
 export DOOMLOCALDIR="$XDG_STATE_HOME"/emacs
 export WINEPREFIX="$XDG_DATA_HOME"/wine
 
- ## Development tools
+## Development tools
 export VIBE_HOME="$XDG_CONFIG_HOME/vibe"
 export CODEX_HOME="$XDG_CONFIG_HOME/codex"
 
@@ -69,6 +70,7 @@ export BUNDLE_USER_PLUGIN="$XDG_STATE_HOME"/bundle
 
 export PYTHONSTARTUP="$XDG_CONFIG_HOME"/pythonstartup.py
 export KSCRIPT_CACHE_DIR="$XDG_CACHE_HOME"/kscript
+export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 
 export RBENV_ROOT="$XDG_STATE_HOME"/rbenv
 
@@ -76,7 +78,7 @@ export R_LIBS="$XDG_STATE_HOME"/R/lib
 
 export FVM_CACHE_PATH="$XDG_DATA_HOME"/fvm
 
- # Java & Android
+## Java & Android
 # macOS keeps java prefs in ~/Library/Preferences through MacOSXPreferences, which never
 # reads userRoot — only Linux's FileSystemPreferences does. Setting it on a Mac creates
 # nothing and prints "Picked up _JAVA_OPTIONS" ahead of every JVM's own output.
@@ -93,11 +95,13 @@ for _asdk in "$HOME/Library/Android/sdk" /opt/android/sdk; do
 done
 unset _asdk
 export ANDROID_HOME="$ANDROID_SDK_ROOT"
- # taskwarrior & timewarrior
+
+## taskwarrior & timewarrior
 export TIMEWARRIORDB="$XDG_DATA_HOME"/timewarrior
 export TASKRC="$XDG_CONFIG_HOME"/task/taskrc
 export TASKDATA="$XDG_DATA_HOME"/task
- # zsh dirs
+
+## zsh dirs
 export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
 export ZSH="$XDG_DATA_HOME"/zsh/oh-my-zsh
 export HISTFILE="$XDG_STATE_HOME"/zsh/history
@@ -111,25 +115,23 @@ test -d "$XDG_DATA_HOME/gem/ruby" &&
 	ruby_bins="$(ls -d $XDG_DATA_HOME/gem/ruby/*/bin 2>/dev/null | head -1):"
 export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bin:$N_PREFIX:$GOPATH/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/emulator:$CARGO_HOME/bin:$KREW_ROOT/bin:${ruby_bins}$HOME/.rvm/bin"
 # /opt/homebrew/opt/coreutils/libexec/gnubin for gnu override of BSD tools
-# Your own Apple devices by name: `xdevice --all` installs on these
-export APPLE_DEVICES="Mars Pluto Ruby"
 
 case "$(uname)" in
 (Darwin)
 	export EDITOR=nvim
 	export ALTERNATE_EDITOR=nvim;;
 (*)
-export ALTERNATE_EDITOR="$(
-	if command -v nvim >/dev/null
-	then echo nvim
-	else echo vi
-	fi)"
-export EDITOR="$(
-	if command -v emacs >/dev/null
-	then echo $BIN/scripts/emacstty
-	else echo $ALTERNATE_EDITOR
-	fi
-)";;
+	export ALTERNATE_EDITOR="$(
+		if command -v nvim >/dev/null
+		then echo nvim
+		else echo vi
+		fi)"
+	export EDITOR="$(
+		if command -v emacs >/dev/null
+		then echo $BIN/scripts/emacstty
+		else echo $ALTERNATE_EDITOR
+		fi
+	)";;
 esac
 export IHP_EDITOR="$BIN/scripts/emacs-line"
 
@@ -137,8 +139,6 @@ export LS_OPTIONS='--color=auto --human-readable --si --group-directories-first 
 export LSCOLORS=Ex
 export LS_COLORS=''
 export DISABLE_LS_COLORS=true # prevents override by oh my zsh
-
-export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
 
 # Dirs that should be in XDG cache
 export DIRS_GENERATED="-x generated -x .gradle -x .kotlin -x .venv -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
@@ -152,10 +152,10 @@ test -f "/usr/lib/libstderred.so" && export LD_PRELOAD="/usr/lib/libstderred.so$
 # software config
 export OSFONTDIR="$XDG_DATA_HOME"/fonts:/usr/share/fonts
 # for ConTeXt: TEXMF=/usr/share/texmf-dist/texmf-context
-export KSCRIPT_IDEA_COMMAND=intellij-idea-ultimate-edition
 ## enable pass extensions
 export PASSWORD_STORE_ENABLE_EXTENSIONS="true"
-## man
+## less & man
+export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
 export MANPAGER="less --squeeze-blank-lines +Gg"
 export LESS_TERMCAP_mb=$'\e[1;31m'	# begin bold
 export LESS_TERMCAP_md=$'\e[1;32m'	# begin blink
@@ -199,7 +199,7 @@ case "$(uname)" in
 esac
 export SPARE_CORES=$(expr $efficiency_cores \* 2 / 3)
 
-## cplusplus - ctest, cmake, ninja
+## parallel builds
 export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1
@@ -210,4 +210,7 @@ export CARGO_BUILD_JOBS=${SPARE_CORES}
 #export TZ='Africa/Nairobi'
 # timedatectl set-timezone Africa/Nairobi
 
+# project settings
+# Your own Apple devices by name: `xdevice --all` installs on these
+export APPLE_DEVICES="Mars Pluto Ruby"
 export CONTEST_NETWORK=lan-restricted-dev
