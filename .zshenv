@@ -142,11 +142,10 @@ export DISABLE_LS_COLORS=true # prevents override by oh my zsh
 export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
 
  # TODO put into config file and use --exclude-from
- # -x 'System Volume Information'
 # Dirs that should be in XDG cache
 export DIRS_GENERATED="-x generated -x .gradle -x .kotlin -x .venv -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
 # Dirs that roughly fit XDG state
-export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .dtrash -x .pyenv -x .local/cache -x .mixxx/analysis -x .config/DeltaChat -x .config/discord -x .config/Slack -x .config/syncthing -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache $DIRS_GENERATED"
+export DIRS_IGNORE_SAFE="-x .cache -x .cpan -x *Cache -x .dtrash -x .pyenv -x .local/cache -x .mixxx/analysis -x .config/DeltaChat -x .config/discord -x .config/Slack -x .config/syncthing -x share/baloo -x share/cabal -x share/cargo -x share/digikam -x share/gem -x share/JetBrains -x share/tldr -x share/syncthing -x share/Steam/ubuntu* -x share/Steam/package -x share/virtualenv -x share/Zeal -x state/gradle -x state/android -x Ferdi/Partitions -x oh-my-zsh -x wine/drive_c/windows -x vendor/cache -x System?Volume?Information $DIRS_GENERATED"
 # Generally big dirs to be ignored in daily use
 export DIRS_IGNORE="-x .archive -x worktrees -x .sync -x .stfolder -x *build -x .git -x .idea* -x env -x out -x cache -x Partitions -x vendor/bundle -x log $DIRS_IGNORE_SAFE"
 
