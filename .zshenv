@@ -114,7 +114,6 @@ export PATH="$BIN/scripts:$BIN:$RBENV_ROOT/shims:$PATH:$XDG_CONFIG_HOME/emacs/bi
 # Your own Apple devices by name: `xdevice --all` installs on these
 export APPLE_DEVICES="Mars Pluto Ruby"
 
-# TODO this is too early (for mac?) - editors may later be added to PATH - but on Linux this helps so it is available everywhere
 case "$(uname)" in
 (Darwin)
 	export EDITOR=nvim
@@ -141,7 +140,6 @@ export DISABLE_LS_COLORS=true # prevents override by oh my zsh
 
 export LESS="--raw-control-chars --ignore-case --LONG-PROMPT --jump-target=5 $(test $(less --version | grep -o '[0-9]\+' | head -1) -ge 590 && echo --incsearch)"
 
- # TODO put into config file and use --exclude-from
 # Dirs that should be in XDG cache
 export DIRS_GENERATED="-x generated -x .gradle -x .kotlin -x .venv -x cmake_build -x dist-newstyle -x node_modules -x __pycache__ -x .pytest_cache"
 # Dirs that roughly fit XDG state
@@ -202,15 +200,12 @@ esac
 export SPARE_CORES=$(expr $efficiency_cores \* 2 / 3)
 
 ## cplusplus - ctest, cmake, ninja
-export NINJAJOBS=${SPARE_CORES} # this probably does not work
 export CMAKE_BUILD_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PARALLEL_LEVEL=${SPARE_CORES}
 export CTEST_PROGRESS_OUTPUT=1
 export CTEST_OUTPUT_ON_FAILURE=1
 export CARGO_BUILD_JOBS=${SPARE_CORES}
 
-# TODO move to proper place - is also called when firenvim starts
-#autolight
 #export TZ='Europe/Dublin'
 #export TZ='Africa/Nairobi'
 # timedatectl set-timezone Africa/Nairobi
