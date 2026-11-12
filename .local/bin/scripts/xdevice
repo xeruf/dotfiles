@@ -16,6 +16,8 @@ builds go to build/xcode.noindex.
   --release    the Release configuration, as shipped (default: Debug)
   --no-launch  install only
   --no-build   reinstall the last build
+  --no-gen     build the project as it is — say after `scripts/gen.sh --no-watch`,
+               when only the watch targets lack a signing profile
   --dry-run    show which devices are reachable and what each would get
   --scheme S   another scheme than the project's name
   -h, --help   this text
@@ -28,13 +30,14 @@ EOF
 }
 set -eu
 
-CONFIG=Debug ALL=0 LAUNCH=1 BUILD=1 DRY=0 SCHEME='' ONLY=''
+CONFIG=Debug ALL=0 LAUNCH=1 BUILD=1 GEN=1 DRY=0 SCHEME='' ONLY=''
 while [ $# -gt 0 ]; do
   case "$1" in
     --all) ALL=1 ;;
     --release) CONFIG=Release ;;
     --no-launch) LAUNCH=0 ;;
     --no-build) BUILD=0 ;;
+    --no-gen) GEN=0 ;;
     --dry-run) DRY=1 ;;
     --scheme) [ $# -ge 2 ] || { echo "error: xdevice: --scheme needs a name" >&2; exit 2; }; SCHEME="$2"; shift ;;
     -h|--help) usage; exit 0 ;;
@@ -48,7 +51,7 @@ PROGRESS="$(dirname "$0")/xcode-progress"
 
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "error: xdevice: not inside a git repo" >&2; exit 1; }
 cd "$ROOT"
-if [ "$BUILD" = 1 ] && [ "$DRY" = 0 ]; then
+if [ "$BUILD" = 1 ] && [ "$GEN" = 1 ] && [ "$DRY" = 0 ]; then
   if [ -x scripts/gen.sh ]; then scripts/gen.sh >/dev/null
   elif [ -f project.yml ]; then xcodegen generate --quiet
   fi
@@ -146,7 +149,8 @@ install_one() {  # identifier kind reachable name
   if [ "$up" = 0 ]; then printf '  skip  %-6s — not reachable\n' "$name"; return; fi
   if [ "$DRY" = 1 ]; then
     [ "$launch" = 1 ] && tag=' (launch)' || tag=''
-    printf '  plan  %-6s ← %s%s\n' "$name" "${app:+$(basename "$app")}${app:-the $kind app}" "$tag"
+    if [ -n "$app" ]; then what=$(basename "$app"); else what="the $kind app"; fi
+    printf '  plan  %-6s ← %s%s\n' "$name" "$what" "$tag"
     return
   fi
   if [ -z "$app" ]; then printf '  skip  %-6s — this build has no %s app\n' "$name" "$kind"; return; fi
