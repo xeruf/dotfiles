@@ -1,0 +1,173 @@
+#!/bin/sh
+# Build the current repo's app and install it on paired iPhones and watches — usage: --help.
+usage() { cat <<'EOF'
+Usage: xdevice [options] [DEVICE]
+
+Builds the app of the Xcode project in the current git repo for devices and
+installs it — by default Debug on the first reachable iPhone in $APPLE_DEVICES
+(any reachable paired iPhone when that is unset), then launches it.
+Project, scheme, generation step and products are found as `xsim --help` says;
+builds go to build/xcode.noindex.
+
+  DEVICE       that one paired device, its name matched case-insensitively;
+               a watch gets the watch app the build produced
+  --all        every reachable device in $APPLE_DEVICES: iPhones get the app,
+               watches the watch app
+  --release    the Release configuration, as shipped (default: Debug)
+  --no-launch  install only
+  --no-build   reinstall the last build
+  --dry-run    show which devices are reachable and what each would get
+  --scheme S   another scheme than the project's name
+  -h, --help   this text
+
+$APPLE_DEVICES lists your own devices by name ("Mars Pluto Ruby"), so a re-paired
+device with a new UDID is still found. Each device gets ONE attempt: a failed
+install is a device asleep, locked or out of range — yours to settle, not a retry's.
+A build failing on signing is this Mac's: sign in under Xcode › Settings › Accounts.
+EOF
+}
+set -eu
+
+CONFIG=Debug ALL=0 LAUNCH=1 BUILD=1 DRY=0 SCHEME='' ONLY=''
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --all) ALL=1 ;;
+    --release) CONFIG=Release ;;
+    --no-launch) LAUNCH=0 ;;
+    --no-build) BUILD=0 ;;
+    --dry-run) DRY=1 ;;
+    --scheme) [ $# -ge 2 ] || { echo "error: xdevice: --scheme needs a name" >&2; exit 2; }; SCHEME="$2"; shift ;;
+    -h|--help) usage; exit 0 ;;
+    -*) echo "error: xdevice: unknown option '$1' (see --help)" >&2; exit 2 ;;
+    *) ONLY="$1" ;;
+  esac
+  shift
+done
+[ "$ALL" = 0 ] || [ -z "$ONLY" ] || { echo "error: xdevice: --all and a DEVICE exclude each other" >&2; exit 2; }
+PROGRESS="$(dirname "$0")/xcode-progress"
+
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "error: xdevice: not inside a git repo" >&2; exit 1; }
+cd "$ROOT"
+if [ "$BUILD" = 1 ] && [ "$DRY" = 0 ]; then
+  if [ -x scripts/gen.sh ]; then scripts/gen.sh >/dev/null
+  elif [ -f project.yml ]; then xcodegen generate --quiet
+  fi
+fi
+PROJECT=$(ls -d ./*.xcodeproj 2>/dev/null | sed -n 's|^\./||; 1p')
+[ -n "$PROJECT" ] || { echo "error: xdevice: no *.xcodeproj in $ROOT" >&2; exit 1; }
+[ "$(ls -d ./*.xcodeproj | wc -l)" -eq 1 ] || { echo "error: xdevice: several *.xcodeproj in $ROOT" >&2; exit 1; }
+SCHEME=${SCHEME:-$(basename "$PROJECT" .xcodeproj)}
+
+# One line per paired physical device: identifier, kind (phone|watch|other), reachable (1|0), name.
+# why: the JSON rather than the table — Xcode 27 added an often-empty Hostname column
+# and a " (UDID)" suffix to the table, which shifted every positional field.
+devices() {
+  json=$(mktemp)
+  xcrun devicectl list devices --json-output "$json" >/dev/null 2>&1 || true
+  python3 -I - "$json" <<'PY'
+import json, sys
+try:
+    found = json.load(open(sys.argv[1]))["result"]["devices"]
+except (OSError, ValueError, KeyError):
+    found = []
+for d in found:
+    hw, conn = d["hardwareProperties"], d["connectionProperties"]
+    if hw.get("reality") == "simulated" or conn.get("pairingState") != "paired":
+        continue
+    kind = {"iPhone": "phone", "appleWatch": "watch"}.get(hw.get("deviceType"), "other")
+    up = 0 if conn.get("tunnelState") == "unavailable" else 1
+    print(f'{d["identifier"]}\t{kind}\t{up}\t{d["deviceProperties"]["name"]}')
+PY
+  rm -f "$json"
+}
+DEVICES=$(devices)
+row() {  # name → that device's line, case-insensitive
+  printf '%s\n' "$DEVICES" | awk -F '\t' -v n="$1" 'tolower($4) == tolower(n) { print; exit }'
+}
+
+# The targets: one line each, picked before the build so a missing phone costs no build minutes.
+TARGETS=''
+if [ -n "$ONLY" ]; then
+  TARGETS=$(row "$ONLY")
+  [ -n "$TARGETS" ] || { echo "error: xdevice: no paired device named '$ONLY' (xcrun devicectl list devices)" >&2; exit 2; }
+elif [ "$ALL" = 1 ]; then
+  [ -n "${APPLE_DEVICES:-}" ] || { echo "error: xdevice: --all needs \$APPLE_DEVICES (your devices' names)" >&2; exit 2; }
+  for n in $APPLE_DEVICES; do
+    r=$(row "$n")
+    if [ -n "$r" ]; then TARGETS="$TARGETS$r
+"; else TARGETS="$TARGETS-	unpaired	0	$n
+"; fi
+  done
+else
+  if [ -n "${APPLE_DEVICES:-}" ]; then
+    for n in $APPLE_DEVICES; do
+      r=$(row "$n")
+      case "$r" in *"	phone	1	"*) TARGETS=$r; break ;; esac
+    done
+  else
+    TARGETS=$(printf '%s\n' "$DEVICES" | awk -F '\t' '$2 == "phone" && $3 == 1 { print; exit }')
+  fi
+  [ -n "$TARGETS" ] || { echo "error: xdevice: no reachable iPhone${APPLE_DEVICES:+ among $APPLE_DEVICES} — connect one or put it on the same Wi-Fi" >&2; exit 1; }
+fi
+
+DERIVED="$ROOT/build/xcode.noindex"
+if [ "$BUILD" = 1 ] && [ "$DRY" = 0 ]; then
+  echo "Building $SCHEME ($CONFIG) for devices…"
+  mkdir -p "$DERIVED"
+  if ! xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
+        -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" \
+        -allowProvisioningUpdates build 2>&1 \
+      | tee "$DERIVED/build.log" | "$PROGRESS"; then
+    echo "Build FAILED — full log: $DERIVED/build.log" >&2
+    exit 1
+  fi
+fi
+
+# The products folders hold each app beside its extensions (.appex) — one .app, or the scheme's.
+product() {  # sdk → that sdk's .app, or nothing
+  dir="$DERIVED/Build/Products/$CONFIG-$1"
+  if [ -d "$dir/$SCHEME.app" ]; then echo "$dir/$SCHEME.app"; else ls -d "$dir"/*.app 2>/dev/null | head -n 1; fi
+}
+IOS_APP=$(product iphoneos)
+WATCH_APP=$(product watchos)
+if [ "$DRY" = 0 ] && [ -z "$IOS_APP" ]; then
+  echo "error: xdevice: no $CONFIG build in $DERIVED — drop --no-build" >&2
+  exit 1
+fi
+
+install_one() {  # identifier kind reachable name
+  id=$1 kind=$2 up=$3 name=$4
+  case "$kind" in
+    phone) app=$IOS_APP launch=$LAUNCH ;;
+    watch) app=$WATCH_APP launch=0 ;;
+    unpaired) printf '  skip  %-6s — not paired\n' "$name"; return ;;
+    *) printf '  skip  %-6s — neither an iPhone nor a watch\n' "$name"; return ;;
+  esac
+  if [ "$up" = 0 ]; then printf '  skip  %-6s — not reachable\n' "$name"; return; fi
+  if [ "$DRY" = 1 ]; then
+    [ "$launch" = 1 ] && tag=' (launch)' || tag=''
+    printf '  plan  %-6s ← %s%s\n' "$name" "${app:+$(basename "$app")}${app:-the $kind app}" "$tag"
+    return
+  fi
+  if [ -z "$app" ]; then printf '  skip  %-6s — this build has no %s app\n' "$name" "$kind"; return; fi
+  if xcrun devicectl device install app --device "$id" "$app" >/dev/null 2>&1; then
+    printf '  ok    %-6s installed\n' "$name"
+  else
+    printf '  FAIL  %-6s install failed (locked / asleep / out of range?)\n' "$name"
+    return
+  fi
+  if [ "$launch" = 1 ]; then
+    bundle=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")
+    if xcrun devicectl device process launch --device "$id" "$bundle" >/dev/null 2>&1; then
+      printf '  run   %-6s launched\n' "$name"
+    else
+      printf '  note  %-6s installed but not launched — open it on the device\n' "$name"
+    fi
+  fi
+}
+
+echo "$SCHEME ($CONFIG) →"
+printf '%s\n' "$TARGETS" | while IFS='	' read -r id kind up name; do
+  if [ -n "$id" ]; then install_one "$id" "$kind" "$up" "$name"; fi
+done
+echo "Done."

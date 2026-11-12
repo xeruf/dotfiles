@@ -1,0 +1,129 @@
+#!/bin/sh
+# Build, install and launch the current repo's iOS app on a simulator — usage: --help.
+usage() { cat <<'EOF'
+Usage: xsim [options] [SIMULATOR] [-- APP_ARGS…]
+
+Builds the app of the Xcode project in the current git repo and (re)launches it
+on an iPhone simulator, a booted one first. Everything is read from the repo:
+the one *.xcodeproj (generated first by scripts/gen.sh, else by xcodegen when
+there is a project.yml), the scheme of the same name, the .app it builds and
+that app's bundle id. Builds go to build/xcode.noindex (Spotlight skips it).
+
+  SIMULATOR     a case-insensitive part of the simulator's name (default: iPhone);
+                an exact name wins, then a booted match, then the shortest name
+  --no-build    reinstall the last build, skip generating and building
+  --release     the Release configuration (default: Debug)
+  --clean       uninstall first, so the app starts with no data
+  --shot FILE   screenshot once the app has drawn
+  --scheme S    another scheme than the project's name
+  -h, --help    this text
+
+Everything after `--` goes to the app as launch arguments, e.g.
+  xsim -- -uitest-demo student      (Semino: sign into the demo site)
+  xsim --shot x.png -- -readAloud off   (Spross: a silent run)
+The repo's verify skill lists the arguments its app reads.
+EOF
+}
+set -eu
+
+DEVICE='iPhone' BUILD=1 CLEAN=0 CONFIG=Debug SHOT='' SCHEME=''
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --no-build) BUILD=0; shift ;;
+    --release) CONFIG=Release; shift ;;
+    --clean) CLEAN=1; shift ;;
+    --shot) [ $# -ge 2 ] || { echo "error: xsim: --shot needs a FILE" >&2; exit 2; }; SHOT="$2"; shift 2 ;;
+    --scheme) [ $# -ge 2 ] || { echo "error: xsim: --scheme needs a name" >&2; exit 2; }; SCHEME="$2"; shift 2 ;;
+    --) shift; break ;;
+    -h|--help) usage; exit 0 ;;
+    -*) echo "error: xsim: unknown option '$1' (see --help)" >&2; exit 2 ;;
+    *) DEVICE="$1"; shift ;;
+  esac
+done
+case "$SHOT" in ''|/*) ;; *) SHOT="$PWD/$SHOT" ;; esac
+PROGRESS="$(dirname "$0")/xcode-progress"
+
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "error: xsim: not inside a git repo" >&2; exit 1; }
+cd "$ROOT"
+# why: the .xcodeproj is generated and gitignored, so a checkout or a new source file leaves it
+# listing the wrong files until regenerated — and a fresh clone has none to find yet.
+if [ "$BUILD" = 1 ]; then
+  if [ -x scripts/gen.sh ]; then scripts/gen.sh >/dev/null
+  elif [ -f project.yml ]; then xcodegen generate --quiet
+  fi
+fi
+PROJECT=$(ls -d ./*.xcodeproj 2>/dev/null | sed -n 's|^\./||; 1p')
+[ -n "$PROJECT" ] || { echo "error: xsim: no *.xcodeproj in $ROOT" >&2; exit 1; }
+[ "$(ls -d ./*.xcodeproj | wc -l)" -eq 1 ] || { echo "error: xsim: several *.xcodeproj in $ROOT" >&2; exit 1; }
+SCHEME=${SCHEME:-$(basename "$PROJECT" .xcodeproj)}
+
+# why: `booted` is ambiguous once a paired watch simulator is up too — every
+# simctl call targets one resolved UDID instead. Among iOS simulators whose name
+# contains $DEVICE, an exact name wins, then a booted one, each the shortest name —
+# the base model over its Pro, Air and e — and on a tie the newest runtime
+# (simctl lists them oldest first), the one `name=` in an xcodebuild destination picks.
+# The UDID is the field shaped like one, since names carry parentheses too ("iPad Pro (M5)").
+UDID=$(xcrun simctl list devices available | awk -v want="$DEVICE" '
+  /^-- / { ios = ($2 == "iOS"); next }
+  !ios { next }
+  {
+    for (i = 1; i <= NF; i++) if (length($i) == 38 && $i ~ /^\([0-9A-F-]+\)$/) break
+    if (i > NF) next
+    name = $1
+    for (j = 2; j < i; j++) name = name " " $j
+    udid = substr($i, 2, 36) "\t" name
+    if (!index(tolower(name), tolower(want))) next
+    if (tolower(name) == tolower(want)) exact = udid
+    if ($0 ~ /\(Booted\)/ && (booted == "" || length(name) <= blen)) { booted = udid; blen = length(name) }
+    if (any == "" || length(name) <= alen) { any = udid; alen = length(name) }
+  }
+  END { print (exact != "" ? exact : booted != "" ? booted : any) }')
+NAME=${UDID#*	}; UDID=${UDID%%	*}
+if [ -z "$UDID" ]; then
+  echo "error: xsim: no available simulator named '$DEVICE' (xcrun simctl list devices available)" >&2
+  exit 1
+fi
+
+DERIVED="$ROOT/build/xcode.noindex"
+if [ "$BUILD" = 1 ]; then
+  echo "Building $SCHEME ($CONFIG) for $NAME…"
+  mkdir -p "$DERIVED"
+  # why: xcodebuild waits up to 30s for an unknown destination to appear; the simulator
+  # is already resolved and listed, so one that is missing will not turn up.
+  if ! xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
+        -destination "id=$UDID" -destination-timeout 3 -derivedDataPath "$DERIVED" build 2>&1 \
+      | tee "$DERIVED/build.log" | "$PROGRESS"; then
+    echo "Build FAILED — full log: $DERIVED/build.log" >&2
+    exit 1
+  fi
+fi
+
+# The products folder holds the app beside its extensions (.appex) — one .app, or the scheme's.
+PRODUCTS="$DERIVED/Build/Products/$CONFIG-iphonesimulator"
+APP="$PRODUCTS/$SCHEME.app"
+if [ ! -d "$APP" ]; then
+  APP=$(ls -d "$PRODUCTS"/*.app 2>/dev/null | head -n 1)
+fi
+[ -n "$APP" ] && [ -d "$APP" ] || { echo "error: xsim: no app in $PRODUCTS — drop --no-build" >&2; exit 1; }
+BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+
+xcrun simctl bootstatus "$UDID" -b >/dev/null 2>&1 || xcrun simctl boot "$UDID"
+# why: Xcode 27 replaced Simulator.app with DeviceHub.app; older Xcodes only have the former.
+# -g opens the device window without pulling it over whatever the user is working in.
+open -g -a DeviceHub --args -CurrentDeviceUDID "$UDID" 2>/dev/null ||
+  open -g -a Simulator --args -CurrentDeviceUDID "$UDID"
+
+if [ "$CLEAN" = 1 ]; then xcrun simctl uninstall "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true; fi
+xcrun simctl terminate "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
+xcrun simctl install "$UDID" "$APP"
+xcrun simctl launch "$UDID" "$BUNDLE_ID" "$@" >/dev/null
+echo "Launched $BUNDLE_ID on $NAME ($UDID)."
+
+if [ -n "$SHOT" ]; then
+  # why: launch returns at spawn, not at first frame — without the pause the
+  # screenshot catches the splash instead of the screen under test.
+  sleep 3
+  mkdir -p "$(dirname "$SHOT")"
+  xcrun simctl io "$UDID" screenshot "$SHOT" >/dev/null 2>&1
+  echo "Screenshot: $SHOT"
+fi
