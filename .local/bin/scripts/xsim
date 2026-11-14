@@ -5,14 +5,13 @@ Usage: xsim [options] [SIMULATOR] [-- APP_ARGS…]
 
 Builds the app of the Xcode project in the current git repo and (re)launches it
 on an iPhone simulator, a booted one first. Everything is read from the repo:
-the one *.xcodeproj (generated first by scripts/gen.sh, else by cached xcodegen when
-there is a project.yml), the scheme of the same name, the .app it builds and
+the one *.xcodeproj (generated first by xcodegen, cached, when there is a
+project.yml), the scheme of the same name, the .app it builds and
 that app's bundle id. Builds go to build/xcode.noindex (Spotlight skips it).
 
   SIMULATOR     a case-insensitive part of the simulator's name (default: iPhone);
                 an exact name wins, then a booted match, then the shortest name
   --no-build    reinstall the last build, skip generating and building
-  --no-gen      build the project as it is (say after `scripts/gen.sh --no-watch`)
   --release     the Release configuration (default: Debug)
   --clean       uninstall first, so the app starts with no data
   --shot FILE   screenshot once the app has drawn
@@ -27,11 +26,10 @@ EOF
 }
 set -eu
 
-DEVICE='iPhone' BUILD=1 GEN=1 CLEAN=0 CONFIG=Debug SHOT='' SCHEME=''
+DEVICE='iPhone' BUILD=1 CLEAN=0 CONFIG=Debug SHOT='' SCHEME=''
 while [ $# -gt 0 ]; do
   case "$1" in
     --no-build) BUILD=0; shift ;;
-    --no-gen) GEN=0; shift ;;
     --release) CONFIG=Release; shift ;;
     --clean) CLEAN=1; shift ;;
     --shot) [ $# -ge 2 ] || { echo "error: xsim: --shot needs a FILE" >&2; exit 2; }; SHOT="$2"; shift 2 ;;
@@ -49,9 +47,8 @@ ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "error: xsim: not in
 cd "$ROOT"
 # why: the .xcodeproj is generated and gitignored, so a checkout or a new source file leaves it
 # listing the wrong files until regenerated — and a fresh clone has none to find yet.
-if [ "$BUILD" = 1 ] && [ "$GEN" = 1 ]; then
-  if [ -x scripts/gen.sh ]; then scripts/gen.sh >/dev/null
-  elif [ -f project.yml ]; then xcodegen generate --quiet --use-cache --cache-path build/xcodegen-cache
+if [ "$BUILD" = 1 ]; then
+  if [ -f project.yml ]; then xcodegen generate --quiet --use-cache --cache-path build/xcodegen-cache
   fi
 fi
 PROJECT=$(ls -d ./*.xcodeproj 2>/dev/null | sed -n 's|^\./||; 1p')
