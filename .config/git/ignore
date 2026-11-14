@@ -60,3 +60,15 @@ node_modules/
 .idea/**/uiDesigner.xml
 
 **/.claude/settings.local.json
+# Claude Code runtime state — it writes the same list into each clone's .git/info/exclude,
+# this covers fresh clones and other devices before it does
+**/.claude/worktrees/
+**/.claude/checkpoints/
+**/.claude/mailbox/
+**/.claude/routines/.state/
+**/.claude/scheduled_tasks.lock
+**/.claude/scheduled_tasks.json
+**/.claude/agent-registry.json
+**/.claude/agent-memory-local
+**/.claude/first-run
+**/.claude/assistant-daemon-state.json
