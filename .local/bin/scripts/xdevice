@@ -53,7 +53,7 @@ ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "error: xdevice: not
 cd "$ROOT"
 if [ "$BUILD" = 1 ] && [ "$GEN" = 1 ] && [ "$DRY" = 0 ]; then
   if [ -x scripts/gen.sh ]; then scripts/gen.sh >/dev/null
-  elif [ -f project.yml ]; then xcodegen generate --quiet
+  elif [ -f project.yml ]; then xcodegen generate --quiet --use-cache --cache-path build/xcodegen-cache
   fi
 fi
 PROJECT=$(ls -d ./*.xcodeproj 2>/dev/null | sed -n 's|^\./||; 1p')
