@@ -1,3 +1,5 @@
 #!/bin/sh
 # Diff project directories, excluding any generated content
+# why: set -f keeps the -x patterns (*build, *Cache) from expanding against the current directory
+set -f
 diff-color --speed-large-files --recursive $DIRS_IGNORE "$@" | less -F

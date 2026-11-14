@@ -1,6 +1,8 @@
 #!/bin/sh -e
 # Backup system and user files with borg
 # Usage: bag [-n] [--dry-run] [--home] [--root MOUNTED_ROOT]
+# why: set -f keeps the exclude patterns (*Cache, sh:**/…) from expanding against the backed-up root
+set -f
 root="/"
 args="--progress --stats"
 # TODO proper ssh handling using local user with local root access to backup all files
