@@ -1,6 +1,6 @@
 #!/bin/sh
 # Emacs in the terminal
-pgrep -fi "emacs" >/dev/null || emacs --daemon
+emacsclient --alternate-editor=false --eval t >/dev/null 2>&1 || emacs --daemon
 emacsclient --create-frame --tty "$@"
 exit=$?
 stty sane

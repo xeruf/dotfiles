@@ -18,8 +18,8 @@ esac
 showinfo() {
 	which info >/dev/null 2>&1 &&
 		case $EDITOR in
-			(*emacs*) info "$@" -w | grep -v "manpages" | grep -q . && $EDITOR --eval "(progn (info \"$1\") (if \"$2\" (Info-index \"$2\")) (delete-other-windows))";;
-			(*vim) info "$@" -w | grep -q . && $EDITOR -R -M -c "Info $1" +only;;
+			(*emacs*) test -f "$(info -w "$1" 2>/dev/null)" && $EDITOR --eval "(progn (info \"$1\") (if \"$2\" (Info-index \"$2\")) (delete-other-windows))";;
+			(*vim) test -f "$(info -w "$1" 2>/dev/null)" && $EDITOR -R -M -c "Info $1" +only;;
 			(*) info -f "$1" $(test "$2" && echo "--index-search=$2") 2>/dev/null;;
 		esac
 }
