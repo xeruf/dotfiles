@@ -22,7 +22,8 @@ builds go to build/xcode.noindex.
 
 $APPLE_DEVICES lists your own devices by name ("Mars Pluto Ruby"), so a re-paired
 device with a new UDID is still found. Each device gets ONE attempt: a failed
-install is a device asleep, locked or out of range — yours to settle, not a retry's.
+install is a device asleep, locked or out of range, or a build from another signing
+team — yours to settle, not a retry's; devicectl's own error names which.
 A build failing on signing is this Mac's: sign in under Xcode › Settings › Accounts.
 EOF
 }
@@ -150,15 +151,16 @@ install_one() {  # identifier kind reachable name
     return
   fi
   if [ -z "$app" ]; then printf '  skip  %-6s — this build has no %s app\n' "$name" "$kind"; return; fi
-  if xcrun devicectl device install app --device "$id" "$app" >/dev/null 2>&1; then
+  # why: stdout is devicectl's success dump; its errors on stderr name the cause, so they stay.
+  if xcrun devicectl device install app --device "$id" "$app" >/dev/null; then
     printf '  ok    %-6s installed\n' "$name"
   else
-    printf '  FAIL  %-6s install failed (locked / asleep / out of range?)\n' "$name"
+    printf '  FAIL  %-6s install failed — the error above names why\n' "$name"
     return
   fi
   if [ "$launch" = 1 ]; then
     bundle=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")
-    if xcrun devicectl device process launch --device "$id" "$bundle" >/dev/null 2>&1; then
+    if xcrun devicectl device process launch --device "$id" "$bundle" >/dev/null; then
       printf '  run   %-6s launched\n' "$name"
     else
       printf '  note  %-6s installed but not launched — open it on the device\n' "$name"
