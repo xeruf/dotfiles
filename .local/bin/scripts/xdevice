@@ -135,6 +135,30 @@ if [ "$DRY" = 0 ] && [ -z "$IOS_APP" ]; then
   exit 1
 fi
 
+# devicectl's stderr → one line: its outermost and innermost distinct ERROR messages,
+# minus the "(Domain error N (0x…))" tails; the raw text when it parses to nothing.
+# why: devicectl nests each cause in a dozen lines and repeats whole chains.
+reason() {
+  python3 -I -c '
+import re, sys
+raw = sys.stdin.read()
+msgs = []
+for m in re.finditer(r"^\s*ERROR:\s*(.+)$", raw, re.M):
+    s = re.sub(r"^The operation couldn.t be completed\.\s*", "", m.group(1).strip())
+    tail = re.search(r"\s*\([\w.]+ error -?\d+(?: \(0x[0-9a-fA-F]+\))?(?: - (.*))?\)$", s)
+    if tail:
+        s = s[:tail.start()].strip() or (tail.group(1) or "").strip()
+    if s and s not in msgs:
+        msgs.append(s)
+if not msgs:
+    print(raw.strip())
+elif len(msgs) == 1:
+    print(msgs[0])
+else:
+    print(msgs[0].rstrip("."), "—", msgs[-1])
+'
+}
+
 install_one() {  # identifier kind reachable name
   id=$1 kind=$2 up=$3 name=$4
   case "$kind" in
@@ -151,19 +175,19 @@ install_one() {  # identifier kind reachable name
     return
   fi
   if [ -z "$app" ]; then printf '  skip  %-6s — this build has no %s app\n' "$name" "$kind"; return; fi
-  # why: stdout is devicectl's success dump; its errors on stderr name the cause, so they stay.
-  if xcrun devicectl device install app --device "$id" "$app" >/dev/null; then
+  # why: stdout is devicectl's success dump; its stderr names the cause, condensed by reason().
+  if err=$(xcrun devicectl device install app --device "$id" "$app" 2>&1 >/dev/null); then
     printf '  ok    %-6s installed\n' "$name"
   else
-    printf '  FAIL  %-6s install failed — the error above names why\n' "$name"
+    printf '  FAIL  %-6s %s\n' "$name" "$(printf '%s' "$err" | reason)"
     return
   fi
   if [ "$launch" = 1 ]; then
     bundle=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")
-    if xcrun devicectl device process launch --device "$id" "$bundle" >/dev/null; then
+    if err=$(xcrun devicectl device process launch --device "$id" "$bundle" 2>&1 >/dev/null); then
       printf '  run   %-6s launched\n' "$name"
     else
-      printf '  note  %-6s installed but not launched — open it on the device\n' "$name"
+      printf '  note  %-6s installed, not launched: %s\n' "$name" "$(printf '%s' "$err" | reason)"
     fi
   fi
 }
@@ -172,4 +196,3 @@ echo "$SCHEME ($CONFIG) →"
 printf '%s\n' "$TARGETS" | while IFS='	' read -r id kind up name; do
   if [ -n "$id" ]; then install_one "$id" "$kind" "$up" "$name"; fi
 done
-echo "Done."
