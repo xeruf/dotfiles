@@ -135,28 +135,12 @@ if [ "$DRY" = 0 ] && [ -z "$IOS_APP" ]; then
   exit 1
 fi
 
-# devicectl's stderr → one line: its outermost and innermost distinct ERROR messages,
-# minus the "(Domain error N (0x…))" tails; the raw text when it parses to nothing.
+# devicectl's stderr → one line: the first ERROR (what failed) — the last NS… = line (the root cause).
 # why: devicectl nests each cause in a dozen lines and repeats whole chains.
 reason() {
-  python3 -I -c '
-import re, sys
-raw = sys.stdin.read()
-msgs = []
-for m in re.finditer(r"^\s*ERROR:\s*(.+)$", raw, re.M):
-    s = re.sub(r"^The operation couldn.t be completed\.\s*", "", m.group(1).strip())
-    tail = re.search(r"\s*\([\w.]+ error -?\d+(?: \(0x[0-9a-fA-F]+\))?(?: - (.*))?\)$", s)
-    if tail:
-        s = s[:tail.start()].strip() or (tail.group(1) or "").strip()
-    if s and s not in msgs:
-        msgs.append(s)
-if not msgs:
-    print(raw.strip())
-elif len(msgs) == 1:
-    print(msgs[0])
-else:
-    print(msgs[0].rstrip("."), "—", msgs[-1])
-'
+  sed -n 's/^ *ERROR: *//p; s/^ *NS[A-Za-z]* = //p' | sed 's/ (.*//' \
+    | awk 'NR == 1 { f = $0 } { l = $0 }
+      END { if (NR == 0) print "devicectl failed"; else if (l == f) print f; else { sub(/\.$/, "", f); print f " — " l } }'
 }
 
 install_one() {  # identifier kind reachable name
