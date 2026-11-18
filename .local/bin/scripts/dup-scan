@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Ranked report of likely duplicated code across a git repo's Swift and Kotlin sources. Never a gate: exits 0 always.
+
+Run inside the repo. Every tracked .swift and .kt file counts, except tests, build output
+and files that say they are GENERATED in their first lines.
+Comments and literals are blanked and identifiers collapsed, so a copy whose names or prose drifted still matches.
+Winnowed token shingles find the shared regions; regions that share fingerprints form a group,
+ranked by tokens x copies. Repeated `// why:` comments are a second, separate signal.
+
+    dup-scan [--top N] [--min-tokens N] [--why]
+"""
+import argparse
+import collections
+import os
+import re
+import subprocess
+import sys
+
+ROOT = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
+SKIP = re.compile(r"(^|/)(build|Tests?|[a-z]*Test|test|Fixtures)(/|$)")
+GENERATED = re.compile(r"GENERATED|@generated|[Dd]o not edit")
+STRIP = re.compile(r'//[^\n]*|/\*.*?\*/|"""(?:.|\n)*?"""|"(?:\\.|[^"\\\n])*"', re.S)
+TOKEN = re.compile(r"[A-Za-z_]\w*|\d[\w.]*|\S")
+KEYWORDS = set("""if else for while return guard let var val fun func struct class object enum case when switch
+in is as try catch throw throws private public internal override static self this nil null true false init
+import package extension protocol interface where do break continue defer async await suspend data sealed""".split())
+K, W = 25, 8  # shingle length, winnowing window
+MAX_COPIES = 40  # a fingerprint seen more often is idiom, and chains unrelated groups together
+
+
+def files():
+    listed = subprocess.run(["git", "ls-files", "--", "*.swift", "*.kt"], cwd=ROOT,
+                            capture_output=True, text=True).stdout.split("\n")
+    for rel in sorted(filter(None, listed)):
+        full = os.path.join(ROOT, rel)
+        if SKIP.search(rel) or not os.path.isfile(full):
+            continue
+        with open(full, encoding="utf-8", errors="replace") as f:
+            if GENERATED.search("".join(f.readline() for _ in range(12))):
+                continue
+        yield full
+
+
+def blank(m):
+    text = m.group(0)
+    return re.sub(r"[^\n]", " ", text) if text.startswith("/*") or text.startswith('"""') else ("" if text.startswith("//") else '"s"')
+
+
+def tokens(text):
+    out = []
+    for n, line in enumerate(text.split("\n"), 1):
+        if re.match(r"\s*(import|package)\b", line):
+            continue
+        for t in TOKEN.findall(line):
+            if t[0].isalpha() or t[0] == "_":
+                t = t if t in KEYWORDS else "I"
+            elif t[0].isdigit():
+                t = "0"
+            out.append((t, n))
+    return out
+
+
+def winnow(toks):
+    hashes = []
+    for i in range(len(toks) - K + 1):
+        shingle = tuple(t for t, _ in toks[i:i + K])
+        hashes.append(hash(shingle) if len(set(shingle)) >= 9 else 0)  # 0: braces and punctuation runs say nothing
+    picked = {}
+    for i in range(len(hashes) - W + 1):
+        j = min(range(i, i + W), key=lambda x: (hashes[x], -x))
+        picked[j] = hashes[j]
+    return picked
+
+
+def regions(picked, size):
+    """Merge repeated-fingerprint positions into [start, end) token spans, bridging gaps under one window."""
+    spans = []
+    for pos in sorted(picked):
+        if spans and pos - spans[-1][1] <= W + K:
+            spans[-1][1] = max(spans[-1][1], pos + K)
+            spans[-1][2].add(picked[pos])
+        else:
+            spans.append([pos, pos + K, {picked[pos]}])
+    return spans
+
+
+def why_report(texts, top):
+    seen = collections.defaultdict(list)
+    for path, text in texts.items():
+        for n, line in enumerate(text.split("\n"), 1):
+            m = re.search(r"//\s*why:\s*(.+)", line)
+            if m:
+                seen[re.sub(r"\W+", " ", m.group(1).lower()).strip()].append(f"{os.path.relpath(path, ROOT)}:{n}")
+    dups = sorted(((k, v) for k, v in seen.items() if len(v) > 1 and len(k) > 25), key=lambda kv: -len(kv[1]))
+    print(f"\n== repeated `// why:` comments: {len(dups)} ==")
+    for k, v in dups[:top]:
+        print(f"  x{len(v)}  {k[:90]}\n       " + ", ".join(v[:6]) + (" ..." if len(v) > 6 else ""))
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--top", type=int, default=25)
+    ap.add_argument("--min-tokens", type=int, default=60)
+    ap.add_argument("--why", action="store_true", help="only the repeated `// why:` signal")
+    args = ap.parse_args()
+    texts, toks, picks = {}, {}, {}
+    for path in files():
+        raw = open(path, encoding="utf-8", errors="replace").read()
+        texts[path] = raw
+        if not args.why:
+            toks[path] = tokens(STRIP.sub(blank, raw))
+            picks[path] = winnow(toks[path])
+    if not args.why:
+        where = collections.defaultdict(set)
+        for path, picked in picks.items():
+            for pos, h in picked.items():
+                where[h].add((path, pos))
+        shared = {p: {} for p in picks}
+        for h, locs in where.items():
+            if 1 < len(locs) <= MAX_COPIES and h != 0:
+                for path, pos in locs:
+                    shared[path][pos] = h
+        nodes, parent = [], {}
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        owner = {}
+        for path, picked in shared.items():
+            for span in regions(picked, len(toks[path])):
+                node = (path, span[0], span[1])
+                nodes.append((node, span[2]))
+                parent[node] = node
+                for h in span[2]:
+                    if h in owner:
+                        parent[find(node)] = find(owner[h])
+                    else:
+                        owner[h] = node
+        groups = collections.defaultdict(list)
+        for node, _ in nodes:
+            groups[find(node)].append(node)
+        ranked = []
+        for members in groups.values():
+            if len(members) < 2:
+                continue
+            size = sorted(e - s for _, s, e in members)[len(members) // 2]
+            if size >= args.min_tokens:
+                ranked.append((size * len(members), size, members))
+        ranked.sort(key=lambda g: -g[0])
+        print(f"== duplicated code: {len(ranked)} groups (score = tokens x copies) ==")
+        for i, (score, size, members) in enumerate(ranked[:args.top], 1):
+            print(f"\n#{i}  score {score}  ~{size} tokens x {len(members)} copies")
+            for path, s, e in sorted(members)[:8]:
+                t = toks[path]
+                print(f"  {os.path.relpath(path, ROOT)}:{t[s][1]}-{t[min(e, len(t)) - 1][1]}")
+            if len(members) > 8:
+                print(f"  ... {len(members) - 8} more")
+            path, s, e = sorted(members)[0]
+            lines = texts[path].split("\n")
+            a = toks[path][s][1]
+            print("    | " + "\n    | ".join(l.strip()[:100] for l in lines[a - 1:a + 3] if l.strip()))
+    why_report(texts, args.top)
+
+
+if __name__ == "__main__":
+    main()
+    sys.exit(0)
